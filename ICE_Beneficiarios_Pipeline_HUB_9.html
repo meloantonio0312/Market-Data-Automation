@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICE Exchanges — Análise de Beneficiários | Broadcast</title>
+<style>
+:root {
+  --bg: #0c0f18;
+  --surface: #141824;
+  --surface2: #1a1f2e;
+  --surface3: #1f2538;
+  --border: #252d42;
+  --accent: #3b82f6;
+  --accent2: #22d3ee;
+  --gold: #f59e0b;
+  --green: #10b981;
+  --red: #ef4444;
+  --purple: #8b5cf6;
+  --text: #e2e8f0;
+  --muted: #8892a4;
+  --label: #4e5a72;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── HEADER ─── */
+header {
+  background: linear-gradient(135deg, #0c0f18 0%, #111829 55%, #0c1524 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 40px 22px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+header::after {
+  content:'';
+  position:absolute; top:0; right:0; bottom:0; width:360px;
+  background: radial-gradient(ellipse at 80% 50%, rgba(59,130,246,0.1) 0%, transparent 70%);
+  pointer-events:none;
+}
+.header-inner { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; }
+.header-left {}
+.header-eyebrow {
+  font-size:10px; font-weight:700; letter-spacing:0.16em;
+  text-transform:uppercase; color:var(--accent2); margin-bottom:8px;
+}
+header h1 {
+  font-size:22px; font-weight:800; color:#fff;
+  letter-spacing:-0.02em; line-height:1.2;
+}
+header h1 span { color:var(--accent); }
+.header-sub { margin-top:6px; color:var(--muted); font-size:12px; }
+.header-kpis {
+  display:flex; gap:24px; flex-wrap:wrap; align-items:flex-end;
+}
+.header-meta {
+  display:flex; gap:6px; align-items:center; font-size:11px; color:var(--label);
+}
+.meta-sep { color:var(--border); }
+
+.hero-kpis {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:32px;
+}
+.hero-card {
+  border-radius:10px; padding:22px 22px 18px;
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column; gap:6px;
+}
+.hero-card::after {
+  content:''; position:absolute; bottom:-18px; right:-18px;
+  width:80px; height:80px; border-radius:50%;
+  opacity:.12; pointer-events:none;
+}
+.hc-gold   { background:linear-gradient(135deg,#2a1d00,#1f1500); border:1px solid rgba(245,158,11,.35); }
+.hc-gold::after   { background:var(--gold); }
+.hc-blue   { background:linear-gradient(135deg,#091433,#07102a); border:1px solid rgba(59,130,246,.35); }
+.hc-blue::after   { background:var(--accent); }
+.hc-green  { background:linear-gradient(135deg,#051a11,#041510); border:1px solid rgba(16,185,129,.35); }
+.hc-green::after  { background:var(--green); }
+.hc-teal   { background:linear-gradient(135deg,#041e26,#031820); border:1px solid rgba(34,211,238,.35); }
+.hc-teal::after   { background:var(--accent2); }
+.hc-purple { background:linear-gradient(135deg,#150d2a,#100a20); border:1px solid rgba(139,92,246,.35); }
+.hc-purple::after { background:var(--purple); }
+.hero-card-icon { font-size:20px; margin-bottom:2px; }
+.hero-card-label {
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.12em; opacity:.65;
+}
+.hc-gold   .hero-card-label { color:var(--gold); }
+.hc-blue   .hero-card-label { color:#93c5fd; }
+.hc-green  .hero-card-label { color:#34d399; }
+.hc-teal   .hero-card-label { color:var(--accent2); }
+.hc-purple .hero-card-label { color:#c4b5fd; }
+.hero-card-val {
+  font-size:26px; font-weight:900; line-height:1; letter-spacing:-.02em; color:#fff;
+}
+.hero-card-sub { font-size:11px; opacity:.55; color:#fff; margin-top:2px; }
+
+/* ─── TOGGLE ─── */
+.toggle-btn {
+  position:fixed; top:14px; right:18px;
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--muted); padding:6px 12px; border-radius:6px;
+  font-size:11px; cursor:pointer; transition:all .2s; z-index:999;
+}
+.toggle-btn:hover { border-color:var(--accent); color:var(--text); }
+
+/* ─── TABS ─── */
+.tabs-wrapper {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.tabs-inner {
+  display:flex; padding:0 40px; gap:0; overflow-x:auto;
+}
+.tab-btn {
+  padding:14px 22px; border:none; background:transparent;
+  color:var(--muted); font-size:12px; font-weight:600;
+  cursor:pointer; border-bottom:2px solid transparent;
+  transition:all .2s; white-space:nowrap;
+  display:flex; align-items:center; gap:7px;
+  letter-spacing:0.01em;
+}
+.tab-btn:hover { color:var(--text); }
+.tab-btn.active { color:#fff; border-bottom-color:var(--accent); }
+.tab-btn .tab-icon { font-size:14px; }
+.tab-btn .tab-badge {
+  font-size:9px; font-weight:800; padding:1px 6px;
+  border-radius:10px; background:rgba(59,130,246,0.15);
+  color:var(--accent); border:1px solid rgba(59,130,246,0.25);
+}
+
+/* ─── PANES ─── */
+.pane { display:none; animation:fadeIn .25s ease; }
+.pane.active { display:block; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
+.pane-inner { max-width:1080px; margin:0 auto; padding:36px 40px; }
+
+/* ─── SECTION TITLE ─── */
+.sec-title {
+  font-size:10px; font-weight:700; letter-spacing:0.13em;
+  text-transform:uppercase; color:var(--accent);
+  margin-bottom:16px; padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+}
+.sec-title::before {
+  content:''; width:3px; height:13px; background:var(--accent);
+  border-radius:2px; display:inline-block;
+}
+
+/* ─── RATIONALE ─── */
+.rationale {
+  background:var(--surface); border:1px solid var(--border);
+  border-left:3px solid var(--gold); border-radius:7px;
+  padding:18px 22px; margin-bottom:28px;
+  font-size:13px; color:var(--text); line-height:1.8;
+}
+.rationale strong { color:var(--gold); }
+.rationale em { color:var(--accent2); font-style:normal; }
+
+/* ─── IMPACT BLOCK ─── */
+.impact-section { margin-bottom:32px; }
+.impact-headline {
+  background:linear-gradient(135deg,#0b1a10 0%,#0f1f15 100%);
+  border:1px solid rgba(16,185,129,.3); border-radius:9px 9px 0 0;
+  padding:16px 22px; display:flex; align-items:center; gap:14px;
+}
+.impact-icon {
+  width:42px; height:42px; background:rgba(16,185,129,.15);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0;
+}
+.impact-headline-title { font-size:14px; font-weight:800; color:#fff; }
+.impact-headline-sub { font-size:11px; color:rgba(52,211,153,.7); margin-top:2px; }
+.impact-headline-num { margin-left:auto; text-align:right; flex-shrink:0; }
+.impact-big { font-size:26px; font-weight:800; color:var(--green); line-height:1; }
+.impact-note { font-size:10px; color:rgba(52,211,153,.55); margin-top:2px; }
+.impact-body {
+  background:var(--surface); border:1px solid rgba(16,185,129,.18);
+  border-top:none; border-radius:0 0 9px 9px; overflow:hidden;
+}
+.impact-row {
+  display:grid; grid-template-columns:26px 1fr auto;
+  gap:14px; align-items:start; padding:14px 22px;
+  border-bottom:1px solid rgba(42,48,69,.45);
+}
+.impact-row:last-child { border-bottom:none; }
+.impact-row:hover { background:rgba(16,185,129,.02); }
+.i-bubble {
+  width:22px; height:22px; background:rgba(16,185,129,.15);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:800; color:var(--green); flex-shrink:0; margin-top:1px;
+}
+.i-title { font-size:13px; font-weight:700; color:#fff; margin-bottom:4px; }
+.i-desc { font-size:12px; color:var(--muted); line-height:1.65; }
+.i-desc strong { color:var(--text); }
+.i-clients { display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
+.i-client-tag {
+  font-size:10px; padding:2px 7px; border-radius:3px;
+  background:rgba(255,255,255,.04); border:1px solid var(--border); color:var(--muted);
+}
+.i-tag { font-size:9px; font-weight:700; padding:4px 9px; border-radius:4px; white-space:nowrap; flex-shrink:0; align-self:flex-start; }
+.itag-now { background:rgba(16,185,129,.15); color:#34d399; border:1px solid rgba(16,185,129,.3); }
+.itag-soon { background:rgba(59,130,246,.15); color:#93c5fd; border:1px solid rgba(59,130,246,.3); }
+.itag-strat { background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); }
+
+/* ─── KPI STRIP ─── */
+.kpi-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:32px; }
+.kpi-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:16px 18px; position:relative; overflow:hidden;
+}
+.kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--accent); }
+.kpi-card.gold::before { background:var(--gold); }
+.kpi-card.green::before { background:var(--green); }
+.kpi-card.teal::before { background:var(--accent2); }
+.kpi-label { font-size:9px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:5px; }
+.kpi-value { font-size:20px; font-weight:800; color:#fff; }
+.kpi-sub { font-size:10px; color:var(--label); margin-top:2px; }
+
+/* ─── COVERAGE CARDS ─── */
+.cov-strip { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:32px; }
+.cov-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:9px; padding:20px 22px;
+}
+.cov-header { display:flex; align-items:flex-start; gap:12px; margin-bottom:16px; }
+.cov-icon {
+  width:40px; height:40px; border-radius:7px;
+  display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;
+}
+.ci-blue { background:rgba(59,130,246,.14); }
+.ci-gold { background:rgba(245,158,11,.14); }
+.cov-title { font-size:13px; font-weight:700; color:#fff; line-height:1.3; }
+.cov-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+.bar-wrap { margin-bottom:12px; }
+.bar-label { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:5px; }
+.bar-label strong { color:var(--text); font-size:12px; }
+.bar-track { height:7px; background:var(--surface2); border-radius:4px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; }
+.bf-blue { background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+.bf-gold { background:linear-gradient(90deg,var(--gold),#fcd34d); }
+.cov-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+.cstat { background:var(--surface2); border-radius:6px; padding:9px 10px; text-align:center; }
+.cstat-val { font-size:17px; font-weight:800; color:#fff; }
+.cstat-val.blue { color:var(--accent); }
+.cstat-val.gold { color:var(--gold); }
+.cstat-val.green { color:var(--green); }
+.cstat-val.teal { color:var(--accent2); }
+.cstat-lbl { font-size:9px; color:var(--label); margin-top:1px; line-height:1.4; }
+
+/* ─── EXCHANGE GRID ─── */
+.exch-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:32px; }
+.exch-pill {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:6px; padding:10px 13px;
+  display:flex; align-items:center; gap:9px;
+}
+.exch-id {
+  font-size:10px; font-weight:700; color:var(--accent2);
+  background:rgba(34,211,238,.08); padding:2px 6px;
+  border-radius:3px; min-width:34px; text-align:center;
+  font-family:'Consolas',monospace;
+}
+.exch-name { font-size:12px; color:var(--text); font-weight:500; flex:1; }
+.exch-tag { margin-left:auto; font-size:9px; padding:2px 6px; border-radius:3px; font-weight:700; }
+.tag-hot { background:rgba(239,68,68,.15); color:#f87171; border:1px solid rgba(239,68,68,.3); }
+.tag-eu  { background:rgba(59,130,246,.12); color:#93c5fd; border:1px solid rgba(59,130,246,.25); }
+.tag-la  { background:rgba(245,158,11,.12); color:#fbbf24; border:1px solid rgba(245,158,11,.25); }
+.tag-as  { background:rgba(139,92,246,.12); color:#a78bfa; border:1px solid rgba(139,92,246,.25); }
+.tag-am  { background:rgba(16,185,129,.12); color:#34d399; border:1px solid rgba(16,185,129,.25); }
+
+/* ─── CLIENT CARDS ─── */
+.client-grid { display:flex; flex-direction:column; gap:12px; margin-bottom:32px; }
+.client-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; overflow:hidden; transition:border-color .2s;
+}
+.client-card:hover { border-color:var(--accent); }
+.client-head {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 18px; background:var(--surface2);
+  border-bottom:1px solid var(--border);
+}
+.c-avatar {
+  width:34px; height:34px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:12px; flex-shrink:0;
+}
+.av-blue { background:rgba(59,130,246,.2); color:var(--accent); }
+.av-gold { background:rgba(245,158,11,.2); color:var(--gold); }
+.av-green { background:rgba(16,185,129,.2); color:var(--green); }
+.av-teal { background:rgba(34,211,238,.2); color:var(--accent2); }
+.av-purple { background:rgba(139,92,246,.2); color:#a78bfa; }
+.c-name { font-weight:700; font-size:13px; color:#fff; }
+.c-hub { font-size:10px; color:var(--muted); }
+.pri-badge {
+  margin-left:auto; font-size:9px; font-weight:700;
+  padding:3px 9px; border-radius:4px; letter-spacing:.04em;
+}
+.pb-high { background:rgba(239,68,68,.15); color:#f87171; border:1px solid rgba(239,68,68,.3); }
+.pb-med  { background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); }
+.pb-pros { background:rgba(34,211,238,.1); color:var(--accent2); border:1px solid rgba(34,211,238,.22); }
+.client-body { padding:12px 18px; }
+.c-desc { font-size:12px; color:var(--muted); line-height:1.65; margin-bottom:10px; }
+.bolsas-row { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+.bolsa-chip {
+  font-size:10px; padding:2px 8px; border-radius:4px; font-weight:600;
+  background:rgba(59,130,246,.09); color:#93c5fd;
+  border:1px solid rgba(59,130,246,.2);
+}
+.c-foot {
+  display:flex; align-items:center; gap:7px;
+  padding:0 18px 12px; font-size:10px; color:var(--label);
+}
+.dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.dot-g { background:var(--green); }
+.dot-y { background:var(--gold); }
+.dot-b { background:var(--accent); }
+
+/* ─── DILUTION TABLE ─── */
+.dil-box {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; overflow:hidden; margin-bottom:32px;
+}
+.dil-header {
+  padding:12px 18px; background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  font-weight:600; font-size:12px; color:var(--text);
+  display:flex; justify-content:space-between; align-items:center;
+}
+table.dil { width:100%; border-collapse:collapse; font-size:12px; }
+table.dil th {
+  padding:9px 18px; text-align:left; font-size:9px;
+  text-transform:uppercase; letter-spacing:.1em;
+  color:var(--label); border-bottom:1px solid var(--border);
+}
+table.dil td {
+  padding:11px 18px; border-bottom:1px solid rgba(42,48,69,.4);
+  color:var(--text); vertical-align:top;
+}
+table.dil tr:last-child td { border-bottom:none; }
+table.dil tr:hover td { background:rgba(255,255,255,.02); }
+.td-num { font-family:'Consolas',monospace; color:var(--accent2); font-weight:600; }
+.td-note { font-size:11px; color:var(--muted); }
+
+/* ─── GAP GRID ─── */
+.gap-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:28px; }
+.gap-row {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:7px; padding:11px 14px;
+  display:flex; align-items:flex-start; gap:11px;
+}
+.gap-row.crit { border-left:3px solid var(--red); }
+.gap-row.sec  { border-left:3px solid var(--label); }
+.gap-src {
+  min-width:88px; font-size:9px; font-weight:700;
+  font-family:'Consolas',monospace; color:var(--accent2);
+}
+.gap-detail { flex:1; }
+.gap-before { font-size:11px; color:var(--muted); }
+.gap-before span { color:var(--red); font-weight:600; }
+.gap-after { font-size:11px; color:var(--green); margin-top:2px; }
+.gap-hubs { font-size:10px; color:var(--label); margin-top:3px; }
+.gap-badge { font-size:9px; padding:2px 6px; border-radius:3px; font-weight:700; flex-shrink:0; align-self:flex-start; }
+.gb-crit { background:rgba(239,68,68,.15); color:#f87171; border:1px solid rgba(239,68,68,.3); }
+.gb-sec  { background:rgba(100,116,139,.15); color:var(--label); border:1px solid rgba(100,116,139,.3); }
+
+/* ─── HUB COVERAGE TABLE ─── */
+.hub-cov-table {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; overflow:hidden; margin-bottom:14px;
+}
+.hct-head {
+  padding:11px 18px; background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  font-size:10px; font-weight:600; color:var(--muted);
+  display:grid; grid-template-columns:2fr 2fr 1fr 76px; gap:12px;
+}
+.hct-row {
+  padding:12px 18px; border-bottom:1px solid rgba(42,48,69,.38);
+  display:grid; grid-template-columns:2fr 2fr 1fr 76px; gap:12px;
+  align-items:center; font-size:11.5px;
+}
+.hct-row:last-child { border-bottom:none; }
+.hct-row:hover { background:rgba(255,255,255,.02); }
+.hct-name { font-weight:600; color:var(--text); }
+.hct-hub { font-size:10px; color:var(--label); }
+.ice-chips { display:flex; flex-wrap:wrap; gap:4px; }
+.ice-chip {
+  font-size:9px; padding:2px 5px; border-radius:3px;
+  background:rgba(34,211,238,.08); color:var(--accent2);
+  border:1px solid rgba(34,211,238,.16); font-family:'Consolas',monospace; font-weight:600;
+}
+.hct-base { font-size:11px; color:var(--muted); }
+.pct-wrap { display:flex; align-items:center; gap:6px; }
+.pct-n { font-size:13px; font-weight:800; min-width:34px; }
+.pct-track { flex:1; height:5px; background:var(--surface2); border-radius:3px; overflow:hidden; }
+.pct-fill { height:100%; border-radius:3px; }
+.pct-g { color:var(--green); } .pct-g .pct-fill { background:var(--green); }
+.pct-y { color:var(--gold); }  .pct-y .pct-fill { background:var(--gold); }
+.pct-t { color:var(--accent2); } .pct-t .pct-fill { background:var(--accent2); }
+
+/* ─── BASE TOTALS ─── */
+.base-totals { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:24px; }
+.btcard {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:8px; padding:14px 16px; text-align:center;
+}
+.btval { font-size:19px; font-weight:800; color:#fff; }
+.btval.blue { color:var(--accent); }
+.btval.teal { color:var(--accent2); }
+.btval.gold { color:var(--gold); }
+.btval.green { color:var(--green); }
+.btlbl { font-size:10px; color:var(--label); margin-top:3px; line-height:1.4; }
+
+/* ─── PROPOSAL ─── */
+.prop-intro {
+  background:linear-gradient(135deg,#090e1c 0%,#0e1325 100%);
+  border:1px solid rgba(59,130,246,.28); border-radius:9px 9px 0 0;
+  padding:18px 24px; display:flex; align-items:center; gap:14px;
+}
+.prop-icon {
+  width:44px; height:44px; background:rgba(59,130,246,.14);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:21px; flex-shrink:0;
+}
+.prop-title { font-size:15px; font-weight:800; color:#fff; letter-spacing:-.01em; }
+.prop-sub { font-size:12px; color:rgba(147,197,253,.65); margin-top:3px; }
+.prop-stamp {
+  margin-left:auto; font-size:10px; font-weight:700;
+  background:rgba(59,130,246,.14); border:1px solid rgba(59,130,246,.28);
+  color:#93c5fd; padding:4px 11px; border-radius:4px; letter-spacing:.05em;
+}
+.prop-body {
+  background:var(--surface); border:1px solid rgba(59,130,246,.14);
+  border-top:none; border-radius:0 0 9px 9px; overflow:hidden; margin-bottom:32px;
+}
+.tier-grid { display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid var(--border); }
+.tier-card {
+  padding:20px 20px; border-right:1px solid var(--border); position:relative;
+}
+.tier-card:last-child { border-right:none; }
+.tier-card.feat { background:linear-gradient(180deg,rgba(59,130,246,.07) 0%,transparent 100%); }
+.tier-card.feat::before {
+  content:'RECOMENDADO'; position:absolute; top:0; left:50%; transform:translateX(-50%);
+  background:var(--accent); color:#fff; font-size:8px; font-weight:800;
+  letter-spacing:.1em; padding:3px 10px; border-radius:0 0 5px 5px;
+}
+.tier-name {
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.1em; color:var(--muted); margin-bottom:5px; margin-top:8px;
+}
+.tier-price { font-size:20px; font-weight:800; color:#fff; line-height:1; }
+.tier-price-u { font-size:11px; font-weight:400; color:var(--muted); }
+.tier-desc { font-size:11px; color:var(--muted); margin:7px 0 12px; line-height:1.6; }
+.tier-items { list-style:none; display:flex; flex-direction:column; gap:5px; }
+.tier-item { display:flex; align-items:flex-start; gap:6px; font-size:11px; color:var(--text); line-height:1.45; }
+.tier-item::before { content:'✓'; color:var(--green); font-weight:700; flex-shrink:0; margin-top:1px; }
+.tier-item.off { color:var(--label); }
+.tier-item.off::before { content:'—'; color:var(--border); }
+.tier-cta {
+  margin-top:14px; display:block; text-align:center;
+  padding:8px; border-radius:6px; font-size:10px; font-weight:700; letter-spacing:.05em;
+}
+.cta-p { background:var(--accent); color:#fff; }
+.cta-o { background:transparent; border:1px solid var(--border); color:var(--muted); }
+
+.prop-exch { padding:16px 22px; border-bottom:1px solid var(--border); }
+.prop-exch-title {
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.1em; color:var(--accent); margin-bottom:11px;
+}
+.eck-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; }
+.eck {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:5px; padding:7px 9px;
+}
+.eck-name { font-weight:700; font-size:10px; color:var(--text); margin-bottom:2px; }
+.eck-avail { font-size:9px; display:flex; align-items:center; gap:4px; color:var(--muted); }
+.da { width:5px; height:5px; border-radius:50%; }
+.da-g { background:var(--green); }
+.da-b { background:var(--accent); }
+.da-y { background:var(--gold); }
+.eck-legend { display:flex; gap:14px; margin-top:10px; font-size:10px; color:var(--label); }
+
+.prop-conds {
+  padding:14px 22px; display:grid; grid-template-columns:repeat(2,1fr);
+  gap:11px; border-bottom:1px solid var(--border); background:var(--surface2);
+}
+.cond-item { display:flex; align-items:flex-start; gap:9px; }
+.cond-ico {
+  width:28px; height:28px; border-radius:5px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; background:rgba(255,255,255,.04);
+}
+.cond-title { font-size:11px; font-weight:700; color:var(--text); }
+.cond-desc { font-size:11px; color:var(--muted); margin-top:1px; line-height:1.5; }
+
+.prop-next { padding:14px 22px; display:grid; grid-template-columns:repeat(4,1fr); gap:9px; }
+.ns { display:flex; flex-direction:column; align-items:flex-start; gap:5px; }
+.ns-num {
+  font-size:9px; font-weight:800; letter-spacing:.1em;
+  color:var(--accent); background:rgba(59,130,246,.1);
+  padding:2px 7px; border-radius:3px;
+}
+.ns-title { font-size:11px; font-weight:700; color:var(--text); }
+.ns-desc { font-size:11px; color:var(--muted); line-height:1.5; }
+
+/* ─── NUAM ─── */
+.nuam-box {
+  background:linear-gradient(135deg,#15100000,#1a150a);
+  border:1px solid rgba(245,158,11,.3); border-radius:9px; overflow:hidden; margin-bottom:28px;
+}
+.nuam-head {
+  background:rgba(245,158,11,.09); border-bottom:1px solid rgba(245,158,11,.18);
+  padding:13px 20px; display:flex; align-items:center; gap:9px;
+}
+.nuam-badge {
+  background:rgba(245,158,11,.2); border:1px solid rgba(245,158,11,.35);
+  color:var(--gold); font-size:9px; font-weight:800;
+  letter-spacing:.12em; padding:3px 8px; border-radius:4px;
+}
+.nuam-head-title { font-weight:700; font-size:13px; color:#fde68a; }
+.nuam-head-sub { margin-left:auto; font-size:10px; color:rgba(253,230,138,.4); }
+.nuam-body { padding:18px 20px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.nuam-sec-title {
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.1em; color:var(--gold); margin-bottom:9px;
+}
+.nuam-text { font-size:12px; color:#d4b896; line-height:1.75; }
+.nuam-text strong { color:#fde68a; }
+.nuam-countries { display:flex; flex-direction:column; gap:7px; }
+.nuam-country {
+  display:flex; align-items:center; gap:9px;
+  background:rgba(245,158,11,.05); border:1px solid rgba(245,158,11,.13);
+  border-radius:6px; padding:9px 13px;
+}
+.nuam-flag { font-size:17px; }
+.nuam-cn { font-weight:700; font-size:11px; color:#fde68a; }
+.nuam-cd { font-size:10px; color:#a08060; margin-top:1px; }
+.nuam-src {
+  margin-left:auto; font-size:9px; font-weight:700;
+  font-family:'Consolas',monospace; color:var(--accent2);
+  background:rgba(34,211,238,.08); padding:2px 7px;
+  border-radius:3px; border:1px solid rgba(34,211,238,.18);
+}
+.nuam-foot {
+  background:rgba(0,0,0,.18); border-top:1px solid rgba(245,158,11,.14);
+  padding:11px 20px; font-size:11px; color:rgba(253,230,138,.45);
+  display:flex; align-items:center; gap:6px;
+}
+.nuam-foot::before { content:'⚠'; font-size:12px; color:var(--gold); }
+
+/* ─── BASE INTRO ─── */
+.base-intro {
+  background:var(--surface); border:1px solid var(--border);
+  border-left:3px solid var(--accent2); border-radius:6px;
+  padding:15px 20px; margin-bottom:20px;
+  font-size:13px; color:var(--text); line-height:1.8;
+}
+.base-intro strong { color:var(--accent2); }
+
+/* ─── FOOTER ─── */
+footer {
+  border-top:1px solid var(--border); padding:20px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:11px; color:var(--label); flex-shrink:0;
+  margin-top:auto;
+}
+.foot-author { font-weight:600; color:var(--muted); }
+.foot-sep { width:1px; height:24px; background:var(--border); margin:0 6px; }
+
+/* ─── CAPEX / OPEX CASH FLOW ─── */
+.cf-intro {
+  background:var(--surface); border:1px solid var(--border);
+  border-left:3px solid var(--purple); border-radius:7px;
+  padding:16px 22px; margin-bottom:28px;
+  font-size:13px; color:var(--text); line-height:1.8;
+}
+.cf-intro strong { color:#c4b5fd; }
+
+.cf-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:32px; }
+.cf-sum-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:16px 18px; text-align:center;
+}
+.cf-sum-card.purple { border-top:2px solid var(--purple); }
+.cf-sum-card.gold   { border-top:2px solid var(--gold); }
+.cf-sum-card.green  { border-top:2px solid var(--green); }
+.cf-sum-card.teal   { border-top:2px solid var(--accent2); }
+.cf-sum-label { font-size:9px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:5px; }
+.cf-sum-val   { font-size:20px; font-weight:800; color:#fff; }
+.cf-sum-sub   { font-size:10px; color:var(--label); margin-top:2px; }
+
+.cf-table-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:9px; overflow:hidden; margin-bottom:28px;
+}
+.cf-table-header {
+  padding:13px 20px; background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.cf-table-title { font-size:12px; font-weight:700; color:var(--text); }
+.cf-table-sub   { font-size:10px; color:var(--muted); }
+table.cf {
+  width:100%; border-collapse:collapse; font-size:12px;
+}
+table.cf thead tr { background:var(--surface2); }
+table.cf th {
+  padding:10px 16px; text-align:right; font-size:9px;
+  text-transform:uppercase; letter-spacing:.09em; color:var(--label);
+  border-bottom:1px solid var(--border); font-weight:700;
+}
+table.cf th:first-child { text-align:left; }
+table.cf td {
+  padding:11px 16px; text-align:right;
+  border-bottom:1px solid rgba(37,45,66,.5); color:var(--text);
+  font-family:'Consolas',monospace; font-size:12px;
+}
+table.cf td:first-child {
+  text-align:left; font-family:'Segoe UI',system-ui,sans-serif;
+  color:var(--text); font-size:12px;
+}
+table.cf tr:last-child td { border-bottom:none; }
+table.cf tr.section-row td {
+  background:var(--surface2); font-weight:700;
+  font-family:'Segoe UI',system-ui,sans-serif;
+  color:var(--muted); font-size:10px; text-transform:uppercase;
+  letter-spacing:.08em; padding:8px 16px;
+}
+table.cf tr.total-row td {
+  background:rgba(139,92,246,.07);
+  border-top:1px solid rgba(139,92,246,.25);
+  border-bottom:1px solid rgba(139,92,246,.25);
+  font-weight:800; color:#fff;
+}
+table.cf tr.total-row td:first-child { color:#c4b5fd; }
+table.cf tr.result-row td {
+  font-weight:800; font-size:13px;
+}
+table.cf .neg { color:var(--red); }
+table.cf .pos { color:var(--green); }
+table.cf .neutral { color:var(--muted); }
+table.cf .bold { font-weight:700; }
+
+.cf-bar-section { margin-bottom:28px; }
+.cf-bar-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--accent); margin-bottom:14px; }
+.cf-bars { display:flex; flex-direction:column; gap:10px; }
+.cf-bar-row { display:grid; grid-template-columns:160px 1fr 100px; gap:12px; align-items:center; }
+.cf-bar-lbl { font-size:11px; color:var(--muted); text-align:right; }
+.cf-bar-track { height:26px; background:var(--surface2); border-radius:5px; overflow:hidden; position:relative; }
+.cf-bar-fill  { height:100%; border-radius:5px; display:flex; align-items:center; padding-left:10px; font-size:10px; font-weight:700; color:rgba(255,255,255,.8); transition:width .6s ease; }
+.cfb-cost   { background:linear-gradient(90deg,rgba(239,68,68,.7),rgba(239,68,68,.4)); }
+.cfb-rev    { background:linear-gradient(90deg,rgba(16,185,129,.8),rgba(16,185,129,.5)); }
+.cfb-margin { background:linear-gradient(90deg,rgba(139,92,246,.8),rgba(139,92,246,.5)); }
+.cf-bar-val { font-size:12px; font-weight:700; color:var(--text); font-family:'Consolas',monospace; }
+
+.cf-note {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:6px; padding:14px 18px;
+  font-size:11px; color:var(--muted); line-height:1.7;
+  margin-bottom:28px;
+}
+.cf-note strong { color:var(--text); }
+
+/* ─── RECEITA DATAFEED ─── */
+.rev-intro {
+  background:var(--surface); border:1px solid var(--border);
+  border-left:3px solid var(--green); border-radius:7px;
+  padding:16px 22px; margin-bottom:28px;
+  font-size:13px; color:var(--text); line-height:1.8;
+}
+.rev-intro strong { color:#34d399; }
+.rev-intro em { color:var(--accent2); font-style:normal; }
+
+.rev-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:32px; }
+.rev-kpi {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:16px 18px;
+}
+.rev-kpi.green  { border-top:2px solid var(--green); }
+.rev-kpi.gold   { border-top:2px solid var(--gold); }
+.rev-kpi.blue   { border-top:2px solid var(--accent); }
+.rev-kpi.teal   { border-top:2px solid var(--accent2); }
+.rev-kpi-label { font-size:9px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:5px; }
+.rev-kpi-val   { font-size:20px; font-weight:800; color:#fff; line-height:1.1; }
+.rev-kpi-sub   { font-size:10px; color:var(--label); margin-top:3px; }
+
+/* scenario tabs inside pane */
+.scen-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.scen-btn {
+  padding:7px 16px; border-radius:6px; border:1px solid var(--border);
+  background:var(--surface2); color:var(--muted); font-size:11px;
+  font-weight:600; cursor:pointer; transition:all .18s;
+}
+.scen-btn:hover { color:var(--text); border-color:var(--accent); }
+.scen-btn.active { background:rgba(59,130,246,.15); color:#93c5fd; border-color:var(--accent); }
+
+.scen-pane { display:none; }
+.scen-pane.active { display:block; }
+
+.rev-table-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:9px; overflow:hidden; margin-bottom:24px;
+}
+.rev-table-header {
+  padding:12px 20px; background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.rev-table-title { font-size:12px; font-weight:700; color:var(--text); }
+.rev-table-sub   { font-size:10px; color:var(--muted); }
+table.rev { width:100%; border-collapse:collapse; font-size:12px; }
+table.rev th {
+  padding:9px 16px; background:var(--surface2); text-align:right;
+  font-size:9px; text-transform:uppercase; letter-spacing:.09em;
+  color:var(--label); border-bottom:1px solid var(--border); font-weight:700;
+}
+table.rev th:first-child { text-align:left; }
+table.rev td {
+  padding:11px 16px; text-align:right; border-bottom:1px solid rgba(37,45,66,.45);
+  font-family:'Consolas',monospace; font-size:12px; color:var(--text);
+}
+table.rev td:first-child {
+  text-align:left; font-family:'Segoe UI',system-ui,sans-serif; font-weight:600;
+}
+table.rev tr:last-child td { border-bottom:none; }
+table.rev tr.rev-total td {
+  background:rgba(16,185,129,.06);
+  border-top:1px solid rgba(16,185,129,.25);
+  border-bottom:1px solid rgba(16,185,129,.25);
+  font-weight:800; color:#fff;
+}
+table.rev tr.rev-total td:first-child { color:#34d399; }
+table.rev tr.payback td { background:rgba(59,130,246,.05); }
+.rev-pos { color:var(--green); }
+.rev-ice { color:var(--accent2); }
+.rev-neg { color:var(--red); }
+.rev-muted { color:var(--muted); }
+
+/* visual bar comparison */
+.rev-bars { display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
+.rev-bar-row { display:grid; grid-template-columns:180px 1fr 120px; gap:12px; align-items:center; }
+.rev-bar-lbl { font-size:11px; color:var(--muted); text-align:right; }
+.rev-bar-track { height:28px; background:var(--surface2); border-radius:5px; overflow:hidden; }
+.rev-bar-fill { height:100%; border-radius:5px; display:flex; align-items:center; padding-left:10px; font-size:10px; font-weight:700; color:rgba(255,255,255,.85); }
+.rfb-base  { background:linear-gradient(90deg,rgba(59,130,246,.6),rgba(59,130,246,.35)); }
+.rfb-ice   { background:linear-gradient(90deg,rgba(34,211,238,.7),rgba(34,211,238,.45)); }
+.rfb-total { background:linear-gradient(90deg,rgba(16,185,129,.8),rgba(16,185,129,.5)); }
+.rev-bar-val { font-size:12px; font-weight:700; font-family:'Consolas',monospace; }
+
+.rev-note {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:6px; padding:14px 18px; font-size:11px;
+  color:var(--muted); line-height:1.7;
+}
+.rev-note strong { color:var(--text); }
+
+/* ─── LIGHT MODE ─── */
+body.light {
+  --bg:#f4f6fa; --surface:#fff; --surface2:#eef0f6;
+  --surface3:#e8ecf4; --border:#d8dde8;
+  --text:#1a2035; --muted:#5a6478; --label:#8892a4;
+}
+body.light header { background:linear-gradient(135deg,#1a2035 0%,#243052 60%,#1a2a42 100%); }
+body.light .tabs-wrapper { background:#fff; }
+
+@media(max-width:768px){
+  .pane-inner { padding:20px; }
+  .hero-kpis { grid-template-columns:1fr 1fr; }
+  .kpi-strip,.cov-strip,.tier-grid,.prop-conds,.prop-next { grid-template-columns:1fr; }
+  .exch-grid,.gap-grid,.eck-grid { grid-template-columns:1fr 1fr; }
+  .hct-head,.hct-row { grid-template-columns:1fr; }
+  .nuam-body { grid-template-columns:1fr; }
+  .base-totals { grid-template-columns:repeat(2,1fr); }
+  header { padding:20px; }
+  .tabs-inner { padding:0 16px; }
+  footer { padding:16px 20px; flex-direction:column; gap:10px; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<button class="toggle-btn" onclick="document.body.classList.toggle('light')">☀ / ☾</button>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="header-eyebrow">Broadcast · Market Data &amp; Automação · Junho 2026</div>
+      <h1>Pacote ICE Exchanges — <span>Análise de Beneficiários</span></h1>
+      <div class="header-sub">Justificativa de custo · Clientes do pipeline HUB · Proposta comercial</div>
+    </div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs-wrapper">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="showTab('visao')">
+      <span class="tab-icon">📊</span> Visão Geral
+    </button>
+    <button class="tab-btn" onclick="showTab('bolsas')">
+      <span class="tab-icon">🌍</span> Bolsas Contratadas
+    </button>
+    <button class="tab-btn" onclick="showTab('cashflow')">
+      <span class="tab-icon">📈</span> Fluxo de Caixa
+    </button>
+    <button class="tab-btn" onclick="showTab('receita')">
+      <span class="tab-icon">💹</span> Projeção Datafeed
+    </button>
+    <button class="tab-btn" onclick="showTab('tecnico')">
+      <span class="tab-icon">🔬</span> Análise Técnica
+    </button>
+    <button class="tab-btn" onclick="showTab('clientes')">
+      <span class="tab-icon">🏦</span> Clientes Beneficiados
+      <span class="tab-badge">13</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('proposta')">
+      <span class="tab-icon">📄</span> Proposta Comercial
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ABA 1 — VISÃO GERAL
+═══════════════════════════════════════════════════ -->
+<div id="pane-visao" class="pane active">
+<div class="pane-inner">
+
+  <!-- HERO KPI CARDS -->
+  <div class="hero-kpis">
+    <div class="hero-card hc-gold">
+      <div class="hero-card-icon">💰</div>
+      <div class="hero-card-label">Custo total / mês</div>
+      <div class="hero-card-val">USD 14.925</div>
+      <div class="hero-card-sub">~R$ 89.000 · USDBRL 5,97</div>
+    </div>
+    <div class="hero-card hc-blue">
+      <div class="hero-card-icon">🌍</div>
+      <div class="hero-card-label">Bolsas contratadas</div>
+      <div class="hero-card-val">15</div>
+      <div class="hero-card-sub">sources via ICE Data</div>
+    </div>
+    <div class="hero-card hc-green">
+      <div class="hero-card-icon">🏦</div>
+      <div class="hero-card-label">Clientes beneficiados</div>
+      <div class="hero-card-val">13</div>
+      <div class="hero-card-sub">identificados no pipeline HUB</div>
+    </div>
+    <div class="hero-card hc-teal">
+      <div class="hero-card-icon">🏷️</div>
+      <div class="hero-card-label">Preço de revenda / bolsa</div>
+      <div class="hero-card-val">USD 2.133</div>
+      <div class="hero-card-sub">por bolsa / mês · confirmado pelo Financeiro</div>
+    </div>
+  </div>
+
+  <div class="rationale">
+    O pacote ICE foi inicialmente solicitado para atender <strong>Itaú BBA, Banco do Brasil, Banco Bradesco e State Street</strong>.
+    Esta análise cruza as 15 bolsas com <em>todo o pipeline HUB 2026</em> e identifica <strong>9 clientes adicionais</strong>
+    com demandas sobrepostas ainda não precificadas. A contratação não se amortiza só pelos solicitantes originais —
+    ela habilita uma carteira maior e eleva a competitividade da Broadcast frente à LSEG e Bloomberg.
+  </div>
+
+  <!-- IMPACTO COMERCIAL -->
+  <div class="sec-title">Por que aprovar agora</div>
+  <div class="impact-section">
+    <div class="impact-headline">
+      <div class="impact-icon">🎯</div>
+      <div style="flex:1">
+        <div class="impact-headline-title">O que a Broadcast ganha com essa aquisição</div>
+        <div class="impact-headline-sub">Base atual + pacote ICE = capacidade de zerar pedidos represados e converter pipeline em receita</div>
+      </div>
+      <div class="impact-headline-num">
+        <div class="impact-big">13</div>
+        <div class="impact-note">clientes desbloqueados<br>imediatamente</div>
+      </div>
+    </div>
+    <div class="impact-body">
+      <div class="impact-row">
+        <div class="i-bubble">1</div>
+        <div>
+          <div class="i-title">Zerar 7 gaps críticos de cobertura que hoje travam vendas</div>
+          <div class="i-desc">
+            A base cadastral possui <strong>588.705 instrumentos</strong>, mas para bolsas de ações internacionais fora dos EUA
+            a cobertura hoje é quase só de índices. LSE, Euronext, Xetra, SIX Swiss, Mexico, Shanghai e Lima têm entre
+            <strong>0 e 62 instrumentos</strong> cadastrados. O pacote ICE preenche todos esses 7 gaps de uma vez —
+            transformando "não temos" em "entregamos amanhã".
+          </div>
+          <div class="i-clients">
+            <span class="i-client-tag">CSD BR — LSE, Euronext, Xetra listados como "não encontrados"</span>
+            <span class="i-client-tag">Somma — 0 instrumentos UK na base atual</span>
+            <span class="i-client-tag">Itaú Custódia — ~40 ISINs pendentes dependem das novas sources</span>
+          </div>
+        </div>
+        <span class="i-tag itag-now">IMEDIATO</span>
+      </div>
+      <div class="impact-row">
+        <div class="i-bubble">2</div>
+        <div>
+          <div class="i-title">Converter pedidos formalizados em contratos — sem novo ciclo de aprovação de dados</div>
+          <div class="i-desc">
+            Dos 13 clientes identificados, pelo menos <strong>5 têm status "Fonte de Dados: Sim"</strong> no HUB —
+            o único obstáculo é a ausência do insumo. Com o pacote aprovado, CSD BR, Somma, Itaú BBA, B3 e Itaú Custódia
+            podem receber proposta na semana seguinte: o dado chega, cadastra ticker, libera no Thor, fatura.
+          </div>
+          <div class="i-clients">
+            <span class="i-client-tag">CSD BR #231 — 100% de cobertura pós-ICE</span>
+            <span class="i-client-tag">Somma #243 — 100%</span>
+            <span class="i-client-tag">Itaú BBA #114 — 95%</span>
+            <span class="i-client-tag">Itaú Custódia #72 — 90%</span>
+            <span class="i-client-tag">B3 #28 — 85%</span>
+          </div>
+        </div>
+        <span class="i-tag itag-now">IMEDIATO</span>
+      </div>
+      <div class="impact-row">
+        <div class="i-bubble">3</div>
+        <div>
+          <div class="i-title">Reabrir negociação com Natixis/State Street — prospect travado por gap de cobertura</div>
+          <div class="i-desc">
+            O CEO Tomas Truzzi devolveu que "solução não atende 100% — principalmente ações europeias."
+            Com <strong>LSE #627, Euronext #788 e Xetra #762</strong> contratados, o principal argumento de recusa é removido.
+            Potencial do cliente: faixa de <strong>USD 8–15K/mês</strong>, nível de contrato LSEG.
+          </div>
+          <div class="i-clients">
+            <span class="i-client-tag">HUB #229 · Natixis State Street — prospect em renegociação</span>
+          </div>
+        </div>
+        <span class="i-tag itag-soon">CURTO PRAZO</span>
+      </div>
+      <div class="impact-row">
+        <div class="i-bubble">4</div>
+        <div>
+          <div class="i-title">Desbloquear o de-para final do Bradesco e fechar a entrega do datafeed</div>
+          <div class="i-desc">
+            O HUB #192 lista <strong>20 ativos ICE pendentes</strong> no de-para BPIPE × Datafeed — incluindo EUX-Euro Stoxx
+            (Euronext) e ICE-Euribor. O pacote resolve a dependência e permite o faturamento integral de um contrato
+            que já está assinado.
+          </div>
+          <div class="i-clients">
+            <span class="i-client-tag">HUBs #107 / #192 — Bradesco Datafeed, contrato ativo</span>
+          </div>
+        </div>
+        <span class="i-tag itag-now">IMEDIATO</span>
+      </div>
+      <div class="impact-row">
+        <div class="i-bubble">5</div>
+        <div>
+          <div class="i-title">Posicionar Broadcast como alternativa real à Bloomberg e LSEG em bolsas internacionais</div>
+          <div class="i-desc">
+            Hoje, para qualquer prospect que pergunta por ações de Londres, Frankfurt ou Paris, a resposta é "temos só o índice."
+            Com o pacote ICE, <strong>a resposta passa a ser "temos Level 1 completo"</strong> — mudando a posição competitiva
+            no segmento de Datafeeds para bancos e assets com carteiras globais.
+          </div>
+          <div class="i-clients">
+            <span class="i-client-tag">Itaú Asset #90 — migração BBG → Broadcast</span>
+            <span class="i-client-tag">Banco Central DEPIN #110 — 3.500 instrumentos</span>
+            <span class="i-client-tag">Pipeline LATAM — NUAM Chile, Peru, Colômbia</span>
+          </div>
+        </div>
+        <span class="i-tag itag-strat">ESTRATÉGICO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECEITA & MARGEM -->
+  <div class="sec-title">Projeção de Receita &amp; Margem — Preço de Revenda USD 2.133 / bolsa / mês</div>
+  <div class="dil-box">
+    <div class="dil-header">
+      Custo ICE: <strong>USD 14.925/mês</strong> &nbsp;·&nbsp; Preço de revenda: <strong>USD 2.133/bolsa/mês</strong> &nbsp;·&nbsp; Markup: <strong>114% por bolsa</strong>
+      <span style="font-size:10px;color:var(--muted)">Confirmado pelo Financeiro · Junho 2026</span>
+    </div>
+    <table class="dil">
+      <thead>
+        <tr>
+          <th>Cenário</th>
+          <th>Clientes</th>
+          <th>Bolsas vendidas</th>
+          <th>Receita bruta / mês</th>
+          <th>Resultado líquido / mês</th>
+          <th>Margem</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Breakeven</strong></td>
+          <td class="td-num">—</td>
+          <td class="td-num">7 bolsas</td>
+          <td class="td-num">USD 14.931</td>
+          <td class="td-num" style="color:var(--green)">USD 6 ✓</td>
+          <td class="td-note">Custo totalmente coberto a partir da 7ª bolsa vendida</td>
+        </tr>
+        <tr>
+          <td>Solicitantes diretos (4 clientes, ~3 bolsas cada)</td>
+          <td class="td-num">4</td>
+          <td class="td-num">12 bolsas</td>
+          <td class="td-num">USD 25.596</td>
+          <td class="td-num" style="color:var(--green)">+ USD 10.671</td>
+          <td class="td-note">41,7% de margem — já cobre o custo com folga</td>
+        </tr>
+        <tr>
+          <td>Conversão conservadora (7 clientes, ~3 bolsas cada)</td>
+          <td class="td-num">7</td>
+          <td class="td-num">21 bolsas</td>
+          <td class="td-num">USD 44.793</td>
+          <td class="td-num" style="color:var(--green)">+ USD 29.868</td>
+          <td class="td-note">66,7% de margem — receita quase 3× o custo</td>
+        </tr>
+        <tr style="background:rgba(16,185,129,0.04);">
+          <td><strong>Todos os beneficiados (13 clientes, ~3 bolsas cada)</strong></td>
+          <td class="td-num">13</td>
+          <td class="td-num">39 bolsas</td>
+          <td class="td-num">USD 83.187</td>
+          <td class="td-num" style="color:var(--green); font-size:14px; font-weight:800;">+ USD 68.262</td>
+          <td class="td-note">82,1% de margem — receita 5,6× o custo do pacote</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ABA 2 — BOLSAS CONTRATADAS
+═══════════════════════════════════════════════════ -->
+<div id="pane-bolsas" class="pane">
+<div class="pane-inner">
+
+  <div class="sec-title">15 Bolsas Contratadas — Source ICE</div>
+  <div class="exch-grid">
+    <div class="exch-pill"><span class="exch-id">205</span><span class="exch-name">Luxembourg Stock Exchange</span><span class="exch-tag tag-eu">EU</span></div>
+    <div class="exch-pill"><span class="exch-id">257</span><span class="exch-name">SIX Swiss Exchange · Cash L1</span><span class="exch-tag tag-eu">EU</span></div>
+    <div class="exch-pill"><span class="exch-id">627</span><span class="exch-name">London Stock Exchange · UK Equity</span><span class="exch-tag tag-hot">HOT</span></div>
+    <div class="exch-pill"><span class="exch-id">762</span><span class="exch-name">Deutsche Börse · Xetra Core L1</span><span class="exch-tag tag-hot">HOT</span></div>
+    <div class="exch-pill"><span class="exch-id">769</span><span class="exch-name">Canadian Securities Exchange</span><span class="exch-tag tag-am">AM</span></div>
+    <div class="exch-pill"><span class="exch-id">788</span><span class="exch-name">Euronext · Continental Cash BBO1+</span><span class="exch-tag tag-hot">HOT</span></div>
+    <div class="exch-pill"><span class="exch-id">794</span><span class="exch-name">Cboe Europe CXE · L1</span><span class="exch-tag tag-eu">EU</span></div>
+    <div class="exch-pill"><span class="exch-id">838</span><span class="exch-name">SIX Swiss · Investment Funds</span><span class="exch-tag tag-eu">EU</span></div>
+    <div class="exch-pill"><span class="exch-id">866</span><span class="exch-name">Lima Stock Exchange · L1</span><span class="exch-tag tag-la">LATAM</span></div>
+    <div class="exch-pill"><span class="exch-id">873</span><span class="exch-name">BX Swiss · L1</span><span class="exch-tag tag-eu">EU</span></div>
+    <div class="exch-pill"><span class="exch-id">899</span><span class="exch-name">Shanghai Stock Exchange · Basic</span><span class="exch-tag tag-as">ÁSIA</span></div>
+    <div class="exch-pill"><span class="exch-id">910</span><span class="exch-name">Korea Exchange · Securities A L1</span><span class="exch-tag tag-as">ÁSIA</span></div>
+    <div class="exch-pill"><span class="exch-id">968</span><span class="exch-name">Vienna Stock Exchange · Cash</span><span class="exch-tag tag-eu">EU</span></div>
+    <div class="exch-pill"><span class="exch-id">984</span><span class="exch-name">Mexico Stock Exchange · Equities</span><span class="exch-tag tag-la">LATAM</span></div>
+    <div class="exch-pill"><span class="exch-id">1849</span><span class="exch-name">Euronext Dublin · Bonds &amp; Funds</span><span class="exch-tag tag-eu">EU</span></div>
+  </div>
+
+  <div class="sec-title">Cobertura do Pipeline HUB 2026</div>
+  <div class="cov-strip">
+    <div class="cov-card">
+      <div class="cov-header">
+        <div class="cov-icon ci-blue">📋</div>
+        <div>
+          <div class="cov-title">Pedidos de Bolsas Internacionais no HUB 2026</div>
+          <div class="cov-sub">Do universo total de 46 projetos ativos</div>
+        </div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-label"><span>Projetos com demanda de bolsas internacionais</span><strong>13 de 46</strong></div>
+        <div class="bar-track"><div class="bar-fill bf-blue" style="width:28%"></div></div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-label"><span>Desses, cobertos pelo pacote ICE</span><strong>13 de 13</strong></div>
+        <div class="bar-track"><div class="bar-fill bf-blue" style="width:100%"></div></div>
+      </div>
+      <div class="cov-stats">
+        <div class="cstat"><div class="cstat-val blue">46</div><div class="cstat-lbl">Projetos ativos HUB 2026</div></div>
+        <div class="cstat"><div class="cstat-val teal">13</div><div class="cstat-lbl">Com demanda de bolsas internacionais</div></div>
+        <div class="cstat"><div class="cstat-val green">100%</div><div class="cstat-lbl">Cobertos pelo pacote ICE</div></div>
+      </div>
+    </div>
+    <div class="cov-card">
+      <div class="cov-header">
+        <div class="cov-icon ci-gold">🏦</div>
+        <div>
+          <div class="cov-title">Clientes Únicos Beneficiados pelo Pacote</div>
+          <div class="cov-sub">Ativos + prospects qualificados</div>
+        </div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-label"><span>Solicitantes originais (justificativa)</span><strong>4 clientes</strong></div>
+        <div class="bar-track"><div class="bar-fill bf-gold" style="width:31%"></div></div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-label"><span>Total com beneficiários desta análise</span><strong>13 clientes</strong></div>
+        <div class="bar-track"><div class="bar-fill bf-gold" style="width:100%"></div></div>
+      </div>
+      <div class="cov-stats">
+        <div class="cstat"><div class="cstat-val gold">4</div><div class="cstat-lbl">Solicitantes diretos originais</div></div>
+        <div class="cstat"><div class="cstat-val gold">+9</div><div class="cstat-lbl">Beneficiários identificados</div></div>
+        <div class="cstat"><div class="cstat-val green">+225%</div><div class="cstat-lbl">Expansão do alcance</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ABA 3 — CLIENTES BENEFICIADOS
+═══════════════════════════════════════════════════ -->
+<div id="pane-clientes" class="pane">
+<div class="pane-inner">
+
+  <div class="sec-title">Clientes do Pipeline HUB que se Beneficiam</div>
+  <div class="client-grid">
+
+    <div class="client-card">
+      <div class="client-head">
+        <div class="c-avatar av-blue">B3</div>
+        <div><div class="c-name">B3 — Portal Investir</div><div class="c-hub">HUB #28 · Datafeed · Responsável: Antonio Melo</div></div>
+        <span class="pri-badge pb-high">ALTA</span>
+      </div>
+      <div class="client-body">
+        <div class="c-desc">Solicitou índices das principais bolsas internacionais para o portal B3 Investir (site e app), incluindo LSE (FTSE100), Deutsche Börse (DAX), Euronext 100, SSE Shanghai Composite e Mexico BMV. O HUB já identificou necessidade de contratar junto à ICE para essas fontes.</div>
+        <div class="bolsas-row">
+          <span class="bolsa-chip">LSE #627</span><span class="bolsa-chip">Deutsche Börse #762</span><span class="bolsa-chip">Euronext #788</span><span class="bolsa-chip">Shanghai SSE #899</span><span class="bolsa-chip">Mexico BMV #984</span>
+        </div>
+      </div>
+      <div class="c-foot"><span class="dot dot-g"></span>Fonte de dados confirmada no HUB — aguardando precificação comercial</div>
+    </div>
+
+    <div class="client-card">
+      <div class="client-head">
+        <div class="c-avatar av-gold">IC</div>
+        <div><div class="c-name">Itaú Custódia</div><div class="c-hub">HUB #72 · Datafeed · Responsável: Larissa Silva</div></div>
+        <span class="pri-badge pb-high">ALTA</span>
+      </div>
+      <div class="client-body">
+        <div class="c-desc">Mapeamento extenso de ISINs com bolsas europeias. Comentário no HUB cita explicitamente que "verificaremos com a ICE se as bolsas podem disponibilizar os ISINs nas sources do portal da ICE." ~40 ISINs pendentes dependem exatamente das sources deste pacote.</div>
+        <div class="bolsas-row">
+          <span class="bolsa-chip">LSE #627</span><span class="bolsa-chip">Euronext #788</span><span class="bolsa-chip">Deutsche Börse #762</span><span class="bolsa-chip">Luxembourg #205</span><span class="bolsa-chip">SIX Swiss #257</span>
+        </div>
+      </div>
+      <div class="c-foot"><span class="dot dot-y"></span>Em mapeamento ativo — próximo passo: confirmar com ICE os ISINs das novas sources</div>
+    </div>
+
+    <div class="client-card">
+      <div class="client-head">
+        <div class="c-avatar av-gold">IB</div>
+        <div><div class="c-name">Itaú BBA</div><div class="c-hub">HUBs #114 / #284 · Datafeed · Responsável: Antonio Melo</div></div>
+        <span class="pri-badge pb-high">ALTA</span>
+      </div>
+      <div class="client-body">
+        <div class="c-desc">Pediu cotações realtime non-display para Risk Management, incluindo SX5E (Euro Stoxx / Euronext) e OMAB (Mexico). O HUB registra esses ativos como "não localizados no fornecedor" — exatamente as sources Euronext e México do pacote ICE. Reuniões semanais com o IBBA em andamento.</div>
+        <div class="bolsas-row">
+          <span class="bolsa-chip">Euronext #788</span><span class="bolsa-chip">Mexico BMV #984</span>
+        </div>
+      </div>
+      <div class="c-foot"><span class="dot dot-y"></span>Em negociação ativa — ICE é pré-requisito para viabilizar ativos marcados como "não encontrados"</div>
+    </div>
+
+    <div class="client-card">
+      <div class="client-head">
+        <div class="c-avatar av-teal">CS</div>
+        <div><div class="c-name">CSD BR</div><div class="c-hub">HUB #231 · Datafeed · Responsável: João Carlos</div></div>
+        <span class="pri-badge pb-high">ALTA</span>
+      </div>
+      <div class="client-body">
+        <div class="c-desc">Solicitou ações e ETFs com histórico via API. No HUB consta lista explícita de bolsas "não identificadas no portfólio atual": LSE, Euronext e XETRA — exatamente as três cobertas pelo pacote ICE. A aprovação é o gatilho para avançar com proposta.</div>
+        <div class="bolsas-row">
+          <span class="bolsa-chip">LSE #627</span><span class="bolsa-chip">Euronext #788</span><span class="bolsa-chip">Deutsche Börse/Xetra #762</span>
+        </div>
+      </div>
+      <div class="c-foot"><span class="dot dot-y"></span>Aguardando aprovação interna — 100% das bolsas listadas como "não encontradas" cobertas</div>
+    </div>
+
+    <div class="client-card">
+      <div class="client-head">
+        <div class="c-avatar av-gold">IA</div>
+        <div><div class="c-name">Itaú Asset — Mesa Beta</div><div class="c-hub">HUB #90 · Datafeed · Responsável: Antonio Melo</div></div>
+        <span class="pri-badge pb-high">ALTA</span>
+      </div>
+      <div class="client-body">
+        <div class="c-desc">Mesa Beta usa Bloomberg e deve substituir pelo Broadcast. Possuem ações do Chile alocadas nos fundos. A cobertura de LSE, Euronext, Xetra e da Lima Stock Exchange (#866, grupo NUAM do Chile) é relevante para essa migração.</div>
+        <div class="bolsas-row">
+          <span class="bolsa-chip">LSE #627</span><span class="bolsa-chip">Euronext #788</span><span class="bolsa-chip">Deutsche Börse #762</span><span class="bolsa-chip">Lima (NUAM) #866</span>
+        </div>
+      </div>
+      <div class="c-foot"><span class="dot dot-g"></span>Fonte confirmada — suporte à migração BBG → Broadcast</div>
+    </div>
+
+    <div class="client-card">
+      <div class="client-head">
+        <div class="c-avatar av-teal">SO</div>
+        <div><div class="c-name">Somma Investimentos</div><div class="c-hub">HUB #243 · Novo Terminal</div></div>
+        <span class="pri-badge pb-high">ALTA</span>
+      </div>
+      <div class="client-body">
+        <div class="c-desc">Usuário solicitou explicitamente acesso à Bolsa de Londres (LSE) no Broadcast, incluindo cotações em painel e livro de ofertas. Com a source LSE #627 contratada, a entrega é direta e sem custo incremental de aquisição.</div>
+        <div class="bolsas-row"><span class="bolsa-chip">LSE #627</span></div>
+      </div>
+      <div class="c-foot"><span class="dot dot-g"></span>Demanda direta e objetiva — 100% de cobertura pós-ICE</div>
+    </div>
+
+    <div class="client-card">
+      <div class="client-head">
+        <div class="c-avatar av-purple">SS</div>
+        <div><div class="c-name">Natixis — State Street</div><div class="c-hub">HUB #229 · Datafeed (Prospect)</div></div>
+        <span class="pri-badge pb-pros">PROSPECT</span>
+      </div>
+      <div class="client-body">
+        <div class="c-desc">CEO Tomas Truzzi devolveu que "solução não atende — principalmente ações europeias." Com LSE, Euronext e Xetra no portfólio, o principal argumento de recusa é removido. Vale retomar contato após aprovação. Potencial: faixa USD 8–15K/mês.</div>
+        <div class="bolsas-row">
+          <span class="bolsa-chip">LSE #627</span><span class="bolsa-chip">Euronext #788</span><span class="bolsa-chip">Deutsche Börse #762</span>
+        </div>
+      </div>
+      <div class="c-foot"><span class="dot dot-b"></span>Prospect — nova abordagem recomendada após aprovação do pacote</div>
+    </div>
+
+    <div class="client-card">
+      <div class="client-head">
+        <div class="c-avatar av-teal">BC</div>
+        <div><div class="c-name">Banco Central — DEPIN</div><div class="c-hub">HUB #110 · Datafeed · Responsável: João Carlos</div></div>
+        <span class="pri-badge pb-med">MÉDIA</span>
+      </div>
+      <div class="client-body">
+        <div class="c-desc">Departamento de Reservas Internacionais pediu ~3.500 instrumentos: sovereign bonds, ETFs, futuros e renda fixa internacional. 40% dos ativos ainda sem mapeamento — bolsas europeias e asiáticas do pacote ICE cobrem parte relevante desse gap.</div>
+        <div class="bolsas-row">
+          <span class="bolsa-chip">LSE #627</span><span class="bolsa-chip">Euronext #788</span><span class="bolsa-chip">Deutsche Börse #762</span><span class="bolsa-chip">Korea Exchange #910</span><span class="bolsa-chip">Shanghai SSE #899</span>
+        </div>
+      </div>
+      <div class="c-foot"><span class="dot dot-y"></span>Em fase de novo contrato DAFE — ICE complementa os 40% não mapeados</div>
+    </div>
+
+    <div class="client-card">
+      <div class="client-head">
+        <div class="c-avatar av-blue">BR</div>
+        <div><div class="c-name">Banco Bradesco — Datafeed</div><div class="c-hub">HUBs #107 / #192 · Datafeed · Responsável: Antonio Melo / João Carlos</div></div>
+        <span class="pri-badge pb-high">ALTA</span>
+      </div>
+      <div class="client-body">
+        <div class="c-desc">De-para ativo com 20 ativos ICE pendentes, incluindo EUX-Euro Stoxx (Euronext), ICE-Euribor e moedas WMR Fixing. O pacote ICE é insumo direto para fechar o de-para e viabilizar o faturamento integral do contrato já assinado.</div>
+        <div class="bolsas-row">
+          <span class="bolsa-chip">Euronext #788</span><span class="bolsa-chip">LSE #627</span><span class="bolsa-chip">Deutsche Börse #762</span>
+        </div>
+      </div>
+      <div class="c-foot"><span class="dot dot-g"></span>Cliente ativo em entrega — mapeamento ICE já em andamento no HUB #192</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ABA 4 — PROPOSTA COMERCIAL
+═══════════════════════════════════════════════════ -->
+<div id="pane-proposta" class="pane">
+<div class="pane-inner">
+
+  <div class="prop-intro">
+    <div class="prop-icon">📄</div>
+    <div>
+      <div class="prop-title">Broadcast · Datafeed Internacional — Bolsas &amp; Índices Globais</div>
+      <div class="prop-sub">Oferta modular de dados de mercado em tempo real e EOD para clientes Datafeed, Terminal e Wallboard</div>
+    </div>
+    <div class="prop-stamp">JUNHO 2026 · v1.0</div>
+  </div>
+  <div class="prop-body">
+
+    <!-- TIERS -->
+    <div class="tier-grid">
+      <div class="tier-card">
+        <div class="tier-name">Índices</div>
+        <div class="tier-price">Sob consulta <span class="tier-price-u">/ mês</span></div>
+        <div class="tier-desc">Para clientes que precisam acompanhar benchmarks internacionais sem ações individuais.</div>
+        <ul class="tier-items">
+          <li class="tier-item">Índices de todas as 15 bolsas ICE (FTSE100, DAX, CAC40, SSE, Kospi, IPSA…)</li>
+          <li class="tier-item">Entrega via Datafeed API — EOD ou Real Time</li>
+          <li class="tier-item">Disponível em Terminal Broadcast e Wallboard</li>
+          <li class="tier-item">Histórico EOD mediante negociação</li>
+          <li class="tier-item off">Ações e ETFs individuais não incluídos</li>
+          <li class="tier-item off">Livro de ofertas não incluído</li>
+        </ul>
+        <span class="tier-cta cta-o">Consultar Elissandra</span>
+      </div>
+      <div class="tier-card feat">
+        <div class="tier-name">Ações + Índices (Level 1)</div>
+        <div class="tier-price">Sob consulta <span class="tier-price-u">/ mês</span></div>
+        <div class="tier-desc">Oferta completa para bancos e assets com carteiras globais. Ações das 15 bolsas ICE em BBO.</div>
+        <ul class="tier-items">
+          <li class="tier-item">Tudo do plano Índices</li>
+          <li class="tier-item">Ações individuais L1 — LSE, Euronext, Xetra, SIX Swiss, Mexico, Shanghai, Lima, Korea, Vienna, Luxembourg, BX Swiss, CSE, Euronext Dublin, Cboe Europe</li>
+          <li class="tier-item">BBO (Best Bid &amp; Offer) em tempo real</li>
+          <li class="tier-item">Display e Non-Display via Datafeed API</li>
+          <li class="tier-item">588.705 instrumentos base + novas sources ICE</li>
+          <li class="tier-item off">Livro de ofertas Level 2 não incluído</li>
+        </ul>
+        <span class="tier-cta cta-p">Indicado para este pipeline</span>
+      </div>
+      <div class="tier-card">
+        <div class="tier-name">Full Market Depth (L2)</div>
+        <div class="tier-price">Sob consulta <span class="tier-price-u">/ mês</span></div>
+        <div class="tier-desc">Para mesas de operação, quant e Risk Management com necessidade de livro de ofertas completo.</div>
+        <ul class="tier-items">
+          <li class="tier-item">Tudo do plano Ações + Índices</li>
+          <li class="tier-item">Livro de ofertas completo (Level 2) nas bolsas com suporte ICE</li>
+          <li class="tier-item">Campos TOLC / TOLV / TQLC / TQLV disponíveis na base B3</li>
+          <li class="tier-item">Non-Display para algoritmos e Risk Management</li>
+          <li class="tier-item">Suporte a ISIN lookup e de-para Bloomberg</li>
+        </ul>
+        <span class="tier-cta cta-o">Consultar Elissandra</span>
+      </div>
+    </div>
+
+    <!-- EXCHANGE AVAILABILITY -->
+    <div class="prop-exch">
+      <div class="prop-exch-title">Disponibilidade por Bolsa — Situação após contratação ICE</div>
+      <div class="eck-grid">
+        <div class="eck"><div class="eck-name">LSE #627</div><div class="eck-avail"><span class="da da-b"></span>Novo — Level 1</div></div>
+        <div class="eck"><div class="eck-name">Euronext #788</div><div class="eck-avail"><span class="da da-b"></span>Novo — BBO1+</div></div>
+        <div class="eck"><div class="eck-name">Xetra #762</div><div class="eck-avail"><span class="da da-b"></span>Novo — Level 1</div></div>
+        <div class="eck"><div class="eck-name">SIX Swiss #257</div><div class="eck-avail"><span class="da da-b"></span>Novo — Cash L1</div></div>
+        <div class="eck"><div class="eck-name">Mexico #984</div><div class="eck-avail"><span class="da da-b"></span>Novo — Level 1</div></div>
+        <div class="eck"><div class="eck-name">Shanghai #899</div><div class="eck-avail"><span class="da da-b"></span>Novo — Basic L1</div></div>
+        <div class="eck"><div class="eck-name">Lima #866</div><div class="eck-avail"><span class="da da-b"></span>Novo — Level 1</div></div>
+        <div class="eck"><div class="eck-name">Korea #910</div><div class="eck-avail"><span class="da da-b"></span>Novo — Sec. A L1</div></div>
+        <div class="eck"><div class="eck-name">Vienna #968</div><div class="eck-avail"><span class="da da-b"></span>Novo — Cash</div></div>
+        <div class="eck"><div class="eck-name">Luxembourg #205</div><div class="eck-avail"><span class="da da-b"></span>Novo — L1</div></div>
+        <div class="eck"><div class="eck-name">SIX Funds #838</div><div class="eck-avail"><span class="da da-b"></span>Novo — Funds</div></div>
+        <div class="eck"><div class="eck-name">BX Swiss #873</div><div class="eck-avail"><span class="da da-b"></span>Novo — L1</div></div>
+        <div class="eck"><div class="eck-name">CSE #769</div><div class="eck-avail"><span class="da da-b"></span>Novo — L1</div></div>
+        <div class="eck"><div class="eck-name">Cboe Europe #794</div><div class="eck-avail"><span class="da da-b"></span>Novo — L1</div></div>
+        <div class="eck"><div class="eck-name">EUR Dublin #1849</div><div class="eck-avail"><span class="da da-b"></span>Novo — Bonds</div></div>
+        <div class="eck"><div class="eck-name">Nasdaq</div><div class="eck-avail"><span class="da da-g"></span>Disponível — 18.168</div></div>
+        <div class="eck"><div class="eck-name">NYSE</div><div class="eck-avail"><span class="da da-g"></span>Disponível — 8.271</div></div>
+        <div class="eck"><div class="eck-name">CBOT</div><div class="eck-avail"><span class="da da-g"></span>Disponível — 34.800</div></div>
+        <div class="eck"><div class="eck-name">CME</div><div class="eck-avail"><span class="da da-g"></span>Disponível — 28.204</div></div>
+        <div class="eck"><div class="eck-name">B3 (Bovespa + BM&amp;F)</div><div class="eck-avail"><span class="da da-g"></span>Disponível — 162.949</div></div>
+        <div class="eck"><div class="eck-name">ICE Europe</div><div class="eck-avail"><span class="da da-g"></span>Disponível — 2.904</div></div>
+        <div class="eck"><div class="eck-name">NYMEX</div><div class="eck-avail"><span class="da da-g"></span>Disponível — 7.267</div></div>
+        <div class="eck"><div class="eck-name">LME</div><div class="eck-avail"><span class="da da-g"></span>Disponível — 2.761</div></div>
+        <div class="eck"><div class="eck-name">FenicsMD (OTC)</div><div class="eck-avail"><span class="da da-g"></span>Disponível — 12.675</div></div>
+        <div class="eck"><div class="eck-name">Santiago / NUAM</div><div class="eck-avail"><span class="da da-y"></span>Em negociação</div></div>
+      </div>
+      <div class="eck-legend">
+        <span><span style="color:var(--green);font-weight:700">●</span> Disponível na base atual</span>
+        <span><span style="color:var(--accent);font-weight:700">●</span> Novo via pacote ICE</span>
+        <span><span style="color:var(--gold);font-weight:700">●</span> Em negociação / contrato bilateral</span>
+      </div>
+    </div>
+
+    <!-- CONDITIONS -->
+    <div class="prop-conds">
+      <div class="cond-item">
+        <div class="cond-ico">📋</div>
+        <div><div class="cond-title">Modalidade de uso</div><div class="cond-desc">Display (Terminal, Wallboard, Widgets) e Non-Display (Risk, algoritmos, BI interno). Cada modalidade tem precificação separada — consultar Elissandra para detalhamento por cliente.</div></div>
+      </div>
+      <div class="cond-item">
+        <div class="cond-ico">⏱</div>
+        <div><div class="cond-title">Latência e entrega</div><div class="cond-desc">Tempo real durante pregão local de cada bolsa. EOD disponível para histórico. Entrega via Datafeed API (WebSocket/REST), Terminal Broadcast ou Wallboard.</div></div>
+      </div>
+      <div class="cond-item">
+        <div class="cond-ico">📜</div>
+        <div><div class="cond-title">Acordos de redistribuição</div><div class="cond-desc">Cada bolsa ICE exige Agreement específico assinado pelo cliente redistribuidor. Verificar com Jurídico e Elissandra antes de emitir proposta ao cliente final.</div></div>
+      </div>
+      <div class="cond-item">
+        <div class="cond-ico">💰</div>
+        <div><div class="cond-title">Estrutura de precificação</div><div class="cond-desc">Custo base ICE: <strong style="color:var(--text)">USD 995/bolsa/mês</strong>. Preço de revenda ao cliente: <strong style="color:var(--text)">USD 2.133/bolsa/mês</strong> (markup de 114%, confirmado pelo Financeiro). Simulador disponível com Elissandra para pacotes personalizados.</div></div>
+      </div>
+    </div>
+
+    <!-- NEXT STEPS -->
+    <div class="prop-next">
+      <div class="ns">
+        <span class="ns-num">PASSO 1</span>
+        <div class="ns-title">Aprovação da Diretoria</div>
+        <div class="ns-desc">Submeter ao Rodrigo Galasini para aprovação do investimento de USD 14.925/mês.</div>
+      </div>
+      <div class="ns">
+        <span class="ns-num">PASSO 2</span>
+        <div class="ns-title">Ativação das Sources ICE</div>
+        <div class="ns-desc">João Carlos / Dados aciona ICE para ativação das 15 sources. Cadastro no Thor.</div>
+      </div>
+      <div class="ns">
+        <span class="ns-num">PASSO 3</span>
+        <div class="ns-title">Proposta Comercial</div>
+        <div class="ns-desc">Elissandra emite proposta para CSD BR, Somma, Itaú BBA, B3 e Itaú Custódia na semana seguinte.</div>
+      </div>
+      <div class="ns">
+        <span class="ns-num">PASSO 4</span>
+        <div class="ns-title">Retomada Natixis / State Street</div>
+        <div class="ns-desc">Valdir e Edgar reabrem negociação com nova demonstração de cobertura europeia.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════
+     ABA — PROJEÇÃO DATAFEED
+═══════════════════════════════════════════════════ -->
+<div id="pane-receita" class="pane">
+<div class="pane-inner">
+
+  <div class="rev-intro">
+    Projeção de receita do <strong>Datafeed</strong> para os próximos 12 meses incorporando o impacto do pacote ICE.
+    Base de cálculo: faturamento acumulado Jan–Mai 2026 de <em>R$ 495.800</em> → média mensal de <strong>R$ 99.160</strong>.
+    A receita ICE é adicionada mês a mês conforme o ramp-up de conversão de clientes (2 no M1 → 13 no M10).
+    Três cenários de crescimento orgânico do produto são apresentados para calibrar a expectativa do CFO.
+  </div>
+
+  <!-- KPIs BASE -->
+  <div class="rev-kpis">
+    <div class="rev-kpi green">
+      <div class="rev-kpi-label">Faturamento acumulado Jan–Mai</div>
+      <div class="rev-kpi-val">R$ 495.800</div>
+      <div class="rev-kpi-sub">Datafeed · 5 meses · 2026</div>
+    </div>
+    <div class="rev-kpi gold">
+      <div class="rev-kpi-label">Média mensal atual</div>
+      <div class="rev-kpi-val">R$ 99.160</div>
+      <div class="rev-kpi-sub">USD 16.610 · base para projeção</div>
+    </div>
+    <div class="rev-kpi blue">
+      <div class="rev-kpi-label">Receita ICE estabilizada / mês</div>
+      <div class="rev-kpi-val">R$ 496.626</div>
+      <div class="rev-kpi-sub">13 clientes × 3 bolsas × USD 2.133</div>
+    </div>
+    <div class="rev-kpi teal">
+      <div class="rev-kpi-label">Receita total projetada Ano 1</div>
+      <div class="rev-kpi-val">R$ 5,4M – 6,0M</div>
+      <div class="rev-kpi-sub">Conservador → Otimista</div>
+    </div>
+  </div>
+
+  <!-- SCENARIO SWITCHER -->
+  <div class="sec-title">Projeção Mensal — 12 Meses</div>
+  <div class="scen-tabs">
+    <button class="scen-btn active" onclick="showScen('cons', this)">📉 Conservador (3% orgânico/mês)</button>
+    <button class="scen-btn" onclick="showScen('base', this)">📊 Base (5% orgânico/mês)</button>
+    <button class="scen-btn" onclick="showScen('otim', this)">🚀 Otimista (8% orgânico/mês)</button>
+  </div>
+
+  <!-- CONSERVADOR -->
+  <div id="scen-cons" class="scen-pane active">
+    <div class="rev-table-wrap">
+      <div class="rev-table-header">
+        <span class="rev-table-title">Cenário Conservador — Crescimento orgânico 3%/mês + ICE</span>
+        <span class="rev-table-sub">Total Ano 1: R$ 5.384.309 · Média: R$ 448.692/mês</span>
+      </div>
+      <table class="rev">
+        <thead><tr><th>Mês</th><th>Clientes ICE</th><th>Base Orgânica</th><th>Receita ICE</th><th>Total Mensal</th><th>Crescimento s/ base</th><th>Acumulado</th></tr></thead>
+        <tbody>
+          <tr><td>M0 — Base atual</td><td>—</td><td>R$ 99.160</td><td class="rev-muted">—</td><td>R$ 99.160</td><td>—</td><td>R$ 495.800</td></tr>
+          <tr><td><strong>M1 — Ativação ICE</strong></td><td>2</td><td>R$ 102.135</td><td class="rev-ice">R$ 76.404</td><td class="rev-pos">R$ 178.539</td><td class="rev-pos">+80%</td><td>R$ 178.539</td></tr>
+          <tr><td><strong>M2</strong></td><td>4</td><td>R$ 105.199</td><td class="rev-ice">R$ 152.808</td><td class="rev-pos">R$ 258.007</td><td class="rev-pos">+160%</td><td>R$ 436.546</td></tr>
+          <tr><td><strong>M3</strong></td><td>5</td><td>R$ 108.355</td><td class="rev-ice">R$ 191.010</td><td class="rev-pos">R$ 299.365</td><td class="rev-pos">+202%</td><td>R$ 735.911</td></tr>
+          <tr class="payback"><td><strong>M4 — Payback ✓</strong></td><td>7</td><td>R$ 111.605</td><td class="rev-ice">R$ 267.414</td><td class="rev-pos">R$ 379.020</td><td class="rev-pos">+282%</td><td>R$ 1.114.930</td></tr>
+          <tr><td><strong>M5</strong></td><td>7</td><td>R$ 114.954</td><td class="rev-ice">R$ 267.414</td><td class="rev-pos">R$ 382.368</td><td class="rev-pos">+285%</td><td>R$ 1.497.298</td></tr>
+          <tr><td><strong>M6</strong></td><td>9</td><td>R$ 118.402</td><td class="rev-ice">R$ 343.818</td><td class="rev-pos">R$ 462.220</td><td class="rev-pos">+366%</td><td>R$ 1.959.519</td></tr>
+          <tr><td><strong>M7</strong></td><td>10</td><td>R$ 121.954</td><td class="rev-ice">R$ 382.020</td><td class="rev-pos">R$ 503.975</td><td class="rev-pos">+408%</td><td>R$ 2.463.493</td></tr>
+          <tr><td><strong>M8</strong></td><td>10</td><td>R$ 125.613</td><td class="rev-ice">R$ 382.020</td><td class="rev-pos">R$ 507.633</td><td class="rev-pos">+412%</td><td>R$ 2.971.127</td></tr>
+          <tr><td><strong>M9</strong></td><td>10</td><td>R$ 129.381</td><td class="rev-ice">R$ 382.020</td><td class="rev-pos">R$ 511.402</td><td class="rev-pos">+415%</td><td>R$ 3.482.528</td></tr>
+          <tr><td><strong>M10</strong></td><td>13</td><td>R$ 133.263</td><td class="rev-ice">R$ 496.626</td><td class="rev-pos">R$ 629.889</td><td class="rev-pos">+535%</td><td>R$ 4.112.417</td></tr>
+          <tr><td><strong>M11</strong></td><td>13</td><td>R$ 137.261</td><td class="rev-ice">R$ 496.626</td><td class="rev-pos">R$ 633.887</td><td class="rev-pos">+539%</td><td>R$ 4.746.304</td></tr>
+          <tr><td><strong>M12</strong></td><td>13</td><td>R$ 141.378</td><td class="rev-ice">R$ 496.626</td><td class="rev-pos">R$ 638.005</td><td class="rev-pos">+543%</td><td>R$ 5.384.309</td></tr>
+          <tr class="rev-total"><td>Total Ano 1</td><td>—</td><td>R$ 1.449.499</td><td class="rev-ice">R$ 3.934.810</td><td>R$ 5.384.309</td><td class="rev-pos">+986%</td><td>R$ 5.384.309</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BASE -->
+  <div id="scen-base" class="scen-pane">
+    <div class="rev-table-wrap">
+      <div class="rev-table-header">
+        <span class="rev-table-title">Cenário Base — Crescimento orgânico 5%/mês + ICE</span>
+        <span class="rev-table-sub">Total Ano 1: R$ 5.592.068 · Média: R$ 466.006/mês</span>
+      </div>
+      <table class="rev">
+        <thead><tr><th>Mês</th><th>Clientes ICE</th><th>Base Orgânica</th><th>Receita ICE</th><th>Total Mensal</th><th>Crescimento s/ base</th><th>Acumulado</th></tr></thead>
+        <tbody>
+          <tr><td>M0 — Base atual</td><td>—</td><td>R$ 99.160</td><td class="rev-muted">—</td><td>R$ 99.160</td><td>—</td><td>R$ 495.800</td></tr>
+          <tr><td><strong>M1 — Ativação ICE</strong></td><td>2</td><td>R$ 104.118</td><td class="rev-ice">R$ 76.404</td><td class="rev-pos">R$ 180.522</td><td class="rev-pos">+82%</td><td>R$ 180.522</td></tr>
+          <tr><td><strong>M2</strong></td><td>4</td><td>R$ 109.324</td><td class="rev-ice">R$ 152.808</td><td class="rev-pos">R$ 262.132</td><td class="rev-pos">+164%</td><td>R$ 442.654</td></tr>
+          <tr><td><strong>M3</strong></td><td>5</td><td>R$ 114.790</td><td class="rev-ice">R$ 191.010</td><td class="rev-pos">R$ 305.800</td><td class="rev-pos">+208%</td><td>R$ 748.454</td></tr>
+          <tr class="payback"><td><strong>M4 — Payback ✓</strong></td><td>7</td><td>R$ 120.530</td><td class="rev-ice">R$ 267.414</td><td class="rev-pos">R$ 387.944</td><td class="rev-pos">+291%</td><td>R$ 1.136.398</td></tr>
+          <tr><td><strong>M5</strong></td><td>7</td><td>R$ 126.556</td><td class="rev-ice">R$ 267.414</td><td class="rev-pos">R$ 393.970</td><td class="rev-pos">+297%</td><td>R$ 1.530.368</td></tr>
+          <tr><td><strong>M6</strong></td><td>9</td><td>R$ 132.884</td><td class="rev-ice">R$ 343.818</td><td class="rev-pos">R$ 476.702</td><td class="rev-pos">+381%</td><td>R$ 2.007.071</td></tr>
+          <tr><td><strong>M7</strong></td><td>10</td><td>R$ 139.528</td><td class="rev-ice">R$ 382.020</td><td class="rev-pos">R$ 521.548</td><td class="rev-pos">+426%</td><td>R$ 2.528.619</td></tr>
+          <tr><td><strong>M8</strong></td><td>10</td><td>R$ 146.504</td><td class="rev-ice">R$ 382.020</td><td class="rev-pos">R$ 528.525</td><td class="rev-pos">+433%</td><td>R$ 3.057.144</td></tr>
+          <tr><td><strong>M9</strong></td><td>10</td><td>R$ 153.830</td><td class="rev-ice">R$ 382.020</td><td class="rev-pos">R$ 535.850</td><td class="rev-pos">+440%</td><td>R$ 3.592.994</td></tr>
+          <tr><td><strong>M10</strong></td><td>13</td><td>R$ 161.521</td><td class="rev-ice">R$ 496.626</td><td class="rev-pos">R$ 658.148</td><td class="rev-pos">+563%</td><td>R$ 4.251.141</td></tr>
+          <tr><td><strong>M11</strong></td><td>13</td><td>R$ 169.597</td><td class="rev-ice">R$ 496.626</td><td class="rev-pos">R$ 666.224</td><td class="rev-pos">+571%</td><td>R$ 4.917.365</td></tr>
+          <tr><td><strong>M12</strong></td><td>13</td><td>R$ 178.077</td><td class="rev-ice">R$ 496.626</td><td class="rev-pos">R$ 674.704</td><td class="rev-pos">+580%</td><td>R$ 5.592.068</td></tr>
+          <tr class="rev-total"><td>Total Ano 1</td><td>—</td><td>R$ 1.657.258</td><td class="rev-ice">R$ 3.934.810</td><td>R$ 5.592.068</td><td class="rev-pos">+1.027%</td><td>R$ 5.592.068</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- OTIMISTA -->
+  <div id="scen-otim" class="scen-pane">
+    <div class="rev-table-wrap">
+      <div class="rev-table-header">
+        <span class="rev-table-title">Cenário Otimista — Crescimento orgânico 8%/mês + ICE</span>
+        <span class="rev-table-sub">Total Ano 1: R$ 5.967.123 · Média: R$ 497.260/mês</span>
+      </div>
+      <table class="rev">
+        <thead><tr><th>Mês</th><th>Clientes ICE</th><th>Base Orgânica</th><th>Receita ICE</th><th>Total Mensal</th><th>Crescimento s/ base</th><th>Acumulado</th></tr></thead>
+        <tbody>
+          <tr><td>M0 — Base atual</td><td>—</td><td>R$ 99.160</td><td class="rev-muted">—</td><td>R$ 99.160</td><td>—</td><td>R$ 495.800</td></tr>
+          <tr><td><strong>M1 — Ativação ICE</strong></td><td>2</td><td>R$ 107.093</td><td class="rev-ice">R$ 76.404</td><td class="rev-pos">R$ 183.497</td><td class="rev-pos">+85%</td><td>R$ 183.497</td></tr>
+          <tr><td><strong>M2</strong></td><td>4</td><td>R$ 115.660</td><td class="rev-ice">R$ 152.808</td><td class="rev-pos">R$ 268.468</td><td class="rev-pos">+171%</td><td>R$ 451.965</td></tr>
+          <tr><td><strong>M3</strong></td><td>5</td><td>R$ 124.913</td><td class="rev-ice">R$ 191.010</td><td class="rev-pos">R$ 315.923</td><td class="rev-pos">+219%</td><td>R$ 767.888</td></tr>
+          <tr class="payback"><td><strong>M4 — Payback ✓</strong></td><td>7</td><td>R$ 134.906</td><td class="rev-ice">R$ 267.414</td><td class="rev-pos">R$ 402.320</td><td class="rev-pos">+306%</td><td>R$ 1.170.209</td></tr>
+          <tr><td><strong>M5</strong></td><td>7</td><td>R$ 145.699</td><td class="rev-ice">R$ 267.414</td><td class="rev-pos">R$ 413.113</td><td class="rev-pos">+317%</td><td>R$ 1.583.321</td></tr>
+          <tr><td><strong>M6</strong></td><td>9</td><td>R$ 157.354</td><td class="rev-ice">R$ 343.818</td><td class="rev-pos">R$ 501.173</td><td class="rev-pos">+405%</td><td>R$ 2.084.494</td></tr>
+          <tr><td><strong>M7</strong></td><td>10</td><td>R$ 169.943</td><td class="rev-ice">R$ 382.020</td><td class="rev-pos">R$ 551.963</td><td class="rev-pos">+456%</td><td>R$ 2.636.457</td></tr>
+          <tr><td><strong>M8</strong></td><td>10</td><td>R$ 183.538</td><td class="rev-ice">R$ 382.020</td><td class="rev-pos">R$ 565.559</td><td class="rev-pos">+470%</td><td>R$ 3.202.016</td></tr>
+          <tr><td><strong>M9</strong></td><td>10</td><td>R$ 198.221</td><td class="rev-ice">R$ 382.020</td><td class="rev-pos">R$ 580.242</td><td class="rev-pos">+485%</td><td>R$ 3.782.257</td></tr>
+          <tr><td><strong>M10</strong></td><td>13</td><td>R$ 214.079</td><td class="rev-ice">R$ 496.626</td><td class="rev-pos">R$ 710.705</td><td class="rev-pos">+616%</td><td>R$ 4.492.963</td></tr>
+          <tr><td><strong>M11</strong></td><td>13</td><td>R$ 231.205</td><td class="rev-ice">R$ 496.626</td><td class="rev-pos">R$ 727.832</td><td class="rev-pos">+634%</td><td>R$ 5.220.795</td></tr>
+          <tr><td><strong>M12</strong></td><td>13</td><td>R$ 249.702</td><td class="rev-ice">R$ 496.626</td><td class="rev-pos">R$ 746.328</td><td class="rev-pos">+652%</td><td>R$ 5.967.123</td></tr>
+          <tr class="rev-total"><td>Total Ano 1</td><td>—</td><td>R$ 2.032.313</td><td class="rev-ice">R$ 3.934.810</td><td>R$ 5.967.123</td><td class="rev-pos">+1.103%</td><td>R$ 5.967.123</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- VISUAL BARS -->
+  <div class="sec-title">Composição da Receita — M12 por Cenário</div>
+  <div class="rev-bars">
+    <div class="rev-bar-row">
+      <div class="rev-bar-lbl">Base orgânica (sem ICE)</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill rfb-base" style="width:13%">R$ 99K</div></div>
+      <div class="rev-bar-val" style="color:var(--accent)">R$ 99.160</div>
+    </div>
+    <div class="rev-bar-row">
+      <div class="rev-bar-lbl">ICE estabilizado (M12)</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill rfb-ice" style="width:66%">R$ 496K</div></div>
+      <div class="rev-bar-val" style="color:var(--accent2)">R$ 496.626</div>
+    </div>
+    <div class="rev-bar-row">
+      <div class="rev-bar-lbl">Total M12 · Conservador</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill rfb-total" style="width:85%">R$ 638K</div></div>
+      <div class="rev-bar-val rev-pos">R$ 638.005</div>
+    </div>
+    <div class="rev-bar-row">
+      <div class="rev-bar-lbl">Total M12 · Base</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill rfb-total" style="width:90%">R$ 675K</div></div>
+      <div class="rev-bar-val rev-pos">R$ 674.704</div>
+    </div>
+    <div class="rev-bar-row">
+      <div class="rev-bar-lbl">Total M12 · Otimista</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill rfb-total" style="width:100%">R$ 746K</div></div>
+      <div class="rev-bar-val rev-pos">R$ 746.328</div>
+    </div>
+  </div>
+
+  <div class="rev-note">
+    <strong>Premissas:</strong>
+    (1) Média mensal calculada sobre faturamento acumulado Jan–Mai 2026 de R$ 495.800 (R$ 99.160/mês).
+    (2) Receita ICE convertida a USDBRL 5,97 — variação cambial pode impactar os valores em BRL.
+    (3) Crescimento orgânico representa expansão natural da carteira existente, independente do ICE.
+    (4) Ramp-up ICE: 2 clientes no M1 → 7 no M4 → 13 no M10, com média de 3 bolsas por cliente.
+    (5) Preço de revenda de <strong>USD 2.133/bolsa/mês</strong> sujeito a revisão no MT conforme orientação da Diretoria.
+    (6) Não inclui churn de clientes existentes nem reajuste contratual anual.
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ABA 5 — FLUXO DE CAIXA CapEx / OpEx
+═══════════════════════════════════════════════════ -->
+<div id="pane-cashflow" class="pane">
+<div class="pane-inner">
+
+  <div class="cf-intro">
+    Este fluxo de caixa classifica o investimento no pacote ICE segundo a ótica <strong>CapEx / OpEx</strong>
+    e projeta a evolução financeira mês a mês ao longo de <strong>12 meses</strong>, considerando três cenários
+    de conversão de clientes. O objetivo é alinhar expectativas com o CFO sobre o perfil do gasto,
+    o timing de retorno e a margem operacional estabilizada.
+  </div>
+
+  <!-- SUMMARY CARDS -->
+  <div class="cf-summary">
+    <div class="cf-sum-card purple">
+      <div class="cf-sum-label">Natureza do investimento</div>
+      <div class="cf-sum-val">OpEx</div>
+      <div class="cf-sum-sub">Licença recorrente — não ativa CapEx</div>
+    </div>
+    <div class="cf-sum-card gold">
+      <div class="cf-sum-label">Desembolso mensal (custo)</div>
+      <div class="cf-sum-val">USD 14.925</div>
+      <div class="cf-sum-sub">ICE Data · 15 sources</div>
+    </div>
+    <div class="cf-sum-card green">
+      <div class="cf-sum-label">Receita potencial / mês</div>
+      <div class="cf-sum-val">USD 83.187</div>
+      <div class="cf-sum-sub">13 clientes × ~3 bolsas × USD 2.133</div>
+    </div>
+    <div class="cf-sum-card teal">
+      <div class="cf-sum-label">Margem operacional estabilizada</div>
+      <div class="cf-sum-val">82,1%</div>
+      <div class="cf-sum-sub">Cenário completo — 13 clientes convertidos</div>
+    </div>
+  </div>
+
+  <!-- CLASSIFICAÇÃO CAPEX / OPEX -->
+  <div class="sec-title">Classificação CapEx vs. OpEx</div>
+  <div class="cf-table-wrap">
+    <div class="cf-table-header">
+      <span class="cf-table-title">Estrutura do Investimento — Pacote ICE Exchanges</span>
+      <span class="cf-table-sub">Broadcast · Junho 2026</span>
+    </div>
+    <table class="cf">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Tipo</th>
+          <th>Valor / mês</th>
+          <th>Valor anual</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="section-row"><td colspan="5">Custos — Aquisição de Conteúdo (OpEx)</td></tr>
+        <tr>
+          <td>Licença ICE — 15 sources de bolsas internacionais</td>
+          <td><span style="color:var(--gold);font-weight:700;font-size:10px;">OPEX</span></td>
+          <td class="neg">– USD 14.925</td>
+          <td class="neg">– USD 179.100</td>
+          <td style="font-size:11px;color:var(--muted);font-family:'Segoe UI',system-ui,sans-serif;">Recorrente · contrato ICE Data Services</td>
+        </tr>
+        <tr class="section-row"><td colspan="5">Custos — Infraestrutura e Integração (estimativa)</td></tr>
+        <tr>
+          <td>Engenharia de integração das 15 sources (one-time)</td>
+          <td><span style="color:var(--purple);font-weight:700;font-size:10px;">CAPEX</span></td>
+          <td class="neutral">—</td>
+          <td class="neg">– USD 15.000</td>
+          <td style="font-size:11px;color:var(--muted);font-family:'Segoe UI',system-ui,sans-serif;">Estimativa · custo de setup e cadastro Thor</td>
+        </tr>
+        <tr>
+          <td>Manutenção técnica das sources (mensal)</td>
+          <td><span style="color:var(--gold);font-weight:700;font-size:10px;">OPEX</span></td>
+          <td class="neg">– USD 500</td>
+          <td class="neg">– USD 6.000</td>
+          <td style="font-size:11px;color:var(--muted);font-family:'Segoe UI',system-ui,sans-serif;">Estimativa interna · squad Dados</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total de custos (Ano 1)</td>
+          <td>—</td>
+          <td class="neg">– USD 15.425</td>
+          <td class="neg">– USD 200.100</td>
+          <td style="font-size:11px;color:var(--muted);font-family:'Segoe UI',system-ui,sans-serif;">OpEx recorrente + CapEx one-time de setup</td>
+        </tr>
+        <tr class="section-row"><td colspan="5">Receita — Revenda de Dados (cenário conservador · 7 clientes, ~3 bolsas cada)</td></tr>
+        <tr>
+          <td>Receita de revenda — Datafeed Internacional</td>
+          <td><span style="color:var(--green);font-weight:700;font-size:10px;">RECEITA</span></td>
+          <td class="pos">+ USD 44.793</td>
+          <td class="pos">+ USD 537.516</td>
+          <td style="font-size:11px;color:var(--muted);font-family:'Segoe UI',system-ui,sans-serif;">7 clientes × 3 bolsas × USD 2.133 / bolsa</td>
+        </tr>
+        <tr class="total-row result-row">
+          <td>Resultado líquido estimado (Ano 1 · cenário conservador)</td>
+          <td>—</td>
+          <td class="pos">+ USD 29.368</td>
+          <td class="pos">+ USD 337.416</td>
+          <td style="font-size:11px;color:var(--muted);font-family:'Segoe UI',system-ui,sans-serif;">Após custos totais ano 1 (incl. setup)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PROJEÇÃO MENSAL 12 MESES -->
+  <div class="sec-title">Projeção Mês a Mês — 12 Meses (Cenário Conservador)</div>
+  <div class="cf-table-wrap">
+    <div class="cf-table-header">
+      <span class="cf-table-title">Ramp-up gradual de clientes · Preço USD 2.133/bolsa/mês</span>
+      <span class="cf-table-sub">Premissa: 2 clientes convertidos no Mês 1 → 7 clientes no Mês 4 → estabilizado</span>
+    </div>
+    <table class="cf">
+      <thead>
+        <tr>
+          <th>Mês</th>
+          <th>Clientes ativos</th>
+          <th>Bolsas vendidas</th>
+          <th>Receita bruta</th>
+          <th>Custo ICE + manutenção</th>
+          <th>Resultado mensal</th>
+          <th>Acumulado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>M0 — Aprovação</strong></td>
+          <td>0</td><td>0</td>
+          <td class="neutral">—</td>
+          <td class="neg">– USD 15.000</td>
+          <td class="neg">– USD 15.000</td>
+          <td class="neg">– USD 15.000</td>
+        </tr>
+        <tr>
+          <td><strong>M1 — Ativação ICE</strong></td>
+          <td>2</td><td>6</td>
+          <td class="pos">+ USD 12.798</td>
+          <td class="neg">– USD 15.425</td>
+          <td class="neg">– USD 2.627</td>
+          <td class="neg">– USD 17.627</td>
+        </tr>
+        <tr>
+          <td><strong>M2</strong></td>
+          <td>4</td><td>12</td>
+          <td class="pos">+ USD 25.596</td>
+          <td class="neg">– USD 15.425</td>
+          <td class="pos">+ USD 10.171</td>
+          <td class="neg">– USD 7.456</td>
+        </tr>
+        <tr>
+          <td><strong>M3</strong></td>
+          <td>5</td><td>15</td>
+          <td class="pos">+ USD 31.995</td>
+          <td class="neg">– USD 15.425</td>
+          <td class="pos">+ USD 16.570</td>
+          <td class="pos">+ USD 9.114</td>
+        </tr>
+        <tr style="background:rgba(16,185,129,0.04);">
+          <td><strong>M4 — Payback ✓</strong></td>
+          <td>7</td><td>21</td>
+          <td class="pos">+ USD 44.793</td>
+          <td class="neg">– USD 15.425</td>
+          <td class="pos bold">+ USD 29.368</td>
+          <td class="pos bold">+ USD 38.482</td>
+        </tr>
+        <tr>
+          <td><strong>M5</strong></td>
+          <td>7</td><td>21</td>
+          <td class="pos">+ USD 44.793</td>
+          <td class="neg">– USD 15.425</td>
+          <td class="pos">+ USD 29.368</td>
+          <td class="pos">+ USD 67.850</td>
+        </tr>
+        <tr>
+          <td><strong>M6</strong></td>
+          <td>9</td><td>27</td>
+          <td class="pos">+ USD 57.591</td>
+          <td class="neg">– USD 15.425</td>
+          <td class="pos">+ USD 42.166</td>
+          <td class="pos">+ USD 110.016</td>
+        </tr>
+        <tr>
+          <td><strong>M7–M9</strong></td>
+          <td>10</td><td>30</td>
+          <td class="pos">+ USD 63.990 / mês</td>
+          <td class="neg">– USD 15.425</td>
+          <td class="pos">+ USD 48.565</td>
+          <td class="pos">+ USD 255.711</td>
+        </tr>
+        <tr>
+          <td><strong>M10–M12</strong></td>
+          <td>13</td><td>39</td>
+          <td class="pos">+ USD 83.187 / mês</td>
+          <td class="neg">– USD 15.425</td>
+          <td class="pos">+ USD 67.762</td>
+          <td class="pos bold">+ USD 459.000</td>
+        </tr>
+        <tr class="total-row result-row">
+          <td><strong>Total Ano 1</strong></td>
+          <td>—</td><td>—</td>
+          <td class="pos">+ USD 537.516</td>
+          <td class="neg">– USD 200.100</td>
+          <td class="pos" style="font-size:14px;">+ USD 337.416</td>
+          <td class="pos" style="font-size:14px;">+ USD 337.416</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VISUAL BARS -->
+  <div class="sec-title">Margem por Cenário de Conversão</div>
+  <div class="cf-bar-section">
+    <div class="cf-bars">
+      <div class="cf-bar-row">
+        <div class="cf-bar-lbl">Custo fixo ICE (base)</div>
+        <div class="cf-bar-track"><div class="cf-bar-fill cfb-cost" style="width:18%">USD 14.925</div></div>
+        <div class="cf-bar-val neg">– 14.925</div>
+      </div>
+      <div class="cf-bar-row">
+        <div class="cf-bar-lbl">4 clientes · 12 bolsas</div>
+        <div class="cf-bar-track"><div class="cf-bar-fill cfb-rev" style="width:31%">USD 25.596</div></div>
+        <div class="cf-bar-val pos">+ 10.671</div>
+      </div>
+      <div class="cf-bar-row">
+        <div class="cf-bar-lbl">7 clientes · 21 bolsas</div>
+        <div class="cf-bar-track"><div class="cf-bar-fill cfb-rev" style="width:54%">USD 44.793</div></div>
+        <div class="cf-bar-val pos">+ 29.368</div>
+      </div>
+      <div class="cf-bar-row">
+        <div class="cf-bar-lbl">10 clientes · 30 bolsas</div>
+        <div class="cf-bar-track"><div class="cf-bar-fill cfb-rev" style="width:77%">USD 63.990</div></div>
+        <div class="cf-bar-val pos">+ 48.565</div>
+      </div>
+      <div class="cf-bar-row">
+        <div class="cf-bar-lbl">13 clientes · 39 bolsas</div>
+        <div class="cf-bar-track"><div class="cf-bar-fill cfb-rev" style="width:100%">USD 83.187</div></div>
+        <div class="cf-bar-val pos">+ 68.262</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cf-note">
+    <strong>Premissas e ressalvas para o CFO:</strong>
+    (1) O investimento ICE é classificado como <strong>OpEx recorrente</strong> — não há aquisição de ativo imobilizado.
+    (2) O custo de setup/integração (~USD 15K) pode ser tratado como <strong>CapEx one-time</strong> se capitalizado via trabalho interno.
+    (3) O preço de revenda de <strong>USD 2.133/bolsa/mês</strong> está em revisão pela Diretoria e pode ser ajustado no MT.
+    (4) Os cenários assumem média de <strong>3 bolsas por cliente</strong> — clientes como B3 e Banco Central podem demandar até 5–7 bolsas, elevando a receita.
+    (5) Receitas projetadas sem considerar reajuste contratual anual ou expansão de clientes além do pipeline atual.
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ABA 6 — ANÁLISE TÉCNICA
+═══════════════════════════════════════════════════ -->
+<div id="pane-tecnico" class="pane">
+<div class="pane-inner">
+
+  <div class="sec-title">Base Cadastral — 588.705 Instrumentos vs. Demandas HUB</div>
+  <div class="base-intro">
+    A base de instrumentos possui <strong>588.705 tickers em 60 fontes</strong>. Para bolsas de ações internacionais fora dos EUA, 
+    a cobertura é quase exclusivamente de índices — sem ações individuais. O pacote ICE preenche exatamente esse vazio: 
+    <strong>7 das 15 sources</strong> representam gaps críticos onde a base atual tem 0 a 8 instrumentos mas os clientes demandam Level 1 completo.
+  </div>
+  <div class="base-totals">
+    <div class="btcard"><div class="btval blue">588.705</div><div class="btlbl">Instrumentos na base cadastral atual</div></div>
+    <div class="btcard"><div class="btval teal">60</div><div class="btlbl">Fontes / bolsas cobertas hoje</div></div>
+    <div class="btcard"><div class="btval gold">7</div><div class="btlbl">Gaps críticos — bolsas com 0–8 instrumentos de ações</div></div>
+    <div class="btcard"><div class="btval green">+15 fontes</div><div class="btlbl">Novas sources ICE cobrindo todos os gaps</div></div>
+  </div>
+
+  <div class="sec-title">Diagnóstico por Source — Antes e Depois do Pacote ICE</div>
+  <div class="gap-grid">
+    <div class="gap-row crit"><div class="gap-src">LSE #627</div><div class="gap-detail"><div class="gap-before">Hoje: <span>0 ações UK</span> — apenas 877 índices FTSE</div><div class="gap-after">✓ Com ICE: UK Equity Market Service completo (Level 1)</div><div class="gap-hubs">HUBs: Somma #243 · Itaú Custódia #72 · CSD BR #231 · Natixis #229 · Itaú Asset #90</div></div><span class="gap-badge gb-crit">CRÍTICO</span></div>
+    <div class="gap-row crit"><div class="gap-src">EURONEXT #788</div><div class="gap-detail"><div class="gap-before">Hoje: <span>8 índices</span> — AEX, CAC40, sem ações</div><div class="gap-after">✓ Com ICE: Ações Paris, Amsterdam, Bruxelas, Lisboa (BBO1+)</div><div class="gap-hubs">HUBs: Itaú BBA #114 · CSD BR #231 · Bradesco #192 · B3 #28 · Itaú Custódia #72</div></div><span class="gap-badge gb-crit">CRÍTICO</span></div>
+    <div class="gap-row crit"><div class="gap-src">XETRA #762</div><div class="gap-detail"><div class="gap-before">Hoje: <span>62 índices</span> — DAX/MDAX, sem ações</div><div class="gap-after">✓ Com ICE: Ações alemãs Xetra Core completo (Level 1)</div><div class="gap-hubs">HUBs: CSD BR #231 · Itaú Custódia #72 · B3 #28 · Natixis #229</div></div><span class="gap-badge gb-crit">CRÍTICO</span></div>
+    <div class="gap-row crit"><div class="gap-src">SIX SWISS #257</div><div class="gap-detail"><div class="gap-before">Hoje: <span>1 instrumento</span> — apenas índice SMI</div><div class="gap-after">✓ Com ICE: Ações suíças Cash L1 + Investment Funds SIX</div><div class="gap-hubs">HUBs: Itaú Custódia #72 (ISINs Swiss pendentes)</div></div><span class="gap-badge gb-crit">CRÍTICO</span></div>
+    <div class="gap-row crit"><div class="gap-src">MEXICO #984</div><div class="gap-detail"><div class="gap-before">Hoje: <span>1 instrumento</span> — apenas índice IPC</div><div class="gap-after">✓ Com ICE: Ações mexicanas Equities Market Level 1</div><div class="gap-hubs">HUBs: B3 #28 · Itaú BBA #114 (OMAB MM Equity)</div></div><span class="gap-badge gb-crit">CRÍTICO</span></div>
+    <div class="gap-row crit"><div class="gap-src">SHANGHAI #899</div><div class="gap-detail"><div class="gap-before">Hoje: <span>2 instrumentos</span> — CSI300 e SSECO apenas</div><div class="gap-after">✓ Com ICE: MarketData Level 1 Basic — ações e índices SSE</div><div class="gap-hubs">HUBs: B3 #28 · Banco Central DEPIN #110</div></div><span class="gap-badge gb-crit">CRÍTICO</span></div>
+    <div class="gap-row crit"><div class="gap-src">LIMA #866</div><div class="gap-detail"><div class="gap-before">Hoje: <span>0 instrumentos</span> — Peru completamente ausente</div><div class="gap-after">✓ Com ICE: Market Data Level 1 — ações peruanas + S&amp;P/BVL</div><div class="gap-hubs">HUBs: Itaú Asset #90 · Terminal LATAM / NUAM</div></div><span class="gap-badge gb-crit">CRÍTICO</span></div>
+    <div class="gap-row sec"><div class="gap-src">KOREA #910</div><div class="gap-detail"><div class="gap-before">Hoje: <span>1 instrumento</span> — apenas KOSPI</div><div class="gap-after">✓ Com ICE: Securities A Level 1 — ações coreanas</div><div class="gap-hubs">HUBs: Banco Central DEPIN #110</div></div><span class="gap-badge gb-sec">SECUNDÁRIO</span></div>
+    <div class="gap-row sec"><div class="gap-src">LUXEMBOURG #205</div><div class="gap-detail"><div class="gap-before">Hoje: <span>0 instrumentos</span></div><div class="gap-after">✓ Com ICE: Market Data L1 — fundos e ações listados em LU</div><div class="gap-hubs">HUBs: Itaú Custódia #72 (UCITS funds)</div></div><span class="gap-badge gb-sec">SECUNDÁRIO</span></div>
+    <div class="gap-row sec"><div class="gap-src">VIENA #968</div><div class="gap-detail"><div class="gap-before">Hoje: <span>0 instrumentos</span> — Áustria ausente</div><div class="gap-after">✓ Com ICE: Cash Market e Structured Products Level 1</div><div class="gap-hubs">HUBs: Itaú Custódia #72 (ISINs austríacos)</div></div><span class="gap-badge gb-sec">SECUNDÁRIO</span></div>
+    <div class="gap-row sec"><div class="gap-src">EUR DUBLIN #1849</div><div class="gap-detail"><div class="gap-before">Hoje: <span>0 instrumentos</span></div><div class="gap-after">✓ Com ICE: Bonds e Funds Euronext Dublin</div><div class="gap-hubs">HUBs: Itaú Custódia #72 (ETFs/UCITS domiciliados em IE)</div></div><span class="gap-badge gb-sec">SECUNDÁRIO</span></div>
+    <div class="gap-row sec"><div class="gap-src">CBOE EUR #794</div><div class="gap-detail"><div class="gap-before">Hoje: <span>274 (Cboe US)</span> — Cboe Europe ausente</div><div class="gap-after">✓ Com ICE: Market Data L1 — venue alternativo UK/EU</div><div class="gap-hubs">Suporte a clientes com execução em múltiplos venues europeus</div></div><span class="gap-badge gb-sec">SECUNDÁRIO</span></div>
+  </div>
+
+  <div class="sec-title">Cobertura Estimada por Demanda HUB — Base Atual + Pacote ICE</div>
+  <div class="hub-cov-table">
+    <div class="hct-head"><span>Cliente / HUB</span><span>Fontes ICE que resolvem o gap</span><span>O que a base já cobre</span><span>Cobertura</span></div>
+    <div class="hct-row"><div><div class="hct-name">CSD BR</div><div class="hct-hub">HUB #231</div></div><div class="ice-chips"><span class="ice-chip">LSE #627</span><span class="ice-chip">EURONEXT #788</span><span class="ice-chip">XETRA #762</span></div><div class="hct-base">B3, Nasdaq, NYSE, CBOT, CME, ICE Europe já disponíveis</div><div class="pct-wrap pct-g"><span class="pct-n">100%</span><div class="pct-track"><div class="pct-fill" style="width:100%"></div></div></div></div>
+    <div class="hct-row"><div><div class="hct-name">Somma Investimentos</div><div class="hct-hub">HUB #243</div></div><div class="ice-chips"><span class="ice-chip">LSE #627</span></div><div class="hct-base">0 instrumentos UK na base atual</div><div class="pct-wrap pct-g"><span class="pct-n">100%</span><div class="pct-track"><div class="pct-fill" style="width:100%"></div></div></div></div>
+    <div class="hct-row"><div><div class="hct-name">Itaú BBA</div><div class="hct-hub">HUB #114</div></div><div class="ice-chips"><span class="ice-chip">EURONEXT #788</span><span class="ice-chip">MEXICO #984</span></div><div class="hct-base">NKE, NVDA, META, EWZ, NIKKEI, HANGSE já na base</div><div class="pct-wrap pct-g"><span class="pct-n">95%</span><div class="pct-track"><div class="pct-fill" style="width:95%"></div></div></div></div>
+    <div class="hct-row"><div><div class="hct-name">Itaú Custódia</div><div class="hct-hub">HUB #72</div></div><div class="ice-chips"><span class="ice-chip">LSE #627</span><span class="ice-chip">XETRA #762</span><span class="ice-chip">SIX #257</span><span class="ice-chip">LUX #205</span><span class="ice-chip">DUBLIN #1849</span></div><div class="hct-base">~40 ADRs via NYSE/Nasdaq já cobertos</div><div class="pct-wrap pct-g"><span class="pct-n">90%</span><div class="pct-track"><div class="pct-fill" style="width:90%"></div></div></div></div>
+    <div class="hct-row"><div><div class="hct-name">B3 — Portal Investir</div><div class="hct-hub">HUB #28</div></div><div class="ice-chips"><span class="ice-chip">LSE #627</span><span class="ice-chip">XETRA #762</span><span class="ice-chip">EURONEXT #788</span><span class="ice-chip">SHANGHAI #899</span><span class="ice-chip">MEXICO #984</span></div><div class="hct-base">Índices FTSE, DAX, AEX, SSECO já na base</div><div class="pct-wrap pct-g"><span class="pct-n">85%</span><div class="pct-track"><div class="pct-fill" style="width:85%"></div></div></div></div>
+    <div class="hct-row"><div><div class="hct-name">Bradesco Datafeed</div><div class="hct-hub">HUBs #107 / #192</div></div><div class="ice-chips"><span class="ice-chip">EURONEXT #788</span></div><div class="hct-base">OTC FX (10.582), ICE Europe (2.904), FenicsMD ativos</div><div class="pct-wrap pct-y"><span class="pct-n">80%</span><div class="pct-track"><div class="pct-fill" style="width:80%"></div></div></div></div>
+    <div class="hct-row"><div><div class="hct-name">Banco Central — DEPIN</div><div class="hct-hub">HUB #110</div></div><div class="ice-chips"><span class="ice-chip">LSE #627</span><span class="ice-chip">EURONEXT #788</span><span class="ice-chip">XETRA #762</span><span class="ice-chip">KOREA #910</span><span class="ice-chip">SHANGHAI #899</span></div><div class="hct-base">Tullet (1.414 gov bonds), CBOT/CME/NYMEX, FenicsMD</div><div class="pct-wrap pct-y"><span class="pct-n">70%</span><div class="pct-track"><div class="pct-fill" style="width:70%"></div></div></div></div>
+    <div class="hct-row"><div><div class="hct-name">Natixis — State Street</div><div class="hct-hub">HUB #229 (Prospect)</div></div><div class="ice-chips"><span class="ice-chip">LSE #627</span><span class="ice-chip">EURONEXT #788</span><span class="ice-chip">XETRA #762</span></div><div class="hct-base">Nasdaq, NYSE, ICE, CBOT, Tullet, FenicsMD ativos</div><div class="pct-wrap pct-t"><span class="pct-n">60%</span><div class="pct-track"><div class="pct-fill" style="width:60%"></div></div></div></div>
+  </div>
+  <div style="font-size:11px;color:var(--label);margin-bottom:32px;padding:0 2px;">* Percentuais estimados com base na análise cruzada entre base cadastral e descrição de demanda no HUB. Gaps residuais (ratings, histórico tick-by-tick) requerem aquisições adicionais independentes deste pacote.</div>
+
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--label);margin-bottom:2px;">Elaborado por</div>
+      <span class="foot-author">Antonio Melo</span>
+      <span style="color:var(--label);margin-left:5px;">· Head de Market Data &amp; Automação · Broadcast</span>
+    </div>
+    <div class="foot-sep"></div>
+    <div>
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--label);margin-bottom:2px;">Última atualização</div>
+      <span class="foot-author">19 de Junho de 2026</span>
+    </div>
+  </div>
+  <div style="text-align:right;">
+    <div>Pipeline HUB 2026 · Pacote ICE Exchanges</div>
+    <div style="font-size:10px;color:var(--label);margin-top:1px;">Análise de Beneficiários &amp; Proposta Comercial</div>
+  </div>
+</footer>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('pane-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+function showScen(id, btn) {
+  document.querySelectorAll('.scen-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.scen-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('scen-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
