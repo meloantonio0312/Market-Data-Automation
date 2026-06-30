@@ -8,195 +8,192 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --navy:        #0d1b2a;
-    --navy-mid:    #162032;
-    --navy-surface:#1e2d40;
-    --navy-card:   #243347;
-    --border:      rgba(255,255,255,0.07);
-    --gold:        #c9a84c;
-    --gold-light:  #e8c96b;
-    --gold-dim:    rgba(201,168,76,0.14);
-    --gold-dim2:   rgba(201,168,76,0.07);
-    --text-1:      #f0ece3;
-    --text-2:      #8fa5ba;
-    --text-3:      #4d6278;
-    --teal:        #2ec4b6;
-    --teal-dim:    rgba(46,196,182,0.11);
-    --green:       #4caf87;
-    --amber:       #e8a94a;
-    --red:         #e05c5c;
+    --navy:       #0d1b2a;
+    --navy-mid:   #132030;
+    --surface:    #1a2a3a;
+    --card:       #1f3044;
+    --border:     rgba(255,255,255,0.07);
+    --border2:    rgba(255,255,255,0.04);
+    --gold:       #c9a84c;
+    --gold-light: #e8c96b;
+    --gold-dim:   rgba(201,168,76,0.13);
+    --gold-dim2:  rgba(201,168,76,0.06);
+    --text-1:     #f0ece3;
+    --text-2:     #8fa5ba;
+    --text-3:     #4d6278;
+    --teal:       #2ec4b6;
+    --teal-dim:   rgba(46,196,182,0.1);
+    --green:      #4caf87;
+    --amber:      #e8a94a;
+    --red:        #e05c5c;
+    --purple:     #9b8cf2;
+    --purple-dim: rgba(155,140,242,0.1);
+    --sidebar-w:  250px;
+    --topbar-h:   52px;
   }
-
-  html { scroll-behavior: smooth; }
+  html, body { height: 100%; }
   body {
     font-family: 'Inter', sans-serif;
     background: var(--navy);
     color: var(--text-1);
-    min-height: 100vh;
-    line-height: 1.6;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
 
   /* ── TOPBAR ── */
   .topbar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-    height: 56px;
-    background: rgba(13,27,42,0.96);
-    backdrop-filter: blur(14px);
+    height: var(--topbar-h);
+    background: rgba(13,27,42,0.97);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center;
-    padding: 0 2rem; gap: 1.5rem;
+    padding: 0 1.25rem; gap: 1rem;
+    flex-shrink: 0; z-index: 100;
   }
-  .brand {
-    display: flex; align-items: center; gap: 10px;
-    flex-shrink: 0;
+  .sidebar-toggle {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-2); padding: 6px; border-radius: 6px;
+    display: flex; align-items: center;
+    transition: background .15s, color .15s;
   }
+  .sidebar-toggle:hover { background: var(--surface); color: var(--text-1); }
+  .brand { display: flex; align-items: center; gap: 9px; }
   .brand-icon {
-    width: 26px; height: 26px; border-radius: 6px;
+    width: 24px; height: 24px; border-radius: 5px;
     background: var(--gold);
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: var(--navy);
+    font-size: 11px; font-weight: 700; color: var(--navy);
   }
-  .brand-text { line-height: 1.2; }
   .brand-name { font-size: 13px; font-weight: 500; }
   .brand-sub  { font-size: 10px; color: var(--text-3); letter-spacing: .05em; text-transform: uppercase; }
-
-  /* ── TAB BAR ── */
-  .tabbar {
-    display: flex; align-items: center; gap: 2px;
-    flex: 1; margin-left: 1.5rem;
-  }
-  .tab-btn {
-    background: none; border: none; cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px; font-weight: 400;
-    color: var(--text-2);
-    padding: 6px 16px; border-radius: 8px;
-    transition: color .15s, background .15s;
-    white-space: nowrap;
-    position: relative;
-  }
-  .tab-btn:hover { color: var(--text-1); background: var(--navy-surface); }
-  .tab-btn.active { color: var(--gold); font-weight: 500; }
-  .tab-btn.active::after {
-    content: '';
-    position: absolute; bottom: -9px; left: 16px; right: 16px;
-    height: 2px; background: var(--gold); border-radius: 1px;
-  }
-
   .topbar-right {
     margin-left: auto; display: flex; align-items: center; gap: 8px;
-    font-size: 11px; color: var(--text-3); flex-shrink: 0;
+    font-size: 11px; color: var(--text-3);
   }
   .pulse {
     width: 6px; height: 6px; border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
+    background: var(--green); box-shadow: 0 0 5px var(--green);
     animation: pulse 2.5s infinite;
   }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
 
-  /* ── PANELS ── */
-  .panel { display: none; padding-top: 56px; min-height: 100vh; }
-  .panel.active { display: block; }
+  .layout { display: flex; flex: 1; overflow: hidden; }
 
-  .inner {
-    max-width: 1060px; margin: 0 auto;
-    padding: 3rem 2rem;
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy-mid);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow-y: auto; overflow-x: hidden;
+    flex-shrink: 0;
+    transition: width .22s ease, opacity .22s ease;
   }
+  .sidebar.collapsed { width: 0; opacity: 0; pointer-events: none; }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .sidebar-inner { padding: 1rem 0 2rem; min-width: var(--sidebar-w); }
 
-  /* ── SECTION HEADER ── */
-  .sh { margin-bottom: 1.75rem; }
-  .sh-eye {
+  .nav-group { margin-bottom: 4px; }
+  .nav-group-btn {
+    width: 100%; background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 14px 7px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text-3);
+    transition: color .15s;
+  }
+  .nav-group-btn:hover { color: var(--text-2); }
+  .nav-group-btn .g-icon { font-size: 13px; }
+  .nav-group-btn .g-label { flex: 1; text-align: left; }
+  .nav-group-btn .g-count {
+    font-size: 9px; color: var(--text-3); font-weight: 500;
+    background: var(--surface); padding: 1px 6px; border-radius: 8px;
+  }
+  .nav-group-btn .chevron { font-size: 10px; color: var(--text-3); transition: transform .2s; }
+  .nav-group-btn.open .chevron { transform: rotate(90deg); }
+
+  .nav-items { overflow: hidden; }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 14px 7px 36px;
+    font-size: 12.5px; color: var(--text-2);
+    cursor: pointer; text-decoration: none;
+    transition: background .12s, color .12s;
+    border-left: 2px solid transparent;
+  }
+  .nav-item:hover { background: var(--surface); color: var(--text-1); }
+  .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: var(--gold-dim2); }
+  .nav-item .item-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-3); flex-shrink: 0; transition: background .15s; }
+  .nav-item.active .item-dot { background: var(--gold); }
+
+  .nav-divider { height: 1px; background: var(--border2); margin: 6px 16px; }
+
+  /* ── MAIN ── */
+  .main { flex: 1; overflow-y: auto; overflow-x: hidden; }
+  .main::-webkit-scrollbar { width: 5px; }
+  .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .inner { max-width: 1020px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+
+  .page-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+  .page-eyebrow {
     font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 6px;
+    color: var(--gold); margin-bottom: 8px;
     display: flex; align-items: center; gap: 8px;
   }
-  .sh-eye::before { content:''; width:20px; height:1px; background:var(--gold); }
-  .sh-title { font-size: 20px; font-weight: 500; }
-  .sh-desc { font-size: 13px; color: var(--text-2); margin-top: 6px; line-height: 1.65; }
+  .page-eyebrow::before { content:''; width:16px; height:1px; background:var(--gold); }
+  .page-title { font-size: 22px; font-weight: 500; color: var(--text-1); margin-bottom: 6px; }
+  .page-desc { font-size: 13px; color: var(--text-2); line-height: 1.7; max-width: 640px; }
 
-  /* ── OVERVIEW PANEL ── */
-  .hero-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 400; line-height: 1.15;
-    margin-bottom: 1rem; max-width: 680px;
-  }
-  .hero-title em { font-style: italic; color: var(--gold-light); }
-  .hero-desc {
-    font-size: 14px; color: var(--text-2);
-    max-width: 520px; line-height: 1.8; margin-bottom: 2.5rem;
-  }
-  .stats-row { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-bottom: 3rem; }
-  .stat-num {
-    font-size: 2.2rem; font-weight: 300; line-height: 1;
-    color: var(--text-1);
-  }
+  .stats-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .stat-num { font-size: 2rem; font-weight: 300; line-height: 1; color: var(--text-1); }
   .stat-num b { color: var(--gold); font-weight: 300; }
   .stat-lbl { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
 
-  /* ── PIPELINE ── */
-  .pipe-section { margin-top: 2.5rem; }
-  .pipe-title { font-size: 13px; font-weight: 500; color: var(--text-2); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: .07em; }
-  .pipe-row {
-    display: grid; grid-template-columns: 160px 1fr 60px;
-    align-items: center; gap: 14px;
-    padding: 10px 0; border-bottom: 1px solid var(--border);
-  }
-  .pipe-row:last-child { border-bottom: none; }
-  .pipe-lbl { font-size: 13px; color: var(--text-2); }
-  .pipe-bg { height: 5px; background: var(--navy-surface); border-radius: 3px; overflow: hidden; }
-  .pipe-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
-  .pipe-val { font-size: 13px; font-weight: 500; color: var(--text-1); text-align: right; }
-
-  /* ── CARD GRID ── */
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 14px;
-  }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr)); gap: 13px; }
   .card {
-    background: var(--navy-card);
-    border: 1px solid var(--border);
-    border-radius: 12px; padding: 1.3rem;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 11px; padding: 1.2rem;
     text-decoration: none; color: inherit;
-    display: flex; flex-direction: column; gap: 10px;
-    transition: border-color .2s, transform .15s;
-    cursor: pointer;
+    display: flex; flex-direction: column; gap: 9px;
+    transition: border-color .18s, transform .14s; cursor: pointer;
   }
-  .card:hover { border-color: rgba(201,168,76,.35); transform: translateY(-2px); }
+  .card:hover { border-color: rgba(201,168,76,.3); transform: translateY(-2px); }
   .card-icon {
-    width: 34px; height: 34px; border-radius: 8px;
+    width: 32px; height: 32px; border-radius: 7px;
     background: var(--gold-dim);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
   }
-  .card-icon.t { background: var(--teal-dim); }
-  .card-icon.g { background: rgba(76,175,135,.1); }
-  .card-icon.a { background: rgba(232,169,74,.1); }
-  .card-icon.r { background: rgba(224,92,92,.1); }
+  .ci-t { background: var(--teal-dim); }
+  .ci-g { background: rgba(76,175,135,.1); }
+  .ci-a { background: rgba(232,169,74,.1); }
+  .ci-r { background: rgba(224,92,92,.1); }
+  .ci-p { background: var(--purple-dim); }
   .tag {
-    display: inline-flex; align-items: center;
-    font-size: 10px; letter-spacing: .05em; text-transform: uppercase;
-    border-radius: 4px; padding: 3px 8px; width: fit-content;
-    color: var(--gold); background: var(--gold-dim2);
+    display: inline-flex; font-size: 10px; letter-spacing: .05em;
+    text-transform: uppercase; border-radius: 4px; padding: 2px 7px;
+    width: fit-content; color: var(--gold); background: var(--gold-dim2);
   }
   .tag.t { color: var(--teal);  background: var(--teal-dim); }
   .tag.g { color: var(--green); background: rgba(76,175,135,.1); }
   .tag.a { color: var(--amber); background: rgba(232,169,74,.1); }
   .tag.r { color: var(--red);   background: rgba(224,92,92,.1); }
-  .card-title { font-size: 14px; font-weight: 500; }
+  .tag.p { color: var(--purple);background: var(--purple-dim); }
+  .card-title { font-size: 13.5px; font-weight: 500; }
   .card-desc  { font-size: 12px; color: var(--text-2); line-height: 1.6; flex: 1; }
   .card-foot  {
     display: flex; align-items: center; justify-content: space-between;
-    padding-top: 10px; border-top: 1px solid var(--border);
+    padding-top: 9px; border-top: 1px solid var(--border);
     font-size: 11px; color: var(--text-3);
   }
-  .arrow { font-size: 14px; color: var(--gold); opacity: .7; }
+  .arrow { font-size: 13px; color: var(--gold); opacity: .6; }
 
-  /* ── ROADMAP TABLE ── */
   .rtable { width: 100%; border-collapse: collapse; }
   .rtable th {
     font-size: 10px; text-transform: uppercase; letter-spacing: .09em;
@@ -204,431 +201,713 @@
     padding: 8px 12px; text-align: left;
     border-bottom: 1px solid var(--border);
   }
-  .rtable td {
-    padding: 13px 12px; font-size: 13px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-2);
-  }
-  .rtable tr:hover td { background: var(--navy-surface); }
+  .rtable td { padding: 12px 12px; font-size: 13px; border-bottom: 1px solid var(--border); color: var(--text-2); }
+  .rtable tr:hover td { background: var(--surface); }
   .rtable tr:last-child td { border-bottom: none; }
   .pname { color: var(--text-1); font-weight: 500; }
-  .badge {
-    display: inline-flex; align-items: center;
-    font-size: 10px; padding: 3px 9px; border-radius: 20px; font-weight: 500;
-  }
+  .badge { display: inline-flex; font-size: 10px; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
   .b-live { background: rgba(76,175,135,.15); color: var(--green); }
   .b-dev  { background: rgba(46,196,182,.12); color: var(--teal); }
   .b-plan { background: rgba(201,168,76,.12); color: var(--gold); }
-  .b-done { background: rgba(255,255,255,.07); color: var(--text-3); }
 
-  /* ── TEAM ── */
-  .domain-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
-  }
-  .domain-card {
-    background: var(--navy-card);
-    border: 1px solid var(--border);
-    border-radius: 12px; padding: 1.4rem;
-  }
-  .domain-label {
-    font-size: 10px; text-transform: uppercase; letter-spacing: .1em;
-    color: var(--text-3); margin-bottom: 1rem;
-  }
-  .domain-name { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
-  .domain-desc { font-size: 12px; color: var(--text-2); line-height: 1.6; margin-bottom: 1rem; }
-  .domain-badge {
-    display: inline-flex; font-size: 10px; padding: 3px 10px;
-    border-radius: 20px; font-weight: 500; letter-spacing: .03em;
-  }
+  .pipe-row { display: grid; grid-template-columns: 160px 1fr 60px; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .pipe-row:last-child { border-bottom: none; }
+  .pipe-lbl { font-size: 13px; color: var(--text-2); }
+  .pipe-bg { height: 5px; background: var(--surface); border-radius: 3px; overflow: hidden; }
+  .pipe-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+  .pipe-val { font-size: 13px; font-weight: 500; color: var(--text-1); text-align: right; }
 
-  .team-note {
-    background: var(--navy-card); border: 1px solid var(--border);
+  .domain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+  .domain-card { background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 1.3rem; }
+  .domain-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); margin-bottom: 8px; }
+  .domain-name  { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .domain-desc  { font-size: 12px; color: var(--text-2); line-height: 1.6; margin-bottom: 10px; }
+
+  .info-box {
+    background: var(--card); border: 1px solid var(--border);
     border-radius: 10px; padding: 1.1rem 1.3rem;
-    font-size: 13px; color: var(--text-2); line-height: 1.7;
-    margin-top: 1.5rem;
+    font-size: 13px; color: var(--text-2); line-height: 1.75;
   }
+  .info-box strong { color: var(--text-1); }
 
-  /* ── DIVIDER ── */
-  .divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
 
-  /* ── RESPONSIVE ── */
   @media (max-width: 680px) {
-    .tabbar { display: none; }
+    .sidebar { position: fixed; top: var(--topbar-h); left: 0; bottom: 0; z-index: 50; }
     .domain-grid { grid-template-columns: 1fr; }
-    .stats-row { gap: 1.5rem; }
-    .pipe-row { grid-template-columns: 120px 1fr 50px; }
+    .pipe-row { grid-template-columns: 110px 1fr 44px; }
   }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR + TABS -->
 <header class="topbar">
+  <button class="sidebar-toggle" onclick="toggleSidebar()" title="Menu">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <rect x="1" y="3" width="14" height="1.5" rx=".75" fill="currentColor"/>
+      <rect x="1" y="7.25" width="14" height="1.5" rx=".75" fill="currentColor"/>
+      <rect x="1" y="11.5" width="14" height="1.5" rx=".75" fill="currentColor"/>
+    </svg>
+  </button>
   <div class="brand">
     <div class="brand-icon">B</div>
-    <div class="brand-text">
+    <div>
       <div class="brand-name">Market Data & Automation</div>
       <div class="brand-sub">Broadcast · Grupo Estado</div>
     </div>
   </div>
-
-  <nav class="tabbar" role="tablist">
-    <button class="tab-btn active" onclick="showTab('overview')"  role="tab">Overview</button>
-    <button class="tab-btn"        onclick="showTab('dashboards')" role="tab">Dashboards</button>
-    <button class="tab-btn"        onclick="showTab('roadmap')"    role="tab">Roadmap</button>
-    <button class="tab-btn"        onclick="showTab('materiais')"  role="tab">Materiais</button>
-    <button class="tab-btn"        onclick="showTab('time')"       role="tab">Time</button>
-  </nav>
-
   <div class="topbar-right">
     <div class="pulse"></div>
-    Jun 2026
+    Jun 2026 &nbsp;·&nbsp; Antonio Melo
   </div>
 </header>
 
-<!-- ══════════════════════════════════════════
-     OVERVIEW
-══════════════════════════════════════════ -->
-<section class="panel active" id="tab-overview">
-  <div class="inner">
-    <p style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:8px;">
-      <span style="display:inline-block;width:20px;height:1px;background:var(--gold)"></span>
-      Head: Antonio Melo
-    </p>
-    <h1 class="hero-title">Visibilidade e <em>progresso</em><br>em um só lugar</h1>
-    <p class="hero-desc">Portal executivo da área de Market Data & Automation. Acesso consolidado a dashboards operacionais, roadmap de projetos, materiais comerciais e estrutura do time.</p>
+<div class="layout">
 
-    <div class="stats-row">
-      <div>
-        <div class="stat-num">14<b>+</b></div>
-        <div class="stat-lbl">Membros do time</div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+
+      <a class="nav-item active" style="padding-left:16px; font-weight:500;" onclick="show('overview')" href="#">
+        <span style="font-size:13px">📊</span> Overview
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <!-- Management -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">👔</span><span class="g-label">Management</span>
+          <span class="g-count">4</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('roadmap')" href="#"><span class="item-dot"></span> Projetos 2026</a>
+          <a class="nav-item" onclick="show('automacao')" href="#"><span class="item-dot"></span> Sprint CoE Automação</a>
+          <a class="nav-item" onclick="show('hub-datafeeds')" href="#"><span class="item-dot"></span> HUB Datafeeds</a>
+          <a class="nav-item" onclick="show('team')" href="#"><span class="item-dot"></span> Estrutura do Time</a>
+        </div>
       </div>
-      <div>
-        <div class="stat-num">6</div>
-        <div class="stat-lbl">Projetos ativos</div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Financeiro -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">💰</span><span class="g-label">Financeiro</span>
+          <span class="g-count">6</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('breakeven')" href="#"><span class="item-dot"></span> Breakeven por Produto</a>
+          <a class="nav-item" onclick="show('faturamento')" href="#"><span class="item-dot"></span> Faturamento Maio 2026</a>
+          <a class="nav-item" onclick="show('despesas')" href="#"><span class="item-dot"></span> Despesas com Dados</a>
+          <a class="nav-item" onclick="show('ice-contratos')" href="#"><span class="item-dot"></span> ICE — Contratos Consolidados</a>
+          <a class="nav-item" onclick="show('terminal-latam')" href="#"><span class="item-dot"></span> Terminal Latam / NUAM</a>
+          <a class="nav-item" onclick="show('exchange-map')" href="#"><span class="item-dot"></span> Mapa de Contratos (32)</a>
+        </div>
       </div>
-      <div>
-        <div class="stat-num">662<b>K</b></div>
-        <div class="stat-lbl">Instrumentos cobertos</div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Vendas — Materiais Comerciais -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">💼</span><span class="g-label">Materiais Comerciais</span>
+          <span class="g-count">5</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('ice-pipeline')" href="#"><span class="item-dot"></span> ICE — Pipeline Beneficiários</a>
+          <a class="nav-item" onclick="show('oferta-dados')" href="#"><span class="item-dot"></span> Oferta de Dados — One Pager</a>
+          <a class="nav-item" onclick="show('datafeed-visao')" href="#"><span class="item-dot"></span> Datafeed — Visão Geral</a>
+          <a class="nav-item" onclick="show('esg')" href="#"><span class="item-dot"></span> Levantamento ESG</a>
+          <a class="nav-item" onclick="show('sugestoes')" href="#"><span class="item-dot"></span> Sugestões de Clientes</a>
+        </div>
       </div>
-      <div>
-        <div class="stat-num">15</div>
-        <div class="stat-lbl">Bolsas ICE</div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Vendas — Bolsas Fees & Regras -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">📋</span><span class="g-label">Bolsas — Fees & Regras</span>
+          <span class="g-count">3</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('licensing-process')" href="#"><span class="item-dot"></span> Processo de Licenciamento</a>
+          <a class="nav-item" onclick="show('fees-cheatsheet')" href="#"><span class="item-dot"></span> Cheatsheet de Fees</a>
+          <a class="nav-item" onclick="show('agro-policies')" href="#"><span class="item-dot"></span> Políticas — Bolsas Agro</a>
+        </div>
       </div>
-      <div>
-        <div class="stat-num">4</div>
-        <div class="stat-lbl">Domínios operacionais</div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Vendas — Competitive Intel -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">⚔️</span><span class="g-label">Competitive Intel</span>
+          <span class="g-count">2</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('inteligencia-mercado')" href="#"><span class="item-dot"></span> Broadcast+ vs Competidores</a>
+          <a class="nav-item" onclick="show('bpipe')" href="#"><span class="item-dot"></span> Bloomberg B-PIPE — Matriz</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Vendas — Produto / Derived Data -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">🧪</span><span class="g-label">Produto — Derived Data</span>
+          <span class="g-count">2</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('derived-commodities')" href="#"><span class="item-dot"></span> Derived Data — Commodities</a>
+          <a class="nav-item" onclick="show('derived-macro')" href="#"><span class="item-dot"></span> Derived Data — Macro</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Comunicação -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">📰</span><span class="g-label">Comunicação</span>
+          <span class="g-count">1</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('newsletter')" href="#"><span class="item-dot"></span> Newsletter Nov/Dez 2025</a>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+  <main class="main" id="main-content">
+
+    <!-- OVERVIEW -->
+    <div class="panel active" id="p-overview">
+      <div class="inner">
+        <p style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:8px;">
+          <span style="width:16px;height:1px;background:var(--gold);display:inline-block"></span>
+          Head: Antonio Melo
+        </p>
+        <h1 style="font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:400;line-height:1.15;margin-bottom:.9rem;">
+          Knowledge Hub — <em style="font-style:italic;color:var(--gold-light)">Market Data & Automation</em>
+        </h1>
+        <p style="font-size:14px;color:var(--text-2);max-width:560px;line-height:1.8;margin-bottom:2rem;">
+          15 documentos organizados por audiência. Management, Financeiro, Vendas & Marketing e Comunicação — tudo num só lugar.
+        </p>
+
+        <div class="stats-row">
+          <div><div class="stat-num">23</div><div class="stat-lbl">Documentos</div></div>
+          <div><div class="stat-num">5</div><div class="stat-lbl">Categorias</div></div>
+          <div><div class="stat-num">662<b>K</b></div><div class="stat-lbl">Instrumentos</div></div>
+          <div><div class="stat-num">15</div><div class="stat-lbl">Bolsas ICE</div></div>
+        </div>
+
+        <hr class="divider">
+
+        <p style="font-size:12px;color:var(--text-3);margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:.08em;">Acesso rápido</p>
+        <div class="card-grid">
+          <div class="card" onclick="show('roadmap')">
+            <div class="card-icon">🗓</div>
+            <div class="tag">Management</div>
+            <div class="card-title">Projetos 2026</div>
+            <div class="card-desc">Status consolidado de entregas realizadas vs. pendentes.</div>
+            <div class="card-foot"><span>Management</span><span class="arrow">→</span></div>
+          </div>
+          <div class="card" onclick="show('ice-pipeline')">
+            <div class="card-icon ci-a">📋</div>
+            <div class="tag a">Vendas</div>
+            <div class="card-title">ICE — Pipeline Beneficiários</div>
+            <div class="card-desc">Análise de clientes beneficiários do pacote ICE Data.</div>
+            <div class="card-foot"><span>Vendas</span><span class="arrow">→</span></div>
+          </div>
+          <div class="card" onclick="show('breakeven')">
+            <div class="card-icon ci-g">📈</div>
+            <div class="tag g">Financeiro</div>
+            <div class="card-title">Breakeven por Produto</div>
+            <div class="card-desc">Análise de breakeven — Maio 2026.</div>
+            <div class="card-foot"><span>Financeiro</span><span class="arrow">→</span></div>
+          </div>
+          <div class="card" onclick="show('automacao')">
+            <div class="card-icon ci-t">⚡</div>
+            <div class="tag t">Tech</div>
+            <div class="card-title">Sprint CoE Automação</div>
+            <div class="card-desc">Planning 2026 do time de automação.</div>
+            <div class="card-foot"><span>Operações</span><span class="arrow">→</span></div>
+          </div>
+          <div class="card" onclick="show('fees-cheatsheet')">
+            <div class="card-icon ci-a">💵</div>
+            <div class="tag a">Vendas</div>
+            <div class="card-title">Cheatsheet de Fees</div>
+            <div class="card-desc">Consulta rápida de taxas por bolsa, sem precisar acionar o time.</div>
+            <div class="card-foot"><span>Bolsas — Fees & Regras</span><span class="arrow">→</span></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <hr class="divider">
-
-    <div class="sh">
-      <div class="sh-eye">Pipeline Comercial ICE</div>
-      <div class="sh-title">Progresso por segmento</div>
-    </div>
-
-    <div style="max-width:640px">
-      <div class="pipe-row">
-        <div class="pipe-lbl">Bancos (Tier 1)</div>
-        <div class="pipe-bg"><div class="pipe-fill" style="width:78%"></div></div>
-        <div class="pipe-val">78%</div>
-      </div>
-      <div class="pipe-row">
-        <div class="pipe-lbl">Asset Managers</div>
-        <div class="pipe-bg"><div class="pipe-fill" style="width:61%"></div></div>
-        <div class="pipe-val">61%</div>
-      </div>
-      <div class="pipe-row">
-        <div class="pipe-lbl">Corretoras</div>
-        <div class="pipe-bg"><div class="pipe-fill" style="width:45%"></div></div>
-        <div class="pipe-val">45%</div>
-      </div>
-      <div class="pipe-row">
-        <div class="pipe-lbl">Fintechs</div>
-        <div class="pipe-bg"><div class="pipe-fill" style="width:33%"></div></div>
-        <div class="pipe-val">33%</div>
-      </div>
-      <div class="pipe-row">
-        <div class="pipe-lbl">Corporates</div>
-        <div class="pipe-bg"><div class="pipe-fill" style="width:20%"></div></div>
-        <div class="pipe-val">20%</div>
-      </div>
-    </div>
-    <p style="font-size:11px;color:var(--text-3);margin-top:1rem;">Atualizar com dados reais do CRM quando disponível.</p>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════
-     DASHBOARDS
-══════════════════════════════════════════ -->
-<section class="panel" id="tab-dashboards">
-  <div class="inner">
-    <div class="sh">
-      <div class="sh-eye">Analytics & Operações</div>
-      <div class="sh-title">Dashboards</div>
-      <div class="sh-desc">Acesso rápido aos painéis operacionais do time. Clique em qualquer card para abrir.</div>
-    </div>
-
-    <div class="card-grid">
-      <a href="#" class="card">
-        <div class="card-icon t">📊</div>
-        <div class="tag t">CoE Automação</div>
-        <div class="card-title">Developer Velocity — JIRA</div>
-        <div class="card-desc">Métricas do squad de automação: throughput, cycle time, sprints e backlog por desenvolvedor.</div>
-        <div class="card-foot"><span>Squad CoE</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="ICE_Beneficiarios_Pipeline_HUB_9.html" target="_blank" class="card"> 
-        <div class="card-icon">💹</div>
-        <div class="tag">ICE Data Services</div>
-        <div class="card-title">Pipeline Comercial — ICE</div>
-        <div class="card-desc">Acompanhamento do pipeline de clientes para o pacote ICE de 15 bolsas internacionais.</div>
-        <div class="card-foot"><span>Comercial</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="#" class="card">
-        <div class="card-icon a">🏗️</div>
-        <div class="tag a">Injeções</div>
-        <div class="card-title">Roadmap 2026–2027</div>
-        <div class="card-desc">Status dos projetos de novos injetores: FenicsMD, Nasdaq, A5X, NUAM, CSD-BR e outros.</div>
-        <div class="card-foot"><span>Tecnologia</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="#" class="card">
-        <div class="card-icon g">📋</div>
-        <div class="tag g">Contratos</div>
-        <div class="card-title">Gestão de Licenças</div>
-        <div class="card-desc">Controle de contratos com SIX Financial, ICE, CME, B3 e demais provedores.</div>
-        <div class="card-foot"><span>Vendor Mgmt</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="#" class="card">
-        <div class="card-icon t">📈</div>
-        <div class="tag t">Financeiro</div>
-        <div class="card-title">Breakeven & Cenários</div>
-        <div class="card-desc">Modelo financeiro com cenários conservador, base e otimista para novas aquisições.</div>
-        <div class="card-foot"><span>Estratégia</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="#" class="card">
-        <div class="card-icon r">🌡️</div>
-        <div class="tag r">E-NPS</div>
-        <div class="card-title">Plano de Ação E-NPS</div>
-        <div class="card-desc">Iniciativas e métricas do plano de melhoria de satisfação após pesquisa consolidada em Produtos.</div>
-        <div class="card-foot"><span>People</span><span class="arrow">→</span></div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════
-     ROADMAP
-══════════════════════════════════════════ -->
-<section class="panel" id="tab-roadmap">
-  <div class="inner">
-    <div class="sh">
-      <div class="sh-eye">Projetos & Entregas</div>
-      <div class="sh-title">Roadmap 2026 – 2027</div>
-      <div class="sh-desc">Projetos ativos, em desenvolvimento e planejados para os próximos 18 meses.</div>
-    </div>
-
-    <table class="rtable">
-      <thead>
-        <tr>
-          <th>Projeto</th>
-          <th>Provedor</th>
-          <th>Domínio</th>
-          <th>Prazo</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="pname">Fenics Market Data (FX / US Treasuries)</td>
-          <td>BGC / FenicsMD</td>
-          <td>Injetor</td>
-          <td>Q3 2026</td>
-          <td><span class="badge b-live">Em produção</span></td>
-        </tr>
-        <tr>
-          <td class="pname">Nasdaq Global Index Data Service</td>
-          <td>Nasdaq</td>
-          <td>Injetor</td>
-          <td>Q3 2026</td>
-          <td><span class="badge b-dev">Em dev</span></td>
-        </tr>
-        <tr>
-          <td class="pname">A5X — Derivativos Brasil</td>
-          <td>A5X</td>
-          <td>Injetor</td>
-          <td>Q4 2026</td>
-          <td><span class="badge b-dev">Em dev</span></td>
-        </tr>
-        <tr>
-          <td class="pname">NUAM Exchange (Chile / Peru / Colombia)</td>
-          <td>NUAM / ICE Data</td>
-          <td>Injetor</td>
-          <td>Q4 2026</td>
-          <td><span class="badge b-plan">Planejado</span></td>
-        </tr>
-        <tr>
-          <td class="pname">CSD-BR — Renda Fixa</td>
-          <td>CSD-BR</td>
-          <td>Injetor</td>
-          <td>Q1 2027</td>
-          <td><span class="badge b-plan">Planejado</span></td>
-        </tr>
-        <tr>
-          <td class="pname">ICE Data — Pacote 15 bolsas internacionais</td>
-          <td>ICE Data Services</td>
-          <td>Aquisição</td>
-          <td>Q3 2026</td>
-          <td><span class="badge b-live">Em aprovação</span></td>
-        </tr>
-        <tr>
-          <td class="pname">Broadcast × Fenics — Go-to-Market</td>
-          <td>BGC / Fenics</td>
-          <td>Comercial</td>
-          <td>Q3 2026</td>
-          <td><span class="badge b-live">Em andamento</span></td>
-        </tr>
-        <tr>
-          <td class="pname">ESG Data — Pesquisa e Produtos Derivados</td>
-          <td>Interno</td>
-          <td>Produto</td>
-          <td>Q4 2026</td>
-          <td><span class="badge b-plan">Planejado</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════
-     MATERIAIS
-══════════════════════════════════════════ -->
-<section class="panel" id="tab-materiais">
-  <div class="inner">
-    <div class="sh">
-      <div class="sh-eye">Estratégia & Vendas</div>
-      <div class="sh-title">Materiais de Marketing & Inteligência</div>
-      <div class="sh-desc">Documentos estratégicos, análises competitivas e materiais de go-to-market.</div>
-    </div>
-
-    <div class="card-grid">
-      <a href="#" class="card">
-        <div class="card-icon">⚔️</div>
-        <div class="tag">Competitive Intel</div>
-        <div class="card-title">Broadcast vs Bloomberg B-PIPE</div>
-        <div class="card-desc">Análise competitiva completa de funcionalidades, cobertura e precificação entre as plataformas.</div>
-        <div class="card-foot"><span>Inteligência</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="#" class="card">
-        <div class="card-icon">🌐</div>
-        <div class="tag">Benchmark</div>
-        <div class="card-title">Broadcast+ vs Mercado</div>
-        <div class="card-desc">Posicionamento frente a Bloomberg, LSEG, Trillia, CMA e outros players do mercado.</div>
-        <div class="card-foot"><span>Produto</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="#" class="card">
-        <div class="card-icon t">🤝</div>
-        <div class="tag t">Go-to-Market</div>
-        <div class="card-title">Fenics × Broadcast — GTM</div>
-        <div class="card-desc">Plano comercial para US Treasuries, FX e FX Options. Inclui battle cards e BIPs para o time de vendas.</div>
-        <div class="card-foot"><span>Comercial</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="#" class="card">
-        <div class="card-icon g">🌿</div>
-        <div class="tag g">ESG</div>
-        <div class="card-title">Pesquisa ESG Data</div>
-        <div class="card-desc">Análise regulatória, mercado de créditos de carbono e oportunidades de produto no segmento ESG.</div>
-        <div class="card-foot"><span>Produto</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="#" class="card">
-        <div class="card-icon a">📄</div>
-        <div class="tag a">Cobertura</div>
-        <div class="card-title">Broadcast — 662K Instrumentos</div>
-        <div class="card-desc">Material de vendas destacando a cobertura completa de instrumentos da plataforma Broadcast.</div>
-        <div class="card-foot"><span>Comercial</span><span class="arrow">→</span></div>
-      </a>
-
-      <a href="#" class="card">
-        <div class="card-icon">📑</div>
-        <div class="tag">Renda Fixa</div>
-        <div class="card-title">One-Pager Renda Fixa</div>
-        <div class="card-desc">Material de marketing focado em produtos de renda fixa para distribuição ao mercado financeiro.</div>
-        <div class="card-foot"><span>Marketing</span><span class="arrow">→</span></div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════
-     TIME
-══════════════════════════════════════════ -->
-<section class="panel" id="tab-time">
-  <div class="inner">
-    <div class="sh">
-      <div class="sh-eye">Estrutura Organizacional</div>
-      <div class="sh-title">Time — Market Data & Automation</div>
-      <div class="sh-desc">4 domínios operacionais sob liderança de Antonio Melo, reporting para Rodrigo Galasini (Dir. Produtos).</div>
-    </div>
-
-    <div class="domain-grid">
-      <div class="domain-card">
-        <div class="domain-label">Domínio 01</div>
-        <div class="domain-name">Squad Market Data</div>
-        <div class="domain-desc">Responsável pela ingestão de dados, desenvolvimento e manutenção de injetores de bolsas nacionais e internacionais, e cobertura de novos mercados.</div>
-        <span class="domain-badge" style="background:var(--teal-dim);color:var(--teal)">Squad MD</span>
-      </div>
-
-      <div class="domain-card">
-        <div class="domain-label">Domínio 02</div>
-        <div class="domain-name">Squad Plataforma</div>
-        <div class="domain-desc">Distribuição de dados, APIs, conectividade com clientes e manutenção da infraestrutura de entrega da plataforma Broadcast.</div>
-        <span class="domain-badge" style="background:var(--teal-dim);color:var(--teal)">Squad PF</span>
-      </div>
-
-      <div class="domain-card">
-        <div class="domain-label">Domínio 03</div>
-        <div class="domain-name">CoE Automação</div>
-        <div class="domain-desc">Centro de Excelência em automação de processos internos, ferramentas de produtividade e desenvolvimento de soluções para o time de Produtos.</div>
-        <span class="domain-badge" style="background:var(--gold-dim);color:var(--gold)">CoE</span>
-      </div>
-
-      <div class="domain-card">
-        <div class="domain-label">Domínio 04</div>
-        <div class="domain-name">Cadastro de Dados</div>
-        <div class="domain-desc">Função independente responsável pela gestão de dados mestre, qualidade e governança de instrumentos financeiros na plataforma.</div>
-        <span class="domain-badge" style="background:rgba(232,169,74,.1);color:var(--amber)">Dados</span>
+    <!-- ═══ MANAGEMENT ═══ -->
+    <div class="panel" id="p-roadmap">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Management</div>
+          <div class="page-title">Projetos 2026 — Accomplished vs Pending</div>
+          <div class="page-desc">Dashboard consolidado de status de todos os projetos da área.</div>
+        </div>
+        <a href="dashboard_2026_projects.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon">🗓</div>
+          <div class="tag">Dashboard</div>
+          <div class="card-title">Abrir Dashboard de Projetos 2026</div>
+          <div class="card-desc">Visualização completa de entregas realizadas e pendentes.</div>
+          <div class="card-foot"><span>dashboard_2026_projects.html</span><span class="arrow">↗</span></div>
+        </a>
       </div>
     </div>
 
-    <div class="team-note">
-      <strong style="color:var(--text-1)">Headcount:</strong> ~14 pessoas + estagiários &nbsp;·&nbsp;
-      <strong style="color:var(--text-1)">Head:</strong> <span style="color:var(--gold)">Antonio Melo</span> &nbsp;·&nbsp;
-      <strong style="color:var(--text-1)">Reporting:</strong> Rodrigo Galasini (Diretor de Produtos) &nbsp;·&nbsp;
-      <strong style="color:var(--text-1)">Divisão:</strong> Produtos · Broadcast · Agência Estado · Grupo Estado
+    <div class="panel" id="p-automacao">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Management · Tech</div>
+          <div class="page-title">CoE Automação — Sprint Planning 2026</div>
+          <div class="page-desc">Planejamento de sprints do Centro de Excelência em Automação.</div>
+        </div>
+        <a href="dashboard_automacao_2026.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-t">⚡</div>
+          <div class="tag t">Dashboard</div>
+          <div class="card-title">Abrir Sprint Planning CoE</div>
+          <div class="card-desc">Backlog, sprints e capacidade do time de automação.</div>
+          <div class="card-foot"><span>dashboard_automacao_2026.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
     </div>
-  </div>
-</section>
+
+    <div class="panel" id="p-hub-datafeeds">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Management</div>
+          <div class="page-title">HUB Datafeeds — Dashboard 2026</div>
+          <div class="page-desc">Visão consolidada dos datafeeds operados pela área.</div>
+        </div>
+        <a href="HUB_Datafeeds_Dashboard.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon">📡</div>
+          <div class="tag">Dashboard</div>
+          <div class="card-title">Abrir HUB Datafeeds</div>
+          <div class="card-desc">Status e cobertura de todos os datafeeds ativos.</div>
+          <div class="card-foot"><span>HUB_Datafeeds_Dashboard.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-team">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Management</div>
+          <div class="page-title">Estrutura do Time</div>
+          <div class="page-desc">4 domínios operacionais. ~14 pessoas + estagiários.</div>
+        </div>
+        <div class="domain-grid">
+          <div class="domain-card">
+            <div class="domain-label">Domínio 01</div>
+            <div class="domain-name">Squad Market Data</div>
+            <div class="domain-desc">Ingestão de dados, injetores de bolsas nacionais e internacionais, cobertura de novos mercados.</div>
+            <span style="display:inline-flex;font-size:10px;padding:3px 10px;border-radius:20px;background:var(--teal-dim);color:var(--teal)">Squad MD</span>
+          </div>
+          <div class="domain-card">
+            <div class="domain-label">Domínio 02</div>
+            <div class="domain-name">Squad Plataforma</div>
+            <div class="domain-desc">Distribuição de dados, APIs, conectividade com clientes e infraestrutura de entrega.</div>
+            <span style="display:inline-flex;font-size:10px;padding:3px 10px;border-radius:20px;background:var(--teal-dim);color:var(--teal)">Squad PF</span>
+          </div>
+          <div class="domain-card">
+            <div class="domain-label">Domínio 03</div>
+            <div class="domain-name">CoE Automação</div>
+            <div class="domain-desc">Centro de Excelência em automação de processos, ferramentas internas e soluções para Produtos.</div>
+            <span style="display:inline-flex;font-size:10px;padding:3px 10px;border-radius:20px;background:var(--gold-dim);color:var(--gold)">CoE</span>
+          </div>
+          <div class="domain-card">
+            <div class="domain-label">Domínio 04</div>
+            <div class="domain-name">Cadastro de Dados</div>
+            <div class="domain-desc">Gestão de dados mestre, qualidade e governança de instrumentos financeiros na plataforma.</div>
+            <span style="display:inline-flex;font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(232,169,74,.1);color:var(--amber)">Dados</span>
+          </div>
+        </div>
+        <div class="info-box" style="margin-top:1.5rem">
+          <strong>Head:</strong> <span style="color:var(--gold)">Antonio Melo</span> &nbsp;·&nbsp;
+          <strong>Reporting:</strong> Rodrigo Galasini (Dir. Produtos) &nbsp;·&nbsp;
+          <strong>Divisão:</strong> Produtos · Broadcast · Agência Estado · Grupo Estado
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FINANCEIRO ═══ -->
+    <div class="panel" id="p-breakeven">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Financeiro</div>
+          <div class="page-title">Breakeven por Produto — Maio 2026</div>
+          <div class="page-desc">Análise de ponto de equilíbrio por linha de produto.</div>
+        </div>
+        <a href="dashboard_breakeven_maio_2026.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-g">📈</div>
+          <div class="tag g">Dashboard</div>
+          <div class="card-title">Abrir Breakeven Maio 2026</div>
+          <div class="card-desc">Receita, custo e ponto de equilíbrio por produto.</div>
+          <div class="card-foot"><span>dashboard_breakeven_maio_2026.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-faturamento">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Financeiro</div>
+          <div class="page-title">Dashboard Faturamento — Maio 2026</div>
+          <div class="page-desc">Receita consolidada do mês por produto e cliente.</div>
+        </div>
+        <a href="dashboard_faturamento_maio_2026.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-g">💳</div>
+          <div class="tag g">Dashboard</div>
+          <div class="card-title">Abrir Faturamento Maio 2026</div>
+          <div class="card-desc">Detalhamento completo de receitas do mês.</div>
+          <div class="card-foot"><span>dashboard_faturamento_maio_2026.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-despesas">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Financeiro</div>
+          <div class="page-title">Despesas com Dados de Mercado — 2026</div>
+          <div class="page-desc">Relatório consolidado de despesas com provedores de dados.</div>
+        </div>
+        <a href="report_despesas_dados_2026.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-g">📋</div>
+          <div class="tag g">Relatório</div>
+          <div class="card-title">Abrir Despesas 2026</div>
+          <div class="card-desc">Custos fixos e variáveis por fornecedor de dados.</div>
+          <div class="card-foot"><span>report_despesas_dados_2026.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-ice-contratos">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Financeiro</div>
+          <div class="page-title">ICE Data Services — Contratos Consolidados</div>
+          <div class="page-desc">Hierarquia completa dos 9 addenda do contrato ICE.</div>
+        </div>
+        <a href="ICE_Addenda_Consolidado.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-g">📑</div>
+          <div class="tag g">Contratos</div>
+          <div class="card-title">Abrir ICE — Addenda Consolidado</div>
+          <div class="card-desc">Todos os addenda do contrato ICE em um só documento.</div>
+          <div class="card-foot"><span>ICE_Addenda_Consolidado.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-terminal-latam">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Financeiro · Management</div>
+          <div class="page-title">Terminal Latam — Market Data Dashboard</div>
+          <div class="page-desc">P&L e cenários de break-even para Chile, Colômbia e Peru (NUAM).</div>
+        </div>
+        <a href="Term_Latam_NUAM.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-g">🌎</div>
+          <div class="tag g">Dashboard</div>
+          <div class="card-title">Abrir Terminal Latam / NUAM</div>
+          <div class="card-desc">Modelagem de 24 meses para break-even na região.</div>
+          <div class="card-foot"><span>Term_Latam_NUAM.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-exchange-map">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Financeiro</div>
+          <div class="page-title">Contratos de Bolsa — Mapa Consolidado</div>
+          <div class="page-desc">Dashboard com os 32 contratos de bolsa ativos, organizados por região e status.</div>
+        </div>
+        <a href="Exchange_Map_Contracts_Dashboard.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-g">🗺️</div>
+          <div class="tag g">Dashboard</div>
+          <div class="card-title">Abrir Mapa de Contratos</div>
+          <div class="card-desc">Visão geográfica e por fornecedor de todos os contratos ativos.</div>
+          <div class="card-foot"><span>Exchange_Map_Contracts_Dashboard.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══ VENDAS — BOLSAS FEES & REGRAS ═══ -->
+    <div class="panel" id="p-licensing-process">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas · Bolsas — Fees & Regras</div>
+          <div class="page-title">Processo de Licenciamento & Aquisição de Conteúdo</div>
+          <div class="page-desc">Guia de referência: como funciona o processo de licenciamento de novos dados, da negociação à ativação.</div>
+        </div>
+        <a href="market_data_licensing_process.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-a">📘</div>
+          <div class="tag a">Processo</div>
+          <div class="card-title">Abrir Processo de Licenciamento</div>
+          <div class="card-desc">Etapas, responsáveis e prazos do processo de aquisição de conteúdo.</div>
+          <div class="card-foot"><span>market_data_licensing_process.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-fees-cheatsheet">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas · Bolsas — Fees & Regras</div>
+          <div class="page-title">Cheatsheet de Fees — Bolsas e Fornecedores</div>
+          <div class="page-desc">Consulta rápida de taxas por bolsa. Self-service para o time de vendas — reduz a necessidade de acionar o time de Market Data.</div>
+        </div>
+        <a href="cheatsheet_fees_bolsas.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-a">💵</div>
+          <div class="tag a">Referência</div>
+          <div class="card-title">Abrir Cheatsheet de Fees</div>
+          <div class="card-desc">Tabela de taxas validada contra os schedules oficiais 2026.</div>
+          <div class="card-foot"><span>cheatsheet_fees_bolsas.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-agro-policies">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas · Bolsas — Fees & Regras</div>
+          <div class="page-title">Políticas Comerciais — Bolsas Agrícolas Internacionais</div>
+          <div class="page-desc">Regras de display, non-display e redistribuição para CME/CBOT, ICE, Euronext/MATIF, B3, DCE e JSE/SAFEX.</div>
+        </div>
+        <a href="broadcast_agro_market_data_policies.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-a">🌾</div>
+          <div class="tag a">Políticas</div>
+          <div class="card-title">Abrir Políticas — Bolsas Agro</div>
+          <div class="card-desc">O que pode e o que não pode redistribuir, por bolsa.</div>
+          <div class="card-foot"><span>broadcast_agro_market_data_policies.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══ VENDAS — COMPETITIVE INTEL ═══ -->
+    <div class="panel" id="p-inteligencia-mercado">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas · Competitive Intel</div>
+          <div class="page-title">Inteligência de Mercado — Broadcast+ vs Competidores</div>
+          <div class="page-desc">Posicionamento competitivo frente a Bloomberg, LSEG, Trillia, CMA e outros players do mercado.</div>
+        </div>
+        <a href="broadcast_inteligencia_mercado.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-p">🌐</div>
+          <div class="tag p">Benchmark</div>
+          <div class="card-title">Abrir Inteligência de Mercado</div>
+          <div class="card-desc">Comparativo de cobertura, preço e funcionalidades.</div>
+          <div class="card-foot"><span>broadcast_inteligencia_mercado.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-bpipe">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas · Competitive Intel</div>
+          <div class="page-title">Bloomberg B-PIPE × Broadcast — Matriz Competitiva</div>
+          <div class="page-desc">Comparação direta de funcionalidades, cobertura e precificação entre as plataformas.</div>
+        </div>
+        <a href="BPIPE_x_Broadcast_apresentacao.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-p">⚔️</div>
+          <div class="tag p">Matriz Comparativa</div>
+          <div class="card-title">Abrir B-PIPE vs Broadcast</div>
+          <div class="card-desc">Apresentação pronta para uso em conversas comerciais.</div>
+          <div class="card-foot"><span>BPIPE_x_Broadcast_apresentacao.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══ VENDAS — PRODUTO / DERIVED DATA ═══ -->
+    <div class="panel" id="p-derived-commodities">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Produto · Derived Data</div>
+          <div class="page-title">Derived Data — Commodities</div>
+          <div class="page-desc">Brainstorm de produtos derivados para a classe de ativos de commodities.</div>
+        </div>
+        <a href="brainstorm_commodities_derived_data.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-p">🧪</div>
+          <div class="tag p">Brainstorm</div>
+          <div class="card-title">Abrir Derived Data — Commodities</div>
+          <div class="card-desc">Ideias de produto a validar com Elissandra (sublicenciamento).</div>
+          <div class="card-foot"><span>brainstorm_commodities_derived_data.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-derived-macro">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Produto · Derived Data</div>
+          <div class="page-title">Derived Data — Macro</div>
+          <div class="page-desc">Brainstorm de produtos derivados para a classe de ativos macro.</div>
+        </div>
+        <a href="brainstorm_macro_derived_data.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-p">🧪</div>
+          <div class="tag p">Brainstorm</div>
+          <div class="card-title">Abrir Derived Data — Macro</div>
+          <div class="card-desc">Ideias de produto a validar com Elissandra (sublicenciamento).</div>
+          <div class="card-foot"><span>brainstorm_macro_derived_data.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══ VENDAS — MATERIAIS COMERCIAIS ═══ -->
+    <div class="panel" id="p-ice-pipeline">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas</div>
+          <div class="page-title">ICE Exchanges — Análise de Beneficiários</div>
+          <div class="page-desc">Pipeline comercial de clientes beneficiários do pacote ICE Data — 15 bolsas internacionais.</div>
+        </div>
+        <a href="ICE_Beneficiarios_Pipeline_HUB.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-a">📋</div>
+          <div class="tag a">Pipeline</div>
+          <div class="card-title">Abrir ICE — Pipeline Beneficiários</div>
+          <div class="card-desc">Demanda evidenciada por 18 tickets, 13 clientes beneficiários.</div>
+          <div class="card-foot"><span>ICE_Beneficiarios_Pipeline_HUB.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-oferta-dados">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas & Marketing</div>
+          <div class="page-title">Broadcast — Oferta de Dados</div>
+          <div class="page-desc">One-pager de vendas com análise de crescimento da cobertura de instrumentos.</div>
+        </div>
+        <a href="broadcast_oferta_dados_onepager.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-a">📄</div>
+          <div class="tag a">One-Pager</div>
+          <div class="card-title">Abrir Oferta de Dados</div>
+          <div class="card-desc">440K → 662K instrumentos. Material pronto para envio a clientes.</div>
+          <div class="card-foot"><span>broadcast_oferta_dados_onepager.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-datafeed-visao">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas & Marketing</div>
+          <div class="page-title">Broadcast Datafeed — Visão Geral de Produto</div>
+          <div class="page-desc">Material institucional sobre o produto Datafeed para apresentação a clientes.</div>
+        </div>
+        <a href="Broadcast_Datafeed_Visao_Geral.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-a">📡</div>
+          <div class="tag a">Produto</div>
+          <div class="card-title">Abrir Visão Geral — Datafeed</div>
+          <div class="card-desc">Apresentação institucional do produto Datafeed.</div>
+          <div class="card-foot"><span>Broadcast_Datafeed_Visao_Geral.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-esg">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas & Marketing</div>
+          <div class="page-title">Levantamento de Mercado — Dados ESG</div>
+          <div class="page-desc">Pesquisa de mercado e oportunidades de produto no segmento de dados ESG.</div>
+        </div>
+        <a href="levantamento_mercado_esg_broadcast.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-p">🌿</div>
+          <div class="tag p">Pesquisa</div>
+          <div class="card-title">Abrir Levantamento ESG</div>
+          <div class="card-desc">Análise regulatória e de mercado de créditos de carbono.</div>
+          <div class="card-foot"><span>levantamento_mercado_esg_broadcast.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-sugestoes">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Vendas · Produto</div>
+          <div class="page-title">Dashboard de Sugestões de Clientes</div>
+          <div class="page-desc">Consolidação de pedidos e feedback de clientes via tickets de suporte.</div>
+        </div>
+        <a href="dashboard_sugestoes_v2.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon ci-a">💡</div>
+          <div class="tag a">Customer Intel</div>
+          <div class="card-title">Abrir Sugestões de Clientes</div>
+          <div class="card-desc">661 tickets JIRA consolidados por tema e prioridade.</div>
+          <div class="card-foot"><span>dashboard_sugestoes_v2.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══ COMUNICAÇÃO ═══ -->
+    <div class="panel" id="p-newsletter">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Comunicação</div>
+          <div class="page-title">Broadcast Market Data — Destaques Nov/Dez 2025</div>
+          <div class="page-desc">Newsletter com os principais destaques e conquistas do período.</div>
+        </div>
+        <a href="newsletter_market_data_novdez2025.html" target="_blank" class="card" style="max-width:340px">
+          <div class="card-icon">📰</div>
+          <div class="tag">Newsletter</div>
+          <div class="card-title">Abrir Newsletter Nov/Dez 2025</div>
+          <div class="card-desc">Resumo executivo das principais entregas do bimestre.</div>
+          <div class="card-foot"><span>newsletter_market_data_novdez2025.html</span><span class="arrow">↗</span></div>
+        </a>
+      </div>
+    </div>
+
+  </main>
+</div>
 
 <script>
-  function showTab(id) {
-    // hide all panels
+  function show(id) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    // deactivate all tabs
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    // show target
-    document.getElementById('tab-' + id).classList.add('active');
-    // activate button
-    event.currentTarget.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('p-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) {
+        n.classList.add('active');
+      }
+    });
+    document.getElementById('main-content').scrollTop = 0;
   }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+  }
+
+  function toggleGroup(btn) {
+    const items = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    if (isOpen) {
+      items.style.maxHeight = items.scrollHeight + 'px';
+      requestAnimationFrame(() => {
+        items.style.transition = 'max-height .2s ease';
+        items.style.maxHeight = '0';
+      });
+      btn.classList.remove('open');
+    } else {
+      items.style.transition = 'max-height .2s ease';
+      items.style.maxHeight = items.scrollHeight + 'px';
+      btn.classList.add('open');
+      setTimeout(() => items.style.maxHeight = 'none', 220);
+    }
+  }
+
+  document.querySelectorAll('.nav-items').forEach(el => el.style.maxHeight = 'none');
 </script>
 </body>
 </html>
