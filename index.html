@@ -33,6 +33,32 @@
     --topbar-h:   52px;
   }
   html, body { height: 100%; }
+
+  /* ── LIGHT MODE ── */
+  body.light {
+    --navy:       #f5f3ee;
+    --navy-mid:   #eeebe3;
+    --surface:    #e4e0d6;
+    --card:       #ffffff;
+    --border:     rgba(13,27,42,0.09);
+    --border2:    rgba(13,27,42,0.05);
+    --gold:       #a8822f;
+    --gold-light: #c9a84c;
+    --gold-dim:   rgba(168,130,47,0.12);
+    --gold-dim2:  rgba(168,130,47,0.06);
+    --text-1:     #1c2a38;
+    --text-2:     #4d6278;
+    --text-3:     #8095a8;
+    --teal:       #1a9e92;
+    --teal-dim:   rgba(26,158,146,0.1);
+    --green:      #2f8f64;
+    --amber:      #b9842f;
+    --red:        #c44545;
+    --purple:     #7060c9;
+    --purple-dim: rgba(112,96,201,0.1);
+  }
+  body { transition: background .25s ease, color .25s ease; }
+
   body {
     font-family: 'Inter', sans-serif;
     background: var(--navy);
@@ -77,6 +103,28 @@
     animation: pulse 2.5s infinite;
   }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); cursor: pointer;
+    color: var(--text-2); padding: 5px 9px; border-radius: 7px;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; transition: background .15s, color .15s, border-color .15s;
+  }
+  .theme-toggle:hover { background: var(--surface); color: var(--text-1); border-color: var(--gold); }
+  .theme-toggle svg { width: 14px; height: 14px; }
+
+  /* ── FOOTER ── */
+  .app-footer {
+    flex-shrink: 0;
+    height: 34px;
+    background: var(--navy-mid);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px;
+    font-size: 11px; color: var(--text-3);
+  }
+  .app-footer .dot { opacity: .5; }
+  .app-footer strong { color: var(--gold); font-weight: 500; }
 
   .layout { display: flex; flex: 1; overflow: hidden; }
 
@@ -288,8 +336,12 @@
     </div>
   </div>
   <div class="topbar-right">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+      <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+      <span id="theme-label">Dark</span>
+    </button>
     <div class="pulse"></div>
-    Jun 2026 &nbsp;·&nbsp; Antonio Melo
+    Online
   </div>
 </header>
 
@@ -304,95 +356,16 @@
 
       <div class="nav-divider"></div>
 
-      <!-- Management -->
-      <div class="nav-group">
-        <button class="nav-group-btn open" onclick="toggleGroup(this)">
-          <span class="g-icon">👔</span><span class="g-label">Management</span>
-          <span class="g-count">4</span><span class="chevron">▶</span>
-        </button>
-        <div class="nav-items">
-          <a class="nav-item" onclick="show('roadmap')" href="#"><span class="item-dot"></span> Projetos 2026</a>
-          <a class="nav-item" onclick="show('automacao')" href="#"><span class="item-dot"></span> Sprint CoE Automação</a>
-          <a class="nav-item" onclick="show('hub-datafeeds')" href="#"><span class="item-dot"></span> HUB Datafeeds</a>
-          <a class="nav-item" onclick="show('team')" href="#"><span class="item-dot"></span> Estrutura do Time</a>
-        </div>
-      </div>
-
-      <div class="nav-divider"></div>
-
-      <!-- Financeiro -->
-      <div class="nav-group">
-        <button class="nav-group-btn open" onclick="toggleGroup(this)">
-          <span class="g-icon">💰</span><span class="g-label">Financeiro</span>
-          <span class="g-count">6</span><span class="chevron">▶</span>
-        </button>
-        <div class="nav-items">
-          <a class="nav-item" onclick="show('breakeven')" href="#"><span class="item-dot"></span> Breakeven por Produto</a>
-          <a class="nav-item" onclick="show('faturamento')" href="#"><span class="item-dot"></span> Faturamento Maio 2026</a>
-          <a class="nav-item" onclick="show('despesas')" href="#"><span class="item-dot"></span> Despesas com Dados</a>
-          <a class="nav-item" onclick="show('ice-contratos')" href="#"><span class="item-dot"></span> ICE — Contratos Consolidados</a>
-          <a class="nav-item" onclick="show('terminal-latam')" href="#"><span class="item-dot"></span> Terminal Latam / NUAM</a>
-          <a class="nav-item" onclick="show('exchange-map')" href="#"><span class="item-dot"></span> Mapa de Contratos (32)</a>
-        </div>
-      </div>
-
-      <div class="nav-divider"></div>
-
-      <!-- Vendas — Materiais Comerciais -->
-      <div class="nav-group">
-        <button class="nav-group-btn open" onclick="toggleGroup(this)">
-          <span class="g-icon">💼</span><span class="g-label">Materiais Comerciais</span>
-          <span class="g-count">5</span><span class="chevron">▶</span>
-        </button>
-        <div class="nav-items">
-          <a class="nav-item" onclick="show('ice-pipeline')" href="#"><span class="item-dot"></span> ICE — Pipeline Beneficiários</a>
-          <a class="nav-item" onclick="show('oferta-dados')" href="#"><span class="item-dot"></span> Oferta de Dados — One Pager</a>
-          <a class="nav-item" onclick="show('datafeed-visao')" href="#"><span class="item-dot"></span> Datafeed — Visão Geral</a>
-          <a class="nav-item" onclick="show('esg')" href="#"><span class="item-dot"></span> Levantamento ESG</a>
-          <a class="nav-item" onclick="show('sugestoes')" href="#"><span class="item-dot"></span> Sugestões de Clientes</a>
-        </div>
-      </div>
-
-      <div class="nav-divider"></div>
-
-      <!-- Vendas — Bolsas Fees & Regras -->
+      <!-- Bolsas — Fees & Regras -->
       <div class="nav-group">
         <button class="nav-group-btn open" onclick="toggleGroup(this)">
           <span class="g-icon">📋</span><span class="g-label">Bolsas — Fees & Regras</span>
           <span class="g-count">3</span><span class="chevron">▶</span>
         </button>
         <div class="nav-items">
-          <a class="nav-item" onclick="show('licensing-process')" href="#"><span class="item-dot"></span> Processo de Licenciamento</a>
           <a class="nav-item" onclick="show('fees-cheatsheet')" href="#"><span class="item-dot"></span> Cheatsheet de Fees</a>
+          <a class="nav-item" onclick="show('licensing-process')" href="#"><span class="item-dot"></span> Processo de Licenciamento</a>
           <a class="nav-item" onclick="show('agro-policies')" href="#"><span class="item-dot"></span> Políticas — Bolsas Agro</a>
-        </div>
-      </div>
-
-      <div class="nav-divider"></div>
-
-      <!-- Vendas — Competitive Intel -->
-      <div class="nav-group">
-        <button class="nav-group-btn open" onclick="toggleGroup(this)">
-          <span class="g-icon">⚔️</span><span class="g-label">Competitive Intel</span>
-          <span class="g-count">2</span><span class="chevron">▶</span>
-        </button>
-        <div class="nav-items">
-          <a class="nav-item" onclick="show('inteligencia-mercado')" href="#"><span class="item-dot"></span> Broadcast+ vs Competidores</a>
-          <a class="nav-item" onclick="show('bpipe')" href="#"><span class="item-dot"></span> Bloomberg B-PIPE — Matriz</a>
-        </div>
-      </div>
-
-      <div class="nav-divider"></div>
-
-      <!-- Vendas — Produto / Derived Data -->
-      <div class="nav-group">
-        <button class="nav-group-btn open" onclick="toggleGroup(this)">
-          <span class="g-icon">🧪</span><span class="g-label">Produto — Derived Data</span>
-          <span class="g-count">2</span><span class="chevron">▶</span>
-        </button>
-        <div class="nav-items">
-          <a class="nav-item" onclick="show('derived-commodities')" href="#"><span class="item-dot"></span> Derived Data — Commodities</a>
-          <a class="nav-item" onclick="show('derived-macro')" href="#"><span class="item-dot"></span> Derived Data — Macro</a>
         </div>
       </div>
 
@@ -406,6 +379,86 @@
         </button>
         <div class="nav-items">
           <a class="nav-item" onclick="show('newsletter')" href="#"><span class="item-dot"></span> Newsletter Nov/Dez 2025</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Competitive Intel -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">⚔️</span><span class="g-label">Competitive Intel</span>
+          <span class="g-count">2</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('bpipe')" href="#"><span class="item-dot"></span> Bloomberg B-PIPE — Matriz</a>
+          <a class="nav-item" onclick="show('inteligencia-mercado')" href="#"><span class="item-dot"></span> Broadcast+ vs Competidores</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Financeiro -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">💰</span><span class="g-label">Financeiro</span>
+          <span class="g-count">6</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('breakeven')" href="#"><span class="item-dot"></span> Breakeven por Produto</a>
+          <a class="nav-item" onclick="show('despesas')" href="#"><span class="item-dot"></span> Despesas com Dados</a>
+          <a class="nav-item" onclick="show('faturamento')" href="#"><span class="item-dot"></span> Faturamento Maio 2026</a>
+          <a class="nav-item" onclick="show('ice-contratos')" href="#"><span class="item-dot"></span> ICE — Contratos Consolidados</a>
+          <a class="nav-item" onclick="show('exchange-map')" href="#"><span class="item-dot"></span> Mapa de Contratos (32)</a>
+          <a class="nav-item" onclick="show('terminal-latam')" href="#"><span class="item-dot"></span> Terminal Latam / NUAM</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Management -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">👔</span><span class="g-label">Management</span>
+          <span class="g-count">5</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('team')" href="#"><span class="item-dot"></span> Estrutura do Time</a>
+          <a class="nav-item" onclick="show('hub-datafeeds')" href="#"><span class="item-dot"></span> HUB Datafeeds</a>
+          <a class="nav-item" onclick="show('datafeed-roadmap')" href="#"><span class="item-dot"></span> Roadmap Datafeed 2026–27</a>
+          <a class="nav-item" onclick="show('roadmap')" href="#"><span class="item-dot"></span> Roadmap Projetos 2026</a>
+          <a class="nav-item" onclick="show('automacao')" href="#"><span class="item-dot"></span> Sprint CoE Automação</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Materiais Comerciais -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">💼</span><span class="g-label">Materiais Comerciais</span>
+          <span class="g-count">5</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('datafeed-visao')" href="#"><span class="item-dot"></span> Datafeed — Visão Geral</a>
+          <a class="nav-item" onclick="show('ice-pipeline')" href="#"><span class="item-dot"></span> ICE — Pipeline Beneficiários</a>
+          <a class="nav-item" onclick="show('esg')" href="#"><span class="item-dot"></span> Levantamento ESG</a>
+          <a class="nav-item" onclick="show('oferta-dados')" href="#"><span class="item-dot"></span> Oferta de Dados — One Pager</a>
+          <a class="nav-item" onclick="show('sugestoes')" href="#"><span class="item-dot"></span> Sugestões de Clientes</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Produto — Derived Data -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">🧪</span><span class="g-label">Produto — Derived Data</span>
+          <span class="g-count">2</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('derived-commodities')" href="#"><span class="item-dot"></span> Derived Data — Commodities</a>
+          <a class="nav-item" onclick="show('derived-macro')" href="#"><span class="item-dot"></span> Derived Data — Macro</a>
         </div>
       </div>
 
@@ -429,7 +482,7 @@
         </p>
 
         <div class="stats-row">
-          <div><div class="stat-num">23</div><div class="stat-lbl">Documentos</div></div>
+          <div><div class="stat-num">24</div><div class="stat-lbl">Documentos</div></div>
           <div><div class="stat-num">5</div><div class="stat-lbl">Categorias</div></div>
           <div><div class="stat-num">662<b>K</b></div><div class="stat-lbl">Instrumentos</div></div>
           <div><div class="stat-num">15</div><div class="stat-lbl">Bolsas ICE</div></div>
@@ -474,6 +527,23 @@
             <div class="card-desc">Consulta rápida de taxas por bolsa, sem precisar acionar o time.</div>
             <div class="card-foot"><span>Bolsas — Fees & Regras</span><span class="arrow">→</span></div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-datafeed-roadmap">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Management</div>
+          <div class="page-title">Roadmap Market Data 2026–2027</div>
+          <div class="page-desc">Roadmap consolidado dos projetos de injetores: FenicsMD, Nasdaq, A5X, NUAM, CSD-BR e demais frentes de Market Data.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Market_Data_Roadmap_2026_2027.html</span>
+            <a href="Market_Data_Roadmap_2026_2027.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Market_Data_Roadmap_2026_2027.html" title="Roadmap Market Data 2026-2027"></iframe>
         </div>
       </div>
     </div>
@@ -903,6 +973,12 @@
   </main>
 </div>
 
+<footer class="app-footer">
+  <span>Autor: <strong>Antonio Melo</strong></span>
+  <span class="dot">·</span>
+  <span>Última atualização: <strong id="last-update"></strong></span>
+</footer>
+
 <script>
   function show(id) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -939,6 +1015,45 @@
   }
 
   document.querySelectorAll('.nav-items').forEach(el => el.style.maxHeight = 'none');
+
+  /* ── THEME TOGGLE ── */
+  const sunPath = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>';
+  const moonPath = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+
+  function applyTheme(theme) {
+    const icon = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (theme === 'light') {
+      document.body.classList.add('light');
+      icon.innerHTML = sunPath;
+      label.textContent = 'Light';
+    } else {
+      document.body.classList.remove('light');
+      icon.innerHTML = moonPath;
+      label.textContent = 'Dark';
+    }
+  }
+
+  function toggleTheme() {
+    const isLight = document.body.classList.contains('light');
+    const next = isLight ? 'dark' : 'light';
+    applyTheme(next);
+    try { localStorage.setItem('mda-theme', next); } catch(e) {}
+  }
+
+  (function initTheme() {
+    let saved = 'dark';
+    try { saved = localStorage.getItem('mda-theme') || 'dark'; } catch(e) {}
+    applyTheme(saved);
+  })();
+
+  /* ── FOOTER DATE ── */
+  (function setFooterDate() {
+    const d = new Date();
+    const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    const formatted = `${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+    document.getElementById('last-update').textContent = formatted;
+  })();
 </script>
 </body>
 </html>
