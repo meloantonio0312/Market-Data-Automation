@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Despesas com Dados de Mercado — 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --surface2: #F0EFE9;
+    --border: rgba(0,0,0,0.08);
+    --border-med: rgba(0,0,0,0.14);
+    --text: #1A1916;
+    --text-2: #6B6960;
+    --text-3: #9A9890;
+    --blue: #1A56A0;
+    --blue-light: #E6EFF9;
+    --blue-mid: #5B8FCC;
+    --purple: #4F45B0;
+    --purple-light: #EDECF9;
+    --purple-mid: #8A84D0;
+    --green: #2A7A4B;
+    --green-bg: #E8F5EE;
+    --red: #B03030;
+    --red-bg: #FAE8E8;
+    --amber: #8A5A0A;
+    --amber-bg: #FBF0D8;
+    --font: 'Inter', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-med);
+    padding: 20px 32px 0;
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .header-brand {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    color: var(--text);
+  }
+  .header-sub {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-top: 3px;
+  }
+  .header-meta {
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-3);
+    font-family: var(--mono);
+  }
+  .header-meta strong {
+    display: block;
+    font-size: 13px;
+    color: var(--text-2);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-top: 4px;
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .15s, border-color .15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .tab-icon { font-size: 15px; }
+
+  /* ── LAYOUT ── */
+  .main { padding: 24px 32px; max-width: 1200px; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── KPI ROW ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    color: var(--text);
+    font-family: var(--mono);
+  }
+  .kpi-sub {
+    font-size: 12px;
+    margin-top: 4px;
+    color: var(--text-2);
+  }
+  .kpi-value.pos { color: var(--green); }
+  .kpi-value.neg { color: var(--red); }
+  .kpi-sub.pos { color: var(--green); }
+  .kpi-sub.neg { color: var(--red); }
+
+  /* ── CHART ROW ── */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .card + .card { margin-top: 16px; }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--text-3);
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: .02em;
+  }
+  .pill-var { background: var(--blue-light); color: var(--blue); }
+  .pill-fix { background: var(--purple-light); color: var(--purple); }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+    font-size: 11px;
+    color: var(--text-2);
+  }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .ld { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
+  .chart-wrap { position: relative; width: 100%; }
+
+  /* ── TABLES ── */
+  .tbl-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  thead th {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-3);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-med);
+    text-align: right;
+    white-space: nowrap;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+  }
+  thead th:first-child { text-align: left; }
+  tbody td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  tbody td:first-child {
+    text-align: left;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+  tbody tr:hover td { background: var(--surface2); }
+  .tr-tot td {
+    font-weight: 600;
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--surface2);
+    border-top: 1.5px solid var(--border-med);
+    border-bottom: none;
+  }
+  .dim { color: var(--text-2); font-weight: 400; }
+  .mono { font-family: var(--mono); }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 5px;
+    letter-spacing: .02em;
+  }
+  .bok  { background: var(--green-bg);  color: var(--green); }
+  .bbad { background: var(--red-bg);    color: var(--red); }
+  .bneu { background: var(--surface2);  color: var(--text-3); }
+  .bamb { background: var(--amber-bg);  color: var(--amber); }
+
+  .pos { color: var(--green); }
+  .neg { color: var(--red); }
+
+  /* ── SECTION DIVIDER ── */
+  .spacer { height: 16px; }
+
+  /* ── METHODOLOGY BOX ── */
+  .method-box {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .method-toggle {
+    width: 100%;
+    background: var(--surface2);
+    border: none;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--text-3);
+    text-align: left;
+  }
+  .method-toggle:hover { background: #E8E7E1; }
+  .method-toggle .arrow { font-size: 14px; transition: transform .2s; }
+  .method-toggle.open .arrow { transform: rotate(180deg); }
+  .method-body { display: none; padding: 16px; background: var(--surface); }
+  .method-body.open { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .method-item {
+    padding: 12px 14px;
+    background: var(--surface2);
+    border-radius: 8px;
+    border-left: 3px solid var(--border-med);
+  }
+  .method-item.c-blue   { border-left-color: var(--blue); }
+  .method-item.c-purple { border-left-color: var(--purple); }
+  .method-item.c-green  { border-left-color: var(--green); }
+  .method-item.c-amber  { border-left-color: var(--amber); }
+  .method-kpi  { font-size: 11px; font-weight: 600; color: var(--text-2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+  .method-val  { font-size: 15px; font-weight: 600; font-family: var(--mono); color: var(--text); margin-bottom: 6px; }
+  .method-desc { font-size: 12px; color: var(--text-2); line-height: 1.55; }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 32px;
+    font-size: 11px;
+    color: var(--text-3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface);
+  }
+
+  /* ── DARK MODE ── */
+  body.dark {
+    --bg: #141412;
+    --surface: #1E1D1A;
+    --surface2: #28271F;
+    --border: rgba(255,255,255,0.07);
+    --border-med: rgba(255,255,255,0.13);
+    --text: #F0EFE9;
+    --text-2: #A09E96;
+    --text-3: #6B6960;
+    --blue: #5B9FE0;
+    --blue-light: #0D2A47;
+    --blue-mid: #3A7DC4;
+    --purple: #8A84D0;
+    --purple-light: #1F1C40;
+    --purple-mid: #6B65B8;
+    --green: #5AAF7A;
+    --green-bg: #0E2A1A;
+    --red: #E07070;
+    --red-bg: #2E1010;
+    --amber: #D4A030;
+    --amber-bg: #2A1E08;
+  }
+
+  /* ── THEME TOGGLE BUTTON ── */
+  .theme-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border-med);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .15s, color .15s;
+    white-space: nowrap;
+  }
+  .theme-btn:hover { background: var(--border); color: var(--text); }
+  .theme-icon { font-size: 14px; }
+
+  @media print {
+    body { background: white; }
+    .header { border-bottom: 1px solid #ddd; }
+    .tab-btn:not(.active) { display: none; }
+    .panel { display: block !important; page-break-inside: avoid; }
+    .theme-btn { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-brand">Agência Estado · Broadcast</div>
+      <div class="header-title">Despesas com dados de mercado</div>
+      <div class="header-sub">Bolsas nacionais, internacionais e parceiros de dados · Versão Real</div>
+    </div>
+    <div style="display:flex; align-items:flex-start; gap:16px;">
+      <div class="header-meta">
+        <strong>Referência</strong>
+        Exercício 2026 · Versão Real<br>
+        Última atualização: <strong style="color:var(--text-2)">10 Jun 2026</strong><br>
+        Autor: <strong style="color:var(--text-2)">Antonio Melo</strong>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme(this)" id="themeBtn">
+        <span class="theme-icon">🌙</span> Modo escuro
+      </button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('maio', this)">
+      <span class="tab-icon">📅</span> Maio / 2026
+    </button>
+    <button class="tab-btn" onclick="switchTab('ytd', this)">
+      <span class="tab-icon">📈</span> YTD — Jan a Mai
+    </button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ══ PAINEL MAIO ══ -->
+  <div id="panel-maio" class="panel active">
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Total maio/2026</div>
+        <div class="kpi-value mono">R$ 2,71M</div>
+        <div class="kpi-sub">Variável + Fixa</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Repasse variável</div>
+        <div class="kpi-value mono">R$ 2,06M</div>
+        <div class="kpi-sub">76% do mês</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Custos fixos</div>
+        <div class="kpi-value mono">R$ 654K</div>
+        <div class="kpi-sub">24% do mês</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">vs. orçado maio</div>
+        <div class="kpi-value pos">−8,0%</div>
+        <div class="kpi-sub pos">R$ 236K abaixo do budget</div>
+      </div>
+    </div>
+
+    <div class="method-box">
+      <button class="method-toggle" onclick="toggleMethod(this)">
+        <span>&#9432;&nbsp;&nbsp;Como esses indicadores são calculados</span>
+        <span class="arrow">&#8964;</span>
+      </button>
+      <div class="method-body">
+        <div class="method-item c-blue">
+          <div class="method-kpi">Total Maio/2026</div>
+          <div class="method-val">R$ 2,71M</div>
+          <div class="method-desc">Soma de todos os lançamentos contábeis do mês de maio — inclui tanto o repasse variável às bolsas quanto os contratos e licenças fixos. Fonte: aba "Evolutivo" do SAP, linha <em>Total Geral</em>, coluna Maio/2026.</div>
+        </div>
+        <div class="method-item c-purple">
+          <div class="method-kpi">Repasse Variável</div>
+          <div class="method-val">R$ 2,06M &nbsp;<span style="font-size:12px;font-weight:400;color:var(--text-3)">(76% do mês)</span></div>
+          <div class="method-desc">Soma das linhas classificadas como <strong>F/V = Variável</strong> no SAP. São os custos que dependem diretamente do volume de uso de dados — fees repassados às bolsas (BM&FBOVESPA, CME Group, ICE, Nasdaq, NYSE e demais). Variam mês a mês conforme contrato de distribuição.</div>
+        </div>
+        <div class="method-item c-purple">
+          <div class="method-kpi">Custos Fixos</div>
+          <div class="method-val">R$ 654K &nbsp;<span style="font-size:12px;font-weight:400;color:var(--text-3)">(24% do mês)</span></div>
+          <div class="method-desc">Soma das linhas classificadas como <strong>F/V = Fixa</strong> no SAP. São contratos e licenças com valor mensal pré-acordado, independentes de volume de uso — IDC, CEPEA-FEALQ, FENICS, ANBIMA, Trading Economics, entre outros.</div>
+        </div>
+        <div class="method-item c-green">
+          <div class="method-kpi">vs. Orçado Maio</div>
+          <div class="method-val pos">−8,0%</div>
+          <div class="method-desc">Compara o Real com o Orçado do mesmo mês: <strong>Real = R$ 2.714.715</strong> vs. <strong>Orçado = R$ 2.951.118</strong>. Desvio = −R$ 236.403. O sinal negativo é <em>favorável</em> — a área gastou menos do que o planejado. Orçado extraído da versão "Orçado 2026" do mesmo relatório SAP, coluna Maio.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="card">
+        <div class="card-head">
+          <span class="pill pill-fix">Fixa</span>
+          <span class="card-title">Real vs. Orçado — maio/2026</span>
+        </div>
+        <div class="legend">
+          <span><span class="ld" style="background:#4F45B0"></span>Real 2026</span>
+          <span><span class="ld" style="background:#A8A4D8"></span>Orçado 2026</span>
+        </div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="cMaiFix" role="img" aria-label="Real vs Orçado fixa maio 2026"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <span class="pill pill-var">Variável</span>
+          <span class="card-title">Real vs. Orçado — maio/2026</span>
+        </div>
+        <div class="legend">
+          <span><span class="ld" style="background:#1A56A0"></span>Real 2026</span>
+          <span><span class="ld" style="background:#9DBFE0"></span>Orçado 2026</span>
+        </div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="cMaiVar" role="img" aria-label="Real vs Orçado variável maio 2026"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="pill pill-fix">Fixa — Contratos e Licenças</span>
+        <span class="card-title">Custos fixos independentes de volume</span>
+      </div>
+      <div class="tbl-wrap"><table id="tMaiFix"></table></div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="pill pill-var">Variável — Repasse às Bolsas</span>
+        <span class="card-title">Custo repassado pelo uso de dados</span>
+      </div>
+      <div class="tbl-wrap"><table id="tMaiVar"></table></div>
+    </div>
+
+  </div>
+
+  <!-- ══ PAINEL YTD ══ -->
+  <div id="panel-ytd" class="panel">
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Total YTD Jan–Mai</div>
+        <div class="kpi-value mono">R$ 13,7M</div>
+        <div class="kpi-sub">Variável + Fixa</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Repasse variável</div>
+        <div class="kpi-value mono">R$ 10,5M</div>
+        <div class="kpi-sub">76% do YTD</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Custos fixos</div>
+        <div class="kpi-value mono">R$ 3,2M</div>
+        <div class="kpi-sub">24% do YTD</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">vs. orçado YTD</div>
+        <div class="kpi-value pos">−6,4%</div>
+        <div class="kpi-sub pos">R$ 935K abaixo do budget</div>
+      </div>
+    </div>
+
+    <div class="method-box">
+      <button class="method-toggle" onclick="toggleMethod(this)">
+        <span>&#9432;&nbsp;&nbsp;Como esses indicadores são calculados</span>
+        <span class="arrow">&#8964;</span>
+      </button>
+      <div class="method-body">
+        <div class="method-item c-blue">
+          <div class="method-kpi">Total YTD Jan–Mai</div>
+          <div class="method-val">R$ 13,7M</div>
+          <div class="method-desc">Soma acumulada de todos os lançamentos contábeis de Janeiro a Maio de 2026 — Variável + Fixa. Fonte: aba "Evolutivo" do SAP, linha <em>Total Geral</em>, colunas 1 a 5 do exercício 2026.</div>
+        </div>
+        <div class="method-item c-purple">
+          <div class="method-kpi">Repasse Variável</div>
+          <div class="method-val">R$ 10,5M &nbsp;<span style="font-size:12px;font-weight:400;color:var(--text-3)">(76% do YTD)</span></div>
+          <div class="method-desc">Acumulado Jan–Mai das linhas <strong>F/V = Variável</strong>. Representa o custo de distribuição e uso de dados de mercado repassado diretamente pelas bolsas nacionais e internacionais. Principal driver: BM&FBOVESPA (R$ 6,6M, 63% do bloco variável).</div>
+        </div>
+        <div class="method-item c-purple">
+          <div class="method-kpi">Custos Fixos</div>
+          <div class="method-val">R$ 3,2M &nbsp;<span style="font-size:12px;font-weight:400;color:var(--text-3)">(24% do YTD)</span></div>
+          <div class="method-desc">Acumulado Jan–Mai das linhas <strong>F/V = Fixa</strong>. Contratos com parceiros de dados cuja mensalidade é pré-fixada — IDC (R$ 1,0M), CME Group Fixa (R$ 358K), CEPEA-FEALQ (R$ 285K) e demais licenças.</div>
+        </div>
+        <div class="method-item c-green">
+          <div class="method-kpi">vs. Orçado YTD</div>
+          <div class="method-val pos">−6,4%</div>
+          <div class="method-desc">Compara o Real acumulado com o Orçado acumulado do mesmo período: <strong>Real = R$ 13,69M</strong> vs. <strong>Orçado = R$ 14,62M</strong>. Desvio favorável de −R$ 935K. Principais contribuições: CME Var (−R$ 372K), ICE Var (−R$ 307K) e NYSE Fixa (−R$ 71K).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="card">
+        <div class="card-head">
+          <span class="pill pill-fix">Fixa</span>
+          <span class="card-title">Real vs. Orçado — YTD Jan–Mai</span>
+        </div>
+        <div class="legend">
+          <span><span class="ld" style="background:#4F45B0"></span>Real 2026</span>
+          <span><span class="ld" style="background:#A8A4D8"></span>Orçado 2026</span>
+        </div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="cYtdFix" role="img" aria-label="Real vs Orçado fixa YTD 2026"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <span class="pill pill-var">Variável</span>
+          <span class="card-title">Real vs. Orçado — YTD Jan–Mai</span>
+        </div>
+        <div class="legend">
+          <span><span class="ld" style="background:#1A56A0"></span>Real 2026</span>
+          <span><span class="ld" style="background:#9DBFE0"></span>Orçado 2026</span>
+        </div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="cYtdVar" role="img" aria-label="Real vs Orçado variável YTD 2026"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="pill pill-fix">Fixa — Contratos e Licenças</span>
+        <span class="card-title">Acumulado Jan–Mai 2026</span>
+      </div>
+      <div class="tbl-wrap"><table id="tYtdFix"></table></div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="pill pill-var">Variável — Repasse às Bolsas</span>
+        <span class="card-title">Acumulado Jan–Mai 2026</span>
+      </div>
+      <div class="tbl-wrap"><table id="tYtdVar"></table></div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>Agência Estado · Broadcast — Gestão de Custos com Dados de Mercado · 2026</span>
+  <span>Autor: Antonio Melo &nbsp;·&nbsp; Última atualização: 10 Jun 2026 &nbsp;·&nbsp; Fonte: SAP · Versão Real</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleTheme(btn) {
+  const dark = document.body.classList.toggle('dark');
+  btn.innerHTML = dark
+    ? '<span class="theme-icon">☀️</span> Modo claro'
+    : '<span class="theme-icon">🌙</span> Modo escuro';
+}
+
+function toggleMethod(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+const fmtR = v => {
+  if (!v || v === 0) return '–';
+  const a = Math.abs(v), s = v < 0 ? '−' : '';
+  if (a >= 1e6) return s + 'R$\u00a0' + (a / 1e6).toFixed(3).replace('.', ',') + 'M';
+  if (a >= 1e3) return s + 'R$\u00a0' + (a / 1e3).toFixed(1).replace('.', ',') + 'K';
+  return s + 'R$\u00a0' + a.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
+const pctH = v => {
+  if (v === null || isNaN(v)) return '<span class="dim">–</span>';
+  const cls = v > 5 ? 'neg' : v < -5 ? 'pos' : 'dim';
+  return `<span class="${cls}">${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(1)}%</span>`;
+};
+
+const badgeH = vsO => {
+  if (vsO === null || isNaN(vsO)) return '<span class="badge bneu">–</span>';
+  if (vsO > 5)  return '<span class="badge bbad">acima</span>';
+  if (vsO < -5) return '<span class="badge bok">abaixo</span>';
+  return '<span class="badge bneu">alinhado</span>';
+};
+
+function buildMaiTable(id, data) {
+  const t = document.getElementById(id);
+  const th = document.createElement('thead');
+  th.innerHTML = `<tr>
+    <th>Fornecedor / Bolsa</th>
+    <th>Mai/26 Real</th>
+    <th>Abr/26 Real</th>
+    <th>vs. Abr</th>
+    <th>Mai/26 Orç.</th>
+    <th>vs. Orçado</th>
+    <th>Mai/25 Real</th>
+    <th>vs. 2025</th>
+    <th>Status</th>
+  </tr>`;
+  t.appendChild(th);
+  const tb = document.createElement('tbody');
+  let tM = 0, tA = 0, tO = 0, tR25 = 0;
+  [...data].sort((a, b) => b.mai - a.mai).forEach(r => {
+    const vsA  = r.abr  ? (r.mai - r.abr)  / Math.abs(r.abr)  * 100 : null;
+    const vsO  = r.orc  ? (r.mai - r.orc)  / Math.abs(r.orc)  * 100 : null;
+    const vs25 = r.r25  ? (r.mai - r.r25)  / Math.abs(r.r25)  * 100 : null;
+    tM += r.mai; tA += r.abr || 0; tO += r.orc || 0; tR25 += r.r25 || 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td title="${r.name}">${r.name}</td>
+      <td class="mono" style="font-weight:600">${fmtR(r.mai)}</td>
+      <td class="mono dim">${fmtR(r.abr)}</td>
+      <td>${pctH(vsA)}</td>
+      <td class="mono dim">${fmtR(r.orc)}</td>
+      <td>${pctH(vsO)}</td>
+      <td class="mono dim">${fmtR(r.r25)}</td>
+      <td>${pctH(vs25)}</td>
+      <td>${badgeH(vsO)}</td>`;
+    tb.appendChild(tr);
+  });
+  const tvA  = tA   ? (tM - tA)   / Math.abs(tA)   * 100 : 0;
+  const tvO  = tO   ? (tM - tO)   / Math.abs(tO)   * 100 : 0;
+  const tv25 = tR25 ? (tM - tR25) / Math.abs(tR25) * 100 : 0;
+  const tr = document.createElement('tr'); tr.className = 'tr-tot';
+  tr.innerHTML = `<td>Total</td>
+    <td>${fmtR(tM)}</td><td>${fmtR(tA)}</td><td>${pctH(tvA)}</td>
+    <td>${fmtR(tO)}</td><td>${pctH(tvO)}</td>
+    <td>${fmtR(tR25)}</td><td>${pctH(tv25)}</td><td></td>`;
+  tb.appendChild(tr);
+  t.appendChild(tb);
+}
+
+function buildYtdTable(id, data) {
+  const t = document.getElementById(id);
+  const th = document.createElement('thead');
+  th.innerHTML = `<tr>
+    <th>Fornecedor / Bolsa</th>
+    <th>YTD Real 2026</th>
+    <th>YTD Orç. 2026</th>
+    <th>vs. Orçado</th>
+    <th>YTD Real 2025</th>
+    <th>vs. 2025</th>
+    <th>Status</th>
+  </tr>`;
+  t.appendChild(th);
+  const tb = document.createElement('tbody');
+  let tR = 0, tO = 0, tR25 = 0;
+  [...data].sort((a, b) => b.r26 - a.r26).forEach(r => {
+    const vsO  = r.o26  ? (r.r26 - r.o26)  / Math.abs(r.o26)  * 100 : null;
+    const vs25 = r.r25  ? (r.r26 - r.r25)  / Math.abs(r.r25)  * 100 : null;
+    tR += r.r26; tO += r.o26 || 0; tR25 += r.r25 || 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td title="${r.name}">${r.name}</td>
+      <td class="mono" style="font-weight:600">${fmtR(r.r26)}</td>
+      <td class="mono dim">${fmtR(r.o26)}</td>
+      <td>${pctH(vsO)}</td>
+      <td class="mono dim">${fmtR(r.r25)}</td>
+      <td>${pctH(vs25)}</td>
+      <td>${badgeH(vsO)}</td>`;
+    tb.appendChild(tr);
+  });
+  const tvO  = tO   ? (tR - tO)   / Math.abs(tO)   * 100 : 0;
+  const tv25 = tR25 ? (tR - tR25) / Math.abs(tR25) * 100 : 0;
+  const tr = document.createElement('tr'); tr.className = 'tr-tot';
+  tr.innerHTML = `<td>Total</td>
+    <td>${fmtR(tR)}</td><td>${fmtR(tO)}</td><td>${pctH(tvO)}</td>
+    <td>${fmtR(tR25)}</td><td>${pctH(tv25)}</td><td></td>`;
+  tb.appendChild(tr);
+  t.appendChild(tb);
+}
+
+// ── DATA ──
+const maiVar = [
+  {name:'BM&FBOVESPA',    mai:1257046.92, abr:1339626.26, orc:1376989.89, r25:1347122.74},
+  {name:'CME Group',       mai:402500.52,  abr:299765.56,  orc:469948.81,  r25:480991.91},
+  {name:'ICE',             mai:253140.31,  abr:225323.33,  orc:310546.59,  r25:291395.17},
+  {name:'Nasdaq',          mai:51731.06,   abr:42573.84,   orc:55325.75,   r25:67408.44},
+  {name:'NYSE',            mai:34517.89,   abr:37248.55,   orc:40628.09,   r25:38470.31},
+  {name:'FTSE',            mai:27208.66,   abr:25592.55,   orc:5270.56,    r25:5834.84},
+  {name:'Euronext',        mai:20454.30,   abr:19416.05,   orc:23073.84,   r25:23832.27},
+  {name:'Deutsche Börse',  mai:7921.92,    abr:9254.68,    orc:9895.79,    r25:10068.58},
+  {name:'CBOE',            mai:5187.32,    abr:4949.06,    orc:5855.88,    r25:4419.63},
+  {name:'LME',             mai:771.20,     abr:705.52,     orc:687.50,     r25:2793.95},
+];
+const maiFix = [
+  {name:'IDC',             mai:199550.28,  abr:193139.10,  orc:219351.41,  r25:217983.99},
+  {name:'CME Group',       mai:70754.80,   abr:67710.89,   orc:76436.25,   r25:86063.48},
+  {name:'CEPEA-FEALQ',    mai:57484.88,   abr:57484.88,   orc:57758.61,   r25:54747.50},
+  {name:'NYSE',            mai:45443.08,   abr:51380.51,   orc:65320.61,   r25:64270.67},
+  {name:'ICE',             mai:40954.41,   abr:34370.93,   orc:42598.02,   r25:44468.21},
+  {name:'UP2Data B3',      mai:35498.56,   abr:27311.86,   orc:8128.05,    r25:3225.20},
+  {name:'FENICS',          mai:34671.53,   abr:55702.14,   orc:19412.25,   r25:0},
+  {name:'ANBIMA',          mai:33228.74,   abr:31756.47,   orc:34701.01,   r25:33228.74},
+  {name:'Nasdaq',          mai:30901.34,   abr:24392.39,   orc:32346.87,   r25:5175.53},
+  {name:'Trading Econ.',   mai:24112.95,   abr:23475.76,   orc:32023.20,   r25:0},
+  {name:'CBOE',            mai:12039.85,   abr:11194.33,   orc:12941.17,   r25:10041.48},
+  {name:'BM&FBOVESPA',     mai:12000.00,   abr:12000.00,   orc:8409.22,    r25:8052.42},
+  {name:'LME',             mai:11041.97,   abr:11041.97,   orc:11458.33,   r25:7054.59},
+  {name:'IIFE',            mai:10405.99,   abr:10405.99,   orc:10405.99,   r25:9894.22},
+  {name:'Euronext',        mai:7285.75,    abr:6918.44,    orc:7456.04,    r25:7885.95},
+  {name:'Six Financial',   mai:7025.21,    abr:7234.46,    orc:8431.68,    r25:8164.03},
+  {name:'FTSE',            mai:6841.29,    abr:6841.29,    orc:6924.03,    r25:6848.78},
+  {name:'Deutsche Börse',  mai:6208.26,    abr:4518.46,    orc:5674.84,    r25:5675.42},
+  {name:'Bolsa Mexico',    mai:4182.81,    abr:4182.81,    orc:4461.11,    r25:4594.28},
+  {name:'Bolsa Malasia',   mai:2618.42,    abr:2650.42,    orc:3898.67,    r25:3131.55},
+  {name:'Shanghai SE',     mai:1176.13,    abr:1176.13,    orc:1222.22,    r25:1017.98},
+  {name:'Thailand SE',     mai:733.34,     abr:727.07,     orc:781.93,     r25:261.08},
+  {name:'Taiwan SE',       mai:75.33,      abr:75.33,      orc:589.90,     r25:514.81},
+];
+const ytdVar = [
+  {name:'BM&FBOVESPA',    r26:6605250.91, o26:6884949.45, r25:6671778.85},
+  {name:'CME Group',       r26:1977296.57, o26:2349744.05, r25:2323938.39},
+  {name:'ICE',             r26:1245814.61, o26:1552732.95, r25:1411960.84},
+  {name:'Nasdaq',          r26:211670.85,  o26:276628.75,  r25:340056.04},
+  {name:'NYSE',            r26:170858.75,  o26:203140.45,  r25:186358.98},
+  {name:'FTSE',            r26:133751.05,  o26:26352.80,   r25:27544.83},
+  {name:'Euronext',        r26:100864.73,  o26:115369.20,  r25:122312.58},
+  {name:'Deutsche Börse',  r26:43164.69,   o26:49478.95,   r25:49344.13},
+  {name:'CBOE',            r26:25956.42,   o26:29279.40,   r25:22622.28},
+  {name:'LME',             r26:3502.93,    o26:3437.50,    r25:8204.10},
+];
+const ytdFix = [
+  {name:'IDC',             r26:1022496.39, o26:1096757.05, r25:1081320.40},
+  {name:'CME Group',       r26:358112.55,  o26:382181.25,  r25:339257.20},
+  {name:'CEPEA-FEALQ',    r26:284687.02,  o26:288207.65,  r25:271214.38},
+  {name:'NYSE',            r26:255806.12,  o26:326603.05,  r25:326441.87},
+  {name:'ICE',             r26:181248.46,  o26:212990.10,  r25:222341.04},
+  {name:'ANBIMA',          r26:166143.70,  o26:173505.05,  r25:166143.70},
+  {name:'FENICS',          r26:159118.08,  o26:97061.25,   r25:0},
+  {name:'Trading Econ.',   r26:139111.62,  o26:160116.00,  r25:0},
+  {name:'Nasdaq',          r26:147294.47,  o26:161734.35,  r25:15064.39},
+  {name:'UP2Data B3',      r26:93113.53,   o26:40640.26,   r25:22383.40},
+  {name:'CBOE',            r26:59770.63,   o26:64705.85,   r25:50472.49},
+  {name:'BM&FBOVESPA',     r26:60000.00,   o26:42046.10,   r25:40262.10},
+  {name:'LME',             r26:55209.84,   o26:57291.65,   r25:50542.73},
+  {name:'IIFE',            r26:52029.95,   o26:52029.95,   r25:49471.10},
+  {name:'Euronext',        r26:35728.72,   o26:37459.15,   r25:29850.15},
+  {name:'FTSE',            r26:34206.45,   o26:34620.15,   r25:34243.90},
+  {name:'Deutsche Börse',  r26:27817.09,   o26:28374.20,   r25:27576.37},
+  {name:'Bolsa Mexico',    r26:20914.03,   o26:22305.55,   r25:22971.42},
+  {name:'Bolsa Malasia',   r26:5944.34,    o26:19493.35,   r25:18897.99},
+  {name:'Shanghai SE',     r26:5880.66,    o26:6111.10,    r25:6383.86},
+  {name:'Thailand SE',     r26:3782.36,    o26:3888.35,    r25:4839.75},
+  {name:'Taiwan SE',       r26:1214.51,    o26:2949.50,    r25:2568.53},
+];
+
+// ── BUILD TABLES ──
+buildMaiTable('tMaiVar', maiVar);
+buildMaiTable('tMaiFix', maiFix);
+buildYtdTable('tYtdVar', ytdVar);
+buildYtdTable('tYtdFix', ytdFix);
+
+// ── CHARTS ──
+function mkBar(id, labels, d1, d2, c1, c2) {
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {label:'Real', data:d1, backgroundColor:c1, borderRadius:4, borderSkipped:false},
+        {label:'Orçado', data:d2, backgroundColor:c2, borderRadius:4, borderSkipped:false}
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {display:false},
+        tooltip: {callbacks:{label:c => c.dataset.label+': R$ '+Math.round(c.raw).toLocaleString('pt-BR')}}
+      },
+      scales: {
+        x: {ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K',font:{size:10,family:'IBM Plex Mono'}}, grid:{color:'rgba(0,0,0,0.05)'}},
+        y: {ticks:{font:{size:11}}, grid:{display:false}}
+      }
+    }
+  });
+}
+
+const top6MaiVar = [...maiVar].sort((a,b)=>b.mai-a.mai).slice(0,6);
+mkBar('cMaiVar', top6MaiVar.map(r=>r.name), top6MaiVar.map(r=>Math.round(r.mai)), top6MaiVar.map(r=>Math.round(r.orc)), '#1A56A0', '#9DBFE0');
+
+const top6MaiFix = [...maiFix].sort((a,b)=>b.mai-a.mai).slice(0,6);
+mkBar('cMaiFix', top6MaiFix.map(r=>r.name), top6MaiFix.map(r=>Math.round(r.mai)), top6MaiFix.map(r=>Math.round(r.orc)), '#4F45B0', '#A8A4D8');
+
+const top6YtdVar = [...ytdVar].sort((a,b)=>b.r26-a.r26).slice(0,6);
+mkBar('cYtdVar', top6YtdVar.map(r=>r.name), top6YtdVar.map(r=>Math.round(r.r26)), top6YtdVar.map(r=>Math.round(r.o26)), '#1A56A0', '#9DBFE0');
+
+const top8YtdFix = [...ytdFix].sort((a,b)=>b.r26-a.r26).slice(0,8);
+mkBar('cYtdFix', top8YtdFix.map(r=>r.name), top8YtdFix.map(r=>Math.round(r.r26)), top8YtdFix.map(r=>Math.round(r.o26)), '#4F45B0', '#A8A4D8');
+</script>
+</body>
+</html>

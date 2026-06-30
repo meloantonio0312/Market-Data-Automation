@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Broadcast Datafeed — Visão Geral de Produto</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@300;400;600;700;800&display=swap');
+
+  :root {
+    --navy:    #0A0F1E;
+    --navy-2:  #111827;
+    --navy-3:  #1C2537;
+    --navy-4:  #243048;
+    --gold:    #C9A84C;
+    --gold-lt: #E4C47A;
+    --gold-dk: #9A7630;
+    --cyan:    #2D9CDB;
+    --cyan-lt: #56B8F2;
+    --white:   #FFFFFF;
+    --gray-1:  #F0F2F5;
+    --gray-2:  #BFC7D5;
+    --gray-3:  #7A8699;
+    --red:     #E05252;
+    --green:   #3CC47C;
+
+    --radius:  12px;
+    --shadow:  0 4px 32px rgba(0,0,0,0.45);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,15,30,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: .02em;
+    color: var(--white);
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--gray-2);
+    text-decoration: none;
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .badge-confidential {
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold-dk);
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(201,168,76,.08);
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    padding: 100px 48px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  section:first-of-type { padding-top: 140px; }
+
+  .section-eyebrow {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px; height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 0 48px;
+    max-width: 100%;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(45,156,219,.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(201,168,76,.07) 0%, transparent 60%),
+      var(--navy);
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    margin: 0 auto 0 0;
+    padding: 120px 0 80px;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,.1);
+    border: 1px solid rgba(201,168,76,.3);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(.8); }
+  }
+  .hero h1 {
+    font-size: clamp(2.8rem, 5vw, 4.4rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: 24px;
+    color: var(--white);
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--gray-2);
+    max-width: 560px;
+    line-height: 1.8;
+    margin-bottom: 48px;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+  }
+  .hero-stat {}
+  .hero-stat .num {
+    font-family: 'Sora', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .hero-stat .lbl {
+    font-size: .75rem;
+    color: var(--gray-3);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  /* ─── SECTION TITLE ─── */
+  .section-title {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .section-sub {
+    color: var(--gray-3);
+    font-size: .95rem;
+    margin-bottom: 48px;
+  }
+
+  /* ─── OVERVIEW GRID ─── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .overview-card {
+    background: var(--navy-3);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: var(--radius);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .25s, transform .25s;
+  }
+  .overview-card:hover {
+    border-color: rgba(201,168,76,.4);
+    transform: translateY(-3px);
+  }
+  .overview-card::before {
+    content: attr(data-num);
+    position: absolute;
+    top: 16px; right: 20px;
+    font-family: 'Sora', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: rgba(255,255,255,.04);
+    line-height: 1;
+  }
+  .card-label {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--white);
+  }
+  .card-body {
+    font-size: .88rem;
+    color: var(--gray-2);
+    line-height: 1.75;
+  }
+  .overview-card.featured {
+    background: linear-gradient(135deg, rgba(201,168,76,.12), rgba(201,168,76,.03));
+    border-color: rgba(201,168,76,.35);
+  }
+  .overview-card.featured .card-title { color: var(--gold-lt); }
+
+  /* ─── VALUE PROP ─── */
+  .value-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .value-result-block {
+    background: linear-gradient(135deg, rgba(45,156,219,.12), rgba(10,15,30,.6));
+    border: 1px solid rgba(45,156,219,.25);
+    border-radius: var(--radius);
+    padding: 36px;
+    margin-bottom: 24px;
+  }
+  .value-result-block h3 {
+    font-size: 1rem;
+    color: var(--cyan-lt);
+    margin-bottom: 12px;
+  }
+  .value-result-block p {
+    font-size: .875rem;
+    color: var(--gray-2);
+    line-height: 1.8;
+  }
+
+  .benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,.04);
+    border-radius: 8px;
+    padding: 14px 18px;
+    border-left: 3px solid var(--gold);
+  }
+  .benefit-icon {
+    width: 32px; height: 32px;
+    min-width: 32px;
+    background: rgba(201,168,76,.15);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+  .benefit-text {
+    font-size: .85rem;
+    font-weight: 500;
+    color: var(--gray-1);
+  }
+
+  .diff-card {
+    background: var(--navy-3);
+    border-radius: var(--radius);
+    padding: 28px;
+    border: 1px solid rgba(255,255,255,.06);
+    margin-bottom: 16px;
+    transition: border-color .2s;
+  }
+  .diff-card:hover { border-color: rgba(201,168,76,.3); }
+  .diff-card h4 {
+    font-size: .9rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diff-card p {
+    font-size: .83rem;
+    color: var(--gray-3);
+    line-height: 1.7;
+  }
+
+  /* ─── FEATURES ─── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .feature-card {
+    background: var(--navy-3);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: var(--radius);
+    padding: 28px;
+    transition: all .25s;
+  }
+  .feature-card:hover {
+    background: var(--navy-4);
+    border-color: rgba(201,168,76,.3);
+    transform: translateY(-2px);
+  }
+  .feature-icon {
+    width: 44px; height: 44px;
+    background: rgba(201,168,76,.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    border: 1px solid rgba(201,168,76,.2);
+  }
+  .feature-card h3 {
+    font-size: .95rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--white);
+  }
+  .feature-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .feature-bullets li {
+    font-size: .8rem;
+    color: var(--gray-3);
+    padding-left: 14px;
+    position: relative;
+  }
+  .feature-bullets li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: .75rem;
+  }
+
+  /* ─── ICP ─── */
+  .icp-layout {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 48px;
+  }
+  .icp-segments {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .icp-segment {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--navy-3);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    border: 1px solid rgba(255,255,255,.06);
+    transition: border-color .2s;
+  }
+  .icp-segment:hover { border-color: rgba(45,156,219,.3); }
+  .icp-segment-icon {
+    width: 40px; height: 40px;
+    min-width: 40px;
+    background: rgba(45,156,219,.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+  .icp-segment-content h4 {
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 3px;
+  }
+  .icp-segment-content p {
+    font-size: .78rem;
+    color: var(--gray-3);
+  }
+
+  .fit-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .fit-group {
+    background: var(--navy-3);
+    border-radius: var(--radius);
+    padding: 22px;
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  .fit-group-label {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .fit-group.yes .fit-group-label { color: var(--green); }
+  .fit-group.no .fit-group-label { color: var(--red); }
+  .fit-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .fit-tag {
+    font-size: .75rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .fit-group.yes .fit-tag {
+    background: rgba(60,196,124,.1);
+    color: var(--green);
+    border: 1px solid rgba(60,196,124,.25);
+  }
+  .fit-group.no .fit-tag {
+    background: rgba(224,82,82,.1);
+    color: var(--red);
+    border: 1px solid rgba(224,82,82,.25);
+  }
+
+  .icp-size-note {
+    background: linear-gradient(135deg, rgba(201,168,76,.08), transparent);
+    border: 1px solid rgba(201,168,76,.2);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .icp-size-note .icon { font-size: 1.4rem; }
+  .icp-size-note p { font-size: .83rem; color: var(--gray-2); }
+
+  /* ─── DORES ─── */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .pain-card {
+    border-radius: var(--radius);
+    padding: 32px;
+    border: 1px solid rgba(255,255,255,.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .pain-card.p1 { background: linear-gradient(160deg, rgba(224,82,82,.12), var(--navy-3)); border-color: rgba(224,82,82,.2); }
+  .pain-card.p2 { background: linear-gradient(160deg, rgba(201,168,76,.10), var(--navy-3)); border-color: rgba(201,168,76,.2); }
+  .pain-card.p3 { background: linear-gradient(160deg, rgba(45,156,219,.10), var(--navy-3)); border-color: rgba(45,156,219,.2); }
+  .pain-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 20px;
+    opacity: .6;
+  }
+  .pain-card.p1 .pain-num { color: var(--red); }
+  .pain-card.p2 .pain-num { color: var(--gold); }
+  .pain-card.p3 .pain-num { color: var(--cyan); }
+  .pain-card h3 {
+    font-size: .95rem;
+    margin-bottom: 14px;
+    color: var(--white);
+  }
+  .pain-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pain-items li {
+    font-size: .82rem;
+    color: var(--gray-2);
+    padding-left: 16px;
+    position: relative;
+  }
+  .pain-items li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    font-size: .7rem;
+  }
+  .pain-card.p1 .pain-items li::before { color: var(--red); }
+  .pain-card.p2 .pain-items li::before { color: var(--gold); }
+  .pain-card.p3 .pain-items li::before { color: var(--cyan); }
+
+  /* ─── USE CASES ─── */
+  .usecase-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .usecase-card {
+    background: var(--navy-3);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: var(--radius);
+    padding: 28px;
+    transition: all .25s;
+  }
+  .usecase-card:hover {
+    border-color: rgba(201,168,76,.35);
+    transform: translateY(-3px);
+  }
+  .usecase-client {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .usecase-card.placeholder .usecase-client { color: var(--gray-3); }
+  .usecase-card h3 {
+    font-size: .95rem;
+    margin-bottom: 10px;
+    color: var(--white);
+  }
+  .usecase-card.placeholder h3 { color: var(--gray-3); }
+  .usecase-card p {
+    font-size: .82rem;
+    color: var(--gray-3);
+    line-height: 1.7;
+  }
+  .usecase-icon {
+    width: 40px; height: 40px;
+    background: rgba(201,168,76,.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+  .usecase-card.placeholder .usecase-icon {
+    background: rgba(255,255,255,.05);
+  }
+
+  /* ─── COMPETITIVE ─── */
+  .comp-table-wrap {
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .comp-table thead {
+    background: var(--navy-4);
+  }
+  .comp-table th {
+    padding: 16px 20px;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--gray-3);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .comp-table th.player-broadcast {
+    color: var(--gold);
+    background: rgba(201,168,76,.1);
+  }
+  .comp-table td {
+    padding: 14px 20px;
+    font-size: .85rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    color: var(--gray-2);
+  }
+  .comp-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--white);
+    background: rgba(255,255,255,.02);
+  }
+  .comp-table td.broadcast-col {
+    background: rgba(201,168,76,.05);
+    color: var(--white);
+    font-weight: 600;
+  }
+  .comp-table tbody tr:hover td { background: rgba(255,255,255,.03); }
+  .comp-table tbody tr:hover td.broadcast-col { background: rgba(201,168,76,.1); }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .check-full  { color: var(--green);  font-size: 1.1rem; }
+  .check-half  { color: var(--gold);   font-size: 1.1rem; }
+  .check-none  { color: var(--gray-3); font-size: 1rem; opacity:.4; }
+  .price-broadcast { color: var(--green); font-weight: 700; font-size: .95rem; }
+  .price-other     { color: var(--gray-3); }
+  .comp-note {
+    background: var(--navy-3);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .comp-note-item h4 {
+    font-size: .82rem;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .comp-note-item p {
+    font-size: .78rem;
+    color: var(--gray-3);
+    line-height: 1.65;
+  }
+
+  /* ─── OBJEÇÕES ─── */
+  .obj-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .obj-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.07);
+  }
+  .obj-question {
+    background: rgba(224,82,82,.07);
+    padding: 24px 28px;
+    border-right: 1px solid rgba(255,255,255,.07);
+  }
+  .obj-question-label {
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+  .obj-question p {
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--white);
+    font-style: italic;
+  }
+  .obj-answer {
+    background: rgba(60,196,124,.06);
+    padding: 24px 28px;
+  }
+  .obj-answer-label {
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .obj-answer p {
+    font-size: .83rem;
+    color: var(--gray-2);
+    line-height: 1.7;
+  }
+
+  /* ─── ROI ─── */
+  .roi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .roi-card {
+    border-radius: var(--radius);
+    padding: 32px;
+    border: 1px solid rgba(255,255,255,.08);
+    text-align: center;
+  }
+  .roi-card.q1 { background: linear-gradient(160deg, rgba(60,196,124,.1), var(--navy-3)); border-color: rgba(60,196,124,.2); }
+  .roi-card.q2 { background: linear-gradient(160deg, rgba(45,156,219,.1), var(--navy-3)); border-color: rgba(45,156,219,.2); }
+  .roi-card.q3 { background: linear-gradient(160deg, rgba(201,168,76,.1), var(--navy-3)); border-color: rgba(201,168,76,.2); }
+  .roi-question {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .roi-card.q1 .roi-question { color: var(--green); }
+  .roi-card.q2 .roi-question { color: var(--cyan); }
+  .roi-card.q3 .roi-question { color: var(--gold); }
+  .roi-card h3 {
+    font-size: 1rem;
+    margin-bottom: 14px;
+    color: var(--white);
+    font-weight: 600;
+  }
+  .roi-card p {
+    font-size: .82rem;
+    color: var(--gray-3);
+    line-height: 1.7;
+  }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,.2), transparent);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--navy-2);
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-brand {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: .95rem;
+    color: var(--white);
+  }
+  .footer-brand span { color: var(--gold); }
+  .footer-meta {
+    font-size: .75rem;
+    color: var(--gray-3);
+  }
+
+  /* ─── UTIL ─── */
+  .gold { color: var(--gold); }
+  .cyan { color: var(--cyan); }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: var(--navy-4); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dk); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">broadcast <span>AE</span></div>
+  <ul class="nav-links">
+    <li><a href="#visao">Visão Geral</a></li>
+    <li><a href="#valor">Proposta de Valor</a></li>
+    <li><a href="#features">Funcionalidades</a></li>
+    <li><a href="#icp">ICP</a></li>
+    <li><a href="#dores">Dores</a></li>
+    <li><a href="#competitivo">Competitivo</a></li>
+    <li><a href="#objecoes">Objeções</a></li>
+    <li><a href="#roi">ROI</a></li>
+  </ul>
+  <span class="badge-confidential">Uso Interno · Confidencial</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Broadcast Datafeed · Visão Geral do Produto</div>
+    <h1>O sistema nervoso<br>central dos seus <em>dados financeiros.</em></h1>
+    <p class="hero-sub">
+      Infraestrutura de conectividade de baixa latência que orquestra o fluxo de Market Data,
+      dados transacionais e referenciais — integrando Bolsas, Bloomberg e Reuters diretamente
+      a motores de risco, plataformas de trading e sistemas de Back-office.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">~1ms</div>
+        <div class="lbl">Latência determinística</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">99.9%</div>
+        <div class="lbl">Alta disponibilidade</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">Multi</div>
+        <div class="lbl">Cloud & Protocolo</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VISÃO GERAL -->
+<section id="visao">
+  <div class="section-eyebrow">01 · Visão Geral</div>
+  <h2 class="section-title">O que é o Broadcast Datafeed</h2>
+  <p class="section-sub">Quatro dimensões que definem o produto</p>
+
+  <div class="overview-grid">
+    <div class="overview-card" data-num="01">
+      <div class="card-label">O produto</div>
+      <div class="card-title">Infraestrutura de conectividade de baixa latência</div>
+      <p class="card-body">
+        Uma camada de middleware que atua como sistema nervoso central para dados financeiros.
+        Orquestra o fluxo de Market Data (cotações, order books), dados transacionais e referenciais,
+        integrando fontes críticas — Bolsas, Bloomberg, Reuters — diretamente a motores de risco,
+        plataformas de trading e sistemas de Back-office.
+      </p>
+    </div>
+    <div class="overview-card featured" data-num="02">
+      <div class="card-label">O alvo (ICP)</div>
+      <div class="card-title">Quem se beneficia diretamente</div>
+      <p class="card-body">
+        Instituições financeiras, Asset Managers, Bancos de Investimento, Fintechs e Family Offices
+        que operam com alta criticidade de dados e necessitam de conformidade rigorosa com
+        órgãos reguladores — CVM, BACEN e SEC.
+      </p>
+    </div>
+    <div class="overview-card" data-num="03">
+      <div class="card-label">Principal problema resolvido</div>
+      <div class="card-title">Elimina a arbitragem negativa da informação</div>
+      <p class="card-body">
+        Resolve o risco operacional de dados inconsistentes entre Front e Back-office.
+        Consolida ativos de diferentes classes — Equities, Fixed Income, Derivativos —
+        em uma única "fonte da verdade" auditável, eliminando silos e reconciliações manuais.
+      </p>
+    </div>
+    <div class="overview-card featured" data-num="04">
+      <div class="card-label">Resumo da proposta de valor</div>
+      <div class="card-title">Integridade Transacional em Escala</div>
+      <p class="card-body">
+        Garantimos que cada tick de dado seja capturado, validado e entregue com latência
+        determinística. A proposta central não é apenas velocidade — é a confiança de que
+        os dados que chegam são os dados corretos, sem perda e sem ambiguidade.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROPOSTA DE VALOR -->
+<section id="valor">
+  <div class="section-eyebrow">02 · Proposta de Valor</div>
+  <h2 class="section-title">Por que o Datafeed transforma operações</h2>
+  <p class="section-sub">Resultado mensurável + diferencial competitivo real</p>
+
+  <div class="value-layout">
+    <div>
+      <div class="value-result-block">
+        <h3>Orquestração de Dados para Decisões em Tempo Real</h3>
+        <p>
+          O cliente deixa de lidar com dados fragmentados e silos para ter uma camada intermediária
+          que garante que a informação certa chegue ao sistema central — ERP, DW, FP&A —
+          no momento exato, pronta para uso estratégico.
+        </p>
+      </div>
+      <div class="benefits-list">
+        <div class="benefit-item">
+          <div class="benefit-icon">⚡</div>
+          <span class="benefit-text">Eficiência Operacional — redução drástica de latência</span>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🛡️</div>
+          <span class="benefit-text">Redução de Custo e Risco — compliance automatizado</span>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">📈</div>
+          <span class="benefit-text">Escalabilidade Sem Interrupções — cresce com o negócio</span>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">✅</div>
+          <span class="benefit-text">Integridade dos Dados — auditabilidade completa</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="diff-card">
+        <h4>🔌 Versatilidade de Protocolos</h4>
+        <p>
+          Capacidade única de conectar sistemas legados e protocolos industriais (OPC UA, MQTT)
+          até plataformas modernas de Cloud — AWS, Azure, Google Cloud.
+          Agnóstico de tecnologia, sem lock-in.
+        </p>
+      </div>
+      <div class="diff-card">
+        <h4>📋 Governança Ativa (ETL/ELT embutido)</h4>
+        <p>
+          Não apenas transporta dados — aplica regras rigorosas de validação, limpeza e padronização
+          durante o trajeto. Transforma a "camada de integração" em um selo de qualidade
+          para a informação corporativa.
+        </p>
+      </div>
+      <div class="diff-card">
+        <h4>🏢 Infraestrutura Enterprise-Grade</h4>
+        <p>
+          Diferente de ferramentas de integração simples, o Datafeed é uma infraestrutura
+          de nível corporativo com SLA, suporte especializado e histórico comprovado
+          no mercado financeiro brasileiro.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FUNCIONALIDADES -->
+<section id="features">
+  <div class="section-eyebrow">03 · Funcionalidades</div>
+  <h2 class="section-title">Principais capacidades e diferenciais</h2>
+  <p class="section-sub">Quatro pilares técnicos que sustentam a proposta de valor</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔗</div>
+      <h3>Orquestração & Conectividade Multi-Protocolo</h3>
+      <ul class="feature-bullets">
+        <li>Conectores universais para qualquer fonte de dados</li>
+        <li>Suporte Multi-Cloud (AWS, Azure, Google Cloud)</li>
+        <li>Engine ETL/ELT nativo e configurável</li>
+        <li>Integração com sistemas legados via OPC UA, MQTT</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🗂️</div>
+      <h3>Governança & Qualidade de Dados</h3>
+      <ul class="feature-bullets">
+        <li>Linhagem de dados end-to-end (Data Lineage)</li>
+        <li>Data Cleansing & Validation automatizados</li>
+        <li>Catálogo de metadados centralizado</li>
+        <li>Regras de negócio aplicadas em trânsito</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Segurança & Resiliência Enterprise</h3>
+      <ul class="feature-bullets">
+        <li>Segurança de ponta a ponta (em repouso e em trânsito)</li>
+        <li>Controle de acesso baseado em função (RBAC)</li>
+        <li>Alta disponibilidade com failover automático</li>
+        <li>Auditoria completa para compliance regulatório</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Monitoramento & Performance</h3>
+      <ul class="feature-bullets">
+        <li>Painel de observabilidade em tempo real</li>
+        <li>Alertas inteligentes configuráveis por threshold</li>
+        <li>Gerenciamento de backpressure para picos de volume</li>
+        <li>Métricas de latência por fluxo e por ativo</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ICP -->
+<section id="icp">
+  <div class="section-eyebrow">04 · Perfil Ideal de Cliente</div>
+  <h2 class="section-title">Quem compra, quem não compra</h2>
+  <p class="section-sub">Segmentos ideais e sinais de fit para otimizar o esforço comercial</p>
+
+  <div class="icp-layout">
+    <div>
+      <div class="icp-segments">
+        <div class="icp-segment">
+          <div class="icp-segment-icon">🏦</div>
+          <div class="icp-segment-content">
+            <h4>Gestoras de Recursos & Asset Managers (Buy-Side)</h4>
+            <p>Necessidade de sincronização de portfólio e gestão de risco em tempo real</p>
+          </div>
+        </div>
+        <div class="icp-segment">
+          <div class="icp-segment-icon">💡</div>
+          <div class="icp-segment-content">
+            <h4>Fintechs de Investimento & Wealthtechs</h4>
+            <p>API-first, alta demanda por dados em tempo real e escalabilidade rápida</p>
+          </div>
+        </div>
+        <div class="icp-segment">
+          <div class="icp-segment-icon">🏢</div>
+          <div class="icp-segment-content">
+            <h4>Tesourarias Corporativas (Enterprise Treasury)</h4>
+            <p>Gestão de exposição cambial, FI e derivativos com dados precisos</p>
+          </div>
+        </div>
+        <div class="icp-segment">
+          <div class="icp-segment-icon">🗄️</div>
+          <div class="icp-segment-content">
+            <h4>Administradores & Custodiantes</h4>
+            <p>Obrigação regulatória de rastreabilidade e auditoria de dados de ativos</p>
+          </div>
+        </div>
+        <div class="icp-segment">
+          <div class="icp-segment-icon">🛒</div>
+          <div class="icp-segment-content">
+            <h4>Empresas de Varejo (uso financeiro)</h4>
+            <p>Precificação dinâmica, integração com gateways de pagamento e bolsas</p>
+          </div>
+        </div>
+      </div>
+      <div class="icp-size-note">
+        <div class="icon">💡</div>
+        <p><strong style="color:var(--gold-lt)">Agnóstico por porte:</strong> o consumo via API independe do tamanho da organização — de fintechs a grandes bancos.</p>
+      </div>
+    </div>
+
+    <div class="fit-panel">
+      <div class="fit-group yes">
+        <div class="fit-group-label">✓ Sinais claros de fit</div>
+        <div class="fit-tags">
+          <span class="fit-tag">Sincronização de portfólio</span>
+          <span class="fit-tag">Gestão de risco em tempo real</span>
+          <span class="fit-tag">Fragmentação de fontes</span>
+          <span class="fit-tag">Pressão regulatória (CVM/BACEN)</span>
+          <span class="fit-tag">Múltiplas classes de ativos</span>
+          <span class="fit-tag">Dados em silos</span>
+        </div>
+      </div>
+      <div class="fit-group no">
+        <div class="fit-group-label">✕ Quando não vender</div>
+        <div class="fit-tags">
+          <span class="fit-tag">High-Frequency Trading puro</span>
+          <span class="fit-tag">Sem equipe de desenvolvimento</span>
+          <span class="fit-tag">Volume de dados muito baixo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DORES -->
+<section id="dores">
+  <div class="section-eyebrow">05 · Dores do Cliente</div>
+  <h2 class="section-title">Problemas que o Datafeed resolve</h2>
+  <p class="section-sub">Três dimensões de dor com impacto direto no negócio</p>
+
+  <div class="pain-grid">
+    <div class="pain-card p1">
+      <div class="pain-num">01</div>
+      <h3>Impacto no Negócio</h3>
+      <ul class="pain-items">
+        <li>Latência e assimetria de informação entre sistemas</li>
+        <li>Fragmentação e silos de dados entre áreas</li>
+        <li>Inconsistência e falhas de conectividade recorrentes</li>
+      </ul>
+    </div>
+    <div class="pain-card p2">
+      <div class="pain-num">02</div>
+      <h3>Impacto Financeiro / Operacional</h3>
+      <ul class="pain-items">
+        <li>Custo elevado de reconciliação manual</li>
+        <li>Consumo ineficiente de licenças de Market Data</li>
+        <li>Risco de execução por arbitragem de informação</li>
+      </ul>
+    </div>
+    <div class="pain-card p3">
+      <div class="pain-num">03</div>
+      <h3>Riscos e Ineficiências</h3>
+      <ul class="pain-items">
+        <li>Descompasso de fluxo de caixa por dados atrasados</li>
+        <li>Risco de compliance e validade jurídica dos dados</li>
+        <li>Ineficiência operacional que escala com o volume</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- USE CASES -->
+<section id="usecases">
+  <div class="section-eyebrow">06 · Use Cases</div>
+  <h2 class="section-title">Aplicações reais em clientes</h2>
+  <p class="section-sub">Casos de uso que demonstram o valor em produção</p>
+
+  <div class="usecase-grid">
+    <div class="usecase-card">
+      <div class="usecase-icon">🏦</div>
+      <div class="usecase-client">Banco Bradesco</div>
+      <h3>Integração de Market Data para Mesa de Risco</h3>
+      <p>Consolidação de dados de múltiplas fontes para alimentação de motor de risco em tempo real com baixa latência e alta disponibilidade.</p>
+    </div>
+    <div class="usecase-card placeholder">
+      <div class="usecase-icon" style="background:rgba(255,255,255,.04)">📋</div>
+      <div class="usecase-client">Case em andamento</div>
+      <h3>Adicionar cliente aqui</h3>
+      <p>Descreva o contexto, o problema resolvido e o resultado obtido. Inclua métricas sempre que possível.</p>
+    </div>
+    <div class="usecase-card placeholder">
+      <div class="usecase-icon" style="background:rgba(255,255,255,.04)">📋</div>
+      <div class="usecase-client">Case em andamento</div>
+      <h3>Adicionar cliente aqui</h3>
+      <p>Descreva o contexto, o problema resolvido e o resultado obtido. Inclua métricas sempre que possível.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMPETITIVO -->
+<section id="competitivo">
+  <div class="section-eyebrow">07 · Análise Competitiva</div>
+  <h2 class="section-title">Broadcast vs. principais players</h2>
+  <p class="section-sub">Comparativo objetivo por dimensão-chave de decisão</p>
+
+  <div class="comp-table-wrap">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Dimensão</th>
+          <th>Player L</th>
+          <th class="player-broadcast">Broadcast ★</th>
+          <th>Player B</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pricing indicativo</td>
+          <td class="price-other">R$ 2.500/mês</td>
+          <td class="broadcast-col price-broadcast">R$ 1.000/mês</td>
+          <td class="price-other">R$ 5.000/mês</td>
+        </tr>
+        <tr>
+          <td>Cobertura de dados</td>
+          <td><span class="check-half">◑</span></td>
+          <td class="broadcast-col"><span class="check-full">✓</span></td>
+          <td><span class="check-half">◑</span></td>
+        </tr>
+        <tr>
+          <td>Tecnologia / API</td>
+          <td><span class="check-half">◑</span></td>
+          <td class="broadcast-col"><span class="check-full">✓</span></td>
+          <td><span class="check-half">◑</span></td>
+        </tr>
+        <tr>
+          <td>Baixa latência</td>
+          <td><span class="check-half">◑</span></td>
+          <td class="broadcast-col"><span class="check-full">✓</span></td>
+          <td><span class="check-half">◑</span></td>
+        </tr>
+        <tr>
+          <td>Qualidade de serviço</td>
+          <td><span class="check-half">◑</span></td>
+          <td class="broadcast-col"><span class="check-full">✓</span></td>
+          <td><span class="check-half">◑</span></td>
+        </tr>
+        <tr>
+          <td>Atendimento local BR</td>
+          <td><span class="check-none">○</span></td>
+          <td class="broadcast-col"><span class="check-full">✓</span></td>
+          <td><span class="check-half">◑</span></td>
+        </tr>
+        <tr>
+          <td>Versatilidade de protocolo</td>
+          <td><span class="check-none">○</span></td>
+          <td class="broadcast-col"><span class="check-full">✓</span></td>
+          <td><span class="check-half">◑</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="comp-note">
+    <div class="comp-note-item">
+      <h4>Vantagem de preço</h4>
+      <p>Broadcast entrega a menor TCO do mercado para o mesmo nível de cobertura e performance que os players globais.</p>
+    </div>
+    <div class="comp-note-item">
+      <h4>Atendimento local</h4>
+      <p>Diferencial crítico: suporte em português, conhecimento do mercado regulatório brasileiro (CVM, BACEN) e SLA customizável.</p>
+    </div>
+    <div class="comp-note-item">
+      <h4>Outras considerações</h4>
+      <p>Adicionar notas sobre integrações exclusivas, cobertura B3, ou outros diferenciais não refletidos na tabela.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OBJEÇÕES -->
+<section id="objecoes">
+  <div class="section-eyebrow">08 · Objeções & Respostas</div>
+  <h2 class="section-title">Como responder às principais barreiras</h2>
+  <p class="section-sub">Guia de argumentação para o time comercial</p>
+
+  <div class="obj-list">
+    <div class="obj-item">
+      <div class="obj-question">
+        <div class="obj-question-label">Objeção</div>
+        <p>"O produto é caro para o nosso budget atual."</p>
+      </div>
+      <div class="obj-answer">
+        <div class="obj-answer-label">Resposta</div>
+        <p>O custo do Datafeed é menor que o custo oculto de reconciliação manual, riscos de compliance e oportunidades perdidas por dados atrasados. Propomos calcular o TCO real juntos: horas de time + multas regulatórias + perda por latência.</p>
+      </div>
+    </div>
+    <div class="obj-item">
+      <div class="obj-question">
+        <div class="obj-question-label">Objeção</div>
+        <p>"Já usamos outro provedor e a troca é complexa."</p>
+      </div>
+      <div class="obj-answer">
+        <div class="obj-answer-label">Resposta</div>
+        <p>A migração pode ser feita em paralelo, sem interrupção. Nossa equipe técnica cuida do mapeamento de conectores existentes e o Datafeed é agnóstico — não exige substituição imediata dos sistemas legados.</p>
+      </div>
+    </div>
+    <div class="obj-item">
+      <div class="obj-question">
+        <div class="obj-question-label">Objeção</div>
+        <p>"Não é prioridade no momento."</p>
+      </div>
+      <div class="obj-answer">
+        <div class="obj-answer-label">Resposta</div>
+        <p>Entendemos. Mas o custo de não agir também cresce — cada mês com dados fragmentados é um mês de risco operacional acumulado. Podemos começar com um projeto piloto de baixo risco para validar o valor antes de uma decisão maior.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROI -->
+<section id="roi">
+  <div class="section-eyebrow">09 · Retorno sobre Investimento</div>
+  <h2 class="section-title">Como justificar o investimento</h2>
+  <p class="section-sub">Três ângulos de argumentação financeira</p>
+
+  <div class="roi-grid">
+    <div class="roi-card q1">
+      <div class="roi-question">Como justificar o preço?</div>
+      <h3>Custo vs. Alternativa</h3>
+      <p>Compare o valor mensal do Datafeed com o custo de manter equipes de integração interna, licenças de múltiplos provedores parciais e horas de reconciliação manual. Na maioria dos casos, o ROI é positivo em menos de 3 meses.</p>
+    </div>
+    <div class="roi-card q2">
+      <div class="roi-question">Retorno financeiro esperado?</div>
+      <h3>Ganhos Mensuráveis</h3>
+      <p>Redução de latência operacional, menor volume de tickets de suporte interno, eliminação de multas regulatórias por inconsistência de dados e otimização do custo de licenças de Market Data redundantes.</p>
+    </div>
+    <div class="roi-card q3">
+      <div class="roi-question">Custo de NÃO contratar?</div>
+      <h3>Risco do Status Quo</h3>
+      <p>Cada incidente de dados incorretos em uma operação financeira pode gerar perdas de dezenas de milhares de reais. A infraestrutura legada não escala — o custo do risco cresce com o volume de operações.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">broadcast <span>AE</span> · Datafeed</div>
+  <div class="footer-meta">Documento interno · Confidencial · Uso restrito à equipe Broadcast</div>
+</footer>
+
+</body>
+</html>

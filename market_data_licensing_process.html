@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Data — Processo de Licenciamento & Aquisição de Conteúdo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0b0f1a;
+    --surface:   #131929;
+    --surface2:  #1a2236;
+    --border:    #243050;
+    --gold:      #d4a830;
+    --gold-dim:  #8a6a1a;
+    --amber:     #f0c040;
+    --teal:      #2dd4bf;
+    --rose:      #f87171;
+    --violet:    #a78bfa;
+    --sky:       #38bdf8;
+    --text:      #e2e8f0;
+    --muted:     #7a8aaa;
+    --rail:      #1e2d4a;
+    --rail-act:  #d4a830;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 32px 48px 28px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .header-left .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.25;
+    max-width: 560px;
+  }
+  header h1 span { color: var(--gold); }
+  .header-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .08em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .badge-ex  { color: var(--teal);   border-color: var(--teal);   background: rgba(45,212,191,.08); }
+  .badge-in  { color: var(--violet); border-color: var(--violet); background: rgba(167,139,250,.08); }
+  .badge-fin { color: var(--amber);  border-color: var(--amber);  background: rgba(240,192,64,.08); }
+  .badge-sys { color: var(--sky);    border-color: var(--sky);    background: rgba(56,189,248,.08); }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    padding: 16px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── Layout ── */
+  main { display: grid; grid-template-columns: 56px 1fr; max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; gap: 0; }
+
+  /* ── Rail ── */
+  .rail { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .rail-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    background: linear-gradient(to bottom, var(--rail-act) 0%, var(--rail) 100%);
+  }
+  .rail-node {
+    position: relative;
+    z-index: 1;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--rail);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: border-color .3s, color .3s, background .3s;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 20px;
+  }
+  .rail-node.active { border-color: var(--gold); color: var(--gold); background: rgba(212,168,48,.1); }
+  .rail-node.type-ex  { border-color: var(--teal);   color: var(--teal); }
+  .rail-node.type-in  { border-color: var(--violet); color: var(--violet); }
+  .rail-node.type-fin { border-color: var(--amber);  color: var(--amber); }
+  .rail-node.type-sys { border-color: var(--sky);    color: var(--sky); }
+  .rail-spacer { flex: 1; }
+
+  /* ── Steps column ── */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+
+  /* ── Step card ── */
+  .step {
+    margin-top: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+    transition: border-color .25s;
+  }
+  .step:hover { border-color: var(--gold-dim); }
+  .step.open  { border-color: var(--gold); }
+
+  .step-header {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .step-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .icon-ex  { background: rgba(45,212,191,.12); }
+  .icon-in  { background: rgba(167,139,250,.12); }
+  .icon-fin { background: rgba(240,192,64,.12); }
+  .icon-sys { background: rgba(56,189,248,.12); }
+
+  .step-title-wrap { flex: 1; }
+  .step-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .step-title { font-size: 15px; font-weight: 600; }
+  .step-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .step-chevron {
+    color: var(--muted); font-size: 13px;
+    transition: transform .25s;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .step.open .step-chevron { transform: rotate(180deg); }
+
+  /* ── Step body ── */
+  .step-body {
+    display: none;
+    padding: 0 22px 22px;
+    border-top: 1px solid var(--border);
+  }
+  .step.open .step-body { display: block; }
+
+  .step-body p { color: var(--muted); font-size: 13.5px; margin-top: 14px; line-height: 1.7; }
+
+  .sub-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 8px;
+    margin-top: 14px;
+  }
+  .sub-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  .sub-list li .li-icon { flex-shrink: 0; margin-top: 1px; }
+  .sub-list li .li-text strong { display: block; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .sub-list li .li-text span  { color: var(--muted); font-size: 12px; }
+
+  .contact-box {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .contact-card {
+    flex: 1; min-width: 180px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .contact-card .cc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .contact-card .cc-name  { font-weight: 600; font-size: 13px; }
+  .contact-card .cc-role  { font-size: 12px; color: var(--muted); }
+  .contact-card .cc-tag   { display: inline-block; margin-top: 6px; font-size: 11px; }
+
+  .decision-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-top: 14px;
+  }
+  .decision-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .decision-card .dc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: .1em; margin-bottom: 6px;
+  }
+  .decision-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .decision-card ul { padding-left: 16px; font-size: 12px; color: var(--muted); line-height: 1.8; }
+
+  .checklist {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 6px;
+    margin-top: 12px;
+  }
+  .checklist li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--muted);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .chk-box {
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Reporting Section ── */
+  .reporting-section {
+    grid-column: 1 / -1;
+    margin-top: 48px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .rep-header {
+    background: linear-gradient(135deg, rgba(212,168,48,.12), rgba(56,189,248,.06));
+    border-bottom: 1px solid var(--border);
+    padding: 22px 28px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .rep-icon { font-size: 26px; }
+  .rep-title { font-size: 18px; font-weight: 700; }
+  .rep-sub   { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .rep-tabs {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+  }
+  .rep-tab {
+    padding: 12px 20px;
+    font-size: 13px; font-weight: 500;
+    border-bottom: 2px solid transparent;
+    cursor: pointer; color: var(--muted);
+    transition: color .2s, border-color .2s;
+    white-space: nowrap;
+  }
+  .rep-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .rep-content { padding: 24px 28px; display: none; }
+  .rep-content.active { display: block; }
+
+  .report-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .report-table th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .report-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(36,48,80,.5);
+    vertical-align: top;
+  }
+  .report-table tr:last-child td { border-bottom: none; }
+  .report-table tr:hover td { background: var(--surface2); }
+  .report-table .td-field { font-weight: 500; color: var(--text); }
+  .report-table .td-type  { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .report-table .td-note  { color: var(--muted); font-size: 12px; }
+  .required-star { color: var(--rose); margin-left: 3px; }
+
+  .freq-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .freq-m  { background: rgba(56,189,248,.12); color: var(--sky); }
+  .freq-q  { background: rgba(167,139,250,.12); color: var(--violet); }
+  .freq-a  { background: rgba(240,192,64,.12);  color: var(--amber); }
+
+  .note-box {
+    margin-top: 16px;
+    background: var(--surface2);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .note-box strong { color: var(--text); display: block; margin-bottom: 3px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 680px) {
+    header, .legend { padding: 20px; }
+    main { padding: 24px 16px 60px; grid-template-columns: 40px 1fr; }
+    .decision-grid { grid-template-columns: 1fr; }
+    .reporting-section { grid-column: 1 / -1; margin: 32px -16px 0; border-radius: 0; }
+    .rep-tabs { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="eyebrow">Market Data · Broadcast</div>
+    <h1>Processo de <span>Licenciamento</span> &amp; Aquisição de Conteúdo</h1>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0;">
+    <div class="header-meta">
+      <span class="badge badge-ex">🌐 Externo (Bolsa/Carrier)</span>
+      <span class="badge badge-in">🏢 Interno</span>
+      <span class="badge badge-fin">💰 Financeiro</span>
+      <span class="badge badge-sys">⚙️ Sistemas</span>
+    </div>
+    <div style="display:flex;gap:16px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">
+      <span>✍️ Author: <span style="color:var(--text);font-weight:600;">Antonio Melo</span></span>
+      <span>🕒 Last Update: <span style="color:var(--text);font-weight:600;" id="last-update">10 Jun 2026</span></span>
+    </div>
+  </div>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Contato Externo / Bolsa / Carrier</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--violet)"></div>Processo Interno</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Financeiro / Aprovação</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--sky)"></div>Sistemas / Tecnologia</div>
+</div>
+
+<main>
+
+  <!-- ══════════════════════════ RAIL ══════════════════════════ -->
+  <div class="rail">
+    <div class="rail-line"></div>
+    <div class="rail-node type-in"  id="rn-1"  onclick="toggleStep('s1')" title="Identificação">01</div>
+    <div class="rail-node type-ex"  id="rn-2"  onclick="toggleStep('s2')" title="Contato">02</div>
+    <div class="rail-node type-ex"  id="rn-3"  onclick="toggleStep('s3')" title="Carrier / Injetor">03</div>
+    <div class="rail-node type-fin" id="rn-4"  onclick="toggleStep('s4')" title="Orçamento">04</div>
+    <div class="rail-node type-fin" id="rn-5"  onclick="toggleStep('s5')" title="Aprovação">05</div>
+    <div class="rail-node type-sys" id="rn-6"  onclick="toggleStep('s6')" title="Banco de Dados">06</div>
+    <div class="rail-node type-sys" id="rn-7"  onclick="toggleStep('s7')" title="Instrumentos">07</div>
+    <div class="rail-node type-sys" id="rn-8"  onclick="toggleStep('s8')" title="Tabelas FIT">08</div>
+    <div class="rail-node type-fin" id="rn-9"  onclick="toggleStep('s9')" title="Precificação">09</div>
+    <div class="rail-node type-sys" id="rn-10" onclick="toggleStep('s10')" title="THOR">10</div>
+    <div class="rail-node type-sys" id="rn-11" onclick="toggleStep('s11')" title="Produção">11</div>
+    <div class="rail-node type-in"  id="rn-12" onclick="toggleStep('s12')" title="Release">12</div>
+    <div class="rail-spacer"></div>
+  </div>
+
+  <!-- ══════════════════════════ STEPS ══════════════════════════ -->
+  <div class="steps">
+
+    <!-- 1 -->
+    <div class="step" id="s1">
+      <div class="step-header" onclick="toggleStep('s1')">
+        <div class="step-icon icon-in">🔍</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--violet)">Interno — Market Data</div>
+          <div class="step-title">Identificação da Necessidade</div>
+          <div class="step-sub">Levantamento do conteúdo desejado e análise de viabilidade</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>O processo inicia com o levantamento interno da necessidade de um novo conteúdo ou feed. A equipe de Market Data deve documentar a demanda, identificar a fonte dos dados e avaliar o interesse comercial antes de qualquer contato externo.</p>
+        <ul class="sub-list">
+          <li>
+            <span class="li-icon">📋</span>
+            <div class="li-text">
+              <strong>Documentar a demanda</strong>
+              <span>Registrar: nome do conteúdo, bolsa/provedor de origem, tipo de instrumento, segmento de clientes interessados.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🏷️</span>
+            <div class="li-text">
+              <strong>Classificar o tipo de conteúdo</strong>
+              <span>Equity, Fixed Income, Derivatives, FX, Commodities, Indices — determina o fluxo técnico subsequente.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🤝</span>
+            <div class="li-text">
+              <strong>Verificar se já existe parceiro conectado</strong>
+              <span>Consultar se a bolsa ou provedor já possui contrato ou relacionamento ativo com o Broadcast.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">📊</span>
+            <div class="li-text">
+              <strong>Estimativa de demanda comercial</strong>
+              <span>Quantos clientes potenciais? Há pipeline ativo que justifica o custo do licenciamento?</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="step" id="s2">
+      <div class="step-header" onclick="toggleStep('s2')">
+        <div class="step-icon icon-ex">📞</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--teal)">Externo — Bolsa ou Parceiro</div>
+          <div class="step-title">Contato com a Fonte de Dados</div>
+          <div class="step-sub">Abertura formal com a bolsa ou provedor de dados</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Com a necessidade documentada, inicia-se o contato formal com a bolsa de valores ou parceiro provedor. O objetivo é obter informações sobre licenciamento, condições comerciais e requisitos técnicos de acesso ao feed.</p>
+        <ul class="sub-list">
+          <li>
+            <span class="li-icon">✉️</span>
+            <div class="li-text">
+              <strong>Enviar carta/e-mail de intenção</strong>
+              <span>Apresentar o Broadcast, descrever o interesse e solicitar informações sobre o programa de licenciamento do conteúdo.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">📑</span>
+            <div class="li-text">
+              <strong>Solicitar documentação técnica</strong>
+              <span>Market Data Policy, Data Agreement, especificações do feed (FIX, SFTP, API), latência, periodicidade de entrega.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🔒</span>
+            <div class="li-text">
+              <strong>Assinar NDA se requerido</strong>
+              <span>Algumas bolsas exigem acordo de confidencialidade antes de compartilhar informações de pricing e técnicas.</span>
+            </div>
+          </li>
+        </ul>
+        <div class="contact-box">
+          <div class="contact-card">
+            <div class="cc-label">Contato Típico — Bolsa</div>
+            <div class="cc-name">Equipe Market Data / Licensing</div>
+            <div class="cc-role">Data Licensing / Vendor Relations</div>
+            <span class="cc-tag badge badge-ex">EXTERNO</span>
+          </div>
+          <div class="contact-card">
+            <div class="cc-label">Contato Típico — Parceiro</div>
+            <div class="cc-name">Account Manager / BD</div>
+            <div class="cc-role">Business Development ou Sales</div>
+            <span class="cc-tag badge badge-ex">EXTERNO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="step" id="s3">
+      <div class="step-header" onclick="toggleStep('s3')">
+        <div class="step-icon icon-ex">🔌</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--teal)">Externo + Sistemas — Definição de Conectividade</div>
+          <div class="step-title">Carrier (ICE Data) ou Novo Injetor?</div>
+          <div class="step-sub">Decisão crítica: usar infraestrutura existente ou criar novo canal de ingestão</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Se a fonte de dados for uma <strong>bolsa de valores</strong>, é necessário avaliar como o feed será recebido. Existem duas alternativas principais: utilizar a rede de distribuição do carrier ICE Data (que já concentra feeds de múltiplas bolsas) ou criar um novo injetor dedicado via SFTP ou protocolo FIX.</p>
+        <div class="decision-grid">
+          <div class="decision-card">
+            <div class="dc-label" style="color:var(--teal)">Opção A — Carrier Existente</div>
+            <h4>ICE Data Services</h4>
+            <ul>
+              <li>Feed já disponível via ICE Consolidated Feed</li>
+              <li>Menor prazo de implementação</li>
+              <li>Custo mensal do serviço de carrier</li>
+              <li>SLA e suporte já estabelecidos</li>
+              <li>Verificar cobertura do instrumento no portfólio ICE</li>
+            </ul>
+          </div>
+          <div class="decision-card">
+            <div class="dc-label" style="color:var(--sky)">Opção B — Novo Injetor</div>
+            <h4>SFTP ou Protocolo FIX</h4>
+            <ul>
+              <li>SFTP: arquivos periódicos (EOD, intraday batches)</li>
+              <li>FIX: feed em tempo real via conexão direta</li>
+              <li>Maior esforço de desenvolvimento interno</li>
+              <li>Necessidade de mapeamento de campos</li>
+              <li>Testes de certificação com a bolsa</li>
+            </ul>
+          </div>
+        </div>
+        <p style="margin-top:16px;">Envolver o time de <strong>Tecnologia / Infra</strong> para validar a decisão técnica. Documentar a escolha com justificativa antes de prosseguir para orçamento.</p>
+        <div class="contact-box">
+          <div class="contact-card">
+            <div class="cc-label">Para Opção A</div>
+            <div class="cc-name">ICE Data Services</div>
+            <div class="cc-role">Vendor Connectivity / Account</div>
+            <span class="cc-tag badge badge-ex">CARRIER</span>
+          </div>
+          <div class="contact-card">
+            <div class="cc-label">Para Opção B</div>
+            <div class="cc-name">TI / Engenharia Broadcast</div>
+            <div class="cc-role">Equipe de Feeds e Ingestão</div>
+            <span class="cc-tag badge badge-sys">INTERNO · TI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="step" id="s4">
+      <div class="step-header" onclick="toggleStep('s4')">
+        <div class="step-icon icon-fin">💼</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--amber)">Financeiro — Externo</div>
+          <div class="step-title">Recebimento de Orçamentos</div>
+          <div class="step-sub">Cotações formais da bolsa e do carrier (quando aplicável)</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Com a decisão de conectividade tomada, solicitar orçamentos formais de ambas as partes envolvidas (bolsa/provedor e carrier, se for o caso). Consolidar os custos totais de implementação e recorrência.</p>
+        <ul class="sub-list">
+          <li>
+            <span class="li-icon">📄</span>
+            <div class="li-text">
+              <strong>Orçamento da Bolsa / Provedor</strong>
+              <span>License fee (setup + mensal/anual), políticas de redistribuição, taxa por usuário ou por device, condições de escalonamento.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">📄</span>
+            <div class="li-text">
+              <strong>Orçamento do Carrier (se ICE Data)</strong>
+              <span>Custo de ativação, fee mensal de conectividade, SLA contratual, capacidade de dados.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🧮</span>
+            <div class="li-text">
+              <strong>Consolidar TCO (Total Cost of Ownership)</strong>
+              <span>Custo de licença + carrier + desenvolvimento interno + operação. Calcular break-even com base na receita esperada de clientes.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">📋</span>
+            <div class="li-text">
+              <strong>Montar dossiê para aprovação</strong>
+              <span>Resumo executivo com: justificativa de negócio, comparativo de cenários, ROI estimado, riscos e prazo de payback.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="step" id="s5">
+      <div class="step-header" onclick="toggleStep('s5')">
+        <div class="step-icon icon-fin">✅</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--amber)">Financeiro — Interno</div>
+          <div class="step-title">Aprovação da Diretoria</div>
+          <div class="step-sub">Submissão formal para aprovação executiva do investimento</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>O dossiê consolidado na etapa anterior é submetido à diretoria responsável (Diretoria de Market Data / Comercial / Financeiro) para aprovação formal. Sem essa aprovação, nenhum contrato pode ser assinado.</p>
+        <ul class="checklist">
+          <li><div class="chk-box"></div>Dossiê técnico-comercial entregue à diretoria</li>
+          <li><div class="chk-box"></div>Reunião de alinhamento com o(s) diretor(es) responsável(is)</li>
+          <li><div class="chk-box"></div>Aprovação formal documentada (e-mail ou sistema interno de aprovação)</li>
+          <li><div class="chk-box"></div>Verba alocada no orçamento do departamento</li>
+          <li><div class="chk-box"></div>Minuta contratual revisada pelo jurídico (se aplicável)</li>
+          <li><div class="chk-box"></div>Assinatura do contrato com bolsa e/ou carrier</li>
+        </ul>
+        <div class="note-box">
+          <strong>⚠️ Ponto de controle crítico</strong>
+          Nenhuma atividade de infraestrutura, banco de dados ou desenvolvimento deve ser iniciada antes da aprovação formal nesta etapa. Documentar a data de aprovação para fins de auditoria e controle de custos.
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="step" id="s6">
+      <div class="step-header" onclick="toggleStep('s6')">
+        <div class="step-icon icon-sys">🗄️</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--sky)">Sistemas — TI / DBA</div>
+          <div class="step-title">Criação do Banco de Dados</div>
+          <div class="step-sub">Estrutura de armazenamento e ingestão para o novo conteúdo</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Com a aprovação concedida, o time de TI inicia a criação da estrutura de banco de dados necessária para receber, armazenar e processar o novo feed de dados.</p>
+        <ul class="sub-list">
+          <li>
+            <span class="li-icon">🏗️</span>
+            <div class="li-text">
+              <strong>Definição do modelo de dados</strong>
+              <span>Mapeamento dos campos do feed da bolsa → estrutura de tabelas Broadcast. Identificar campos obrigatórios, opcionais, tipos de dados e regras de normalização.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">📦</span>
+            <div class="li-text">
+              <strong>Criação das tabelas no ambiente de pré-produção</strong>
+              <span>Scripts DDL revisados e executados primeiro em pré-prod. Revisão de índices, particionamento e políticas de retenção.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🔄</span>
+            <div class="li-text">
+              <strong>Configurar pipeline de ingestão</strong>
+              <span>Configurar o injetor (ICE Data, SFTP ou FIX) para apontar para o novo banco. Validar recepção inicial dos dados com amostras do feed.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🧪</span>
+            <div class="li-text">
+              <strong>Testes de integridade</strong>
+              <span>Validar completude dos dados, horários de recepção, tratamento de lacunas (gaps), duplicatas e reprocessamento de falhas.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="step" id="s7">
+      <div class="step-header" onclick="toggleStep('s7')">
+        <div class="step-icon icon-sys">📝</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--sky)">Sistemas — Pré-Produção</div>
+          <div class="step-title">Cadastro de Instrumentos (Pré-Prod)</div>
+          <div class="step-sub">Registro e validação de todos os ativos/instrumentos no ambiente de homologação</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Antes de ir a produção, todos os instrumentos cobertos pelo novo feed devem ser cadastrados e validados no ambiente de pré-produção do Broadcast. Esta etapa garante que os metadados, identificadores e hierarquias estejam corretos.</p>
+        <ul class="sub-list">
+          <li>
+            <span class="li-icon">🔑</span>
+            <div class="li-text">
+              <strong>Mapeamento de identificadores</strong>
+              <span>Ticker da bolsa, ISIN, CUSIP, RIC (Reuters), código Bloomberg (FIGI) — garantir consistência com os padrões internos Broadcast.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🗂️</span>
+            <div class="li-text">
+              <strong>Classificação por tipo e segmento</strong>
+              <span>Asset class, sub-tipo, mercado, moeda, país, setor — necessário para roteamento de dados e filtros nos produtos do cliente.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">⏱️</span>
+            <div class="li-text">
+              <strong>Validar sessões de negociação</strong>
+              <span>Horários de abertura/fechamento, calendário de feriados, fuso horário. Crítico para normalização de timestamps e cálculos de variação.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">✔️</span>
+            <div class="li-text">
+              <strong>Revisão e aprovação do cadastro</strong>
+              <span>Equipe de conteúdo revisa uma amostra representativa dos instrumentos cadastrados antes de avançar para as tabelas FIT.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="step" id="s8">
+      <div class="step-header" onclick="toggleStep('s8')">
+        <div class="step-icon icon-sys">📊</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--sky)">Sistemas — Configuração</div>
+          <div class="step-title">Tabelas FIT</div>
+          <div class="step-sub">Configuração das tabelas de formatação, instrumentos e tipos do Broadcast</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>As <strong>Tabelas FIT (Format, Instrument, Type)</strong> são a camada de configuração do Broadcast que define como os dados do feed são apresentados, distribuídos e identificados na plataforma. Devem ser configuradas e testadas em pré-produção.</p>
+        <ul class="sub-list">
+          <li>
+            <span class="li-icon">📐</span>
+            <div class="li-text">
+              <strong>Tabela de Formato (F)</strong>
+              <span>Definir estrutura de entrega dos dados: campos a serem distribuídos, ordem, formatação de decimais, codificação de caracteres especiais.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🏷️</span>
+            <div class="li-text">
+              <strong>Tabela de Instrumento (I)</strong>
+              <span>Relacionar identificadores internos do Broadcast com os códigos da bolsa. Incluir aliases e regras de resolução de conflitos de ticker.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">⚙️</span>
+            <div class="li-text">
+              <strong>Tabela de Tipo (T)</strong>
+              <span>Classificar os tipos de mensagem/evento do feed: trade, quote, status, auction, settlement — e mapear para os eventos internos do Broadcast.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🧪</span>
+            <div class="li-text">
+              <strong>Testes end-to-end das tabelas FIT</strong>
+              <span>Simular recepção de dados completos (um dia de pregão) e validar a saída no formato esperado para os produtos finais.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="step" id="s9">
+      <div class="step-header" onclick="toggleStep('s9')">
+        <div class="step-icon icon-fin">💰</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--amber)">Financeiro — Comercial Interno</div>
+          <div class="step-title">Precificação com Elissandra</div>
+          <div class="step-sub">Definição da política comercial e pricing do novo conteúdo</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Com o conteúdo tecnicamente pronto em pré-produção, é necessário definir o modelo de precificação para oferecer o produto aos clientes. Este alinhamento é conduzido com <strong>Elissandra (Comercial / Pricing)</strong>.</p>
+        <ul class="sub-list">
+          <li>
+            <span class="li-icon">📊</span>
+            <div class="li-text">
+              <strong>Análise de custo e margem</strong>
+              <span>Cruzar o custo total de licença + carrier + operação com a estimativa de receita. Definir margem mínima aceitável.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🧩</span>
+            <div class="li-text">
+              <strong>Definir modelo de cobrança</strong>
+              <span>Por usuário? Por device? Por segmento de cliente (profissional vs. não-profissional)? Fee fixo ou variável? Bundle com outros conteúdos?</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">📋</span>
+            <div class="li-text">
+              <strong>Tabela de preços e condições especiais</strong>
+              <span>Redigir tabela oficial de preços. Definir condições para clientes estratégicos, descontos por volume e políticas de trial.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🔗</span>
+            <div class="li-text">
+              <strong>Alinhamento com obrigações de reporting</strong>
+              <span>Verificar se a bolsa exige relatórios de uso (número de usuários, devices, receita). Definir processo de coleta e envio (ver Etapa 13).</span>
+            </div>
+          </li>
+        </ul>
+        <div class="contact-box">
+          <div class="contact-card">
+            <div class="cc-label">Responsável</div>
+            <div class="cc-name">Elissandra</div>
+            <div class="cc-role">Pricing / Comercial — Broadcast</div>
+            <span class="cc-tag badge badge-fin">PRICING</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="step" id="s10">
+      <div class="step-header" onclick="toggleStep('s10')">
+        <div class="step-icon icon-sys">🖥️</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--sky)">Sistemas — Plataforma THOR</div>
+          <div class="step-title">Criação de Páginas e Serviços no THOR</div>
+          <div class="step-sub">Configuração da camada de distribuição e apresentação do conteúdo</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>O THOR é a plataforma de distribuição e gestão de conteúdo do Broadcast. Nesta etapa, configura-se como o novo feed será apresentado e entregue aos clientes — criando páginas de monitoramento e os serviços de distribuição correspondentes.</p>
+        <ul class="sub-list">
+          <li>
+            <span class="li-icon">📄</span>
+            <div class="li-text">
+              <strong>Criar páginas de conteúdo</strong>
+              <span>Páginas que consolidam os dados do novo feed em visões temáticas: lista de instrumentos, cotações, variações, histórico disponível.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🔧</span>
+            <div class="li-text">
+              <strong>Configurar serviços de distribuição</strong>
+              <span>Definir quais clientes/grupos terão acesso, via quais produtos Broadcast (Terminal, API, White Label), com quais permissões e filtros.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🔔</span>
+            <div class="li-text">
+              <strong>Alertas e monitoramento</strong>
+              <span>Configurar alertas de falha de feed, atraso de dados e anomalias. Definir responsável por plantão de monitoramento.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🧪</span>
+            <div class="li-text">
+              <strong>Testes de acesso em pré-prod</strong>
+              <span>Validar que os dados chegam corretamente nas páginas THOR, que as permissões funcionam e que a latência está dentro do esperado.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="step" id="s11">
+      <div class="step-header" onclick="toggleStep('s11')">
+        <div class="step-icon icon-sys">🚀</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--sky)">Sistemas — Produção</div>
+          <div class="step-title">Criar Versão Trunk (Produção)</div>
+          <div class="step-sub">Migração do ambiente de pré-prod para produção após validação completa</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Após a validação completa em pré-produção, cria-se a versão <strong>trunk</strong> — a versão de produção estável do novo feed. Esta etapa envolve a promoção de todos os artefatos testados para o ambiente produtivo.</p>
+        <ul class="checklist">
+          <li><div class="chk-box"></div>Revisão final do checklist de pré-produção com TI e Market Data</li>
+          <li><div class="chk-box"></div>Scripts de banco de dados executados em produção (DDL, procedures, triggers)</li>
+          <li><div class="chk-box"></div>Configuração do injetor/carrier apontando para produção</li>
+          <li><div class="chk-box"></div>Instrumentos migrados e validados no cadastro de produção</li>
+          <li><div class="chk-box"></div>Tabelas FIT ativadas em produção</li>
+          <li><div class="chk-box"></div>Páginas e serviços THOR publicados em produção</li>
+          <li><div class="chk-box"></div>Monitoramento ativo e alertas configurados</li>
+          <li><div class="chk-box"></div>Smoke test: verificar recepção de dados ao vivo por pelo menos um pregão completo</li>
+        </ul>
+        <div class="note-box">
+          <strong>🕐 Janela de Go-Live</strong>
+          Preferencialmente agendar o go-live para um dia de pregão com baixa volatilidade esperada. Manter equipe de TI e Market Data disponível no primeiro dia de produção para resposta imediata a incidentes.
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="step" id="s12">
+      <div class="step-header" onclick="toggleStep('s12')">
+        <div class="step-icon icon-in">📢</div>
+        <div class="step-title-wrap">
+          <div class="step-type" style="color:var(--violet)">Interno + Comercial</div>
+          <div class="step-title">Release e Reporting</div>
+          <div class="step-sub">Comunicação interna, lançamento aos clientes e início das obrigações de reporte</div>
+        </div>
+        <div class="step-chevron">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Com o conteúdo em produção e estável, realiza-se o lançamento formal. Em paralelo, inicia-se o ciclo de reporting obrigatório às bolsas licenciadoras — detalhado na seção abaixo.</p>
+        <ul class="sub-list">
+          <li>
+            <span class="li-icon">📨</span>
+            <div class="li-text">
+              <strong>Comunicado interno</strong>
+              <span>Informar equipes de Vendas, Suporte e Marketing sobre o novo conteúdo disponível, com briefing técnico e comercial.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">🌐</span>
+            <div class="li-text">
+              <strong>Material de divulgação ao mercado</strong>
+              <span>Release de imprensa, atualização do site Broadcast, nota na plataforma, comunicado às carteiras de clientes existentes.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">📊</span>
+            <div class="li-text">
+              <strong>Início do ciclo de reporting às bolsas</strong>
+              <span>Conforme obrigações contratuais de cada licença, iniciar o preenchimento e envio dos relatórios de uso. Ver planilha-padrão abaixo.</span>
+            </div>
+          </li>
+          <li>
+            <span class="li-icon">📅</span>
+            <div class="li-text">
+              <strong>Registro no calendário de obrigações</strong>
+              <span>Cadastrar os prazos de reporting de cada bolsa no calendário do time de Market Data para garantir conformidade contratual.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- end .steps -->
+
+  <!-- ══════════════════════ REPORTING SECTION ══════════════════════ -->
+  <div class="reporting-section">
+    <div class="rep-header">
+      <div class="rep-icon">📋</div>
+      <div>
+        <div class="rep-title">Planilha-Padrão de Reporting às Bolsas</div>
+        <div class="rep-sub">Campos obrigatórios que a equipe de Market Data deve preencher periodicamente para cada licença ativa</div>
+      </div>
+    </div>
+
+    <div class="rep-tabs">
+      <div class="rep-tab active" onclick="switchTab('nasdaq')">📈 Nasdaq Basic</div>
+      <div class="rep-tab" onclick="switchTab('lme')">🏭 LME</div>
+      <div class="rep-tab" onclick="switchTab('ftse')">🇬🇧 FTSE Russell</div>
+    </div>
+
+    <!-- NASDAQ BASIC -->
+    <div class="rep-content active" id="tab-nasdaq">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Campo</th>
+            <th>Tipo / Formato</th>
+            <th>Frequência</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-field">Período de Referência <span class="required-star">*</span></td>
+            <td class="td-type">MM/AAAA</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Mês/ano dos dados reportados</td>
+          </tr>
+          <tr>
+            <td class="td-field">Número de Usuários Profissionais <span class="required-star">*</span></td>
+            <td class="td-type">Inteiro</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Conforme definição Nasdaq: acesso com fins comerciais/profissionais</td>
+          </tr>
+          <tr>
+            <td class="td-field">Número de Usuários Não-Profissionais</td>
+            <td class="td-type">Inteiro</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Pessoas físicas, uso pessoal — tarifa diferenciada</td>
+          </tr>
+          <tr>
+            <td class="td-field">Número de Dispositivos (Devices) <span class="required-star">*</span></td>
+            <td class="td-type">Inteiro</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Cada terminal, tela ou acesso API conta como device</td>
+          </tr>
+          <tr>
+            <td class="td-field">Clientes Redistribuidores (Sub-Distributors)</td>
+            <td class="td-type">Lista (Nome + Nº Devices)</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Se o Broadcast revende a terceiros que redistribuem o dado</td>
+          </tr>
+          <tr>
+            <td class="td-field">Uso em Aplicações Derivadas (Derived Data) <span class="required-star">*</span></td>
+            <td class="td-type">Sim / Não + descrição</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Índices, scores, modelos analíticos construídos sobre dados Nasdaq</td>
+          </tr>
+          <tr>
+            <td class="td-field">Uso em Display vs. Non-Display <span class="required-star">*</span></td>
+            <td class="td-type">% ou volume por categoria</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Non-display: trading algorítmico, backtesting, risk systems</td>
+          </tr>
+          <tr>
+            <td class="td-field">Variações no Período</td>
+            <td class="td-type">Texto livre</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Novos clientes, cancelamentos, mudanças de uso no mês</td>
+          </tr>
+          <tr>
+            <td class="td-field">Responsável pelo Preenchimento <span class="required-star">*</span></td>
+            <td class="td-type">Nome + E-mail</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Ponto de contato Broadcast para o relatório</td>
+          </tr>
+          <tr>
+            <td class="td-field">Data de Envio <span class="required-star">*</span></td>
+            <td class="td-type">DD/MM/AAAA</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Prazo contratual: geralmente até o 15º dia útil do mês seguinte</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note-box">
+        <strong>📤 Como enviar — Nasdaq Basic</strong>
+        Preencher o formulário oficial disponível no portal Nasdaq Subscriber Services. Em caso de dúvidas: <em>dataops@nasdaq.com</em>. Guardar cópia do relatório enviado por no mínimo 3 anos (exigência contratual).
+      </div>
+    </div>
+
+    <!-- LME -->
+    <div class="rep-content" id="tab-lme">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Campo</th>
+            <th>Tipo / Formato</th>
+            <th>Frequência</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-field">Período de Referência <span class="required-star">*</span></td>
+            <td class="td-type">Trimestre + Ano (ex: Q1 2025)</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">LME reporta em base trimestral</td>
+          </tr>
+          <tr>
+            <td class="td-field">Número Total de Usuários <span class="required-star">*</span></td>
+            <td class="td-type">Inteiro</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">Todos os usuários com acesso a dados LME no período</td>
+          </tr>
+          <tr>
+            <td class="td-field">Classificação por Tipo de Uso <span class="required-star">*</span></td>
+            <td class="td-type">Display / Automated Trading / Risk</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">LME diferencia usos para fins de royalty; detalhar cada categoria</td>
+          </tr>
+          <tr>
+            <td class="td-field">Metais Cobertos no Feed <span class="required-star">*</span></td>
+            <td class="td-type">Lista de commodities (Cu, Al, Zn, Pb, Ni, Sn, Co…)</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">Reportar apenas os metais efetivamente distribuídos no período</td>
+          </tr>
+          <tr>
+            <td class="td-field">Clientes que Acessam Dados LME</td>
+            <td class="td-type">Quantidade por segmento</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">Segmentar: Bancos, Fundos, Industriais, Outros</td>
+          </tr>
+          <tr>
+            <td class="td-field">Uso de Settlement Prices <span class="required-star">*</span></td>
+            <td class="td-type">Sim / Não + volume estimado</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">Preços de settlement têm licença específica na LME</td>
+          </tr>
+          <tr>
+            <td class="td-field">Redistribuição via Terceiros</td>
+            <td class="td-type">Nome da entidade + nº de usuários</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">Sub-distribuidores devem ser declarados à LME</td>
+          </tr>
+          <tr>
+            <td class="td-field">Variações Significativas vs. Período Anterior</td>
+            <td class="td-type">Texto livre</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">Alertar a LME sobre crescimentos ou quedas acima de 20%</td>
+          </tr>
+          <tr>
+            <td class="td-field">Responsável pelo Relatório <span class="required-star">*</span></td>
+            <td class="td-type">Nome + Cargo + E-mail</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">—</td>
+          </tr>
+          <tr>
+            <td class="td-field">Confirmação de Compliance com Políticas LME <span class="required-star">*</span></td>
+            <td class="td-type">Checkbox / Assinatura</td>
+            <td><span class="freq-badge freq-q">TRIMESTRAL</span></td>
+            <td class="td-note">Declaração de que o uso está em conformidade com o contrato vigente</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note-box">
+        <strong>📤 Como enviar — LME</strong>
+        Enviar via formulário no portal LME Data Services ou por e-mail para o Account Manager LME designado. Prazo: até 30 dias após o encerramento do trimestre. Contato: <em>marketdata@lme.com</em>.
+      </div>
+    </div>
+
+    <!-- FTSE -->
+    <div class="rep-content" id="tab-ftse">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Campo</th>
+            <th>Tipo / Formato</th>
+            <th>Frequência</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-field">Período de Referência <span class="required-star">*</span></td>
+            <td class="td-type">MM/AAAA</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">FTSE exige reporte mensal</td>
+          </tr>
+          <tr>
+            <td class="td-field">Índices FTSE Distribuídos <span class="required-star">*</span></td>
+            <td class="td-type">Lista de índices (FTSE 100, FTSE 250, FTSE All-Share, FTSE4Good…)</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Reportar apenas os índices efetivamente licenciados e distribuídos</td>
+          </tr>
+          <tr>
+            <td class="td-field">Número de Usuários por Índice <span class="required-star">*</span></td>
+            <td class="td-type">Tabela: Índice × Nº Usuários</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">A cobrança FTSE é por índice; reportar separadamente</td>
+          </tr>
+          <tr>
+            <td class="td-field">Número de Devices por Índice <span class="required-star">*</span></td>
+            <td class="td-type">Tabela: Índice × Nº Devices</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Terminal, API, telas digitais e feeds algorítmicos contam separadamente</td>
+          </tr>
+          <tr>
+            <td class="td-field">Tipo de Licença em Uso <span class="required-star">*</span></td>
+            <td class="td-type">Display / Benchmark / Derived / Non-Display</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">FTSE tem estrutura de licença granular; confirmar categoria contratada</td>
+          </tr>
+          <tr>
+            <td class="td-field">Uso em Produtos Financeiros (ETFs, Fundos Indexados)</td>
+            <td class="td-type">Sim / Não + AUM estimado (USD)</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Se o índice for usado como benchmark de produto financeiro, há taxa específica</td>
+          </tr>
+          <tr>
+            <td class="td-field">Sub-distribuidores</td>
+            <td class="td-type">Nome + País + Nº Usuários</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">FTSE exige aprovação prévia de sub-distribuidores</td>
+          </tr>
+          <tr>
+            <td class="td-field">Novos Clientes no Período</td>
+            <td class="td-type">Lista (Nome + Segmento + Data de Início)</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">Facilita auditoria e confirma alinhamento de receita</td>
+          </tr>
+          <tr>
+            <td class="td-field">Cancelamentos no Período</td>
+            <td class="td-type">Lista (Nome + Data + Motivo)</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">—</td>
+          </tr>
+          <tr>
+            <td class="td-field">Responsável pelo Relatório <span class="required-star">*</span></td>
+            <td class="td-type">Nome + Cargo + E-mail</td>
+            <td><span class="freq-badge freq-m">MENSAL</span></td>
+            <td class="td-note">—</td>
+          </tr>
+          <tr>
+            <td class="td-field">Confirmação de Compliance FTSE <span class="required-star">*</span></td>
+            <td class="td-type">Checkbox / Assinatura digital</td>
+            <td><span class="freq-badge freq-a">ANUAL</span></td>
+            <td class="td-note">Revisão anual completa; o relatório mensal inclui confirmação de não-mudança</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note-box">
+        <strong>📤 Como enviar — FTSE Russell</strong>
+        Utilizar o portal FTSE Russell Client Portal (clientportal.ftserussell.com) ou enviar via e-mail para o Relationship Manager FTSE. Prazo: até o 10º dia útil do mês seguinte. Contato de suporte: <em>info@ftserussell.com</em>.
+      </div>
+    </div>
+
+  </div><!-- end .reporting-section -->
+
+</main>
+
+<script>
+  function toggleStep(id) {
+    const step = document.getElementById(id);
+    const num = id.replace('s','');
+    const node = document.getElementById('rn-' + num);
+    const isOpen = step.classList.contains('open');
+
+    // Close all
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('open'));
+    document.querySelectorAll('.rail-node').forEach(n => n.classList.remove('active'));
+
+    if (!isOpen) {
+      step.classList.add('open');
+      if (node) node.classList.add('active');
+      setTimeout(() => step.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+  }
+
+  function switchTab(name) {
+    document.querySelectorAll('.rep-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.rep-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // Open first step by default
+  toggleStep('s1');
+</script>
+</body>
+</html>

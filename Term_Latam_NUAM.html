@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal Latam — Market Data Dashboard</title>
+<style>
+  :root {
+    --navy:    #0B1628;
+    --navy-2:  #112040;
+    --navy-3:  #162A52;
+    --gold:    #C9A84C;
+    --gold-lt: #E2C578;
+    --gold-dk: #8C6A22;
+    --slate:   #8FA0B8;
+    --ice:     #D6E4F7;
+    --white:   #F4F7FC;
+    --red:     #E05555;
+    --green:   #3DAA6E;
+
+    --col-chile:    #D94F3A;
+    --col-colombia: #FBD049;
+    --col-peru:     #D94F3A;
+    --col-text:     #C9A84C;
+
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body:    'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-mono:    'Consolas', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0A1220 0%, #112040 60%, #0F1D38 100%);
+    border-bottom: 1px solid var(--gold-dk);
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: stretch;
+    gap: 0;
+    min-height: 88px;
+  }
+  .header-logo-bar {
+    display: flex;
+    align-items: center;
+    padding-right: 28px;
+    border-right: 1px solid rgba(201,168,76,.2);
+    margin: 18px 0;
+  }
+  .header-logo-bar .logotype {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: normal;
+    color: var(--gold);
+    letter-spacing: 1.5px;
+    line-height: 1;
+  }
+  .header-logo-bar .logotype span {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-dk);
+    margin-top: 5px;
+  }
+  .header-center {
+    padding: 20px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .header-center .doc-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.3px;
+  }
+  .header-center .doc-sub {
+    font-size: 11px;
+    color: var(--slate);
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+  }
+  .header-meta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    border-left: 1px solid rgba(201,168,76,.2);
+    padding-left: 28px;
+    margin: 18px 0;
+    gap: 5px;
+  }
+  .header-meta .badge {
+    display: inline-block;
+    background: rgba(201,168,76,.12);
+    border: 1px solid var(--gold-dk);
+    color: var(--gold);
+    padding: 3px 10px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .header-meta .meta-line {
+    color: var(--slate);
+    font-size: 10px;
+    text-align: right;
+    line-height: 1.6;
+  }
+  .header-meta .meta-line strong { color: var(--ice); font-weight: 500; }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    display: flex;
+    background: #0D1A30;
+    border-bottom: 1px solid rgba(201,168,76,.15);
+    padding: 0 40px;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--slate);
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 14px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    border-top: 2px solid transparent;
+    transition: color .2s, border-color .2s, background .2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--gold-lt); background: rgba(255,255,255,.02); }
+  .tab-btn.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+    background: rgba(201,168,76,.04);
+  }
+
+  /* ── MAIN CONTENT ── */
+  main { padding: 36px 40px; max-width: 1400px; margin: 0 auto; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── EXCHANGE CARD HEADER ── */
+  .exchange-hero {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 24px;
+    background: var(--navy-2);
+    border: 1px solid var(--navy-3);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+  }
+  .flag-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    background: var(--navy-3);
+    border: 2px solid var(--gold-dk);
+    flex-shrink: 0;
+  }
+  .exchange-hero h2 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: normal;
+    color: var(--gold);
+  }
+  .exchange-hero p {
+    color: var(--slate);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .hero-meta {
+    text-align: right;
+    color: var(--slate);
+    font-size: 11px;
+    line-height: 2;
+  }
+  .hero-meta strong { color: var(--white); font-size: 12px; }
+
+  /* ── SECTION HEADERS ── */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-dk);
+    margin-bottom: 16px;
+    margin-top: 36px;
+  }
+  .section-title::before {
+    content: '';
+    width: 3px; height: 14px;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(201,168,76,.12);
+  }
+
+  /* ── KPI STRIP ── */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: rgba(201,168,76,.1);
+    border: 1px solid rgba(201,168,76,.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .kpi-cell {
+    background: var(--navy-2);
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .kpi-cell .kpi-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--slate);
+    font-weight: 600;
+  }
+  .kpi-cell .kpi-value {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    color: var(--gold);
+    font-weight: 400;
+    letter-spacing: -0.5px;
+  }
+  .kpi-cell .kpi-note {
+    font-size: 10px;
+    color: var(--slate);
+    margin-top: 2px;
+  }
+
+  /* ── ICE CARRIER BOX ── */
+  .ice-carrier-block {
+    background: linear-gradient(135deg, rgba(201,168,76,.07) 0%, rgba(22,42,82,.5) 100%);
+    border: 1px solid var(--gold-dk);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 18px 22px;
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 20px;
+  }
+  .ice-carrier-block .ice-logo {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    background: rgba(201,168,76,.1);
+    border: 1px solid var(--gold-dk);
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .ice-carrier-block .ice-desc {
+    font-size: 12px;
+    color: var(--slate);
+    line-height: 1.5;
+  }
+  .ice-carrier-block .ice-desc strong { color: var(--white); }
+  .ice-carrier-block .ice-total {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .ice-carrier-block .ice-total .ice-price {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    color: var(--gold-lt);
+    display: block;
+  }
+  .ice-carrier-block .ice-total .ice-sub {
+    font-size: 10px;
+    color: var(--slate);
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ── CONTENT TYPE GRID ── */
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .content-card {
+    background: var(--navy-2);
+    border: 1px solid var(--navy-3);
+    border-radius: 4px;
+    padding: 16px 18px;
+    transition: border-color .2s;
+  }
+  .content-card:hover { border-color: var(--gold-dk); }
+  .content-card .ct-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .content-card .ct-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .content-card .ct-desc {
+    font-size: 11px;
+    color: var(--slate);
+    line-height: 1.5;
+  }
+  .dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+  .dot-rt  { background: var(--green); }
+  .dot-del { background: #F4A03B; }
+  .dot-eod { background: var(--slate); }
+
+  /* ── PRICING TABLE ── */
+  .price-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .price-table th {
+    background: var(--navy-3);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .price-table th:not(:first-child) { text-align: right; }
+  .price-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--navy-3);
+    color: var(--white);
+    vertical-align: middle;
+  }
+  .price-table td:not(:first-child) { text-align: right; font-family: var(--font-mono); color: var(--gold-lt); }
+  .price-table tr:hover td { background: rgba(201,168,76,.05); }
+  .price-table .row-group td {
+    background: rgba(255,255,255,.03);
+    font-size: 11px;
+    color: var(--slate);
+    padding: 6px 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .price-table .total-row td {
+    background: rgba(201,168,76,.07);
+    color: var(--gold-lt);
+    font-weight: 600;
+    border-top: 1px solid var(--gold-dk);
+  }
+
+  /* ── INFO BOXES ── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .info-box {
+    background: var(--navy-2);
+    border: 1px solid var(--navy-3);
+    border-radius: 4px;
+    padding: 16px 18px;
+  }
+  .info-box .ib-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 6px;
+  }
+  .info-box .ib-value {
+    font-size: 13px;
+    color: var(--white);
+    font-weight: 500;
+  }
+  .info-box .ib-note {
+    font-size: 11px;
+    color: var(--slate);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .tag-rt   { background: rgba(61,170,110,.2); color: #3DAA6E; }
+  .tag-del  { background: rgba(244,160,59,.2); color: #F4A03B; }
+  .tag-eod  { background: rgba(143,160,184,.2); color: #8FA0B8; }
+  .tag-warn { background: rgba(224,85,85,.2); color: var(--red); }
+
+  /* ── DISCOUNT TABLE ── */
+  .discount-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--navy-3);
+    font-size: 13px;
+  }
+  .discount-row:last-child { border-bottom: none; }
+  .discount-pct {
+    font-family: var(--font-mono);
+    color: var(--green);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* ── COMPARISON VIEW ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .compare-col {
+    background: var(--navy-2);
+    border: 1px solid var(--navy-3);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .compare-col-header {
+    padding: 14px 18px;
+    border-bottom: 2px solid var(--gold-dk);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .compare-col-header .flag { font-size: 22px; }
+  .compare-col-header h3 {
+    font-size: 15px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .compare-col-header .mkt { font-size: 11px; color: var(--slate); margin-top: 1px; }
+  .compare-row {
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--navy-3);
+    font-size: 12px;
+  }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row .cr-label { color: var(--slate); font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+  .compare-row .cr-value { color: var(--white); font-weight: 500; }
+  .compare-row .cr-price { color: var(--gold-lt); font-family: var(--font-mono); font-size: 13px; }
+
+  /* ── LEGAL NOTES ── */
+  .legal-block {
+    background: rgba(201,168,76,.06);
+    border: 1px solid var(--gold-dk);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin-top: 8px;
+  }
+  .legal-block p { font-size: 12px; color: var(--slate); line-height: 1.6; }
+  .legal-block strong { color: var(--gold-lt); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--navy-3);
+    padding: 20px 40px;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--slate);
+    font-size: 11px;
+  }
+  footer span { color: var(--gold-dk); }
+
+  /* ── PILLS ── */
+  .pill-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .pill {
+    background: var(--navy-3);
+    border: 1px solid rgba(201,168,76,.25);
+    color: var(--slate);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+  }
+
+  /* ── NOTICE BANNER ── */
+  .notice {
+    background: rgba(244,160,59,.08);
+    border-left: 3px solid #F4A03B;
+    padding: 10px 16px;
+    font-size: 11px;
+    color: var(--slate);
+    margin-top: 8px;
+    border-radius: 0 4px 4px 0;
+  }
+  .notice strong { color: #F4A03B; }
+
+  /* ── P&L STYLES ── */
+  .pl-scenario-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .pl-tab {
+    background: var(--navy-2);
+    border: 1px solid var(--navy-3);
+    color: var(--slate);
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: 2px;
+  }
+  .pl-tab:hover { color: var(--gold-lt); border-color: var(--gold-dk); }
+  .pl-tab.active { background: rgba(201,168,76,.1); border-color: var(--gold); color: var(--gold); }
+
+  .pl-scenario { display: none; }
+  .pl-scenario.active { display: block; }
+
+  .pl-summary-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: rgba(201,168,76,.1);
+    border: 1px solid rgba(201,168,76,.12);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .pl-kpi {
+    background: var(--navy-2);
+    padding: 16px 18px;
+  }
+  .pl-kpi .pk-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--slate);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .pl-kpi .pk-value {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1;
+  }
+  .pk-value.positive { color: var(--green); }
+  .pk-value.negative { color: var(--red); }
+  .pk-value.neutral  { color: var(--gold); }
+  .pl-kpi .pk-sub {
+    font-size: 10px;
+    color: var(--slate);
+    margin-top: 4px;
+  }
+
+  .pl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .pl-table th {
+    background: var(--navy-3);
+    color: var(--gold);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 9px 12px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .pl-table th:first-child { text-align: left; min-width: 180px; }
+  .pl-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(22,42,82,.8);
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--slate);
+    white-space: nowrap;
+  }
+  .pl-table td:first-child {
+    text-align: left;
+    font-family: var(--font-body);
+    color: var(--white);
+    font-size: 12px;
+  }
+  .pl-table tr:hover td { background: rgba(255,255,255,.02); }
+  .pl-table .pl-section td {
+    background: rgba(22,42,82,.6);
+    color: var(--gold-dk);
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 7px 12px;
+  }
+  .pl-table .pl-subtotal td {
+    color: var(--ice);
+    font-weight: 600;
+    border-top: 1px solid var(--navy-3);
+    background: rgba(255,255,255,.03);
+  }
+  .pl-table .pl-subtotal td:first-child { font-family: var(--font-body); }
+  .pl-table .pl-total td {
+    color: var(--gold-lt);
+    font-weight: 700;
+    font-size: 12px;
+    border-top: 2px solid var(--gold-dk);
+    background: rgba(201,168,76,.06);
+    padding: 10px 12px;
+  }
+  .pl-table .pl-total td:first-child { font-family: var(--font-body); font-size: 12px; }
+  .pl-table .pl-breakeven td {
+    background: rgba(61,170,110,.08);
+    color: var(--green);
+    border-top: 1px solid rgba(61,170,110,.3);
+    font-weight: 600;
+  }
+  .pl-table .pl-breakeven td:first-child { font-family: var(--font-body); }
+  .pl-table .positive { color: var(--green) !important; }
+  .pl-table .negative { color: var(--red) !important; }
+  .pl-table .muted { color: var(--slate) !important; font-style: italic; }
+
+  .pl-chart-wrap {
+    background: var(--navy-2);
+    border: 1px solid var(--navy-3);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 8px;
+  }
+  .pl-chart-wrap h4 {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold-dk);
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+  .chart-bars {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 6px 10px;
+    align-items: center;
+  }
+  .chart-month-label {
+    font-size: 10px;
+    color: var(--slate);
+    text-align: right;
+    font-family: var(--font-mono);
+  }
+  .chart-bar-track {
+    height: 22px;
+    background: rgba(255,255,255,.04);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .chart-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width .4s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    min-width: 2px;
+  }
+  .chart-bar-fill.neg { background: rgba(224,85,85,.4); border-right: 2px solid var(--red); }
+  .chart-bar-fill.pos { background: rgba(61,170,110,.35); border-right: 2px solid var(--green); }
+  .chart-bar-label {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--white);
+    white-space: nowrap;
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .zero-line {
+    grid-column: 2;
+    height: 1px;
+    background: rgba(201,168,76,.4);
+    margin: 4px 0;
+    position: relative;
+  }
+  .zero-line::before {
+    content: 'Break-even';
+    position: absolute;
+    right: 0;
+    top: -10px;
+    font-size: 9px;
+    color: var(--gold-dk);
+    letter-spacing: 0.5px;
+  }
+
+  .pl-assumptions {
+    background: rgba(201,168,76,.04);
+    border: 1px solid rgba(201,168,76,.12);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .pl-assumptions h5 {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold-dk);
+    margin-bottom: 8px;
+    font-weight: 700;
+    grid-column: 1/-1;
+  }
+  .assumption-item {
+    font-size: 11px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+  .assumption-item strong { color: var(--white); display: block; font-size: 12px; margin-bottom: 2px; }
+
+@media (max-width: 768px) {
+    header, main, footer { padding-left: 16px; padding-right: 16px; }
+    .nav-tabs { padding-left: 16px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .exchange-hero { grid-template-columns: auto 1fr; }
+    .exchange-hero .hero-meta { display: none; }
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    .pl-summary-strip { grid-template-columns: repeat(2, 1fr); }
+    .pl-assumptions { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo-bar">
+    <div class="logotype">
+      Terminal Latam
+      <span>Market Data Intelligence</span>
+    </div>
+  </div>
+  <div class="header-center">
+    <div class="doc-title">NUAM Exchange Group — Análise de Contratos &amp; Estrutura de Tarifas</div>
+    <div class="doc-sub">Broadcast Agência Estado · Grupo Estado &nbsp;|&nbsp; Head Market Data &amp; Automation · A. Melo</div>
+  </div>
+  <div class="header-meta">
+    <div class="badge">Confidencial</div>
+    <div class="meta-line">
+      <strong>Responsável Contratos:</strong> Elissandra<br>
+      Junho 2026
+    </div>
+  </div>
+</header>
+
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="showTab('overview')">Visão Geral</button>
+  <button class="tab-btn" onclick="showTab('compare')">Comparativo</button>
+  <button class="tab-btn" onclick="showTab('pl')">P&amp;L / Fluxo de Caixa</button>
+  <button class="tab-btn" onclick="showTab('chile')">🇨🇱 Chile (BCS)</button>
+  <button class="tab-btn" onclick="showTab('colombia')">🇨🇴 Colômbia (BVC)</button>
+  <button class="tab-btn" onclick="showTab('peru')">🇵🇪 Peru (BVL)</button>
+</nav>
+
+<main>
+
+  <!-- ══════════════ OVERVIEW ══════════════ -->
+  <div id="tab-overview" class="tab-panel active">
+
+    <!-- KPI Strip -->
+    <div class="kpi-strip">
+      <div class="kpi-cell">
+        <div class="kpi-label">Bolsas NUAM ativas</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-note">Chile · Colômbia · Peru</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Instrumentos distribuíveis</div>
+        <div class="kpi-value">~1.500</div>
+        <div class="kpi-note">Ações + Bonds + Derivativos (est.)</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Custo fixo anual estimado</div>
+        <div class="kpi-value">~USD 60k</div>
+        <div class="kpi-note">Sem terminais variáveis · ex-IVA</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Fee ICE (Carrier)</div>
+        <div class="kpi-value">USD 4.500</div>
+        <div class="kpi-note">USD 1.500 × 3 bolsas / ano</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Total com carrier ICE</div>
+        <div class="kpi-value">~USD 64k</div>
+        <div class="kpi-note">Base anual consolidada</div>
+      </div>
+    </div>
+
+    <div class="section-title">Sobre o Grupo NUAM</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="ib-label">Holding</div>
+        <div class="ib-value">Holding Bursátil Regional S.A.</div>
+        <div class="ib-note">Contraparte legal nos contratos de Chile. Bolsa de Valores de Colombia S.A. (BVC) para Colômbia. Bolsa de Valores de Lima S.A. (BVL) para Peru.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Jurisdições ativas</div>
+        <div class="ib-value">3 países — Chile · Colômbia · Peru</div>
+        <div class="ib-note">Cada bolsa opera contrato independente. Tarifas em USD (exceto ajuste anual Colômbia pela TRM).</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Modelo de acesso</div>
+        <div class="ib-value">Via Carrier / Router autorizado</div>
+        <div class="ib-note">Broadcast atua como Vendor (redistribuidor). Necessário carrier homologado em cada jurisdição.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Moeda de cobrança</div>
+        <div class="ib-value">USD em todos os países</div>
+        <div class="ib-note">Chile: notas fiscais em CLP equivalente ao USD. Colômbia: faturamento anual antecipado com TRM do 1º dia útil do período.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Delay padrão (não-RT)</div>
+        <div class="ib-value">20 min (Chile: 20 min · Peru: 20 min)</div>
+        <div class="ib-note">Colombia: 15 min para feeds via Data Feeds. EOD pode ser distribuído sem custo variável em todos os países.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Auditoria</div>
+        <div class="ib-value">Anual (Chile: 1×/ano; Colombia: 2×/ano)</div>
+        <div class="ib-note">Aviso prévio mínimo de 30–60 dias. Período auditado máx. 3 anos. Custo da bolsa.</div>
+      </div>
+    </div>
+
+    <div class="section-title">Tipos de Conteúdo por Bolsa</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Tipo de Dado</th>
+          <th>🇨🇱 Chile (BCS)</th>
+          <th>🇨🇴 Colômbia (BVC)</th>
+          <th>🇵🇪 Peru (BVL)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Renda Variável (Equities)</td><td><span class="tag tag-rt">RT</span></td><td><span class="tag tag-rt">RT</span></td><td><span class="tag tag-rt">RT</span></td></tr>
+        <tr><td>Renda Fixa — Dívida Pública</td><td>—</td><td><span class="tag tag-rt">RT</span></td><td>—</td></tr>
+        <tr><td>Renda Fixa — Dívida Corporativa</td><td>—</td><td><span class="tag tag-rt">RT</span></td><td>—</td></tr>
+        <tr><td>Derivativos</td><td>—</td><td><span class="tag tag-rt">RT</span></td><td>—</td></tr>
+        <tr><td>Índices de Mercado</td><td><span class="tag tag-rt">RT</span></td><td><span class="tag tag-rt">RT</span></td><td><span class="tag tag-eod">S&amp;P/BVL (restr.)</span></td></tr>
+        <tr><td>Market Depth (5 níveis)</td><td><span class="tag tag-rt">Telepregón HT</span></td><td><span class="tag tag-rt">5 linhas</span></td><td><span class="tag tag-rt">Level 2</span></td></tr>
+        <tr><td>Full Depth (profundidade total)</td><td><span class="tag tag-del">1 ação por vez</span></td><td><span class="tag tag-rt">Disponível</span></td><td><span class="tag tag-rt">Level 3</span></td></tr>
+        <tr><td>10 Maiores Altas/Baixas</td><td><span class="tag tag-rt">RT</span></td><td>—</td><td>—</td></tr>
+        <tr><td>Preço de Fechamento (EOD)</td><td><span class="tag tag-eod">Sem custo variável</span></td><td><span class="tag tag-eod">Sem custo variável</span></td><td><span class="tag tag-eod">Sem custo variável</span></td></tr>
+        <tr><td>Publicação Web (Internet)</td><td><span class="tag tag-del">20 min delay (multi-ativo)</span></td><td><span class="tag tag-del">15 min delay</span></td><td><span class="tag tag-del">20 min delay</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Resumo de Tarifas Fixas (Vendor / Base)</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Bolsa</th>
+          <th>Taxa Fixação / Commissioning</th>
+          <th>Taxa Mensal Fixa</th>
+          <th>Taxa Variável / Usuário (RT)</th>
+          <th>Faturamento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🇨🇱 Chile (BCS) — Level 1 Equities</td>
+          <td>USD 2.000 (conexão direta)<br><span style="color:var(--slate);font-size:11px">Grátis via Router</span></td>
+          <td>USD 1.500 + VAT</td>
+          <td>USD 30 / terminal / mês + VAT</td>
+          <td>Mensal — CLP equivalente ao USD</td>
+        </tr>
+        <tr>
+          <td>🇨🇴 Colômbia (BVC) — Equities</td>
+          <td>USD 3.485 anual (conexão direta)<br><span style="color:var(--slate);font-size:11px">USD 291/mês (SAE)</span></td>
+          <td>USD 13.606 / ano (full depth) via carrier</td>
+          <td>USD 560–1.119 / usuário / mês (RT data feed)</td>
+          <td>Anual antecipado via TRM 1º dia útil</td>
+        </tr>
+        <tr>
+          <td>🇵🇪 Peru (BVL) — Equities</td>
+          <td>—</td>
+          <td>USD 2.000 / mês</td>
+          <td>USD 28–56 / terminal / mês</td>
+          <td>Anual antecipado + mensal por terminal</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="notice">
+      <strong>Atenção:</strong> Colombia tem isenção de 3 meses a partir da data efetiva do contrato (versão NUAM BVC 05/2026). Peru tem isenção de 1 mês na taxa mensal fixa no primeiro mês. Chile tem custo único de comissionamento de USD 2.000 em conexão direta (inclui 40h de suporte por 2 meses).
+    </div>
+
+    <div class="section-title">Cobertura de Instrumentos — Universo NUAM</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Bolsa</th>
+          <th>Ações / Emissores</th>
+          <th>Renda Fixa (est.)</th>
+          <th>Derivativos</th>
+          <th>Índices principais</th>
+          <th>Total estimado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🇨🇱 Chile (BCS)</td>
+          <td>~182 ações listadas<br><span style="color:var(--slate);font-size:10px">Fonte: CEIC, abr/2026</span></td>
+          <td>~300 títulos<br><span style="color:var(--slate);font-size:10px">Gov. + Corp. (bonds, UF)</span></td>
+          <td>Futuros + Opções<br><span style="color:var(--slate);font-size:10px">IPSA, ações, moedas, ouro</span></td>
+          <td>S&amp;P IPSA (29 ações)<br>S&amp;P/CLX IGPA · INTER10</td>
+          <td style="color:var(--gold-lt);font-family:var(--font-mono);">~600–800</td>
+        </tr>
+        <tr>
+          <td>🇨🇴 Colômbia (BVC)</td>
+          <td>64 ações / 174 emissores<br><span style="color:var(--slate);font-size:10px">Fonte: BVC/Rankia, 2025</span></td>
+          <td>~350 títulos<br><span style="color:var(--slate);font-size:10px">TES (dívida pública) + Corp.</span></td>
+          <td>19 futuros s/ ações + COLCAP<br><span style="color:var(--slate);font-size:10px">+ Opções + OIS IBR · abr/2026</span></td>
+          <td>MSCI COLCAP (20 ações)<br>COLEQTY · COLSC · COLTES</td>
+          <td style="color:var(--gold-lt);font-family:var(--font-mono);">~500–700</td>
+        </tr>
+        <tr>
+          <td>🇵🇪 Peru (BVL)</td>
+          <td>~260 empresas listadas<br><span style="color:var(--slate);font-size:10px">Fonte: comparabancaperu, 2026</span></td>
+          <td>~150 títulos<br><span style="color:var(--slate);font-size:10px">Bonds corp. + soberanos + titulização</span></td>
+          <td>Mínimo<br><span style="color:var(--slate);font-size:10px">Sem mercado de derivativos relevante</span></td>
+          <td>S&amp;P/BVL Peru General<br><span style="color:var(--slate);font-size:10px">29–41 ações · restrição de redistribuição</span></td>
+          <td style="color:var(--gold-lt);font-family:var(--font-mono);">~350–500</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total NUAM consolidado</td>
+          <td>~506 ações únicas</td>
+          <td>~800 títulos de renda fixa</td>
+          <td>~25–30 contratos</td>
+          <td>~10 índices regionais</td>
+          <td style="font-family:var(--font-mono);font-size:14px;">≈ 1.500–2.000</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="notice" style="margin-bottom:8px;">
+      <strong>Nota metodológica:</strong> Estimativas baseadas em fontes públicas verificadas (CEIC abr/2026, BVC/Rankia 2025, comparabancaperu 2026, Wikipedia BVC 2026). O universo <em>distribuível pela Broadcast</em> é menor — foca em ativos com presença bursátil ativa. Índices S&amp;P/BVL Peru não podem ser redistribuídos (restrição contratual). Para fins de proposta comercial, ~1.500 instrumentos é o número conservador defensável.
+    </div>
+
+    <div class="section-title">Carrier — ICE Data Services</div>
+    <div class="ice-carrier-block">
+      <div class="ice-logo">ICE Data<br>Services</div>
+      <div class="ice-desc">
+        <strong>Carrier homologado pela NUAM para as 3 bolsas.</strong><br>
+        A ICE atua como intermediário (Router/Carrier) entre a Broadcast e os feeds NUAM Chile, Colômbia e Peru.
+        O fee de carrier é cobrado separadamente dos contratos de licença de cada bolsa, sendo um custo de conectividade.
+      </div>
+      <div class="ice-total">
+        <span class="ice-price">USD 4.500</span>
+        <span class="ice-sub">3 bolsas × USD 1.500 / ano</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ CHILE ══════════════ -->
+  <div id="tab-chile" class="tab-panel">
+
+    <div class="exchange-hero">
+      <div class="flag-circle">🇨🇱</div>
+      <div>
+        <h2>Bolsa de Chile (BCS) — NUAM Chile</h2>
+        <p>Holding Bursátil Regional S.A. · La Bolsa 64, Santiago, Chile · sacbursatil@nuamx.com · +562 2399 3110</p>
+      </div>
+      <div class="hero-meta">
+        <strong>Protocolo FIX 4.4</strong><br>
+        Equities Market Protocol v1.10.8<br>
+        <strong>Horário:</strong> Seg–Sex 09h–19h (CLT)<br>
+        Exceto feriados + 31/dez
+      </div>
+    </div>
+
+    <div class="section-title">Tipos de Conteúdo Disponíveis</div>
+    <div class="content-grid">
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real</div>
+        <div class="ct-title">Índices de Mercado</div>
+        <div class="ct-desc">Valor e variação % dos índices de mercado, patrimoniais e setoriais (IGPA, IPSA, INTER10). IGPA/IPSA/INTER10 isentos de taxa variável.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real</div>
+        <div class="ct-title">10 Maiores Altas/Baixas</div>
+        <div class="ct-desc">Ranking diário das 10 maiores variações positivas e negativas do pregão.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real</div>
+        <div class="ct-title">Preço de Fechamento</div>
+        <div class="ct-desc">Divulgação 2×/dia: abertura e fechamento. Pode incluir múltiplas ações simultaneamente.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real (individual)</div>
+        <div class="ct-title">Puntas Telepregón HT</div>
+        <div class="ct-desc">Quantidade / Preço / Montante das melhores ofertas — somente para cada ação consultada individualmente.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real (individual)</div>
+        <div class="ct-title">Resumo por Ação</div>
+        <div class="ct-desc">Dados RT por ação somente quando solicitado individualmente pelo usuário. Proibido: janelas de múltiplas ações simultâneas ou portfolios em RT.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-del"></span>Delay 20 min</div>
+        <div class="ct-title">Multi-Ativo (Web)</div>
+        <div class="ct-desc">Publicação em site público de mais de uma ação: obrigatório delay de 20 min + indicação explícita do atraso na tela.</div>
+      </div>
+    </div>
+
+    <div class="notice">
+      <strong>Restrição Web importante:</strong> No modelo Anexo 2 (publicação em website), é proibido criar telas que mostrem dados de múltiplas ações em tempo real simultaneamente. Cada ação RT precisa ser consultada individualmente pelo usuário.
+    </div>
+
+    <div class="section-title">Tarifas — Anexo 1 · Level 1 Equities (USD)</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Componente</th>
+          <th>Valor</th>
+          <th>Notas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-group"><td colspan="3">Taxa de Implantação (única)</td></tr>
+        <tr>
+          <td>Comissionamento — Conexão Direta</td>
+          <td>USD 2.000 + VAT</td>
+          <td style="font-size:11px;color:var(--slate)">Inclui 40h suporte / 2 meses. Link dedicado ou Internet.</td>
+        </tr>
+        <tr>
+          <td>Comissionamento — Via Router autorizado</td>
+          <td>USD 0</td>
+          <td style="font-size:11px;color:var(--slate)">Sem taxa de implantação. Nome do router deve ser informado.</td>
+        </tr>
+        <tr class="row-group"><td colspan="3">Taxa Recorrente Mensal</td></tr>
+        <tr>
+          <td>Taxa Fixa (To-Do-Evento)</td>
+          <td>USD 1.500 + VAT</td>
+          <td style="font-size:11px;color:var(--slate)">Devida integralmente mesmo sem uso (causas não imputáveis à NUAM).</td>
+        </tr>
+        <tr>
+          <td>Taxa Variável — Terminal Level 1 (RT)</td>
+          <td>USD 30 + VAT / terminal / mês</td>
+          <td style="font-size:11px;color:var(--slate)">Usuários com acesso RT dentro ou fora do Chile. Declaração até dia 15 do mês seguinte.</td>
+        </tr>
+        <tr class="row-group"><td colspan="3">Isenções</td></tr>
+        <tr>
+          <td>Índices IGPA / IPSA / INTER10</td>
+          <td>USD 0</td>
+          <td style="font-size:11px;color:var(--slate)">Publicação RT para todos os usuários da rede isenta de taxa variável.</td>
+        </tr>
+        <tr class="row-group"><td colspan="3">Dados Bancários para Pagamento</td></tr>
+        <tr>
+          <td>Banco Intermediário</td>
+          <td>JP Morgan Chase Bank NA (CHASEUS33)</td>
+          <td style="font-size:11px;color:var(--slate)">ABA: 021000021</td>
+        </tr>
+        <tr>
+          <td>Banco Beneficiário</td>
+          <td>Banco Bice — BICECLRM</td>
+          <td style="font-size:11px;color:var(--slate)">Conta: 01-30-109285-3 · Holding Bursátil Regional S.A.</td>
+        </tr>
+        <tr class="row-group"><td colspan="3">Custo de Carrier (ICE Data Services)</td></tr>
+        <tr>
+          <td>Fee ICE — Carrier NUAM Chile</td>
+          <td>USD 1.500 / ano</td>
+          <td style="font-size:11px;color:var(--slate)">Cobrado separadamente pela ICE Data Services. Custo de conectividade, não de licença.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Condições Contratuais Relevantes</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="ib-label">Vigência</div>
+        <div class="ib-value">Prazo Indeterminado</div>
+        <div class="ib-note">Rescisão com 30 dias de aviso por escrito (carta registrada).</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Reajuste de tarifas</div>
+        <div class="ib-value">90 dias de aviso prévio</div>
+        <div class="ib-note">Broadcast tem 30 dias para contestar ou rescisão implícita. Sem manifestação = aceito.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Pagamento</div>
+        <div class="ib-value">15 dias corridos da fatura</div>
+        <div class="ib-note">Emisão da fatura após recebimento da declaração mensal de usuários. Fatura em CLP equivalente ao USD.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Auditoria</div>
+        <div class="ib-value">1× por ano / 60 dias aviso</div>
+        <div class="ib-note">Período auditável máximo: 3 anos. Custo: NUAM. Acesso a registros, computadores e arquivos.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Índice criado pelo cliente</div>
+        <div class="ib-value"><span class="tag tag-warn">Proibido sem autorização</span></div>
+        <div class="ib-note">Criação de índices permanentes baseados em ativos NUAM requer autorização escrita prévia.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Link NUAM obrigatório (Web)</div>
+        <div class="ib-value">bolsadesantiago.com</div>
+        <div class="ib-note">Obrigatório vincular ao site da NUAM na página que exibe dados chilenos.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ COLOMBIA ══════════════ -->
+  <div id="tab-colombia" class="tab-panel">
+
+    <div class="exchange-hero">
+      <div class="flag-circle">🇨🇴</div>
+      <div>
+        <h2>Bolsa de Valores de Colombia (BVC) — NUAM Colombia</h2>
+        <p>Bolsa de Valores de Colombia S.A. · Carrera 7 No. 71-21, Torre B Piso 12, Bogotá · bvc-vendors@bvc.com.co</p>
+      </div>
+      <div class="hero-meta">
+        <strong>Representante Legal:</strong> Andrés Restrepo Montoya<br>
+        <strong>Contrato:</strong> PL-GCM-1412 v6.0<br>
+        <strong>Atualizado:</strong> Abril 2026<br>
+        <strong>Faturamento:</strong> TRM 1º dia útil do período
+      </div>
+    </div>
+
+    <div class="section-title">Tipos de Conteúdo Disponíveis</div>
+    <div class="content-grid">
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real</div>
+        <div class="ct-title">Renda Variável (Equities)</div>
+        <div class="ct-desc">Ações listadas na BVC. Disponível em Level 1 (best bid/offer), Level 2 (5 níveis) e Full Depth. Feed via Data Feed ou outros mecanismos.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real</div>
+        <div class="ct-title">Renda Fixa — Dívida Pública</div>
+        <div class="ct-desc">Títulos públicos colombianos. Disponível em 3 níveis de profundidade. Taxa anual separada ou em pacotes com outros ativos.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real</div>
+        <div class="ct-title">Renda Fixa — Dívida Corporativa</div>
+        <div class="ct-desc">Títulos corporativos. Menor custo individual. Combinável com dívida pública para desconto.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real</div>
+        <div class="ct-title">Derivativos</div>
+        <div class="ct-desc">Contratos futuros e opções listados na BVC. Disponível em 3 níveis de profundidade.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real</div>
+        <div class="ct-title">Índices*</div>
+        <div class="ct-desc">Incluído sem custo adicional com qualquer pacote RT. MSCI COLCAP: disponível apenas para vendors na América Latina.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-del"></span>Delay 15 min</div>
+        <div class="ct-title">Dados com Atraso</div>
+        <div class="ct-desc">Estrutura de preços 30–40% menor que RT. Disponível via Data Feed ou mecanismo próprio.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-eod"></span>End of Day</div>
+        <div class="ct-title">Fechamento (EOD)</div>
+        <div class="ct-desc">Preços e volumes de fechamento. Distribuição interna e externa sem contrato com usuário. Sem taxa variável.</div>
+      </div>
+    </div>
+
+    <div class="notice">
+      <strong>MSCI COLCAP:</strong> Desde junho/2021, o índice MSCI COLCAP não está incluído no pacote de índices distribuído pela BVC para clientes fora da América Latina. Para habilitar, contato: bvc-vendors@bvc.com.co
+    </div>
+
+    <div class="section-title">Tarifas Anuais — Via Carrier (USD/ano · Full Market Depth)</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Mercado</th>
+          <th>Taxa Anual (USD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Renda Variável (Equities)</td><td>13.606</td></tr>
+        <tr><td>Renda Fixa — Dívida Pública</td><td>11.075</td></tr>
+        <tr><td>Renda Fixa — Dívida Corporativa</td><td>7.383</td></tr>
+        <tr><td>RF Corp. + RF Pública</td><td>18.352</td></tr>
+        <tr><td>Derivativos</td><td>8.649</td></tr>
+        <tr><td>Equities + Índices</td><td>15.927</td></tr>
+        <tr class="total-row"><td>Equities + RF + Derivativos</td><td>34.806</td></tr>
+        <tr class="total-row"><td>Equities + RF + Derivativos + Índices</td><td>37.021</td></tr>
+        <tr><td>Índices (standalone)</td><td>2.531</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Tarifas Variáveis — Data Feed RT (USD / usuário / mês)</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Mercado</th>
+          <th>Level 1 (Best bid/offer)</th>
+          <th>Level 2 (5 linhas)</th>
+          <th>Full Depth</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Renda Variável</td><td>560</td><td>746</td><td>1.119</td></tr>
+        <tr><td>RF — Dívida Pública</td><td>459</td><td>609</td><td>916</td></tr>
+        <tr><td>RF — Dívida Corporativa</td><td>306</td><td>407</td><td>609</td></tr>
+        <tr><td>RF Corp. + RF Pública</td><td>837</td><td>1.016</td><td>1.524</td></tr>
+        <tr><td>Derivativos</td><td>357</td><td>474</td><td>712</td></tr>
+        <tr><td>Equities + Índices</td><td>764</td><td>950</td><td>1.322</td></tr>
+        <tr class="total-row"><td>Equities + RF + Derivativos</td><td>1.451</td><td>1.935</td><td>2.901</td></tr>
+        <tr class="total-row"><td>Equities + RF + Derivativos + Índices</td><td>1.627</td><td>2.109</td><td>3.076</td></tr>
+        <tr><td>Índices (standalone)</td><td>205</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Tarifas Variáveis — Outros Mecanismos (não Data Feed · RT)</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Mercado</th>
+          <th>Level 1</th>
+          <th>Level 2</th>
+          <th>Full Depth</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Renda Variável</td><td>38</td><td>49</td><td>74</td></tr>
+        <tr><td>Renda Fixa</td><td>38</td><td>49</td><td>74</td></tr>
+        <tr><td>Derivativos</td><td>38</td><td>49</td><td>74</td></tr>
+        <tr><td>RV + RF</td><td>67</td><td>88</td><td>132</td></tr>
+        <tr><td>RV + DV</td><td>67</td><td>88</td><td>132</td></tr>
+        <tr><td>RF + DV</td><td>67</td><td>88</td><td>132</td></tr>
+        <tr class="total-row"><td>RV + RF + DV</td><td>88</td><td>118</td><td>176</td></tr>
+        <tr><td>Índice MSCI COLCAP</td><td>0</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Tarifas com Delay 15 min — Data Feed (USD / usuário / mês)</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Mercado</th>
+          <th>Level 1</th>
+          <th>Level 2</th>
+          <th>Full Depth</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Renda Variável</td><td>392</td><td>523</td><td>784</td></tr>
+        <tr><td>RF — Dívida Pública</td><td>321</td><td>427</td><td>640</td></tr>
+        <tr><td>RF — Dívida Corporativa</td><td>214</td><td>285</td><td>427</td></tr>
+        <tr><td>RF Corp. + RF Pública</td><td>535</td><td>712</td><td>1.067</td></tr>
+        <tr><td>Derivativos</td><td>250</td><td>332</td><td>498</td></tr>
+        <tr><td>Equities + Índices</td><td>535</td><td>665</td><td>926</td></tr>
+        <tr class="total-row"><td>Equities + RF + Derivativos</td><td>1.016</td><td>1.354</td><td>2.030</td></tr>
+        <tr class="total-row"><td>Equities + RF + Derivativos + Índices</td><td>1.139</td><td>1.478</td><td>2.154</td></tr>
+        <tr><td>Índices (standalone)</td><td>143</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Política de Descontos por Volume de Mercados</div>
+    <div style="background:var(--navy-2);border:1px solid var(--navy-3);border-radius:4px;overflow:hidden;max-width:400px;">
+      <div class="discount-row"><span>1 Mercado</span><span class="discount-pct">0%</span></div>
+      <div class="discount-row"><span>2 Mercados</span><span class="discount-pct">10%</span></div>
+      <div class="discount-row"><span>3 Mercados</span><span class="discount-pct">13,75%</span></div>
+    </div>
+    <p style="font-size:11px;color:var(--slate);margin-top:8px;">Índices habilitados sem custo adicional com qualquer serviço RT contratado. Preços não incluem 19% IVA.</p>
+
+    <div class="section-title">Condições Contratuais Relevantes</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="ib-label">Vigência</div>
+        <div class="ib-value">1 ano + renovação automática</div>
+        <div class="ib-note">Renovação automática salvo aviso de 30 dias antes do vencimento.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Isenção Inicial</div>
+        <div class="ib-value"><span class="tag tag-rt">3 meses grátis</span></div>
+        <div class="ib-note">Contratos com cláusula 4 §9 (NUAM BVC 05/2026): taxa fixa e variável isentas nos primeiros 3 meses da data efetiva.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Faturamento</div>
+        <div class="ib-value">Anual antecipado</div>
+        <div class="ib-note">Com base na TRM (peso/dólar) do 1º dia útil do período. Pagamento em 10 dias da fatura/boleto.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Conexão direta (SAE)</div>
+        <div class="ib-value">+USD 291/mês ou USD 3.485/ano</div>
+        <div class="ib-note">Custo adicional para conexão direta com a bolsa (SAE), além da taxa do contrato de dados.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Mora</div>
+        <div class="ib-value">Taxa Superfinanciera + máximo legal</div>
+        <div class="ib-note">Suspensão do serviço após 60 dias de inadimplência. Multa diária de 2% do contrato por descumprimento.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Auditoria</div>
+        <div class="ib-value">2× ao ano / 30 dias aviso</div>
+        <div class="ib-note">Revisoría Fiscal ou auditor independente. Reuniões trimestrais de revisão de contrato.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Custo Carrier (ICE)</div>
+        <div class="ib-value">USD 1.500 / ano</div>
+        <div class="ib-note">Fee ICE Data Services como carrier homologado para acesso à BVC. Cobrado separadamente do contrato de licença.</div>
+      </div>
+    </div>
+
+  </div>
+  <div id="tab-peru" class="tab-panel">
+
+    <div class="exchange-hero">
+      <div class="flag-circle">🇵🇪</div>
+      <div>
+        <h2>Bolsa de Valores de Lima (BVL) — NUAM Peru</h2>
+        <p>NUAM / Grupo BVL S.A.A. · Av. Jorge Basadre Grohmann 347, Int. 801, San Isidro, Lima · catherine.delcastillo@nuam.com</p>
+      </div>
+      <div class="hero-meta">
+        <strong>Contrato:</strong> NUAM BVL 05/21/2026<br>
+        <strong>Representantes:</strong> Miguel Zapatero Alba<br>&amp; Mariella Cordova Vargas<br>
+        <strong>Moeda:</strong> USD
+      </div>
+    </div>
+
+    <div class="section-title">Tipos de Conteúdo Disponíveis</div>
+    <div class="content-grid">
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real — Level 1</div>
+        <div class="ct-title">Best Bid &amp; Best Ask</div>
+        <div class="ct-desc">Melhor oferta de compra e venda para cada ativo listado na BVL. USD 28/terminal/mês.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real — Level 2</div>
+        <div class="ct-title">5 Melhores Ofertas</div>
+        <div class="ct-desc">5 melhores bids e 5 melhores asks. USD 39/terminal/mês.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-rt"></span>Tempo Real — Level 3</div>
+        <div class="ct-title">Full Depth (Book Completo)</div>
+        <div class="ct-desc">Todas as ofertas de compra e venda. USD 56/terminal/mês.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-del"></span>Delay 20 min</div>
+        <div class="ct-title">Dados com Atraso</div>
+        <div class="ct-desc">Distribuição livre após 20 minutos da geração da informação. Pode ser distribuído por qualquer meio de comunicação.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-eod"></span>Sem custo</div>
+        <div class="ct-title">EOD — Fechamento</div>
+        <div class="ct-desc">Preços e volumes ao fechamento. Distribuição interna e externa sem custo. Não requer contrato com usuário.</div>
+      </div>
+      <div class="content-card">
+        <div class="ct-label"><span class="dot dot-eod"></span>Restrição</div>
+        <div class="ct-title">Índices S&amp;P/BVL</div>
+        <div class="ct-desc">S&amp;P/BVL Index Values (EOD, RT e histórico) — proibido armazenar ou publicar. Apenas uso interno controlado.</div>
+      </div>
+    </div>
+
+    <div class="notice">
+      <strong>Importante — Índices S&amp;P/BVL:</strong> O contrato proíbe explicitamente o armazenamento ou publicação de EOD Index Values, Real-Time Index Values e Historical S&amp;P/BVL Index Values. Isso deve ser refletido na configuração do injector/distribuição da Broadcast.
+    </div>
+
+    <div class="section-title">Tarifas — Bolsa de Valores de Lima (USD)</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Componente</th>
+          <th>Valor</th>
+          <th>Notas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-group"><td colspan="3">Taxa Fixa Mensal</td></tr>
+        <tr>
+          <td>Direito de distribuição (mensal)</td>
+          <td>USD 2.000 / mês</td>
+          <td style="font-size:11px;color:var(--slate)">Isenção no 1º mês (paga-se apenas taxa por terminal no primeiro mês).</td>
+        </tr>
+        <tr class="row-group"><td colspan="3">Taxa Variável por Terminal (RT)</td></tr>
+        <tr>
+          <td>Level 1 — Best bid/ask</td>
+          <td>USD 28 / terminal / mês</td>
+          <td style="font-size:11px;color:var(--slate)">Por acesso RT ao Level 1.</td>
+        </tr>
+        <tr>
+          <td>Level 2 — 5 melhores ofertas</td>
+          <td>USD 39 / terminal / mês</td>
+          <td style="font-size:11px;color:var(--slate)">Por acesso RT ao Level 2.</td>
+        </tr>
+        <tr>
+          <td>Level 3 — Full Depth (book completo)</td>
+          <td>USD 56 / terminal / mês</td>
+          <td style="font-size:11px;color:var(--slate)">Por acesso RT ao Level 3.</td>
+        </tr>
+        <tr class="row-group"><td colspan="3">Condições de Pagamento</td></tr>
+        <tr>
+          <td>Taxa fixa anual (pré-pago)</td>
+          <td>USD 24.000 / ano</td>
+          <td style="font-size:11px;color:var(--slate)">Pago até 5 dias úteis após início de cada período anual. BVL envia fatura 30 dias antes.</td>
+        </tr>
+        <tr>
+          <td>Mora</td>
+          <td>TAMEX + 3% a.a.</td>
+          <td style="font-size:11px;color:var(--slate)">Cálculo diário. Publicado no Diário Oficial El Peruano.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Condições Contratuais Relevantes</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="ib-label">Vigência</div>
+        <div class="ib-value">1 ano + renovação automática</div>
+        <div class="ib-note">Renovação ao pagar a taxa do período seguinte. Rescisão: aviso 3 meses antes do vencimento.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Isenção Inicial</div>
+        <div class="ib-value">1 mês grátis (taxa fixa)</div>
+        <div class="ib-note">No 1º mês, apenas a taxa por terminal se aplica. Taxa mensal fixa de USD 2.000 isenta.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">RT — definição</div>
+        <div class="ib-value">&lt; 20 min da geração</div>
+        <div class="ib-note">BVL pode alterar unilateralmente o período RT (max. 1h), com aviso de 45 dias.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Distributors (sub-vendors)</div>
+        <div class="ib-value">Autorizados pelo contrato</div>
+        <div class="ib-note">Subsidiárias ou terceiros autorizados pela Broadcast. Cada novo Distributor deve ser reportado à BVL.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Auditoria</div>
+        <div class="ib-value">30 dias aviso prévio</div>
+        <div class="ib-note">BVL pode auditar registros, equipamentos da Broadcast e de seus usuários/distribuidores. Custo da BVL salvo descumprimento.</div>
+      </div>
+      <div class="info-box">
+        <div class="ib-label">Equipamento em Lima</div>
+        <div class="ib-value"><span class="tag tag-warn">Obrigatório instalar terminal</span></div>
+        <div class="ib-note">Broadcast deve instalar equipamento na BVL para controle de qualidade do feed. Seguro total obrigatório.</div>
+      </div>
+    </div>
+
+    <div class="legal-block">
+      <p><strong>Responsável BVL:</strong> Catherine Del Castillo Validivia — catherine.delcastillo@nuam.com<br>
+      <strong>Uso para novos produtos/serviços:</strong> A informação pode ser usada gratuitamente para desenvolvimento de novos produtos e serviços. Uso para treinamento, venda ou análise de mercado é tarifado normalmente.<br>
+      <strong>Aviso obrigatório aos usuários:</strong> Broadcast deve publicar em suas propriedades (websites, apps) que a informação é de caráter referencial e sujeita a alteração.<br>
+      <strong>Carrier ICE Data Services:</strong> Fee adicional de USD 1.500/ano cobrado pela ICE como carrier para conectividade com a BVL.</p>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ COMPARE ══════════════ -->
+  <div id="tab-compare" class="tab-panel">
+
+    <div class="section-title">Comparativo Rápido — Chile · Colômbia · Peru</div>
+    <div class="compare-grid">
+
+      <div class="compare-col">
+        <div class="compare-col-header">
+          <span class="flag">🇨🇱</span>
+          <div>
+            <h3>Chile (BCS)</h3>
+            <div class="mkt">Bolsa de Santiagio · FIX 4.4</div>
+          </div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Instrumentos estimados</div>
+          <div class="cr-value">~600–800 · 182 ações listadas</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Ativos cobertos</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Taxa fixa mensal</div>
+          <div class="cr-price">USD 1.500 / mês</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Taxa por terminal RT</div>
+          <div class="cr-price">USD 30 / terminal / mês</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Implantação</div>
+          <div class="cr-price">USD 2.000 (direto) / USD 0 (router)</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Delay publicação web</div>
+          <div class="cr-value">20 min (multi-ativo)</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Faturamento</div>
+          <div class="cr-value">Mensal · CLP equiv. USD</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Vigência</div>
+          <div class="cr-value">Indeterminada</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Isenção inicial</div>
+          <div class="cr-value">Não</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Auditoria</div>
+          <div class="cr-value">1×/ano · 60 dias aviso</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Prazo rescisão</div>
+          <div class="cr-value">30 dias carta registrada</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Restrição especial</div>
+          <div class="cr-value">Proib. multi-ativo RT no web</div>
+        </div>
+        <div class="compare-row" style="background:rgba(201,168,76,.04);">
+          <div class="cr-label">Carrier ICE (fee anual)</div>
+          <div class="cr-price">USD 1.500 / ano</div>
+        </div>
+      </div>
+
+      <div class="compare-col">
+        <div class="compare-col-header">
+          <span class="flag">🇨🇴</span>
+          <div>
+            <h3>Colômbia (BVC)</h3>
+            <div class="mkt">Bolsa de Valores de Colombia</div>
+          </div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Instrumentos estimados</div>
+          <div class="cr-value">~500–700 · 64 ações / 174 emissores</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Ativos cobertos</div>
+          <div class="cr-value">RV + RF Pública + RF Corp. + Derivativos + Índices</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Profundidade máx.</div>
+          <div class="cr-value">Full Market Depth (todos)</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Taxa fixa anual (RV full)</div>
+          <div class="cr-price">USD 13.606 / ano</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Taxa por usuário RT (RV full)</div>
+          <div class="cr-price">USD 1.119 / usuário / mês</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Pacote completo (anual)</div>
+          <div class="cr-price">USD 37.021 / ano</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Delay dados</div>
+          <div class="cr-value">15 min (Data Feed)</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Faturamento</div>
+          <div class="cr-value">Anual antecipado · TRM</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Vigência</div>
+          <div class="cr-value">1 ano + auto-renovação</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Isenção inicial</div>
+          <div class="cr-value"><span class="tag tag-rt">3 meses</span></div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Auditoria</div>
+          <div class="cr-value">2×/ano · 30 dias aviso</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Prazo rescisão</div>
+          <div class="cr-value">30 dias carta</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Desconto multi-mercado</div>
+          <div class="cr-value">Até 13,75% (3 mercados)</div>
+        </div>
+        <div class="compare-row" style="background:rgba(201,168,76,.04);">
+          <div class="cr-label">Carrier ICE (fee anual)</div>
+          <div class="cr-price">USD 1.500 / ano</div>
+        </div>
+      </div>
+
+      <div class="compare-col">
+        <div class="compare-col-header">
+          <span class="flag">🇵🇪</span>
+          <div>
+            <h3>Peru (BVL)</h3>
+            <div class="mkt">Bolsa de Valores de Lima</div>
+          </div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Instrumentos estimados</div>
+          <div class="cr-value">~350–500 · ~260 empresas listadas</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Ativos cobertos</div>
+          <div class="cr-value">Equities (Lv1/Lv2/Lv3)</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Profundidade máx.</div>
+          <div class="cr-value">Level 3 (Full Book)</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Taxa fixa mensal</div>
+          <div class="cr-price">USD 2.000 / mês</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Taxa por terminal RT</div>
+          <div class="cr-price">USD 28 / 39 / 56</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Custo anual total (ex-var.)</div>
+          <div class="cr-price">USD 24.000 / ano</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Delay distribuição</div>
+          <div class="cr-value">20 min</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Faturamento</div>
+          <div class="cr-value">Anual antecipado</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Vigência</div>
+          <div class="cr-value">1 ano + auto-renovação</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Isenção inicial</div>
+          <div class="cr-value"><span class="tag tag-del">1 mês (fixa)</span></div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Auditoria</div>
+          <div class="cr-value">Qualquer hora · 30 dias aviso</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Prazo rescisão</div>
+          <div class="cr-value">3 meses antes do vencimento</div>
+        </div>
+        <div class="compare-row">
+          <div class="cr-label">Restrição especial</div>
+          <div class="cr-value">Proib. S&amp;P/BVL Index (RT/EOD/Hist)</div>
+        </div>
+        <div class="compare-row" style="background:rgba(201,168,76,.04);">
+          <div class="cr-label">Carrier ICE (fee anual)</div>
+          <div class="cr-price">USD 1.500 / ano</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Estimativa de Custo Mínimo Anual (sem terminais variáveis)</div>
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Bolsa / Componente</th>
+          <th>Taxa Fixa Anual (USD)</th>
+          <th>Implantação (uma vez)</th>
+          <th>Total 1º Ano (ex-variável)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🇨🇱 Chile — Level 1 Equities</td>
+          <td>18.000 (12 × 1.500)</td>
+          <td>2.000 (conexão direta) ou 0 (router)</td>
+          <td>20.000 / 18.000</td>
+        </tr>
+        <tr>
+          <td>🇨🇴 Colômbia — Equities only (full depth)</td>
+          <td>13.606</td>
+          <td>3.485 (SAE direto) ou 0 (carrier)</td>
+          <td>17.091 / 13.606</td>
+        </tr>
+        <tr>
+          <td>🇨🇴 Colômbia — Pacote completo (RV+RF+DV+Idx)</td>
+          <td>37.021</td>
+          <td>—</td>
+          <td>37.021</td>
+        </tr>
+        <tr>
+          <td>🇵🇪 Peru — Level 1</td>
+          <td>24.000 (12 × 2.000)</td>
+          <td>—</td>
+          <td>24.000</td>
+        </tr>
+        <tr style="background:rgba(201,168,76,.04);">
+          <td style="color:var(--gold-lt);font-size:12px;">📡 ICE Data Services — Carrier (3 bolsas)</td>
+          <td style="font-family:var(--font-mono);text-align:right;color:var(--gold-lt);">4.500</td>
+          <td style="text-align:right;color:var(--slate);font-size:11px;">USD 1.500 × Chile + Colômbia + Peru</td>
+          <td style="font-family:var(--font-mono);text-align:right;color:var(--gold-lt);">4.500</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total NUAM (Chile + Colômbia Equities + Peru) + ICE Carrier</td>
+          <td>60.106</td>
+          <td>~2.000–5.485</td>
+          <td>~62.106–66.091</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--slate);margin-top:8px;">* Colômbia com isenção de 3 meses reduz custo do 1º ano em ~USD 3.400. Todos os valores excluem IVA/impostos locais. Variáveis (terminais RT) não incluídas. Fee ICE é custo de conectividade (carrier), cobrado separadamente dos contratos de licença NUAM.</p>
+
+  </div>
+
+  <!-- ══════════════ P&L ══════════════ -->
+  <div id="tab-pl" class="tab-panel">
+
+    <div class="pl-scenario-tabs">
+      <button class="pl-tab active" onclick="showScenario('cons')">Conservador · 3 terminais</button>
+      <button class="pl-tab" onclick="showScenario('base')">Base · 10 terminais</button>
+      <button class="pl-tab" onclick="showScenario('otim')">Otimista · 25 terminais</button>
+    </div>
+
+    <!-- ── CONSERVADOR ── -->
+    <div id="sc-cons" class="pl-scenario active">
+
+      <div class="pl-summary-strip">
+        <div class="pl-kpi"><div class="pk-label">Terminais vendidos</div><div class="pk-value neutral">3</div><div class="pk-sub">Ramp-up 6 meses</div></div>
+        <div class="pl-kpi"><div class="pk-label">Receita mensal (estável)</div><div class="pk-value neutral">USD 1.800</div><div class="pk-sub">3 × USD 600</div></div>
+        <div class="pl-kpi"><div class="pk-label">Custo fixo mensal</div><div class="pk-value negative">USD 5.375</div><div class="pk-sub">Licenças + ICE carrier</div></div>
+        <div class="pl-kpi"><div class="pk-label">Break-even mensal</div><div class="pk-value negative">Não atingido</div><div class="pk-sub">Déficit permanente</div></div>
+        <div class="pl-kpi"><div class="pk-label">P&amp;L acumulado (24m)</div><div class="pk-value negative">–USD 85.650</div><div class="pk-sub">Resultado consolidado</div></div>
+      </div>
+
+      <table class="pl-table">
+        <thead>
+          <tr>
+            <th>Linha</th>
+            <th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th>
+            <th>M7–12</th><th>M13–18</th><th>M19–24</th><th>Total 24m</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="pl-section"><td colspan="11">RECEITAS</td></tr>
+          <tr>
+            <td>Terminais ativos</td>
+            <td>1</td><td>1</td><td>2</td><td>2</td><td>3</td><td>3</td>
+            <td>3</td><td>3</td><td>3</td><td class="muted">—</td>
+          </tr>
+          <tr>
+            <td>Receita terminal (USD 600/un)</td>
+            <td>600</td><td>600</td><td>1.200</td><td>1.200</td><td>1.800</td><td>1.800</td>
+            <td class="muted">10.800</td><td class="muted">10.800</td><td class="muted">10.800</td>
+            <td class="positive">37.800</td>
+          </tr>
+          <tr class="pl-subtotal">
+            <td>Total Receitas</td>
+            <td>600</td><td>600</td><td>1.200</td><td>1.200</td><td>1.800</td><td>1.800</td>
+            <td>10.800</td><td>10.800</td><td>10.800</td><td class="positive">37.800</td>
+          </tr>
+
+          <tr class="pl-section"><td colspan="11">CUSTOS FIXOS (mensais)</td></tr>
+          <tr>
+            <td>NUAM Chile (licença)</td>
+            <td>1.500</td><td>1.500</td><td>1.500</td><td>1.500</td><td>1.500</td><td>1.500</td>
+            <td class="muted">9.000</td><td class="muted">9.000</td><td class="muted">9.000</td>
+            <td class="negative">36.000</td>
+          </tr>
+          <tr>
+            <td>NUAM Colômbia (licença anual ÷12)</td>
+            <td>1.134</td><td>1.134</td><td>1.134</td><td>1.134</td><td>1.134</td><td>1.134</td>
+            <td class="muted">6.804</td><td class="muted">6.804</td><td class="muted">6.804</td>
+            <td class="negative">27.216</td>
+          </tr>
+          <tr>
+            <td>NUAM Peru (licença)</td>
+            <td>2.000</td><td>2.000</td><td>2.000</td><td>2.000</td><td>2.000</td><td>2.000</td>
+            <td class="muted">12.000</td><td class="muted">12.000</td><td class="muted">12.000</td>
+            <td class="negative">48.000</td>
+          </tr>
+          <tr>
+            <td>ICE Carrier (÷12)</td>
+            <td>375</td><td>375</td><td>375</td><td>375</td><td>375</td><td>375</td>
+            <td class="muted">2.250</td><td class="muted">2.250</td><td class="muted">2.250</td>
+            <td class="negative">9.000</td>
+          </tr>
+          <tr>
+            <td>Isenção Colômbia (–3m)</td>
+            <td style="color:var(--green)">+1.134</td><td style="color:var(--green)">+1.134</td><td style="color:var(--green)">+1.134</td><td>—</td><td>—</td><td>—</td>
+            <td class="muted">—</td><td class="muted">—</td><td class="muted">—</td>
+            <td style="color:var(--green)">+3.402</td>
+          </tr>
+          <tr class="pl-subtotal">
+            <td>Total Custos Fixos</td>
+            <td>3.875</td><td>3.875</td><td>3.875</td><td>5.009</td><td>5.009</td><td>5.009</td>
+            <td>30.054</td><td>30.054</td><td>30.054</td><td class="negative">116.814</td>
+          </tr>
+
+          <tr class="pl-total">
+            <td>Resultado Mensal (Receita – Custo)</td>
+            <td class="negative">–3.275</td><td class="negative">–3.275</td><td class="negative">–2.675</td>
+            <td class="negative">–3.809</td><td class="negative">–3.209</td><td class="negative">–3.209</td>
+            <td class="negative">–19.254</td><td class="negative">–19.254</td><td class="negative">–19.254</td>
+            <td class="negative">–79.014</td>
+          </tr>
+          <tr class="pl-total">
+            <td>P&amp;L Acumulado</td>
+            <td class="negative">–3.275</td><td class="negative">–6.550</td><td class="negative">–9.225</td>
+            <td class="negative">–13.034</td><td class="negative">–16.243</td><td class="negative">–19.452</td>
+            <td class="negative">–38.706</td><td class="negative">–57.960</td><td class="negative">–79.014</td>
+            <td class="negative">–79.014</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pl-chart-wrap">
+        <h4>Resultado Mensal Acumulado — 24 meses</h4>
+        <div class="chart-bars" id="chart-cons"></div>
+      </div>
+
+      <div class="notice" style="margin-top:12px;">
+        <strong>Diagnóstico:</strong> Com apenas 3 terminais, a receita (USD 1.800/mês) cobre apenas 34% do custo fixo mínimo (USD 5.375/mês). O produto precisa de pelo menos <strong>9 terminais</strong> para atingir o break-even operacional (sem considerar Chile commissioning de USD 2.000). Recomenda-se revisar precificação ou estratégia de go-to-market antes de assinar os contratos.
+      </div>
+    </div>
+
+    <!-- ── BASE ── -->
+    <div id="sc-base" class="pl-scenario">
+
+      <div class="pl-summary-strip">
+        <div class="pl-kpi"><div class="pk-label">Terminais vendidos</div><div class="pk-value neutral">10</div><div class="pk-sub">Ramp-up 8 meses</div></div>
+        <div class="pl-kpi"><div class="pk-label">Receita mensal (estável)</div><div class="pk-value neutral">USD 6.000</div><div class="pk-sub">10 × USD 600</div></div>
+        <div class="pl-kpi"><div class="pk-label">Custo fixo mensal</div><div class="pk-value negative">USD 5.375</div><div class="pk-sub">Licenças + ICE carrier</div></div>
+        <div class="pl-kpi"><div class="pk-label">Break-even mensal</div><div class="pk-value positive">Mês 9</div><div class="pk-sub">Receita cobre custos fixos</div></div>
+        <div class="pl-kpi"><div class="pk-label">P&amp;L acumulado (24m)</div><div class="pk-value positive">+USD 8.482</div><div class="pk-sub">Resultado consolidado</div></div>
+      </div>
+
+      <table class="pl-table">
+        <thead>
+          <tr>
+            <th>Linha</th>
+            <th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th><th>M7</th><th>M8</th>
+            <th>M9–12</th><th>M13–18</th><th>M19–24</th><th>Total 24m</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="pl-section"><td colspan="13">RECEITAS (ramp-up linear: +1–2 terminais/mês)</td></tr>
+          <tr>
+            <td>Terminais ativos</td>
+            <td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>8</td><td>10</td>
+            <td>10</td><td>10</td><td>10</td><td class="muted">—</td>
+          </tr>
+          <tr>
+            <td>Receita terminal (USD 600)</td>
+            <td>600</td><td>1.200</td><td>1.800</td><td>2.400</td><td>3.000</td><td>3.600</td><td>4.800</td><td>6.000</td>
+            <td class="muted">24.000</td><td class="muted">36.000</td><td class="muted">36.000</td>
+            <td class="positive">119.400</td>
+          </tr>
+          <tr class="pl-subtotal">
+            <td>Total Receitas</td>
+            <td>600</td><td>1.200</td><td>1.800</td><td>2.400</td><td>3.000</td><td>3.600</td><td>4.800</td><td>6.000</td>
+            <td>24.000</td><td>36.000</td><td>36.000</td><td class="positive">119.400</td>
+          </tr>
+
+          <tr class="pl-section"><td colspan="13">CUSTOS FIXOS</td></tr>
+          <tr>
+            <td>NUAM Chile (÷12)</td>
+            <td>1.500</td><td>1.500</td><td>1.500</td><td>1.500</td><td>1.500</td><td>1.500</td><td>1.500</td><td>1.500</td>
+            <td class="muted">6.000</td><td class="muted">9.000</td><td class="muted">9.000</td>
+            <td class="negative">36.000</td>
+          </tr>
+          <tr>
+            <td>NUAM Colômbia (÷12)</td>
+            <td>1.134</td><td>1.134</td><td>1.134</td><td>1.134</td><td>1.134</td><td>1.134</td><td>1.134</td><td>1.134</td>
+            <td class="muted">4.536</td><td class="muted">6.804</td><td class="muted">6.804</td>
+            <td class="negative">27.216</td>
+          </tr>
+          <tr>
+            <td>NUAM Peru (mensal)</td>
+            <td>2.000</td><td>2.000</td><td>2.000</td><td>2.000</td><td>2.000</td><td>2.000</td><td>2.000</td><td>2.000</td>
+            <td class="muted">8.000</td><td class="muted">12.000</td><td class="muted">12.000</td>
+            <td class="negative">48.000</td>
+          </tr>
+          <tr>
+            <td>ICE Carrier (÷12)</td>
+            <td>375</td><td>375</td><td>375</td><td>375</td><td>375</td><td>375</td><td>375</td><td>375</td>
+            <td class="muted">1.500</td><td class="muted">2.250</td><td class="muted">2.250</td>
+            <td class="negative">9.000</td>
+          </tr>
+          <tr>
+            <td>Isenção Colômbia (–3m)</td>
+            <td style="color:var(--green)">+1.134</td><td style="color:var(--green)">+1.134</td><td style="color:var(--green)">+1.134</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+            <td class="muted">—</td><td class="muted">—</td><td class="muted">—</td>
+            <td style="color:var(--green)">+3.402</td>
+          </tr>
+          <tr class="pl-subtotal">
+            <td>Total Custos Fixos</td>
+            <td>3.875</td><td>3.875</td><td>3.875</td><td>5.009</td><td>5.009</td><td>5.009</td><td>5.009</td><td>5.009</td>
+            <td>20.036</td><td>30.054</td><td>30.054</td><td class="negative">110.814</td>
+          </tr>
+
+          <tr class="pl-total">
+            <td>Resultado Mensal</td>
+            <td class="negative">–3.275</td><td class="negative">–2.675</td><td class="negative">–2.075</td>
+            <td class="negative">–2.609</td><td class="negative">–2.009</td><td class="negative">–1.409</td>
+            <td class="negative">–209</td><td class="positive">+991</td>
+            <td class="positive">+3.964</td><td class="positive">+5.946</td><td class="positive">+5.946</td>
+            <td class="positive">+8.586</td>
+          </tr>
+          <tr class="pl-breakeven">
+            <td>✓ Break-even operacional atingido no Mês 8 (10 terminais)</td>
+            <td colspan="11" style="text-align:left;font-family:var(--font-body);color:var(--green);font-size:11px;">Payback do investimento acumulado: Mês 15 · P&amp;L positivo a partir do Mês 8</td>
+          </tr>
+          <tr class="pl-total">
+            <td>P&amp;L Acumulado</td>
+            <td class="negative">–3.275</td><td class="negative">–5.950</td><td class="negative">–8.025</td>
+            <td class="negative">–10.634</td><td class="negative">–12.643</td><td class="negative">–14.052</td>
+            <td class="negative">–14.261</td><td class="negative">–13.270</td>
+            <td class="negative">–9.306</td><td class="positive">+8.544</td><td class="positive">+44.214</td>
+            <td class="positive">+44.214</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pl-chart-wrap">
+        <h4>Resultado Mensal Acumulado — 24 meses</h4>
+        <div class="chart-bars" id="chart-base"></div>
+      </div>
+
+      <div class="notice" style="margin-top:12px;border-left-color:var(--green);">
+        <strong>Diagnóstico:</strong> Com 10 terminais (ramp-up em 8 meses), o produto se torna operacionalmente lucrativo no <strong>Mês 8</strong>. O investimento acumulado (pico de –USD 14.261) é recuperado por volta do <strong>Mês 15</strong>. Cenário viável com estratégia comercial focada em conversão de clientes Broadcast já existentes com interesse em LATAM.
+      </div>
+    </div>
+
+    <!-- ── OTIMISTA ── -->
+    <div id="sc-otim" class="pl-scenario">
+
+      <div class="pl-summary-strip">
+        <div class="pl-kpi"><div class="pk-label">Terminais vendidos</div><div class="pk-value neutral">25</div><div class="pk-sub">Ramp-up 10 meses</div></div>
+        <div class="pl-kpi"><div class="pk-label">Receita mensal (estável)</div><div class="pk-value positive">USD 15.000</div><div class="pk-sub">25 × USD 600</div></div>
+        <div class="pl-kpi"><div class="pk-label">Custo fixo mensal</div><div class="pk-value negative">USD 5.375</div><div class="pk-sub">Licenças + ICE carrier</div></div>
+        <div class="pl-kpi"><div class="pk-label">Break-even mensal</div><div class="pk-value positive">Mês 7</div><div class="pk-sub">Receita cobre custos</div></div>
+        <div class="pl-kpi"><div class="pk-label">P&amp;L acumulado (24m)</div><div class="pk-value positive">+USD 133k</div><div class="pk-sub">Resultado consolidado</div></div>
+      </div>
+
+      <table class="pl-table">
+        <thead>
+          <tr>
+            <th>Linha</th>
+            <th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th><th>M7</th><th>M8–10</th>
+            <th>M11–12</th><th>M13–18</th><th>M19–24</th><th>Total 24m</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="pl-section"><td colspan="13">RECEITAS (ramp-up agressivo: +2–3 terminais/mês)</td></tr>
+          <tr>
+            <td>Terminais ativos</td>
+            <td>2</td><td>4</td><td>7</td><td>10</td><td>14</td><td>18</td><td>22</td><td>25</td>
+            <td>25</td><td>25</td><td>25</td><td class="muted">—</td>
+          </tr>
+          <tr>
+            <td>Receita terminal (USD 600)</td>
+            <td>1.200</td><td>2.400</td><td>4.200</td><td>6.000</td><td>8.400</td><td>10.800</td><td>13.200</td>
+            <td class="muted">45.000</td><td class="muted">30.000</td><td class="muted">90.000</td><td class="muted">90.000</td>
+            <td class="positive">301.200</td>
+          </tr>
+          <tr class="pl-subtotal">
+            <td>Total Receitas</td>
+            <td>1.200</td><td>2.400</td><td>4.200</td><td>6.000</td><td>8.400</td><td>10.800</td><td>13.200</td>
+            <td>45.000</td><td>30.000</td><td>90.000</td><td>90.000</td>
+            <td class="positive">301.200</td>
+          </tr>
+
+          <tr class="pl-section"><td colspan="13">CUSTOS FIXOS</td></tr>
+          <tr>
+            <td>NUAM Chile + Colômbia + Peru</td>
+            <td>3.500</td><td>3.500</td><td>3.500</td><td>3.500</td><td>3.500</td><td>3.500</td><td>3.500</td>
+            <td class="muted">10.500</td><td class="muted">7.000</td><td class="muted">21.000</td><td class="muted">21.000</td>
+            <td class="negative">84.000</td>
+          </tr>
+          <tr>
+            <td>ICE Carrier (÷12)</td>
+            <td>375</td><td>375</td><td>375</td><td>375</td><td>375</td><td>375</td><td>375</td>
+            <td class="muted">1.125</td><td class="muted">750</td><td class="muted">2.250</td><td class="muted">2.250</td>
+            <td class="negative">9.000</td>
+          </tr>
+          <tr>
+            <td>Isenção Colômbia (–3m)</td>
+            <td style="color:var(--green)">+1.134</td><td style="color:var(--green)">+1.134</td><td style="color:var(--green)">+1.134</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td>
+            <td class="muted">—</td><td class="muted">—</td><td class="muted">—</td><td class="muted">—</td>
+            <td style="color:var(--green)">+3.402</td>
+          </tr>
+          <tr class="pl-subtotal">
+            <td>Total Custos Fixos</td>
+            <td>2.741</td><td>2.741</td><td>2.741</td><td>3.875</td><td>3.875</td><td>3.875</td><td>3.875</td>
+            <td>11.625</td><td>7.750</td><td>23.250</td><td>23.250</td>
+            <td class="negative">89.598</td>
+          </tr>
+
+          <tr class="pl-total">
+            <td>Resultado Mensal</td>
+            <td class="negative">–1.541</td><td class="negative">–341</td><td class="positive">+1.459</td>
+            <td class="positive">+2.125</td><td class="positive">+4.525</td><td class="positive">+6.925</td><td class="positive">+9.325</td>
+            <td class="positive">+33.375</td><td class="positive">+22.250</td>
+            <td class="positive">+66.750</td><td class="positive">+66.750</td>
+            <td class="positive">+211.602</td>
+          </tr>
+          <tr class="pl-breakeven">
+            <td>✓ Break-even operacional atingido no Mês 7 (22 terminais)</td>
+            <td colspan="11" style="text-align:left;font-family:var(--font-body);color:var(--green);font-size:11px;">Payback do investimento: Mês 3 · Crescimento de margem a partir do Mês 11 (25 terminais estabilizados)</td>
+          </tr>
+          <tr class="pl-total">
+            <td>P&amp;L Acumulado</td>
+            <td class="negative">–1.541</td><td class="negative">–1.882</td><td class="positive">–423</td>
+            <td class="positive">+1.702</td><td class="positive">+6.227</td><td class="positive">+13.152</td><td class="positive">+22.477</td>
+            <td class="positive">+55.852</td><td class="positive">+78.102</td>
+            <td class="positive">+144.852</td><td class="positive">+211.602</td>
+            <td class="positive">+211.602</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pl-chart-wrap">
+        <h4>Resultado Mensal Acumulado — 24 meses</h4>
+        <div class="chart-bars" id="chart-otim"></div>
+      </div>
+
+      <div class="notice" style="margin-top:12px;border-left-color:var(--green);">
+        <strong>Diagnóstico:</strong> Com 25 terminais e ramp-up agressivo, o produto gera <strong>+USD 211k</strong> em 24 meses. O break-even mensal ocorre no <strong>Mês 7</strong>, e o payback do investimento já no <strong>Mês 3</strong>. Margem estabilizada de ~USD 9.600/mês a partir do Mês 11, com potencial de expansão via contratos de redistribuição (sub-vendors autorizados pela NUAM).
+      </div>
+    </div>
+
+    <!-- Assumptions -->
+    <div class="pl-assumptions">
+      <h5>Premissas do Modelo</h5>
+      <div class="assumption-item">
+        <strong>Precificação do Terminal</strong>
+        USD 600/mês por cliente — pacote completo das 3 bolsas (Chile + Colômbia + Peru). Preço único, independente do nível de profundidade contratado junto à NUAM.
+      </div>
+      <div class="assumption-item">
+        <strong>Custos Fixos Mensais</strong>
+        NUAM Chile: USD 1.500 · NUAM Colômbia: USD 1.134 (USD 13.606 ÷ 12) · NUAM Peru: USD 2.000 · ICE Carrier: USD 375 (USD 4.500 ÷ 12) · Total: USD 5.009/mês (após isenção Colômbia nos 3 primeiros meses: USD 3.875).
+      </div>
+      <div class="assumption-item">
+        <strong>Custos Variáveis</strong>
+        Modelo simplificado: custos de licença da NUAM são fixos (não por terminal). Taxa variável por usuário final não incluída — aplica-se apenas se Broadcast redistribuir com cobrança por acesso RT aos clientes finais. Colômbia isenta nos primeiros 3 meses. Chile: commissioning de USD 2.000 (único) não incluído no fluxo mensal.
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <div>Broadcast Agência Estado — Market Data &amp; Automation &nbsp;·&nbsp; <span>Documento Interno — Confidencial · Terminal Latam</span></div>
+  <div>Base documental: contratos NUAM Chile/Colombia/Peru (2025–2026) · ICE Data Services (carrier)</div>
+</footer>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showScenario(name) {
+  document.querySelectorAll('.pl-scenario').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.pl-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('sc-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Chart data: monthly cumulative P&L values
+const chartData = {
+  cons: [
+    {m:'M1', v:-3275}, {m:'M2', v:-6550}, {m:'M3', v:-9225},
+    {m:'M4', v:-13034},{m:'M5', v:-16243},{m:'M6', v:-19452},
+    {m:'M7', v:-22661},{m:'M8', v:-25870},{m:'M9', v:-29079},
+    {m:'M10',v:-32288},{m:'M11',v:-35497},{m:'M12',v:-38706},
+    {m:'M13',v:-41915},{m:'M14',v:-45124},{m:'M15',v:-48333},
+    {m:'M16',v:-51542},{m:'M17',v:-54751},{m:'M18',v:-57960},
+    {m:'M19',v:-61169},{m:'M20',v:-64378},{m:'M21',v:-67587},
+    {m:'M22',v:-70796},{m:'M23',v:-74005},{m:'M24',v:-79014}
+  ],
+  base: [
+    {m:'M1', v:-3275}, {m:'M2', v:-5950}, {m:'M3', v:-8025},
+    {m:'M4', v:-10634},{m:'M5', v:-12643},{m:'M6', v:-14052},
+    {m:'M7', v:-14261},{m:'M8', v:-13270},{m:'M9', v:-12279},
+    {m:'M10',v:-9315},{m:'M11',v:-6351},{m:'M12',v:-3387},
+    {m:'M13',v: -423}, {m:'M14',v: 3541},{m:'M15',v: 7505},
+    {m:'M16',v:11469},{m:'M17',v:15433},{m:'M18',v:19397},
+    {m:'M19',v:23361},{m:'M20',v:27325},{m:'M21',v:31289},
+    {m:'M22',v:35253},{m:'M23',v:39217},{m:'M24',v:44214}
+  ],
+  otim: [
+    {m:'M1', v:-1541},{m:'M2', v:-1882},{m:'M3', v: 1459},
+    {m:'M4', v: 3584},{m:'M5', v: 8109},{m:'M6', v:15034},
+    {m:'M7', v:24359},{m:'M8', v:35609},{m:'M9', v:46859},
+    {m:'M10',v:58109},{m:'M11',v:69109},{m:'M12',v:78102},
+    {m:'M13',v:89102},{m:'M14',v:100102},{m:'M15',v:111102},
+    {m:'M16',v:122102},{m:'M17',v:133102},{m:'M18',v:144102},
+    {m:'M19',v:155102},{m:'M20',v:166102},{m:'M21',v:177102},
+    {m:'M22',v:188102},{m:'M23',v:199602},{m:'M24',v:211602}
+  ]
+};
+
+function buildChart(containerId, data) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+
+  const values = data.map(d => d.v);
+  const maxAbs = Math.max(...values.map(Math.abs));
+
+  data.forEach((d, i) => {
+    const label = document.createElement('div');
+    label.className = 'chart-month-label';
+    label.textContent = d.m;
+
+    const track = document.createElement('div');
+    track.className = 'chart-bar-track';
+
+    const fill = document.createElement('div');
+    const pct = Math.abs(d.v) / maxAbs * 100;
+    fill.className = 'chart-bar-fill ' + (d.v >= 0 ? 'pos' : 'neg');
+    fill.style.width = Math.max(pct, 1) + '%';
+
+    const valLabel = document.createElement('span');
+    valLabel.className = 'chart-bar-label';
+    const formatted = (d.v >= 0 ? '+' : '') + (d.v / 1000).toFixed(1) + 'k';
+    valLabel.textContent = formatted;
+
+    track.appendChild(fill);
+    track.appendChild(valLabel);
+    container.appendChild(label);
+    container.appendChild(track);
+
+    // zero line after last negative month
+    if (i < data.length - 1 && d.v < 0 && data[i+1].v >= 0) {
+      const zl1 = document.createElement('div');
+      const zl2 = document.createElement('div');
+      zl2.className = 'zero-line';
+      container.appendChild(zl1);
+      container.appendChild(zl2);
+    }
+  });
+}
+
+// Build charts on load
+document.addEventListener('DOMContentLoaded', () => {
+  buildChart('chart-cons', chartData.cons);
+  buildChart('chart-base', chartData.base);
+  buildChart('chart-otim', chartData.otim);
+});
+</script>
+
+</body>
+</html>

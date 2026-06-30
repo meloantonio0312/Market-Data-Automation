@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Projects Dashboard — Accomplished vs Pending</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: rgba(255,255,255,0.07);
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --high: #ef4444;
+    --med: #f59e0b;
+    --low: #3b82f6;
+    --done: #10b981;
+    --hold: #8b5cf6;
+    --accent: #38bdf8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height:100vh; }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top:0; z-index:100;
+    backdrop-filter: blur(10px);
+  }
+  .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:20px; color:var(--accent); letter-spacing:-.5px; }
+  .logo span { color: var(--text); }
+  .header-meta { font-size:12px; color: var(--muted); text-align:right; }
+  .header-meta strong { color: var(--text); display:block; font-size:13px; }
+
+  /* LAYOUT */
+  .container { max-width: 1440px; margin: 0 auto; padding: 28px 32px; }
+
+  /* KPI CARDS */
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    position: relative; overflow: hidden;
+    transition: transform .2s, border-color .2s;
+    cursor: default;
+  }
+  .kpi-card:hover { transform: translateY(-2px); }
+  .kpi-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background: var(--kpi-color);
+  }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+  .kpi-value { font-family:'Syne',sans-serif; font-size: 36px; font-weight:800; color: var(--kpi-color); line-height:1; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .kpi-badge {
+    display: inline-block; font-size:10px; padding: 2px 8px; border-radius: 20px;
+    background: color-mix(in srgb, var(--kpi-color) 15%, transparent);
+    color: var(--kpi-color);
+    margin-top: 6px; font-weight:500;
+  }
+
+  /* PROGRESS BAR */
+  .progress-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 28px; }
+  .progress-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px; }
+  .progress-title { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; }
+  .progress-pct { font-family:'Syne',sans-serif; font-size: 28px; font-weight:800; color:var(--done); }
+  .progress-track { height: 10px; background: var(--surface2); border-radius: 99px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:99px; background: linear-gradient(90deg, var(--done), #34d399); transition: width 1s ease; }
+  .progress-labels { display: flex; gap: 20px; margin-top: 10px; flex-wrap:wrap; }
+  .progress-item { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); }
+  .progress-dot { width:8px; height:8px; border-radius:50%; }
+
+  /* CHARTS ROW */
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px;
+  }
+  .chart-title { font-family:'Syne',sans-serif; font-weight:700; font-size:13px; color: var(--text); margin-bottom:16px; }
+  .chart-wrap { position: relative; height: 200px; }
+
+  /* FILTERS */
+  .filters-bar {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 20px;
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .filter-label { font-size: 11px; text-transform: uppercase; letter-spacing:1px; color: var(--muted); margin-right:4px; }
+  .filter-group { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .filter-btn {
+    padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); font-size: 12px; cursor:pointer;
+    transition: all .15s; font-family:'DM Sans',sans-serif;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #0a0e1a; font-weight:500; }
+  .search-input {
+    padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text); font-size: 12px; outline:none;
+    font-family:'DM Sans',sans-serif; min-width: 200px; margin-left:auto;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .results-count { font-size: 11px; color: var(--muted); white-space:nowrap; }
+
+  /* TABLE */
+  .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow:hidden; }
+  .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .table-title { font-family:'Syne',sans-serif; font-weight:700; font-size:13px; }
+  table { width:100%; border-collapse:collapse; }
+  th {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+    padding: 11px 16px; text-align:left; border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    white-space:nowrap;
+  }
+  td { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size:12.5px; vertical-align:middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(56,189,248,0.04); }
+  .td-action { max-width: 320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+  .td-action:hover { white-space: normal; }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex; align-items:center; gap:5px;
+    padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 500;
+    white-space:nowrap;
+  }
+  .badge-dot { width:5px; height:5px; border-radius:50%; }
+  .b-HIGH { background: rgba(239,68,68,.12); color: #ef4444; }
+  .b-MED  { background: rgba(245,158,11,.12); color: #f59e0b; }
+  .b-LOW  { background: rgba(59,130,246,.12); color: #60a5fa; }
+  .b-DONE { background: rgba(16,185,129,.12); color: #10b981; }
+  .b-HOLD { background: rgba(139,92,246,.12); color: #a78bfa; }
+
+  /* PROGRESS BAR INLINE */
+  .pct-bar { display:flex; align-items:center; gap:8px; }
+  .pct-track { flex:1; height:5px; background:var(--surface2); border-radius:99px; overflow:hidden; min-width:50px; }
+  .pct-fill { height:100%; border-radius:99px; }
+  .pct-text { font-size:11px; color:var(--muted); min-width:30px; text-align:right; }
+
+  /* PAGINATION */
+  .pagination { display:flex; justify-content:center; align-items:center; gap:6px; padding: 16px; border-top: 1px solid var(--border); }
+  .page-btn {
+    width:30px; height:30px; border-radius:6px; border: 1px solid var(--border);
+    background:transparent; color:var(--muted); cursor:pointer; font-size:12px;
+    transition:all .15s; display:flex; align-items:center; justify-content:center;
+  }
+  .page-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .page-btn.active { background:var(--accent); border-color:var(--accent); color:#0a0e1a; font-weight:600; }
+  .page-info { font-size:11px; color:var(--muted); padding: 0 8px; }
+
+  /* PERSON TAG */
+  .person-tag { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px; }
+
+  /* TOOLTIP */
+  .notes-cell { max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--muted); font-size:11px; cursor:help; }
+
+  /* ANIMATE */
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  .kpi-card { animation: fadeIn .4s ease both; }
+  .kpi-card:nth-child(1){animation-delay:.05s} .kpi-card:nth-child(2){animation-delay:.1s}
+  .kpi-card:nth-child(3){animation-delay:.15s} .kpi-card:nth-child(4){animation-delay:.2s}
+  .kpi-card:nth-child(5){animation-delay:.25s}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">AE Broadcast <span>Market Data</span></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:3px;">2026 Projects — Accomplished vs Pending</div>
+  </div>
+  <div class="header-meta">
+    <strong>Antonio Melo</strong>
+    
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card" style="--kpi-color: var(--text)">
+      <div class="kpi-label">Total Projects</div>
+      <div class="kpi-value" id="kpi-total">222</div>
+      <div class="kpi-badge">All Priorities</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: var(--done)">
+      <div class="kpi-label">Completed</div>
+      <div class="kpi-value" id="kpi-done">76</div>
+      <div class="kpi-badge">4_DONE</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: var(--high)">
+      <div class="kpi-label">High Priority</div>
+      <div class="kpi-value" id="kpi-high">64</div>
+      <div class="kpi-badge">1_HIGH</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: var(--hold)">
+      <div class="kpi-label">On Hold</div>
+      <div class="kpi-value" id="kpi-hold">23</div>
+      <div class="kpi-badge">5_HOLD</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: var(--accent)">
+      <div class="kpi-label">Overall Progress</div>
+      <div class="kpi-value" id="kpi-pct">—</div>
+      <div class="kpi-badge">Avg % Done</div>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-section">
+    <div class="progress-header">
+      <div>
+        <div class="progress-title">2026 Overall Completion</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">Weighted average across all 222 projects</div>
+      </div>
+      <div class="progress-pct" id="prog-pct-text">—</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-bar" style="width:0%"></div></div>
+    <div class="progress-labels">
+      <div class="progress-item"><div class="progress-dot" style="background:var(--high)"></div>1_HIGH (64)</div>
+      <div class="progress-item"><div class="progress-dot" style="background:var(--med)"></div>2_MED (32)</div>
+      <div class="progress-item"><div class="progress-dot" style="background:var(--low)"></div>3_LOW (27)</div>
+      <div class="progress-item"><div class="progress-dot" style="background:var(--done)"></div>4_DONE (76)</div>
+      <div class="progress-item"><div class="progress-dot" style="background:var(--hold)"></div>5_HOLD (23)</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">By Priority</div>
+      <div class="chart-wrap"><canvas id="chartPriority"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">By Type</div>
+      <div class="chart-wrap"><canvas id="chartType"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Progress Distribution</div>
+      <div class="chart-wrap"><canvas id="chartProgress"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <span class="filter-label">Priority</span>
+    <div class="filter-group" id="priority-filters">
+      <button class="filter-btn active" data-filter="priority" data-value="all">All</button>
+      <button class="filter-btn" data-filter="priority" data-value="1_HIGH">🔴 HIGH</button>
+      <button class="filter-btn" data-filter="priority" data-value="2_MED">🟡 MED</button>
+      <button class="filter-btn" data-filter="priority" data-value="3_LOW">🔵 LOW</button>
+      <button class="filter-btn" data-filter="priority" data-value="4_DONE">🟢 DONE</button>
+      <button class="filter-btn" data-filter="priority" data-value="5_HOLD">🟣 HOLD</button>
+    </div>
+    <span class="filter-label" style="margin-left:8px">Type</span>
+    <div class="filter-group" id="type-filters">
+      <button class="filter-btn active" data-filter="type" data-value="all">All</button>
+    </div>
+    <input class="search-input" id="search-input" type="text" placeholder="🔍  Search projects...">
+    <span class="results-count" id="results-count"></span>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-header">
+      <div class="table-title">Project List</div>
+      <div style="font-size:11px;color:var(--muted)" id="page-info-top"></div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Priority</th>
+          <th>Type</th>
+          <th>Asset Class</th>
+          <th style="min-width:300px">Action / Project</th>
+          <th>Progress</th>
+          <th>Primary Contact</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+</div>
+
+<script>
+const RAW_DATA = [{"id": 1, "priority": "1_HIGH", "type": "Content Acquisition", "asset_class": "Contract Review", "action": "NUAM CO: Passo 1 - Fazer contrata\u00e7\u00e3o da Bolsa de Colombia", "pct_done": 0.75, "primary": "Jorge Abreo / Linda Alejandra", "secondary": "Regis Fernando Ferreira", "notes": "Pending approval from Dr Regis"}, {"id": 2, "priority": "1_HIGH", "type": "Content Acquisition", "asset_class": "Contract Review", "action": "NUAM PE: Passo 1 - Fazer a contrata\u00e7\u00e3o da Bolsa de Lima", "pct_done": 0.75, "primary": "Catherine Del Castillo Valdivia", "secondary": "Regis Fernando Ferreira", "notes": "Pending approval from Dr Regis"}, {"id": 3, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "Equities", "action": "NUAM CO: Passo 4 - Fazer contrata\u00e7\u00e3o da Bolsa de Colombia - ICE DATA", "pct_done": 0.0, "primary": "Alex Merrill", "secondary": "Antonio Melo", "notes": "So assinar contrato quando o Link Internacional estar feito o upgrade"}, {"id": 4, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "Equities", "action": "NUAM PE: Passo 4 - Fazer contrata\u00e7\u00e3o da Bolsa de Lima - ICE DATA", "pct_done": 0.0, "primary": "Alex Merrill", "secondary": "Antonio Melo", "notes": "So assinar contrato quando o Link Internacional estar feito o upgrade"}, {"id": 5, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "Exchange Order Form", "action": "CME: Datafeed - Usage Report", "pct_done": 0.0, "primary": "Tatiana Potekhina", "secondary": "Matthew Frego", "notes": "Melo to Follow Up"}, {"id": 6, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "Exchange Order Form", "action": "FTSE: Datafeed - Usage Report", "pct_done": 0.0, "primary": "Leonora Edwin", "secondary": "Luciana Monegatti", "notes": "Melo to Follow Up"}, {"id": 7, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "Exchange Usage Report", "action": "Nasdaq Basic: Providenciar Lista de Usu\u00e1rios", "pct_done": 0.75, "primary": "Ugn\u0117 Merli\u016bnait\u0117", "secondary": "Antonio Melo", "notes": "Lista de usu\u00e1rios providenciada 05/12/2026. Waiting feedback. "}, {"id": 8, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "FenicsMD: FIX Protocol - 6) Replace Tullet (ICE Futures) for FMX UST", "pct_done": 0.25, "primary": "Robert Scharringa", "secondary": "Larissa O Lima", "notes": "Injetor done by 04/30/2026. Pre-Prod Details shared with Marcos Jara. ETA for MDT Testing?"}, {"id": 9, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "Futures & Derivatives", "action": "A5X: Nova Bolsa de Derivativos_Universo de Ativos", "pct_done": 0.25, "primary": "Gustavo Laurino", "secondary": "Marcos Capelini", "notes": "Need to follow up on Marcos Capellini"}, {"id": 10, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "FX Spot", "action": "FenicsMD: FIX Protocol - 3) Novos Pacotes de Dados para Bradesco (Testar)", "pct_done": 0.75, "primary": "Robert Scharringa", "secondary": "Jo\u00e3o Pacheco", "notes": "Bruno Paiva vai marcar uma reuni\u00e3o com o Glayson e pedir para testar os dados"}, {"id": 11, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "FX Spot", "action": "FenicsMD: FIX Protocol - 4) Pre Prod Criar vers\u00e3o Trunc para Produ\u00e7\u00e3o", "pct_done": 0.5, "primary": "Robert Scharringa", "secondary": "Marcos Capelini", "notes": "Pedir para o Marquinhos criar a vers\u00e3o trunc"}, {"id": 12, "priority": "1_HIGH", "type": "Exchange Relations", "asset_class": "FX Spot", "action": "FenicsMD: FIX Protocol - 5) RPA Desativar Robos", "pct_done": 0.5, "primary": "Robert Scharringa", "secondary": "Jo\u00e3o Pacheco", "notes": "A partir do momento que o feed estiver em produ\u00e7\u00e3o desativar os rob\u00f4s"}, {"id": 13, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 028: B3 | Portal do Investir | Indices Internacionais", "pct_done": 0.75, "primary": "Claudio Girotto", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Retorno - Comercial"}, {"id": 14, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 072: Ita\u00fa Cust\u00f3dia - Entrega de dados via API para substitui BBG", "pct_done": 0.5, "primary": "Edgar Jesus", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 15, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 093: Rating de CDSs soberanos", "pct_done": 0.5, "primary": "Jackson de Mota Pereira", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 16, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 107: Bradesco (Fase 2): Expans\u00e3o do Datafeed e Valida\u00e7\u00e3o de Instrumentos", "pct_done": 0.5, "primary": "Caroline Almeida", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 17, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 114: ITA\u00da BBA - DADOS DE BOLSAS OFFSHORE API DAFE TESOURARIA", "pct_done": 0.25, "primary": "Edgar Jesus", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Infos"}, {"id": 18, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 143: Datafeed Sumitomo", "pct_done": 0.75, "primary": "Caroline Almeida", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Retorno - Comercial"}, {"id": 19, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 147: Dados Macroeconomicos", "pct_done": 0.75, "primary": "Jackson de Mota Pereira", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Retorno - Comercial"}, {"id": 20, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 173: Solu\u00e7\u00e3o Data Feed / Book de ofertas B3 Real Time", "pct_done": 0.75, "primary": "Victor Marcio de Menezes", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Retorno - Comercial"}, {"id": 21, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 182: Broadcast Datafeed - Curvas de Spread de Risco de Cr\u00e9dito", "pct_done": 0.75, "primary": "Paloma Alves", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Retorno - Comercial"}, {"id": 22, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 229: STATE STREET - ENTREGA DE DADOS VIA API PARA SUBSTITUIR LSEG", "pct_done": 0.25, "primary": "Edgar Jesus", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Infos"}, {"id": 23, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 231: CSD / Bolsas", "pct_done": 0.25, "primary": "Victor Marcio de Menezes", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Infos"}, {"id": 24, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 278: Datafeed - Or\u00e7amento Lista de Ativos Bloomberg", "pct_done": 0.25, "primary": "Mayra Rodrigues", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Infos"}, {"id": 25, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 283: BM&F em Delay para Alimenta\u00e7\u00e3o de App aberto", "pct_done": 0.5, "primary": "Luis Felipe Gradwol", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 26, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 284: Demanda de API Nyse e Nasdaq RT", "pct_done": 0.5, "primary": "Edgar Jesus", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 27, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 287: Datafeed - B8 Partners", "pct_done": 0.5, "primary": "Mayra Rodrigues", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 28, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 300: Banco Safra - API para Multi Family Office", "pct_done": 0.25, "primary": "Edgar Jesus", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Infos"}, {"id": 29, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 305: BNY Mellon - Ratings para Credito Privados e FIDCS", "pct_done": 0.5, "primary": "Jackson de Mota Pereira", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 30, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 306: Desenvolve SP - Dados Hist\u00f3ricos", "pct_done": 0.5, "primary": "Jackson de Mota Pereira", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 31, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 315: Ita\u00fa - RFP Licenciamento de Conte\u00fado \u2013 Hub Investimentos | IGA", "pct_done": 0.0, "primary": "Edgar Jesus", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Dados"}, {"id": 32, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 316: Bayes Capital - Datafeed - Hist\u00f3rico Bovespa - Bayes Capital", "pct_done": 0.5, "primary": "Mayra Rodrigues", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 33, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 318: Aplicativo + Dividendos Carteira de Investimento LTDA", "pct_done": 0.0, "primary": "Carolina Almeida", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Dados"}, {"id": 34, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 001: Inclus\u00e3o de ativo BTC Spot em USD", "pct_done": 0.0, "primary": "Luis Felipe Gradwol", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 35, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 066: Cota\u00e7\u00f5es de TOFR", "pct_done": 0.0, "primary": "Analu Vieira Vicente dos Santos", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 36, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 077: Cliente deseja visualizar os Cbonds da Ambipar na Fenics MD", "pct_done": 0.25, "primary": "Analu Vieira Vicente dos Santos", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Infos"}, {"id": 37, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 090: Demanda Pelas A\u00e7\u00f5es da Bolsa do Chile", "pct_done": 0.5, "primary": "Edgar Jesus", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 38, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 098: C2P - Brasilprev Pacotes Full Credito Privado", "pct_done": 0.25, "primary": "Jackson de Mota Pereira", "secondary": "Jo\u00e3o Pacheco", "notes": "Aguardando Infos"}, {"id": 39, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 105: Dados de LFs Senior", "pct_done": 0.0, "primary": "Jackson de Mota Pereira", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Dados"}, {"id": 40, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 141: Inclus\u00e3o de Tickers (Bonds) no Terminal", "pct_done": 0.5, "primary": "Analu Vieira Vicente dos Santos", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 41, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 158: LINE UP \u2013 Exibi\u00e7\u00e3o do tipo de carga", "pct_done": 0.0, "primary": "Analu Vieira Vicente dos Santos", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Produtos"}, {"id": 42, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 243: Disponibiliza\u00e7\u00e3o de Dados da Bolsa LSE", "pct_done": 0.0, "primary": "Analu Vieira Vicente dos Santos", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Produtos"}, {"id": 43, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 251: Hist\u00f3rico de Fundos", "pct_done": 0.0, "primary": "Analu Vieira Vicente dos Santos", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Dados"}, {"id": 44, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 264: Inclus\u00e3o de Novos Campos do ULT", "pct_done": 0.0, "primary": "Larissa Paioli", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Dados"}, {"id": 45, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 275: Inclus\u00e3o do campo Platts Soybeans Paranagu\u00e1 Basis", "pct_done": 0.5, "primary": "Larissa Paioli", "secondary": "Jo\u00e3o Pacheco", "notes": "Em An\u00e1lise - Dados"}, {"id": 46, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 276: Exibi\u00e7\u00e3o de Informa\u00e7\u00f5es de COEs", "pct_done": 0.0, "primary": "Larissa Paioli", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Dados"}, {"id": 47, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 277: Inclus\u00e3o de informa\u00e7\u00f5es sobre CDCA", "pct_done": 0.0, "primary": "Larissa Paioli", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Dados"}, {"id": 48, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 309: Inclus\u00e3o de dados do fertilizante MAP (fosfato monoam\u00f4nico)", "pct_done": 0.0, "primary": "Larissa Paioli", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Dados"}, {"id": 49, "priority": "1_HIGH", "type": "HUB Request", "asset_class": "Terminal Novo", "action": "HUB 334: BC Compliance - Monitorar o chat e integrar com outras mensagerias", "pct_done": 0.0, "primary": "Mayra Rodrigues", "secondary": "Jo\u00e3o Pacheco", "notes": "Pendente de An\u00e1lise - Dados"}, {"id": 50, "priority": "1_HIGH", "type": "Human Resources", "asset_class": "People", "action": "Colaboradores - Corrigir Cargos de Todos Funcion\u00e1rios", "pct_done": 0.5, "primary": "Michelle Cruz Teixeira", "secondary": "Rodrigo Galasini", "notes": "Corre\u00e7\u00e3o do Cargos e Sal\u00e1rios j\u00e1 est\u00e1 nas m\u00e3os do Rodrigo Galasini"}, {"id": 51, "priority": "1_HIGH", "type": "Human Resources", "asset_class": "People", "action": "Coordernadores - Mudan\u00e7a de Filosofia - Maiores Responsabilidades", "pct_done": 0.5, "primary": "Michelle Cruz Teixeira", "secondary": "Rodrigo Galasini", "notes": "Mudar Mindset dos Coordenadores para Executivos Seniors"}, {"id": 52, "priority": "1_HIGH", "type": "Leadership", "asset_class": "Dashboard", "action": "Create a Dashboard to be Presented Related Exchange Feed Usage vs Cost", "pct_done": 0.25, "primary": "Denis Piovezan", "secondary": "Victoria Valentina do Amaral", "notes": "Vic ser\u00e1 a pessoa que ira criar os dashboards"}, {"id": 53, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Review", "action": "NUAM CO: Passo 2 - Revis\u00e3o Contratual Jur\u00eddico AE Broadcast", "pct_done": 0.5, "primary": "Regis Fernando Ferreira", "secondary": "Antonio Melo", "notes": "Enviei nova vers\u00e3o ao Dr Regis com os ajustes releferente ao waiver de pagamento. "}, {"id": 54, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Review", "action": "NUAM PE: Passo 2 - Revis\u00e3o Contratual Pelo Jur\u00eddico AE Broadcast", "pct_done": 0.5, "primary": "Regis Fernando Ferreira", "secondary": "Antonio Melo", "notes": "Se aprovado pelo juridico encaminhar para diretoria para assinatura"}, {"id": 55, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Signature", "action": "A5X: Nova Bolsa de Derivativos_Analisar & Assinar Contrato", "pct_done": 0.5, "primary": "Gustavo Laurino", "secondary": "Regis Fernando Ferreira", "notes": "N\u00e3o temos um contrato que nos de previl\u00e9gios de consumo e redistribui\u00e7\u00e3o."}, {"id": 56, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Signature", "action": "CBOE: Futures Level 1", "pct_done": 0.5, "primary": "Maggie  White", "secondary": "Regis Fernando Ferreira", "notes": "Pedido de Renova\u00e7\u00e3o Entregue Rodrigo Galasini"}, {"id": 57, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Signature", "action": "Deustche B\u00f6rse - EUREX - Level 1", "pct_done": 0.5, "primary": "Afriyie Ola Dimeji", "secondary": "Regis Fernando Ferreira", "notes": "Pedido de Renova\u00e7\u00e3o Entregue Rodrigo Galasini"}, {"id": 58, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Signature", "action": "LME - LBMA - Platinium & Palladium Benchmarks", "pct_done": 0.5, "primary": "LME Market Data", "secondary": "Regis Fernando Ferreira", "notes": "Pedido de Renova\u00e7\u00e3o Entregue Rodrigo Galasini"}, {"id": 59, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Signature", "action": "LSEG - WM Reuters - Forward Rates, NDF Rates, Spot Rates", "pct_done": 0.5, "primary": "WMR Sales", "secondary": "Regis Fernando Ferreira", "notes": "Pedido de Renova\u00e7\u00e3o Entregue Rodrigo Galasini"}, {"id": 60, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Signature", "action": "NUAM CO: Passo 3 - Assinatura Contrato Diretoria AE Broadcast", "pct_done": 0.0, "primary": "Rodrigo Galasini", "secondary": "Gustavo Iohartti", "notes": "Se aprovado pelo juridico encaminhar para diretoria para assinatura"}, {"id": 61, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Signature", "action": "NUAM PE: Passo 3 - Assinatura Contrato Diretoria AE Broadcast", "pct_done": 0.0, "primary": "Rodrigo Galasini", "secondary": "Gustavo Iohartti", "notes": "Se aprovado pelo juridico encaminhar para diretoria para assinatura"}, {"id": 62, "priority": "1_HIGH", "type": "Legal", "asset_class": "Contract Signature", "action": "Terminal LATAM - BanRep: Assinatura de Contrato", "pct_done": 0.25, "primary": "Juan Manuel Quintero", "secondary": "Regis Fernando Ferreira", "notes": "Melo to Follow Up"}, {"id": 63, "priority": "1_HIGH", "type": "Market Data", "asset_class": "Internal Process", "action": "Automa\u00e7\u00e3o Contribui\u00e7\u00e3o: BRL Swaps", "pct_done": 0.75, "primary": "Marcos Capelini", "secondary": "Mike William Rosa", "notes": "Follow Up Mike sobre as automa\u00e7\u00f5es"}, {"id": 64, "priority": "1_HIGH", "type": "Market Data", "asset_class": "Internal Process", "action": "ICE DATA: Over Usage - Removal of Incorrectly added Instruments", "pct_done": 0.75, "primary": "Alex Merrill", "secondary": "Antonio Melo", "notes": "As off Friday last week, AEB should not be consuming any extra instruments aside the ones we hired"}, {"id": 65, "priority": "2_MED", "type": "Content Acquisition", "asset_class": "Equities", "action": "Nasdaq Agreement: Nasdaq Total View", "pct_done": 0.25, "primary": "Trey Anderson", "secondary": "Marcos Capelini", "notes": "Got Feed Spec from Trey. Informed Jara & Rey. "}, {"id": 66, "priority": "2_MED", "type": "Content Acquisition", "asset_class": "Fixed Income", "action": "Anbima: CRI/CRA, Debentures & Indices", "pct_done": 0.0, "primary": "Claudio Girotto", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 67, "priority": "2_MED", "type": "Content Acquisition", "asset_class": "Fixed Income", "action": "CDS: Find New Source for CDS (Need BID/ASK values) ", "pct_done": 0.0, "primary": "Alex Merrill", "secondary": "Jo\u00e3o Pacheco", "notes": "A pedido do Bradesco encontrar nova fonte de dados para CDS"}, {"id": 68, "priority": "2_MED", "type": "Content Acquisition", "asset_class": "Fixed Income", "action": "Terminal LATAM - BanRep: AE Instrumentos - Criar 240.000 Titulos Renda Fixa", "pct_done": 0.0, "primary": "Juan Manuel Quintero", "secondary": "Larissa O Lima", "notes": "Melo to Follow Up"}, {"id": 69, "priority": "2_MED", "type": "Content Acquisition", "asset_class": "Futures & Derivatives", "action": "FenicsMD: FMD FX - Taxas e Curvas de Refer\u00eancia Sem Risco (RFRs)", "pct_done": 0.25, "primary": "Robert Scharringa", "secondary": "Larissa O Lima", "notes": "Melo to Follow Up"}, {"id": 70, "priority": "2_MED", "type": "Content Acquisition", "asset_class": "News", "action": "Dow Jones News Spanish", "pct_done": 0.5, "primary": "Tassia Neves", "secondary": "Antonio Melo", "notes": "Need to review with Gustavo what the next step will be."}, {"id": 71, "priority": "2_MED", "type": "Content Acquisition", "asset_class": "News", "action": "Valora Analitik - Colombia Spanish News", "pct_done": 0.75, "primary": "Camilo Silva Jaramillo", "secondary": "Antonio Melo", "notes": "Had a call to discuss technical aspects. Waiting FeedSpec and Proposal"}, {"id": 72, "priority": "2_MED", "type": "Content Acquisition", "asset_class": "Open Source Provider", "action": "Trading View: Open Source for Graphic & OMS Tools", "pct_done": 0.75, "primary": "Gustavo Reyes", "secondary": "Oleg Morgunov", "notes": "Had a call w/ Gustavo. Prices still high. Paulo asked for a discount and to remove trading out of the proposal"}, {"id": 73, "priority": "2_MED", "type": "Contribution", "asset_class": "Agro", "action": "Consumo de Combust\u00edveis por regi\u00e3o: EdenRed", "pct_done": 0.75, "primary": "Caroline Brito", "secondary": "Zuleica Kozio", "notes": "Apresenta\u00e7\u00e3o Efetuada. Esperando detalhes parceria e assinatura de contrato"}, {"id": 74, "priority": "2_MED", "type": "Contribution", "asset_class": "Agro", "action": "Consumo de Combustiveis por regi\u00e3o: ValeCard", "pct_done": 0.75, "primary": "Victoria Ribeiro ", "secondary": "Zuleica Kozio", "notes": "Apresenta\u00e7\u00e3o Efetuada. Esperando detalhes parceria e assinatura de contrato"}, {"id": 75, "priority": "2_MED", "type": "Contribution", "asset_class": "Agro", "action": "Gr\u00e3o Direto - Rever Parceria & Conte\u00fado", "pct_done": 0.5, "primary": "Clayton Anselmo de Melo", "secondary": "Zuleica Kozio", "notes": "FT criado. Jo\u00e3o vai navegar no site e ver o que podemos implementa do nosso lado. "}, {"id": 76, "priority": "2_MED", "type": "Contribution", "asset_class": "Agro", "action": "Meteoblue - Rever Parceria & Conte\u00fado", "pct_done": 0.25, "primary": "Miro Lima", "secondary": "Zuleica Kozio", "notes": "Tivemos apresenta\u00e7\u00e3o dos Dados da Meteoblue. Miro disse que vai entrar em contato com o Fregnani."}, {"id": 77, "priority": "2_MED", "type": "Contribution", "asset_class": "Broadcast TV", "action": "Cr\u00e9dito Privado 360", "pct_done": 0.75, "primary": "Jadyr Pav\u00e3o J\u00fanior", "secondary": "Aline Pereira Silva", "notes": "ITSM-1770 foi atualizado. Video testa esta na plataforma. Podemos fazer o release?"}, {"id": 78, "priority": "2_MED", "type": "Contribution", "asset_class": "Historical Data", "action": "Terminal LATAM - Precia: Dados Hist\u00f3ricos Confirmar a base hist\u00f3rica referente 2025", "pct_done": 0.75, "primary": "Juan Manuel Quintero", "secondary": "Antonio Melo", "notes": "Jo\u00e3o to review and provide feedback"}, {"id": 79, "priority": "2_MED", "type": "Contribution", "asset_class": "Internal Process", "action": "Terminal LATAM - BanRep: SFTP Login", "pct_done": 0.25, "primary": "Diego Dussan", "secondary": "Mateus Lacerda de Souza", "notes": "Had a chat with Diego who will review with BanRep the possibility redistribution to us. "}, {"id": 80, "priority": "2_MED", "type": "Contribution", "asset_class": "Research_Equity", "action": "Banco do Brasil Equity Research", "pct_done": 0.75, "primary": "Wesley Pereira Bernabe", "secondary": "Aline Pereira Silva", "notes": "Meeting Schedule for Friday to review Legal issues and doubts"}, {"id": 81, "priority": "2_MED", "type": "Contribution", "asset_class": "Research_Equity", "action": "Eleven Research", "pct_done": 0.25, "primary": "Aline Pereira da Silva", "secondary": "Antonio Melo", "notes": "Novo contato informado para Aline ir atras desse novo contribuinte. "}, {"id": 82, "priority": "2_MED", "type": "Contribution", "asset_class": "Research_Equity", "action": "Suno Research", "pct_done": 0.25, "primary": "Aline Pereira da Silva", "secondary": "Antonio Melo", "notes": "Novo contato informado para Aline ir atras desse novo contribuinte. "}, {"id": 83, "priority": "2_MED", "type": "Human Resources", "asset_class": "People", "action": "Envelope Azul: Market Data: Gabriela Vitalino Dominiquini", "pct_done": 0.25, "primary": "Gabriela V Dominiquini", "secondary": "Rodrigo Galasini", "notes": "Indicar para Envelope Azul - Periodo Outubro"}, {"id": 84, "priority": "2_MED", "type": "Human Resources", "asset_class": "People", "action": "Envelope Azul: Market Data: Kaua Francisco Persich Carvalho dos Santos", "pct_done": 0.25, "primary": "Kaua Francisco Persich Carvalho dos Santos", "secondary": "Rodrigo Galasini", "notes": "Indicar para Envelope Azul - Periodo Outubro"}, {"id": 85, "priority": "2_MED", "type": "Human Resources", "asset_class": "People", "action": "Envelope Azul: Market Data: Mateus Lacerda de Souza", "pct_done": 0.25, "primary": "Mateus Lacerda de Souza", "secondary": "Rodrigo Galasini", "notes": "Indicar para Envelope Azul - Periodo Outubro"}, {"id": 86, "priority": "2_MED", "type": "Legal", "asset_class": "Contract Review", "action": "Datafeed: AE Datafeed Contract: Rever Termos Usu\u00e1rios que Utilizam Infraestrutura Legada", "pct_done": 0.75, "primary": "Regis Fernando Ferreira", "secondary": "Antonio Melo", "notes": "Melo to Follow Up"}, {"id": 87, "priority": "2_MED", "type": "Legal", "asset_class": "Contract Review", "action": "Datafeed: Comunicado - Ambiente de Backup Exclusivo", "pct_done": 0.25, "primary": "Regis Fernando Ferreira", "secondary": "Elissandra Manzano", "notes": "Elissandra Aprovou as melhorias no aditivo."}, {"id": 88, "priority": "2_MED", "type": "Market Data", "asset_class": "Internal Process", "action": "Ativoteca: Novos Par\u00e2metros & Melhorias Ferramente", "pct_done": 0.25, "primary": "Sergio Vaz Ferreira", "secondary": "Gabriela Vitalino Dominique", "notes": "Projeto gigante. Decidimos focar nos dados macro economicos de inicio."}, {"id": 89, "priority": "2_MED", "type": "Market Data", "asset_class": "Internal Process", "action": "Dashboards: Elabora\u00e7\u00e3o Relatorio de OS de Clientes", "pct_done": 0.0, "primary": "Victoria Valentina Amaral", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 90, "priority": "2_MED", "type": "Market Data", "asset_class": "Internal Process", "action": "Dashboards: Elabora\u00e7\u00e3o Relatorio de Produtividade", "pct_done": 0.0, "primary": "Victoria Valentina Amaral", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 91, "priority": "2_MED", "type": "Market Data", "asset_class": "Internal Process", "action": "Migrar Projetos do Trello para Jira", "pct_done": 0.0, "primary": "Matheus  L Souza", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 92, "priority": "2_MED", "type": "Market Data", "asset_class": "Internal Process", "action": "OPUS: Rever que Projetos de Automa\u00e7\u00e3o Podemos Priorizar OPUS", "pct_done": 0.0, "primary": "Jo\u00e3o Pacheco", "secondary": "Antonio Melo", "notes": "Precisa amadurecer a ideia e criar uma lista de projetos que a OPUS pode trabalhar neles."}, {"id": 93, "priority": "2_MED", "type": "Market Data", "asset_class": "Internal Process", "action": "Rever Header / Security List / BCTAB / Campos.dat / CampoBC.tab", "pct_done": 0.25, "primary": "Sergio Vaz Ferreira", "secondary": "Luciana Monegatti", "notes": "Melo to Follow Up"}, {"id": 94, "priority": "2_MED", "type": "Market Data", "asset_class": "Marketing", "action": "MDT: Newsletter Equipe - Mostrar Trabalho Efetuado", "pct_done": 0.0, "primary": "Luciana Monegatti", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 95, "priority": "2_MED", "type": "Sales", "asset_class": "Marketing", "action": "Sales: Statements - BIPs", "pct_done": 0.0, "primary": "Valdir Martins Ferreira", "secondary": "Bruno Costa Chayb", "notes": "Melo to Follow Up"}, {"id": 96, "priority": "2_MED", "type": "Sales", "asset_class": "Marketing", "action": "Sales: Statements - New Functionality", "pct_done": 0.0, "primary": "Valdir Martins Ferreira", "secondary": "Bruno Costa Chayb", "notes": "Melo to Follow Up"}, {"id": 97, "priority": "3_LOW", "type": "Content Acquisition", "asset_class": "Equities", "action": "FactSet: Parceria para International Equities", "pct_done": 0.25, "primary": "Eggonare Andrade ", "secondary": "Matheus Ferreira", "notes": "Melo to Follow Up"}, {"id": 98, "priority": "3_LOW", "type": "Content Acquisition", "asset_class": "FX Spot", "action": "FactSet: BRL FX Pairs", "pct_done": 0.25, "primary": "Eggonare Andrade ", "secondary": "Matheus Ferreira", "notes": "Melo to Follow Up"}, {"id": 99, "priority": "3_LOW", "type": "Content Acquisition", "asset_class": "FX Spot", "action": "MorningStar: BRL FX Pairs", "pct_done": 0.25, "primary": "Michel Faraggi", "secondary": "Brian Mora", "notes": "Melo to Follow Up"}, {"id": 100, "priority": "3_LOW", "type": "Content Acquisition", "asset_class": "Mortgage-Backed Sec", "action": "ICE DATA: Mortgages Backet Securities Coverage", "pct_done": 0.75, "primary": "Alex Merrill", "secondary": "Mike William Rosa", "notes": "Alex provided source ID 1900 (FINRA TRACE). Lari achou source ID 276 & 1325"}, {"id": 101, "priority": "3_LOW", "type": "Contribution", "asset_class": "Credit Ratings", "action": "Fitch Rating: Equity and Macro Economic Research", "pct_done": 0.0, "primary": "Jin Gu", "secondary": "Antonio Melo", "notes": "Saber da possibilidade de sermos um Gateway. "}, {"id": 102, "priority": "3_LOW", "type": "Contribution", "asset_class": "Credit Ratings", "action": "Moody\u00b4s: Equity and Macro Economic Research", "pct_done": 0.0, "primary": "Vincent Pieretti", "secondary": "Antonio Melo", "notes": "Saber da possibilidade de sermos um Gateway. "}, {"id": 103, "priority": "3_LOW", "type": "Contribution", "asset_class": "Credit Ratings", "action": "S&P: Equity and Macro Economic Research", "pct_done": 0.0, "primary": "Ana Laura Garcia Rodriguez", "secondary": "Raphael Costa", "notes": "Saber da possibilidade de sermos um Gateway. "}, {"id": 104, "priority": "3_LOW", "type": "Contribution", "asset_class": "Fixed Income", "action": "CUSIP: Implementar Parceria", "pct_done": 0.0, "primary": "Daphne E. Shephard", "secondary": "Antonio Melo", "notes": "Melo to Follow Up"}, {"id": 105, "priority": "3_LOW", "type": "Exchange Relations", "asset_class": "Cripto Currency", "action": "BEE4: Tokens de Participa\u00e7\u00e3o em Empresas, Ativos Digitais, Crowdfunding tokenizado", "pct_done": 0.0, "primary": "", "secondary": "", "notes": "Melo to Follow Up"}, {"id": 106, "priority": "3_LOW", "type": "Exchange Relations", "asset_class": "Equities", "action": "Base Exchange: A\u00e7\u00f5es & ETFs", "pct_done": 0.0, "primary": "", "secondary": "", "notes": "Melo to Follow Up"}, {"id": 107, "priority": "3_LOW", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "CSR BR: Renda Fixa, Debentures, Titulos Estruturados, Servi\u00e7os de Cust\u00f3dia", "pct_done": 0.0, "primary": "", "secondary": "", "notes": "Melo to Follow Up"}, {"id": 108, "priority": "3_LOW", "type": "Exchange Relations", "asset_class": "Futures & Derivatives", "action": "Base Exchange: Derivatives", "pct_done": 0.0, "primary": "", "secondary": "", "notes": "Melo to Follow Up"}, {"id": 109, "priority": "3_LOW", "type": "Human Resources", "asset_class": "Education", "action": "ANBIMA: Pagar Inscri\u00e7\u00e3o de CPA-20", "pct_done": 0.0, "primary": "Antonio Melo", "secondary": "Antonio Melo", "notes": "Melo to Follow Up"}, {"id": 110, "priority": "3_LOW", "type": "Human Resources", "asset_class": "Education", "action": "FISD FIA Certification", "pct_done": 0.0, "primary": "Maria Eugenia", "secondary": "Antonio Melo", "notes": "Rever Budget com Rodrigo & Michelle sobre Curso de Market Data (US$500.00)"}, {"id": 111, "priority": "3_LOW", "type": "Human Resources", "asset_class": "People", "action": "Terminal LATAM - Spanish Classes - Market Data Team", "pct_done": 0.25, "primary": "Michelle Cruz Teixeira", "secondary": "Rodrigo Galasini", "notes": "Need to Review BP Terminal Internacional for resources"}, {"id": 112, "priority": "3_LOW", "type": "Market Data", "asset_class": "Internal Process", "action": "Melhorar Plataforma Legada de Equity Research", "pct_done": 0.0, "primary": "Gabriela V Dominiquini", "secondary": "Luciana Monegatti", "notes": "Criar um prototipo que ser\u00e1 util para todo time de MD. Agendar reuni\u00e3o Sim\u00e3o once done."}, {"id": 113, "priority": "3_LOW", "type": "Market Data", "asset_class": "Internal Process", "action": "Melhorar Plataforma Legada de Proje\u00e7\u00f5es", "pct_done": 0.0, "primary": "Monica Monteiro", "secondary": "Luciano F dos Santos", "notes": "Criar um prototipo que ser\u00e1 util para todo time de MD. Agendar reuni\u00e3o Sim\u00e3o once done."}, {"id": 114, "priority": "3_LOW", "type": "Market Data", "asset_class": "Internal Process", "action": "Website com Bolsas/Servicos/Permissionamento/Custos", "pct_done": 0.0, "primary": "Luciana Monegatti", "secondary": "Jo\u00e3o Pacheco", "notes": "Criar um prototipo que ser\u00e1 util para todo o escrit\u00f3rio"}, {"id": 115, "priority": "3_LOW", "type": "Market Data", "asset_class": "Internal Process", "action": "Website: Implementar Pol\u00edtica de Contribuintes", "pct_done": 0.0, "primary": "Elissandra Mansano ", "secondary": "Rodrigo Galasini", "notes": "Agendar Reuni\u00e3o com Eli para detalhar o que ser\u00e1 necessario do ponto de vista juridico"}, {"id": 116, "priority": "3_LOW", "type": "Market Data", "asset_class": "People", "action": "Org Chart: Mudar Linha de Reporte do Time Agro", "pct_done": 0.75, "primary": "Michelle Cruz Teixeira", "secondary": "Rodrigo Galasini", "notes": "Celula Agro est\u00e1 embaixo do Jo\u00e3o isso precisa mudar para mim. "}, {"id": 117, "priority": "3_LOW", "type": "Market Data Events", "asset_class": "People", "action": "WFIC - World Financial Information Conference - Copenhagem", "pct_done": 0.0, "primary": "Antonio Melo", "secondary": "Rodrigo Galasini", "notes": "Se programar para viagem ano que vem. "}, {"id": 118, "priority": "3_LOW", "type": "Technology", "asset_class": "Monitoring", "action": "Rever Processos de Monitora\u00e7\u00e3o_AE-BRL", "pct_done": 0.0, "primary": "Reynaldo Rancan Junior", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 119, "priority": "3_LOW", "type": "Technology", "asset_class": "Monitoring", "action": "Rever Processos de Monitora\u00e7\u00e3o_Agro_CEPEA", "pct_done": 0.0, "primary": "Reynaldo Rancan Junior", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 120, "priority": "3_LOW", "type": "Technology", "asset_class": "Monitoring", "action": "Rever Processos de Monitora\u00e7\u00e3o_Dados Macro-Economicos_Trading Economics", "pct_done": 0.0, "primary": "Marcelo Saquelle", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 121, "priority": "3_LOW", "type": "Technology", "asset_class": "Monitoring", "action": "Rever Processos de Monitora\u00e7\u00e3o_MF_Anbima", "pct_done": 0.0, "primary": "Reynaldo Rancan Junior", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 122, "priority": "3_LOW", "type": "Technology", "asset_class": "Monitoring", "action": "Rever Processos de Monitora\u00e7\u00e3o_MF_CVM", "pct_done": 0.0, "primary": "Reynaldo Rancan Junior", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 123, "priority": "3_LOW", "type": "Technology", "asset_class": "Monitoring", "action": "Rever Processos de Monitora\u00e7\u00e3o_PTAX", "pct_done": 0.0, "primary": "Reynaldo Rancan Junior", "secondary": "Jo\u00e3o Pacheco", "notes": "Melo to Follow Up"}, {"id": 124, "priority": "4_DONE", "type": "Content Acquisition", "asset_class": "Equity Options", "action": "Nasdaq Agreement: Nasdaq Smart Options MBBO (Level 1 & Level 2)", "pct_done": 1.0, "primary": "Rodrigo Galasini", "secondary": "Gustavo Iohartti", "notes": "Contrato Assinado com Sucesso pelo Rodrigo Galasini & Gustavo Ioriatti"}, {"id": 125, "priority": "4_DONE", "type": "Contribution", "asset_class": "Commodities", "action": "CEPEA: Estreitar Relacionamento - Participar de Eventos", "pct_done": 1.0, "primary": "Margarete Boteon", "secondary": "Zuleica Kozio", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 126, "priority": "4_DONE", "type": "Contribution", "asset_class": "Fixed Income", "action": "Terminal LATAM - Precia: Titulos de Renda Fixa (2,000)", "pct_done": 1.0, "primary": "Juan Manuel Quintero", "secondary": "Larissa O Lima", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 127, "priority": "4_DONE", "type": "Contribution", "asset_class": "FX NDFs", "action": "FenicsMD: FMD FX - Taxas Spot, Curvas de Forward & NDF de cambio", "pct_done": 1.0, "primary": "Robert Scharringa", "secondary": "Larissa O Lima", "notes": "Proposta Aprovado. Larissa cadastro dos instrumentos. Clientes BBDC, ITAU & BBAS contemplados"}, {"id": 128, "priority": "4_DONE", "type": "Contribution", "asset_class": "FX NDFs", "action": "Terminal LATAM - Precia: Forward Rates (47,000)", "pct_done": 1.0, "primary": "Juan Manuel Quintero", "secondary": "Larissa O Lima", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 129, "priority": "4_DONE", "type": "Contribution", "asset_class": "FX Options", "action": "FenicsMD: FMD FXO - Superficies de Volatilidade", "pct_done": 1.0, "primary": "Robert Scharringa", "secondary": "Larissa O Lima", "notes": "Proposta Aprovado. Larissa cadastro dos instrumentos. Clientes BBDC, ITAU & BBAS contemplados"}, {"id": 130, "priority": "4_DONE", "type": "Contribution", "asset_class": "FX Spot", "action": "Terminal LATAM - Precia: Paridades de Moedas (3,200)", "pct_done": 1.0, "primary": "Juan Manuel Quintero", "secondary": "Larissa O Lima", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 131, "priority": "4_DONE", "type": "Contribution", "asset_class": "FX Swaps", "action": "FenicsMD: CDS Data Enhancements - Data de Vencimento", "pct_done": 1.0, "primary": "Robert Scharringa", "secondary": "Larissa O Lima", "notes": "Proposta Aprovado. Larissa cadastro dos instrumentos. Clientes BBDC, ITAU & BBAS contemplados"}, {"id": 132, "priority": "4_DONE", "type": "Contribution", "asset_class": "FX Swaps", "action": "Terminal LATAM - Precia: Curvas de Swaps (4,000)", "pct_done": 1.0, "primary": "Juan Manuel Quintero", "secondary": "Larissa O Lima", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 133, "priority": "4_DONE", "type": "Contribution", "asset_class": "FX Volatility Curves", "action": "Terminal LATAM - Precia: Curvas de Volatilidade (21,400)", "pct_done": 1.0, "primary": "Juan Manuel Quintero", "secondary": "Larissa O Lima", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 134, "priority": "4_DONE", "type": "Contribution", "asset_class": "Implied Rates", "action": "Terminal LATAM - Precia: Taxas Implicitas (17,000)", "pct_done": 1.0, "primary": "Juan Manuel Quintero", "secondary": "Larissa O Lima", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 135, "priority": "4_DONE", "type": "Contribution", "asset_class": "Internal Process", "action": "Terminal LATAM - Precia: Database - Realizar a valida\u00e7\u00e3o ", "pct_done": 1.0, "primary": "Juan Manuel Quintero", "secondary": "Jo\u00e3o Pacheco", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 136, "priority": "4_DONE", "type": "Contribution", "asset_class": "Internal Process", "action": "Terminal LATAM - Precia: Janela de Cota\u00e7\u00f5es", "pct_done": 1.0, "primary": "Juan Manuel Quintero", "secondary": "Jo\u00e3o Pacheco", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 137, "priority": "4_DONE", "type": "Contribution", "asset_class": "Macroeconomic", "action": "Terminal LATAM - Precia: Calend\u00e1rio da Colombia", "pct_done": 1.0, "primary": "Juan Manuel Quintero", "secondary": "Luciano F dos Santos", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 138, "priority": "4_DONE", "type": "Contribution", "asset_class": "News", "action": "Newswires: Fazer Levantamento de Novos Contribuintes", "pct_done": 1.0, "primary": "Marcio Rodrigues", "secondary": "Antonio Melo", "notes": "Primeira Pagina in Colombia declined our partnership offer. New potential prospect is MTNewswire"}, {"id": 139, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Exchange Audit", "action": "London Metal Exchange (LME) - Audit", "pct_done": 1.0, "primary": "Ben Martin/Mia Parsons/Alexander Thompson", "secondary": "Antonio Melo", "notes": "All Contract Documentation have been provided.Waiting Final Decision from LME"}, {"id": 140, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Exchange Audit", "action": "London Metal Exchange (LME) - Audit - Free Trial Process ", "pct_done": 1.0, "primary": "Ben Martin/Mia Parsons/Alexander Thompson", "secondary": "Davi de Carvalho", "notes": "Free Trial process has been shared with Mia & Alex. "}, {"id": 141, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: 1) Add Missing Content - T\u00edtulos Publicos (NTNB, NTNC etc) ", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 142, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: 2) Ajustes nos C\u00f3digos BCSYS", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 143, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: 3) Cria\u00e7\u00e3o de Database \"Trademate\"", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 144, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: 4) Cria\u00e7\u00e3o de Headers", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 145, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: 5) Criar Paginas e Servi\u00e7os no Thor", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 146, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: 6) Elaborar Documento para Monitora\u00e7\u00e3o", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Documenta\u00e7\u00e3o entregue. Luciano e Marcelo est\u00e3o fazendo ajustes finos sobre monitora\u00e7\u00e3o."}, {"id": 147, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: 7) MOCK Test", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Mock Test agendado para Sabado 27/04/2026,"}, {"id": 148, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: 8) Mover de Homologa\u00e7\u00e3o para Pre-Prod", "pct_done": 1.0, "primary": "Rosemeire Bonfim de Almeida", "secondary": "Luciano F dos Santos", "notes": "Vers\u00e3o Trunc foi criada e colocada em Produ\u00e7\u00e3o."}, {"id": 149, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: 9) Orquestra\u00e7\u00e3o: Cadastro Instrumentos (12,000 instrumentos)", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 150, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: a1) Soft Lounge", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Semana de 27/Abr a 30/Abr"}, {"id": 151, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Trademate: a2) Valida\u00e7\u00e3o dos Campos", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "\u00c2ngelo Jos\u00e9 Paiva Larosa", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 152, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Futures & Derivatives", "action": "A5X: Nova Bolsa de Derivativos_C-Level Meeting Agendar ", "pct_done": 1.0, "primary": "Gustavo Laurino", "secondary": "Antonio Melo", "notes": "Reuni\u00e3o Agendada para dia 21/Jan @3pm. Convidei AE CEO Denis Piovezan"}, {"id": 153, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Futures & Derivatives", "action": "A5X: Nova Bolsa de Derivativos_Contrata\u00e7\u00e3o de Links Dedicados", "pct_done": 1.0, "primary": "Gustavo Laurino", "secondary": "Reynaldo Rancan Junior", "notes": "Reuni\u00e3o Agendada para dia 22/Jan para sanar d\u00favidas equipe tecnica."}, {"id": 154, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "Futures & Derivatives", "action": "A5X: Nova Bolsa de Derivativos_Rever Forma de Conex\u00e3o (FIX Protocol)", "pct_done": 1.0, "primary": "Gustavo Laurino", "secondary": "Reynaldo Rancan Junior", "notes": "Reuni\u00e3o Agendada para dia 22/Jan para sanar d\u00favidas equipe tecnica."}, {"id": 155, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "FX Spot", "action": "FenicsMD: FIX Protocol - 1) Implementar Novo Injetor", "pct_done": 1.0, "primary": "Robert Scharringa", "secondary": "Marcos Capelini", "notes": "Injetor done by 04/30/2026. Pre-Prod Details shared with Marcos Jara. "}, {"id": 156, "priority": "4_DONE", "type": "Exchange Relations", "asset_class": "FX Spot", "action": "FenicsMD: FIX Protocol - 2) Fazer a valida\u00e7\u00e3o dos Instrumentos em Pre-Prod", "pct_done": 1.0, "primary": "Robert Scharringa", "secondary": "Marcos Capelini", "notes": "Larissa fez a valida\u00e7\u00e3o dos instrumentos. Dados est\u00e3o sendo atualizados de min-min. "}, {"id": 157, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 002: Dinheirama - Dados Fundamentalista (demandas)", "pct_done": 1.0, "primary": "Luis Felipe Gradwol", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 158, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 005: Adicionar Novos Bonds - Pacote FenicsMD", "pct_done": 1.0, "primary": "Mayra Rodrigues", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 159, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 015: Dinheirama - Dados Fudamentalistas para Data Feed", "pct_done": 1.0, "primary": "Luis Felipe Gradwol", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 160, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 025: Tipo de ativos sinal B3", "pct_done": 1.0, "primary": "Sergio Fernandes", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 161, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 027: Scalare | Corporate Bond | USL01343AA79", "pct_done": 1.0, "primary": "Claudio Girotto", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 162, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 030: Bradesco (Fase 1): Datafeed Tesouraria ", "pct_done": 1.0, "primary": "Caroline Almeida", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 163, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 052: Pre\u00e7os calculados em R$ para commodities negociadas nas bolsas internacionais", "pct_done": 1.0, "primary": "Jackson de Mota Pereira", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 164, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 063: Incluir o Estudo de Volume para Moedas", "pct_done": 1.0, "primary": "Daniela Teixeira Costa Alvas", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 165, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 068: C2P Data Feed", "pct_done": 1.0, "primary": "Mayra Rodrigues", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 166, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 069: Eletrobras - SPN Indices", "pct_done": 1.0, "primary": "Mariana Gurski Maia", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 167, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 091: DADOS TEMPESTIVOS DE FUNDOS VIA API PARA DEMANDA ITA\u00da", "pct_done": 1.0, "primary": "Edgar Jesus", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 168, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 091: Dados Tempestivos de Fundos via API para Demanda Ita\u00fa", "pct_done": 1.0, "primary": "Edgar Jesus", "secondary": "Jo\u00e3o Pacheco", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 169, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 110: Broadcast Datafeed - DEPIN - BANCO CENTRAL", "pct_done": 1.0, "primary": "Paloma Alves", "secondary": "Jo\u00e3o Pacheco", "notes": "Ser\u00e1 feito trabalho com cliente para contratar em outro contrato focado em DAF."}, {"id": 170, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 132: Pre\u00e7os Commodities AE", "pct_done": 1.0, "primary": "Jackson de Mota Pereira", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 171, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 136: Base Hist\u00f3rica - 5 anos", "pct_done": 1.0, "primary": "Fernanda Felippe", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 172, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 171: Base Analise Fundamentalista", "pct_done": 1.0, "primary": "Caroline Almeida", "secondary": "Jo\u00e3o Pacheco", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 173, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Internal Process", "action": "Datafeed: Acelerar o Processo de Onboarding de Novos Clientes", "pct_done": 1.0, "primary": "Antonio Melo", "secondary": "Antonio Melo", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 174, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Internal Process", "action": "Datafeed: Implementar Processo para Submeter Nova Acquisi\u00e7\u00e3o de Conteudo para MT", "pct_done": 1.0, "primary": "Antonio Melo", "secondary": "Antonio Melo", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 175, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Internal Process", "action": "Datafeed: Valida\u00e7\u00e3o do Campo Hora (HRF) ", "pct_done": 1.0, "primary": "Marcos Jara", "secondary": "Bruno Paiva", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 176, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Internal Process", "action": "HUB Solicita\u00e7\u00f5es: Pedir Melhorias no Fluxo Operacional Ferramenta", "pct_done": 1.0, "primary": "Jo\u00e3o Pacheco", "secondary": "Luciana Monegatti", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 177, "priority": "4_DONE", "type": "HUB Request", "asset_class": "Statements", "action": "Datafeed: Comunicado - Altera\u00e7\u00f5es Data/Hora", "pct_done": 1.0, "primary": "Wagner Mesquita", "secondary": "Antonio Melo", "notes": "Projeto do Datafeed Entregue com Sucesso pela equipe de Market Data."}, {"id": 178, "priority": "4_DONE", "type": "Human Resources", "asset_class": "Employee Objectives", "action": "Employee Performance Review: 2025 Goals & Objectives", "pct_done": 1.0, "primary": "Michelle Cruz Teixeira", "secondary": "Antonio Melo", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 179, "priority": "4_DONE", "type": "Human Resources", "asset_class": "Employee Objectives", "action": "Employee Performance Review: 2026 Goals & Objectives", "pct_done": 1.0, "primary": "Michelle Cruz Teixeira", "secondary": "Antonio Melo", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 180, "priority": "4_DONE", "type": "Human Resources", "asset_class": "Internal Process", "action": "The Cinefyn: Entrevista Discutir Revis\u00e3o Processos Internos & Fornecer Melhorias", "pct_done": 1.0, "primary": "Ana Hidalgo", "secondary": "Antonio Melo", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 181, "priority": "4_DONE", "type": "Human Resources", "asset_class": "People", "action": "Colaboradores - Converter Estagi\u00e1rio & Menor Aprendiz em FTE", "pct_done": 1.0, "primary": "Michelle Cruz Teixeira", "secondary": "Rodrigo Galasini", "notes": "Efetiva\u00e7\u00e3o Programada para 07/Abr/2026 de Bruno e Victoria."}, {"id": 182, "priority": "4_DONE", "type": "Human Resources", "asset_class": "People", "action": "Envelope Azul: Market Data: Aline Pereira da Silva", "pct_done": 1.0, "primary": "Aline Pereira da Silva", "secondary": "Rodrigo Galasini", "notes": "Each one will receive a 10% merit increase"}, {"id": 183, "priority": "4_DONE", "type": "Human Resources", "asset_class": "People", "action": "Envelope Azul: Market Data: Larissa Oliveira Lima", "pct_done": 1.0, "primary": "Larissa O Lima", "secondary": "Rodrigo Galasini", "notes": "Each one will receive a 10% merit increase"}, {"id": 184, "priority": "4_DONE", "type": "Human Resources", "asset_class": "People", "action": "Envelope Azul: Market Data: Mike William Rosa", "pct_done": 1.0, "primary": "Mike William Rosa", "secondary": "Rodrigo Galasini", "notes": "Each one will receive a 10% merit increase"}, {"id": 185, "priority": "4_DONE", "type": "Human Resources", "asset_class": "People", "action": "New Hire: Finalizar Processo de Contrata\u00e7\u00e3o de 2 FTEs", "pct_done": 1.0, "primary": "Michelle Cruz Teixeira", "secondary": "Rodrigo Galasini", "notes": "First Day Vic & Bruno 07/Abr/2026. Project Completed. "}, {"id": 186, "priority": "4_DONE", "type": "Legal", "asset_class": "Contract Signature", "action": "B3: Up2Data - Rever Contrato - Rever Precifica\u00e7\u00e3o Pois existe Divergencias", "pct_done": 1.0, "primary": "Gessi Porto", "secondary": "Rodrigo Galasini", "notes": "Galasini fechou novo contrato. "}, {"id": 187, "priority": "4_DONE", "type": "Legal", "asset_class": "Contract Signature", "action": "CEPEA: Rever contrato para Redistribui\u00e7\u00e3o de Conte\u00fado", "pct_done": 1.0, "primary": "Margarete Boteon", "secondary": "Regis Fernando Ferreira", "notes": "Contrato Assinado com Sucesso pelo Rodrigo Galasini & Gustavo Ioriatti"}, {"id": 188, "priority": "4_DONE", "type": "Legal", "asset_class": "Contract Signature", "action": "FenicsMD: Assinatura do Aditivo para Inclus\u00e3o dos Novos Conteudos", "pct_done": 1.0, "primary": "Robert Scharringa", "secondary": "Rodrigo Galasini", "notes": "Contrato Assinado com Sucesso pelo Rodrigo Galasini & Gustavo Ioriatti"}, {"id": 189, "priority": "4_DONE", "type": "Legal", "asset_class": "Contract Signature", "action": "ICE DATA: International Circuit Upgrade - from 1 Giga to 10 Gigabits", "pct_done": 1.0, "primary": "John Galligan & Parth Parmar", "secondary": "Regis Fernando Ferreira", "notes": "Contrato Assinado com Sucesso pelo Rodrigo Galasini & Gustavo Ioriatti"}, {"id": 190, "priority": "4_DONE", "type": "Legal", "asset_class": "Contract Signature", "action": "Nasdaq Agreement: Nasdaq Smart Options MBBO (Level 1 & Level 2)", "pct_done": 1.0, "primary": "Regis Fernando Ferreira", "secondary": "Antonio Melo", "notes": "Dr Regis deu aval para assinatura do contrato."}, {"id": 191, "priority": "4_DONE", "type": "Legal", "asset_class": "Statements", "action": "Cboe Global Markets referentes \u00e0 pol\u00edtica de uso de dados de mercado em solu\u00e7\u00f5es de IA.", "pct_done": 1.0, "primary": "Luciana Monegatti", "secondary": "Antonio Melo", "notes": "Processo efetuado para divulga\u00e7\u00e3o de nova politica comercial"}, {"id": 192, "priority": "4_DONE", "type": "Market Data", "asset_class": "Internal Process", "action": "Automa\u00e7\u00e3o Contribui\u00e7\u00e3o: BRL AE & AEUSCO", "pct_done": 1.0, "primary": "Marcos Capelini", "secondary": "Mike William Rosa", "notes": "Mike concluiu o processo de automatiza\u00e7\u00e3o desse conteudo."}, {"id": 193, "priority": "4_DONE", "type": "Market Data", "asset_class": "Internal Process", "action": "Automa\u00e7\u00e3o Contribui\u00e7\u00e3o: BRL Casado", "pct_done": 1.0, "primary": "Marcos Capelini", "secondary": "Mike William Rosa", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 194, "priority": "4_DONE", "type": "Market Data", "asset_class": "Internal Process", "action": "ICE DATA: Cria\u00e7\u00e3o de filtros nos injetores, evidenciando os agressores numa Blacklist", "pct_done": 1.0, "primary": "Marcos Capelini", "secondary": "Mike William Rosa", "notes": "Apresenta\u00e7\u00e3o do Marquinhos sobre NII - Blacklist para Contribuintes"}, {"id": 195, "priority": "4_DONE", "type": "Market Data", "asset_class": "Internal Process", "action": "Terminal LATAM - Precia: Cria\u00e7\u00e3o de Tabelas FIT", "pct_done": 1.0, "primary": "Aline Pereira da Silva", "secondary": "Mauricio Nusa", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 196, "priority": "4_DONE", "type": "Market Data", "asset_class": "Macroeconomic", "action": "Trading Economics: Quality Control (Quote, Dates, Historical Data are working?)", "pct_done": 1.0, "primary": "Larissa O Lima", "secondary": "Aline Pereira Silva", "notes": "Processo finalizado com sucesso pela equipe de Market Data."}, {"id": 197, "priority": "4_DONE", "type": "Market Data", "asset_class": "Monitoring", "action": "B3 Monitora\u00e7\u00e3o: Criar documento com parametros de monitora\u00e7\u00e3o instrumentos B3", "pct_done": 1.0, "primary": "Marcelo Saquelle", "secondary": "Reynaldo Rancan Junior", "notes": "Documento enviado para Reynaldo para criar monitora\u00e7\u00e3o"}, {"id": 198, "priority": "4_DONE", "type": "Sales", "asset_class": "Marketing", "action": "Sales: Marketing - Folha de Combate", "pct_done": 1.0, "primary": "Valdir Martins Ferreira", "secondary": "Bruno Costa Chayb", "notes": "Folha de combate para o Datafeed entregue no dia do offsite de vendas. "}, {"id": 199, "priority": "4_DONE", "type": "Technology", "asset_class": "Internal Process", "action": "ICE DATA: International Circuit Upgrade - from 1 Giga to 10 Gigabits", "pct_done": 1.0, "primary": "John Galligan & Parth Parmar", "secondary": "Fabio Rodrigo Zanardo", "notes": "Fase 1 concluida 05/08/2026. Fase 2 concluida dia 05/15/2026. Trabalhar nas novas Sources c Alex"}, {"id": 200, "priority": "5_HOLD", "type": "Contribution", "asset_class": "Agro", "action": "Agroboard", "pct_done": 1.0, "primary": "Clayton Melo", "secondary": "Zuleica Kozio", "notes": "Zuleica tentou de todas as formas entrar em contato com esse provedor, sem sucesso!"}, {"id": 201, "priority": "5_HOLD", "type": "Contribution", "asset_class": "Commodities", "action": "DxFeed: Cria\u00e7\u00e3o de Indice de Commodities AE Broadcast", "pct_done": 1.0, "primary": "Bruce Traan / Ruslan Danilo", "secondary": "Antonio Melo", "notes": "Projeto foi Colocado em HOLD pela DxFeed"}, {"id": 202, "priority": "5_HOLD", "type": "Contribution", "asset_class": "Fundamentals Analysis", "action": "Austin Ratings: Fundamentals for Private Organizations", "pct_done": 1.0, "primary": "Alex Agostini", "secondary": "Antonio Melo", "notes": "Project has been put on hold due to total universe of 6000 private organizations."}, {"id": 203, "priority": "5_HOLD", "type": "Contribution", "asset_class": "Mutual Funds", "action": "MorningStar: Offshore Funds Coverage", "pct_done": 1.0, "primary": "Michel Faraggi", "secondary": "Alejandro Diaz", "notes": "Project has been put on hold by Daniel Galotti - Budget"}, {"id": 204, "priority": "5_HOLD", "type": "Contribution", "asset_class": "News", "action": "Newswires: MT Newswire - Adicionar Novo Newswire", "pct_done": 1.0, "primary": "John Nixon", "secondary": "Gustavo Iohartti", "notes": "MTNewswire do not have Latin America news coverage"}, {"id": 205, "priority": "5_HOLD", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Up2Data - Add Missing Content - CRI / CRA ", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "Jo\u00e3o Pacheco", "notes": "Nosso contrato n\u00e3o contempla essa tipo de instrumento. Apenas Corp Actions."}, {"id": 206, "priority": "5_HOLD", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Up2Data - Add Missing Content - Debentures / Coporate Bonds", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "Jo\u00e3o Pacheco", "notes": "Nosso contrato n\u00e3o contempla essa tipo de instrumento. Apenas Corp Actions."}, {"id": 207, "priority": "5_HOLD", "type": "Exchange Relations", "asset_class": "Fixed Income", "action": "B3: Up2Data - Add Missing Content - Superficie de Volatilidade / Volatility Surfaces", "pct_done": 1.0, "primary": "Luciano F dos Santos", "secondary": "Jo\u00e3o Pacheco", "notes": "Nosso contrato n\u00e3o contempla essa tipo de instrumento. Apenas Corp Actions."}, {"id": 208, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 079: Broadcast Datafeed - BDMG", "pct_done": 1.0, "primary": "Paloma Alves", "secondary": "Jo\u00e3o Pacheco", "notes": "Cliente n\u00e3o seguiu com a contrata\u00e7\u00e3o por necessidade de dados entregues de imediato"}, {"id": 209, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 118: Datafeed M Dias Branco", "pct_done": 1.0, "primary": "Felipe Reusch", "secondary": "Jo\u00e3o Pacheco", "notes": "Felipe informou que vai tentar seguir por um outro caminho com cliente, o Broadcast Agro Web."}, {"id": 210, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 122: API Luz  - Op\u00e7\u00e3o de Calcular no Excel via formulas", "pct_done": 1.0, "primary": "Mayra Rodrigues", "secondary": "Jo\u00e3o Pacheco", "notes": "Mayra retornou informando que \"A B3 j\u00e1 oferece esse servi\u00e7o gratuitamente ao cliente"}, {"id": 211, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 174: Black Midia / Datafeed Not\u00edcias", "pct_done": 1.0, "primary": "Victor Marcio de Menezes", "secondary": "Jo\u00e3o Pacheco", "notes": "Victor informou em comit\u00ea que cliente n\u00e3o seguir\u00e1 com demanda."}, {"id": 212, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Datafeeds", "action": "HUB 180: Dados Letras Financeira - C2P", "pct_done": 1.0, "primary": "Mayra Rodrigues", "secondary": "Jo\u00e3o Pacheco", "notes": "Mayra informou que cliente declinou da proposta e monteou um sistema interno para atender."}, {"id": 213, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Internal Process", "action": "Datafeed: Login \"monit_datafeed-hml@estadao.com\" base caracter\u00edsticas e permiss\u00f5es", "pct_done": 1.0, "primary": "Wagner Mesquita", "secondary": "Bruno Paiva", "notes": "Esses temas ser\u00e3o conduzidos pelo Bruno Paiva de Produtos. "}, {"id": 214, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Internal Process", "action": "Thor: Fazer Research Sobre Uso de Free Trial (Quem Est\u00e1 Usando)", "pct_done": 1.0, "primary": "Wagner Mesquita", "secondary": "Bruno Paiva", "notes": "Esses temas ser\u00e3o conduzidos pelo Bruno Paiva de Produtos. "}, {"id": 215, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Statements", "action": "B3: Politica Comercial 2026 - Compartilhar Time + Resumo", "pct_done": 1.0, "primary": "Bruno Paiva", "secondary": "Antonio Melo", "notes": "Esses temas ser\u00e3o conduzidos pelo Bruno Paiva de Produtos. "}, {"id": 216, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Statements", "action": "Datafeed: Comunicado - Ambiente de Testes", "pct_done": 1.0, "primary": "Wagner Mesquita", "secondary": "Bruno Paiva", "notes": "Esses temas ser\u00e3o conduzidos pelo Bruno Paiva de Produtos. "}, {"id": 217, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Statements", "action": "Datafeed: Comunicado - Deixar claro que o ip \u00e9 um IP google, e deve ser liberado na rede", "pct_done": 1.0, "primary": "Wagner Mesquita", "secondary": "Bruno Paiva", "notes": "Esses temas ser\u00e3o conduzidos pelo Bruno Paiva de Produtos. "}, {"id": 218, "priority": "5_HOLD", "type": "HUB Request", "asset_class": "Statements", "action": "Datafeed: Comunicado - Informando Novo Ambiente Valida\u00e7\u00e3o, Regras de Utiliza\u00e7\u00e3o", "pct_done": 1.0, "primary": "Wagner Mesquita", "secondary": "Bruno Paiva", "notes": "Esses temas ser\u00e3o conduzidos pelo Bruno Paiva de Produtos. "}, {"id": 219, "priority": "5_HOLD", "type": "Human Resources", "asset_class": "People", "action": "New Hire: Anuncio LinkedIn para Perfil Especialista em Produtos", "pct_done": 1.0, "primary": "Lyzza Tayane", "secondary": "Antonio Melo", "notes": "Para MDT vamos contratar os estagi\u00e1rios e n\u00e3o ser\u00e1 necessario trazer ninguem novo"}, {"id": 220, "priority": "5_HOLD", "type": "Human Resources", "asset_class": "People", "action": "New Hire: Entrevistar Candidatos para Perfil Especialista em Produtos", "pct_done": 1.0, "primary": "Lyzza Tayane", "secondary": "Antonio Melo", "notes": "Para Produtos o Rodrigo Galasini ira ver os candidatos com a Michelle"}, {"id": 221, "priority": "5_HOLD", "type": "Legal", "asset_class": "Statements", "action": "ICE DATA: Enviar notifica\u00e7\u00e3o Extra Judicial sobre Problemas Relacionados ao SPOT FX OTC", "pct_done": 1.0, "primary": "Alex Merrill", "secondary": "Regis Fernando Ferreira ", "notes": "Processo deu uma esfriada. Tanto DP quanto Regis n\u00e3o me apresentaram uma proposta da notifica\u00e7\u00e3o"}, {"id": 222, "priority": "5_HOLD", "type": "Market Data", "asset_class": "Mutual Funds", "action": "Mutual Funds Product: B3 Fundos.Net", "pct_done": 1.0, "primary": "Daniel Galotti", "secondary": "Antonio Melo", "notes": "Project has been put on hold by Daniel Galotti - Budget"}];
+
+const PRIORITY_COLORS = {
+  '1_HIGH': '#ef4444',
+  '2_MED':  '#f59e0b',
+  '3_LOW':  '#3b82f6',
+  '4_DONE': '#10b981',
+  '5_HOLD': '#8b5cf6',
+};
+const PRIORITY_LABELS = {
+  '1_HIGH':'1 HIGH','2_MED':'2 MED','3_LOW':'3 LOW','4_DONE':'4 DONE','5_HOLD':'5 HOLD'
+};
+const PCT_COLORS = { 0:'#ef4444', 0.25:'#f97316', 0.5:'#f59e0b', 0.75:'#22d3ee', 1:'#10b981' };
+
+let currentPriority = 'all';
+let currentType = 'all';
+let currentSearch = '';
+let currentPage = 1;
+const PAGE_SIZE = 20;
+
+// Populate type filters
+const types = [...new Set(RAW_DATA.map(d => d.type))].sort();
+const tf = document.getElementById('type-filters');
+types.forEach(t => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn';
+  btn.dataset.filter = 'type';
+  btn.dataset.value = t;
+  btn.textContent = t;
+  tf.appendChild(btn);
+});
+
+// Compute KPIs
+const total = RAW_DATA.length;
+const done = RAW_DATA.filter(d => d.priority === '4_DONE').length;
+const high = RAW_DATA.filter(d => d.priority === '1_HIGH').length;
+const hold = RAW_DATA.filter(d => d.priority === '5_HOLD').length;
+const avgPct = RAW_DATA.reduce((s,d) => s + d.pct_done, 0) / total;
+
+document.getElementById('kpi-total').textContent = total;
+document.getElementById('kpi-done').textContent = done;
+document.getElementById('kpi-high').textContent = high;
+document.getElementById('kpi-hold').textContent = hold;
+document.getElementById('kpi-pct').textContent = Math.round(avgPct * 100) + '%';
+document.getElementById('prog-pct-text').textContent = Math.round(avgPct * 100) + '%';
+setTimeout(() => {
+  document.getElementById('prog-bar').style.width = (avgPct * 100) + '%';
+}, 200);
+
+// Charts
+const chartDefaults = {
+  plugins: { legend: { display: false } },
+  scales: {}
+};
+
+// Priority chart
+const priorCounts = {};
+RAW_DATA.forEach(d => { priorCounts[d.priority] = (priorCounts[d.priority]||0)+1; });
+const priorKeys = Object.keys(PRIORITY_LABELS);
+
+new Chart(document.getElementById('chartPriority'), {
+  type: 'bar',
+  data: {
+    labels: priorKeys.map(k => PRIORITY_LABELS[k]),
+    datasets: [{
+      data: priorKeys.map(k => priorCounts[k]||0),
+      backgroundColor: priorKeys.map(k => PRIORITY_COLORS[k] + '99'),
+      borderColor: priorKeys.map(k => PRIORITY_COLORS[k]),
+      borderWidth: 1, borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: { legend:{display:false}, tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' projects'}} },
+    scales: {
+      x:{ grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#64748b',font:{size:10}} },
+      y:{ grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#64748b',font:{size:10}}, beginAtZero:true }
+    }
+  }
+});
+
+// Type chart
+const typeCounts = {};
+RAW_DATA.forEach(d => { typeCounts[d.type] = (typeCounts[d.type]||0)+1; });
+const typeEntries = Object.entries(typeCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+const typeColors = ['#38bdf8','#818cf8','#f472b6','#34d399','#fbbf24','#f87171','#a78bfa','#4ade80'];
+
+new Chart(document.getElementById('chartType'), {
+  type: 'doughnut',
+  data: {
+    labels: typeEntries.map(e => e[0].length > 18 ? e[0].slice(0,16)+'…' : e[0]),
+    datasets: [{
+      data: typeEntries.map(e => e[1]),
+      backgroundColor: typeColors.map(c => c + 'bb'),
+      borderColor: typeColors,
+      borderWidth: 1,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: {
+      legend: { display:true, position:'right', labels:{color:'#94a3b8',font:{size:9},boxWidth:10,padding:6} },
+      tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}`}}
+    },
+    cutout:'60%'
+  }
+});
+
+// Progress distribution
+const pctBuckets = {'Not Started (0%)':0,'25%':0,'50%':0,'75%':0,'Complete (100%)':0};
+RAW_DATA.forEach(d => {
+  if(d.pct_done === 0) pctBuckets['Not Started (0%)']++;
+  else if(d.pct_done === 0.25) pctBuckets['25%']++;
+  else if(d.pct_done === 0.5)  pctBuckets['50%']++;
+  else if(d.pct_done === 0.75) pctBuckets['75%']++;
+  else if(d.pct_done === 1)    pctBuckets['Complete (100%)']++;
+});
+
+new Chart(document.getElementById('chartProgress'), {
+  type: 'bar',
+  data: {
+    labels: Object.keys(pctBuckets),
+    datasets: [{
+      data: Object.values(pctBuckets),
+      backgroundColor: ['#ef444499','#f9731699','#f59e0b99','#22d3ee99','#10b98199'],
+      borderColor:     ['#ef4444','#f97316','#f59e0b','#22d3ee','#10b981'],
+      borderWidth:1, borderRadius:6,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' projects'}}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#64748b',font:{size:10}},beginAtZero:true},
+      y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#64748b',font:{size:9}}}
+    }
+  }
+});
+
+// Filtering & Rendering
+function getFiltered() {
+  return RAW_DATA.filter(d => {
+    if (currentPriority !== 'all' && d.priority !== currentPriority) return false;
+    if (currentType !== 'all' && d.type !== currentType) return false;
+    if (currentSearch) {
+      const s = currentSearch.toLowerCase();
+      if (!d.action.toLowerCase().includes(s) && !d.type.toLowerCase().includes(s) &&
+          !d.asset_class.toLowerCase().includes(s) && !d.primary.toLowerCase().includes(s) &&
+          !d.notes.toLowerCase().includes(s)) return false;
+    }
+    return true;
+  });
+}
+
+function priorityClass(p) {
+  return { '1_HIGH':'HIGH','2_MED':'MED','3_LOW':'LOW','4_DONE':'DONE','5_HOLD':'HOLD' }[p] || p;
+}
+
+function renderTable() {
+  const filtered = getFiltered();
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const slice = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+  
+  document.getElementById('results-count').textContent = `${total} projects`;
+  document.getElementById('page-info-top').textContent = `Showing ${Math.min((currentPage-1)*PAGE_SIZE+1,total)}–${Math.min(currentPage*PAGE_SIZE,total)} of ${total}`;
+
+  const pctColor = p => p===0?'#ef4444':p===0.25?'#f97316':p===0.5?'#f59e0b':p===0.75?'#22d3ee':'#10b981';
+
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = slice.map(d => `
+    <tr>
+      <td style="color:var(--muted);font-size:11px">${d.id}</td>
+      <td><span class="badge b-${priorityClass(d.priority)}">${PRIORITY_LABELS[d.priority]||d.priority}</span></td>
+      <td style="font-size:11px;color:#94a3b8;white-space:nowrap">${d.type}</td>
+      <td style="font-size:11px;color:#94a3b8;white-space:nowrap">${d.asset_class}</td>
+      <td class="td-action" title="${d.action}">${d.action}</td>
+      <td>
+        <div class="pct-bar">
+          <div class="pct-track"><div class="pct-fill" style="width:${d.pct_done*100}%;background:${pctColor(d.pct_done)}"></div></div>
+          <span class="pct-text">${Math.round(d.pct_done*100)}%</span>
+        </div>
+      </td>
+      <td class="person-tag" title="${d.primary}">${d.primary || '—'}</td>
+      <td class="notes-cell" title="${d.notes}">${d.notes || '—'}</td>
+    </tr>
+  `).join('');
+
+  // Pagination
+  const pg = document.getElementById('pagination');
+  let html = '';
+  const maxVisible = 7;
+  let start = Math.max(1, currentPage - 3), end = Math.min(totalPages, start + maxVisible - 1);
+  if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
+
+  if (currentPage > 1) html += `<button class="page-btn" onclick="goPage(${currentPage-1})">‹</button>`;
+  if (start > 1) html += `<button class="page-btn" onclick="goPage(1)">1</button>${start>2?'<span class="page-info">…</span>':''}`;
+  for (let i = start; i <= end; i++) {
+    html += `<button class="page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  if (end < totalPages) html += `${end<totalPages-1?'<span class="page-info">…</span>':''}<button class="page-btn" onclick="goPage(${totalPages})">${totalPages}</button>`;
+  if (currentPage < totalPages) html += `<button class="page-btn" onclick="goPage(${currentPage+1})">›</button>`;
+  pg.innerHTML = html;
+}
+
+function goPage(n) { currentPage = n; renderTable(); window.scrollTo({top:document.querySelector('.filters-bar').offsetTop-80,behavior:'smooth'}); }
+
+// Event listeners
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const filter = btn.dataset.filter;
+    const value = btn.dataset.value;
+    if (filter === 'priority') {
+      currentPriority = value;
+      document.querySelectorAll('[data-filter="priority"]').forEach(b => b.classList.remove('active'));
+    } else {
+      currentType = value;
+      document.querySelectorAll('[data-filter="type"]').forEach(b => b.classList.remove('active'));
+    }
+    btn.classList.add('active');
+    currentPage = 1;
+    renderTable();
+  });
+});
+
+document.getElementById('search-input').addEventListener('input', e => {
+  currentSearch = e.target.value.trim();
+  currentPage = 1;
+  renderTable();
+});
+
+renderTable();
+</script>
+</body>
+</html>

@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Derived Data — Commodities · Broadcast</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --surface2: #F0EFE9;
+    --border: rgba(0,0,0,0.08);
+    --border-med: rgba(0,0,0,0.14);
+    --text: #1A1916;
+    --text-2: #6B6960;
+    --text-3: #9A9890;
+    --amber: #8A5A0A;
+    --amber-bg: #FBF0D8;
+    --amber-mid: #D4920A;
+    --green: #2A7A4B;
+    --green-bg: #E8F5EE;
+    --blue: #1A56A0;
+    --blue-bg: #E6EFF9;
+    --purple: #4F45B0;
+    --purple-bg: #EDECF9;
+    --teal: #0F6E56;
+    --teal-bg: #E1F5EE;
+    --gray-bg: #F1EFE8;
+    --font: 'Inter', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-med);
+    padding: 20px 32px 18px;
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header-brand {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 5px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    color: var(--text);
+  }
+  .header-sub {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-top: 3px;
+  }
+  .header-meta {
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-3);
+    font-family: var(--mono);
+  }
+  .header-meta strong {
+    display: block;
+    font-size: 13px;
+    color: var(--text-2);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  /* ── MAIN ── */
+  .main { padding: 28px 32px; max-width: 1100px; }
+
+  /* ── SECTION TITLES ── */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text-3);
+  }
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-desc {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 16px;
+    max-width: 680px;
+    line-height: 1.6;
+  }
+
+  /* ── CONVERSION CARDS ── */
+  .conv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .conv-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .conv-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .conv-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .conv-formula {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--amber);
+    margin-bottom: 8px;
+    letter-spacing: -.01em;
+  }
+  .conv-desc {
+    font-size: 12.5px;
+    color: var(--text-2);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .conv-formula-box {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-2);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .conv-formula-box strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 20px;
+    letter-spacing: .02em;
+  }
+  .tag-agro { background: var(--green-bg); color: var(--green); }
+  .tag-energia { background: var(--amber-bg); color: var(--amber); }
+  .tag-metal { background: var(--gray-bg); color: #444441; }
+  .tag-fx { background: var(--teal-bg); color: var(--teal); }
+  .tag-multi { background: var(--purple-bg); color: var(--purple); }
+
+  /* ── SPREADS TABLE ── */
+  .spreads-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    background: var(--surface2);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-3);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-med);
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  td { padding: 11px 16px; vertical-align: top; }
+  td.mono { font-family: var(--mono); font-size: 12px; }
+  .spread-name { font-weight: 500; color: var(--text); }
+  .spread-desc { font-size: 12px; color: var(--text-2); margin-top: 2px; line-height: 1.5; }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .badge-alta { background: var(--green-bg); color: var(--green); }
+  .badge-media { background: var(--amber-bg); color: var(--amber); }
+  .badge-nova { background: var(--purple-bg); color: var(--purple); }
+
+  /* ── AI CARDS ── */
+  .ai-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .ai-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .ai-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .ai-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .ai-icon-agro { background: var(--green-bg); }
+  .ai-icon-energy { background: var(--amber-bg); }
+  .ai-icon-macro { background: var(--purple-bg); }
+  .ai-icon-alert { background: var(--blue-bg); }
+  .ai-card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .ai-card-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.6; margin-bottom: 12px; }
+  .ai-sources { font-size: 11.5px; color: var(--text-3); }
+  .ai-sources strong { color: var(--text-2); }
+
+  /* ── DIVIDER ── */
+  .divider { margin: 28px 0; border: none; border-top: 1px solid var(--border); }
+
+  /* ── ROADMAP ── */
+  .roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 680px) { .roadmap-grid { grid-template-columns: 1fr; } }
+  .roadmap-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .roadmap-phase {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: 8px;
+  }
+  .roadmap-phase-1 { color: var(--green); }
+  .roadmap-phase-2 { color: var(--amber); }
+  .roadmap-phase-3 { color: var(--purple); }
+  .roadmap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 12.5px;
+    color: var(--text-2);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .roadmap-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .dot-green { background: var(--green); }
+  .dot-amber { background: var(--amber-mid); }
+  .dot-purple { background: var(--purple); }
+
+  /* ── KPI ROW ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 700px) { .kpi-row { grid-template-columns: repeat(2,1fr); } }
+  .kpi { background: var(--surface2); border-radius: 10px; padding: 14px 16px; }
+  .kpi-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); margin-bottom: 6px; }
+  .kpi-val { font-size: 22px; font-weight: 600; font-family: var(--mono); letter-spacing: -.02em; }
+  .kpi-val.pos { color: var(--green); }
+  .kpi-val.neg { color: #B03030; }
+  .kpi-val.neu { color: var(--text); }
+  .kpi-sub { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── INFO CARD ── */
+  .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .info-title { font-size: 12px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+  .info-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12.5px; color: var(--text-2); padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .ir-val { font-family: var(--mono); font-size: 12px; color: var(--text); font-weight: 500; white-space: nowrap; margin-left: 12px; }
+
+  /* ── TICKET TABLE ── */
+  .ticket-tbl-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+  .ticket-tbl-wrap table { font-size: 12.5px; }
+  .ticket-tbl-wrap td { padding: 10px 14px; }
+  .margin-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .margin-bar { height: 5px; border-radius: 3px; background: var(--green); }
+  .margin-label { font-size: 11.5px; font-family: var(--mono); color: var(--text-2); white-space: nowrap; }
+
+  /* ── DELIVERY BADGE ── */
+  .dbadge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .db-blue   { background: var(--blue-bg);   color: var(--blue); }
+  .db-purple { background: var(--purple-bg); color: var(--purple); }
+  .db-green  { background: var(--green-bg);  color: var(--green); }
+  .db-amber  { background: var(--amber-bg);  color: var(--amber); }
+
+  /* ── NOTE BOX ── */
+  .note-box { background: var(--surface2); border-left: 3px solid var(--border-med); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 12.5px; color: var(--text-2); line-height: 1.6; margin-bottom: 28px; }
+  .note-box strong { color: var(--text); }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 40px;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .footer-left { font-size: 12px; color: var(--text-3); }
+  .footer-right { font-size: 12px; font-family: var(--mono); color: var(--text-3); }
+
+  @media (max-width: 700px) {
+    .main { padding: 20px 16px; }
+    .header { padding: 16px; }
+    .conv-grid, .ai-grid { grid-template-columns: 1fr; }
+    .roadmap-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-brand">Broadcast · Market Data</div>
+      <div class="header-title">Derived Data — Commodities</div>
+      <div class="header-sub">Brainstorm de dados derivados, conversões e oportunidades de produto</div>
+    </div>
+    <div class="header-meta">
+      <strong>Versão 1.0</strong>
+      Junho 2026
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 1. CONVERSÕES DE PREÇO -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-head">
+    <span class="section-label">01 — Conversões de preço</span>
+    <div class="section-rule"></div>
+  </div>
+  <p class="section-desc">
+    O dado mais pedido pelo mercado: preços internacionais convertidos para unidades brasileiras com câmbio PTAX em tempo real. Cada conversão cruza pelo menos dois fornecedores do portfólio Broadcast.
+  </p>
+
+  <div class="conv-grid">
+
+    <!-- SOJA -->
+    <div class="conv-card">
+      <div class="conv-card-top">
+        <div class="conv-name">Soja</div>
+        <span class="badge badge-alta">Alta demanda</span>
+      </div>
+      <div class="conv-formula">US$/bu → R$/sc</div>
+      <div class="conv-desc">Soja CBOT (CME) em US$/bushel convertida para R$/saca de 60 kg com PTAX. Referência para exportadores, trading companies e cooperativas.</div>
+      <div class="conv-formula-box">
+        R$/sc = <strong>US$/bu × 0,367437 × PTAX</strong><br>
+        Fator: 1 bushel soja = 27,2155 kg → 60 kg / 27,2155 = 2,2046 × 1/6 bu<br>
+        Fator compacto: <strong>0,367437 sc/bu</strong>
+      </div>
+      <div class="tags">
+        <span class="tag tag-agro">CME — ZS</span>
+        <span class="tag tag-agro">CEPEA Esalq</span>
+        <span class="tag tag-fx">PTAX</span>
+      </div>
+    </div>
+
+    <!-- MILHO -->
+    <div class="conv-card">
+      <div class="conv-card-top">
+        <div class="conv-name">Milho</div>
+        <span class="badge badge-alta">Alta demanda</span>
+      </div>
+      <div class="conv-formula">US$/bu → R$/sc</div>
+      <div class="conv-desc">Milho CBOT (CME) em US$/bushel para R$/saca de 60 kg. Demanda intensa de avicultores, suinocultores e pecuaristas.</div>
+      <div class="conv-formula-box">
+        R$/sc = <strong>US$/bu × 0,523813 × PTAX</strong><br>
+        Fator: 1 bushel milho = 25,4012 kg → 60 / 25,4012 × 1/bu<br>
+        Fator compacto: <strong>0,523813 sc/bu</strong>
+      </div>
+      <div class="tags">
+        <span class="tag tag-agro">CME — ZC</span>
+        <span class="tag tag-agro">CEPEA Esalq</span>
+        <span class="tag tag-fx">PTAX</span>
+      </div>
+    </div>
+
+    <!-- TRIGO -->
+    <div class="conv-card">
+      <div class="conv-card-top">
+        <div class="conv-name">Trigo</div>
+        <span class="badge badge-media">Demanda média</span>
+      </div>
+      <div class="conv-formula">US$/bu → R$/sc</div>
+      <div class="conv-desc">Trigo CBOT (CME) convertido para R$/saca. Base para cálculo de paridade de importação pelos moinhos brasileiros.</div>
+      <div class="conv-formula-box">
+        R$/sc = <strong>US$/bu × 0,509296 × PTAX</strong><br>
+        Fator: 1 bushel trigo = 27,2155 kg (soft) → 60 / 27,2155 × 1/bu<br>
+        Inclui: frete Santos + ICMS quando disponível
+      </div>
+      <div class="tags">
+        <span class="tag tag-agro">CME — ZW</span>
+        <span class="tag tag-agro">ICE — MFWM</span>
+        <span class="tag tag-fx">PTAX</span>
+      </div>
+    </div>
+
+    <!-- CAFÉ -->
+    <div class="conv-card">
+      <div class="conv-card-top">
+        <div class="conv-name">Café arábica</div>
+        <span class="badge badge-alta">Alta demanda</span>
+      </div>
+      <div class="conv-formula">US¢/lb → R$/sc</div>
+      <div class="conv-desc">ICE Arabica (KC) em US¢/libra convertido para R$/saca de 60 kg. Mercado exportador e torrefações monitoram em tempo real.</div>
+      <div class="conv-formula-box">
+        R$/sc = <strong>(US¢/lb / 100) × 132,276 × PTAX</strong><br>
+        Fator: 1 saca = 132,276 lb<br>
+        + Diferencial NY vs. <strong>CEPEA Esalq</strong> (prêmio/desconto)
+      </div>
+      <div class="tags">
+        <span class="tag tag-energia">ICE — KC</span>
+        <span class="tag tag-agro">CEPEA Esalq</span>
+        <span class="tag tag-fx">PTAX</span>
+      </div>
+    </div>
+
+    <!-- AÇÚCAR -->
+    <div class="conv-card">
+      <div class="conv-card-top">
+        <div class="conv-name">Açúcar cristal</div>
+        <span class="badge badge-alta">Alta demanda</span>
+      </div>
+      <div class="conv-formula">US¢/lb → R$/t</div>
+      <div class="conv-desc">ICE Sugar #11 (SB) convertido para R$/tonelada. Setor sucroalcooleiro usa para decisão de mix açúcar vs. etanol.</div>
+      <div class="conv-formula-box">
+        R$/t = <strong>(US¢/lb / 100) × 2.204,62 × PTAX</strong><br>
+        Fator: 1 t = 2.204,62 lb<br>
+        Cross: <strong>açúcar VHP vs. etanol hidratado CEPEA</strong>
+      </div>
+      <div class="tags">
+        <span class="tag tag-energia">ICE — SB</span>
+        <span class="tag tag-agro">CEPEA Esalq</span>
+        <span class="tag tag-fx">PTAX</span>
+      </div>
+    </div>
+
+    <!-- BOI GORDO -->
+    <div class="conv-card">
+      <div class="conv-card-top">
+        <div class="conv-name">Boi gordo</div>
+        <span class="badge badge-media">Demanda média</span>
+      </div>
+      <div class="conv-formula">US$/cwt → R$/@</div>
+      <div class="conv-desc">Live Cattle CME em US$/cwt para R$/arroba. Spread de paridade de exportação em relação à cotação CEPEA doméstica.</div>
+      <div class="conv-formula-box">
+        R$/@ = <strong>US$/cwt × 0,6804 × PTAX</strong><br>
+        Fator: 1 @ = 15 kg; 1 cwt = 45,359 kg<br>
+        Spread paridade: <strong>CME (R$/@) − CEPEA (R$/@)</strong>
+      </div>
+      <div class="tags">
+        <span class="tag tag-agro">CME — LE</span>
+        <span class="tag tag-agro">CEPEA</span>
+        <span class="tag tag-fx">PTAX</span>
+      </div>
+    </div>
+
+    <!-- PETRÓLEO -->
+    <div class="conv-card">
+      <div class="conv-card-top">
+        <div class="conv-name">Petróleo</div>
+        <span class="badge badge-alta">Alta demanda</span>
+      </div>
+      <div class="conv-formula">US$/bbl → R$/l</div>
+      <div class="conv-desc">WTI (CME) e Brent (ICE) em US$/barril convertidos para R$/litro. Proxy para análise de combustíveis e derivados Petrobras.</div>
+      <div class="conv-formula-box">
+        R$/l = <strong>US$/bbl ÷ 158,987 × PTAX</strong><br>
+        Fator: 1 barril = 158,987 litros<br>
+        Publicar: <strong>WTI, Brent e spread WTI–Brent em R$/l</strong>
+      </div>
+      <div class="tags">
+        <span class="tag tag-energia">CME — CL</span>
+        <span class="tag tag-energia">ICE — BRN</span>
+        <span class="tag tag-fx">PTAX</span>
+      </div>
+    </div>
+
+    <!-- METAIS LME -->
+    <div class="conv-card">
+      <div class="conv-card-top">
+        <div class="conv-name">Metais industriais (LME)</div>
+        <span class="badge badge-media">Demanda média</span>
+      </div>
+      <div class="conv-formula">US$/t → R$/t</div>
+      <div class="conv-desc">Cobre, alumínio, zinco, chumbo e níquel (LME) em R$/tonelada. Demanda de siderurgia, mineração (Vale, Nexa) e indústria metalúrgica.</div>
+      <div class="conv-formula-box">
+        R$/t = <strong>US$/t × PTAX</strong><br>
+        Metais: <strong>Cu, Al, Zn, Pb, Ni, Sn</strong><br>
+        Extra: spread <strong>LME 3M vs. spot</strong> (contango/backwardation)
+      </div>
+      <div class="tags">
+        <span class="tag tag-metal">LME</span>
+        <span class="tag tag-fx">PTAX</span>
+      </div>
+    </div>
+
+    <!-- OURO -->
+    <div class="conv-card">
+      <div class="conv-card-top">
+        <div class="conv-name">Ouro e prata</div>
+        <span class="badge badge-media">Demanda média</span>
+      </div>
+      <div class="conv-formula">US$/oz → R$/g</div>
+      <div class="conv-desc">Ouro e prata COMEX (CME) em US$/onça troy convertidos para R$/grama. Relevante para ourivesarias, joyeria e gestores de portfólio.</div>
+      <div class="conv-formula-box">
+        R$/g = <strong>US$/oz ÷ 31,1035 × PTAX</strong><br>
+        Fator: 1 oz troy = 31,1035 g<br>
+        Extra: razão <strong>ouro/prata</strong> (Gold/Silver ratio) em tempo real
+      </div>
+      <div class="tags">
+        <span class="tag tag-metal">CME — GC / SI</span>
+        <span class="tag tag-fx">PTAX</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 2. SPREADS E DIFERENCIAIS -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-head">
+    <span class="section-label">02 — Spreads e diferenciais</span>
+    <div class="section-rule"></div>
+  </div>
+  <p class="section-desc">
+    Análise que agrega valor sobre os preços brutos. Esses dados mostram relações entre mercados e são muito usados por traders, indústria e exportadores para decisões de hedge e compra.
+  </p>
+
+  <div class="spreads-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Spread / Diferencial</th>
+          <th>Fórmula</th>
+          <th>Fontes</th>
+          <th>Público-alvo</th>
+          <th>Demanda</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="spread-name">Spread Esalq vs. CBOT — soja</div>
+            <div class="spread-desc">Prêmio ou desconto do produto brasileiro em relação a Chicago. Indica competitividade de exportação.</div>
+          </td>
+          <td class="mono">CEPEA Paranaguá − CME ZS (R$/sc)</td>
+          <td><span class="tag tag-agro">CME</span> <span class="tag tag-agro">CEPEA</span></td>
+          <td style="font-size:12px; color:var(--text-2)">Exportadores, tradings, cooperativas</td>
+          <td><span class="badge badge-alta">Alta</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Paridade de exportação — milho</div>
+            <div class="spread-desc">Preço CBOT convertido para Santos/Paranaguá como teto de compra do produtor rural.</div>
+          </td>
+          <td class="mono">CME ZC (R$/sc) − basis porto</td>
+          <td><span class="tag tag-agro">CME</span> <span class="tag tag-agro">CEPEA</span> <span class="tag tag-fx">PTAX</span></td>
+          <td style="font-size:12px; color:var(--text-2)">Produtor rural, corretoras de grãos</td>
+          <td><span class="badge badge-alta">Alta</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Paridade de importação — trigo</div>
+            <div class="spread-desc">CBOT trigo + frete + impostos = preço de paridade no porto de Santos. Teto para moagem doméstica.</div>
+          </td>
+          <td class="mono">CME ZW + frete + ICMS (R$/sc)</td>
+          <td><span class="tag tag-agro">CME</span> <span class="tag tag-energia">ICE</span> <span class="tag tag-fx">PTAX</span></td>
+          <td style="font-size:12px; color:var(--text-2)">Moinhos, indústria de alimentos</td>
+          <td><span class="badge badge-media">Média</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Crack spread — petróleo</div>
+            <div class="spread-desc">Diferencial de refinaria entre petróleo cru e derivados. Proxy da margem de refino e pricing de combustíveis Petrobras.</div>
+          </td>
+          <td class="mono">2/3 gasolina + 1/3 diesel − Brent</td>
+          <td><span class="tag tag-energia">CME</span> <span class="tag tag-energia">ICE</span></td>
+          <td style="font-size:12px; color:var(--text-2)">Distribuidoras, analistas de energia</td>
+          <td><span class="badge badge-alta">Alta</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Spread WTI–Brent</div>
+            <div class="spread-desc">Diferencial geopolítico clássico. Indica pressão de oferta americana vs. europeia e afeta preço dos derivados no Brasil.</div>
+          </td>
+          <td class="mono">CME CL − ICE BRN (US$/bbl)</td>
+          <td><span class="tag tag-energia">CME</span> <span class="tag tag-energia">ICE</span></td>
+          <td style="font-size:12px; color:var(--text-2)">Distribuidoras, gestores, energia</td>
+          <td><span class="badge badge-alta">Alta</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Paridade etanol/gasolina</div>
+            <div class="spread-desc">Ponto de equilíbrio de custo do etanol hidratado vs. gasolina para o consumidor final (eficiência 70%).</div>
+          </td>
+          <td class="mono">Etanol CEPEA ÷ 0,70 vs. Gasolina ANP</td>
+          <td><span class="tag tag-agro">CEPEA</span> <span class="tag tag-energia">CME</span></td>
+          <td style="font-size:12px; color:var(--text-2)">Distribuidoras, postos, consumidor</td>
+          <td><span class="badge badge-alta">Alta</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Spread LME cobre — 3M vs. spot</div>
+            <div class="spread-desc">Contango ou backwardation do cobre. Sinal antecedente de demanda industrial global. Usado por Vale, Nexa e siderúrgicas.</div>
+          </td>
+          <td class="mono">LME Cu 3M − LME Cu spot (US$/t)</td>
+          <td><span class="tag tag-metal">LME</span></td>
+          <td style="font-size:12px; color:var(--text-2)">Siderurgia, mineração, indústria</td>
+          <td><span class="badge badge-media">Média</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Razão ouro/prata (Gold-Silver ratio)</div>
+            <div class="spread-desc">Indicador clássico de sentimento de risco. Acima de 80 indica aversão a risco; abaixo de 60 indica apetite. Tempo real CME COMEX.</div>
+          </td>
+          <td class="mono">CME GC (US$/oz) ÷ CME SI (US$/oz)</td>
+          <td><span class="tag tag-metal">CME COMEX</span></td>
+          <td style="font-size:12px; color:var(--text-2)">Gestores, analistas macro</td>
+          <td><span class="badge badge-media">Média</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Mix açúcar vs. etanol — ATR</div>
+            <div class="spread-desc">Ponto de indiferença da usina na decisão de produzir açúcar ou etanol, calculado por ATR (Açúcar Total Recuperável).</div>
+          </td>
+          <td class="mono">ICE SB (R$/kg ATR) vs. etanol CEPEA (R$/m³)</td>
+          <td><span class="tag tag-energia">ICE</span> <span class="tag tag-agro">CEPEA</span> <span class="tag tag-fx">PTAX</span></td>
+          <td style="font-size:12px; color:var(--text-2)">Usinas, trading sucroalcooleiro</td>
+          <td><span class="badge badge-alta">Alta</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 3. DADOS PREDITIVOS E AGENTES DE IA -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-head">
+    <span class="section-label">03 — Dados preditivos e agentes de IA</span>
+    <div class="section-rule"></div>
+  </div>
+  <p class="section-desc">
+    Oportunidade de criar conteúdo genuinamente novo no mercado brasileiro — nenhum competidor entrega isso de forma integrada com dados proprietários CEPEA + CME + câmbio em tempo real. Diferencial de produto para Terminal e Datafeed.
+  </p>
+
+  <div class="ai-grid">
+
+    <div class="ai-card">
+      <div class="ai-card-head">
+        <div class="ai-icon ai-icon-agro">🌾</div>
+        <div class="ai-card-title">Agente de paridade de grãos</div>
+      </div>
+      <div class="ai-card-desc">
+        Recalcula em tempo real o preço de paridade de exportação e importação para soja, milho e trigo quando câmbio ou Chicago se movem. Dispara alertas por threshold configurável pelo cliente. Pode ser embutido no Terminal ou via API para ERPs de cooperativas.
+      </div>
+      <div class="ai-sources">
+        <strong>Fontes:</strong> CME (ZS, ZC, ZW) · CEPEA · Fenics FX (PTAX intraday)
+      </div>
+      <div style="margin-top:10px"><span class="badge badge-nova">Produto novo</span></div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-card-head">
+        <div class="ai-icon ai-icon-energy">⚡</div>
+        <div class="ai-card-title">Monitor de energia integrado</div>
+      </div>
+      <div class="ai-card-desc">
+        Cruza preços de petróleo (WTI/Brent), gás natural, etanol e carvão para calcular custo marginal de geração e spreads de substitutos energéticos. Inclui equivalência calórica entre combustíveis. Setor elétrico, distribuidoras e análise de utilities.
+      </div>
+      <div class="ai-sources">
+        <strong>Fontes:</strong> CME (CL, NG, RB) · ICE (BRN, TTF) · CEPEA (etanol)
+      </div>
+      <div style="margin-top:10px"><span class="badge badge-nova">Produto novo</span></div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-card-head">
+        <div class="ai-icon ai-icon-macro">📊</div>
+        <div class="ai-card-title">Índice de pressão inflacionária</div>
+      </div>
+      <div class="ai-card-desc">
+        Cesta ponderada de commodities (petróleo, grãos, metais, alimentos) em R$ como leading indicator do IPCA alimentação e de serviços energéticos. Cruza com Trading Economics para calibrar os pesos por componente do IPCA. Publicável como índice proprietário Broadcast.
+      </div>
+      <div class="ai-sources">
+        <strong>Fontes:</strong> CME · ICE · LME · CEPEA · Trading Economics
+      </div>
+      <div style="margin-top:10px"><span class="badge badge-nova">Produto novo</span></div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-card-head">
+        <div class="ai-icon ai-icon-agro">🐄</div>
+        <div class="ai-card-title">Monitor do agronegócio</div>
+      </div>
+      <div class="ai-card-desc">
+        Dashboard integrado com CEPEA + CBOT + câmbio: rentabilidade estimada por cultura (soja, milho, boi, café, cana) por safra e por região. Calcula break-even do produtor com custo de produção e preço corrente. Público: cooperativas, bancos agrícolas, exportadores.
+      </div>
+      <div class="ai-sources">
+        <strong>Fontes:</strong> CEPEA · CME (ZS, ZC, LE, KC) · ICE (SB) · PTAX
+      </div>
+      <div style="margin-top:10px"><span class="badge badge-nova">Produto novo</span></div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-card-head">
+        <div class="ai-icon ai-icon-alert">🔔</div>
+        <div class="ai-card-title">Alertas de correlação commodity-ação</div>
+      </div>
+      <div class="ai-card-desc">
+        Calcula correlação rolante (30/90 dias) entre commodities e ações brasileiras expostas: Vale vs. minério/cobre LME, Petrobras vs. Brent/WTI, JBS/Marfrig vs. boi gordo, Suzano vs. celulose. Identifica distorções e envia alerta ao analista.
+      </div>
+      <div class="ai-sources">
+        <strong>Fontes:</strong> LME · CME · ICE · BM&amp;FBOVESPA (B3)
+      </div>
+      <div style="margin-top:10px"><span class="badge badge-nova">Produto novo</span></div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-card-head">
+        <div class="ai-icon ai-icon-energy">📦</div>
+        <div class="ai-card-title">Custo de produção industrial em R$</div>
+      </div>
+      <div class="ai-card-desc">
+        Cesta de insumos industriais em R$ para setores específicos: aço (minério + carvão + energia), fertilizantes (amônia + gás natural), papel e celulose (energia + madeira). Proxy de pressão de custos para análise de margens corporativas.
+      </div>
+      <div class="ai-sources">
+        <strong>Fontes:</strong> LME (Cu, Al, Fe) · CME (NG) · ICE · PTAX
+      </div>
+      <div style="margin-top:10px"><span class="badge badge-nova">Produto novo</span></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 4. ROADMAP SUGERIDO -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-head">
+    <span class="section-label">04 — Roadmap sugerido</span>
+    <div class="section-rule"></div>
+  </div>
+  <p class="section-desc">
+    Proposta de sequência de entrega por complexidade e demanda de mercado.
+  </p>
+
+  <div class="roadmap-grid">
+    <div class="roadmap-card">
+      <div class="roadmap-phase roadmap-phase-1">Fase 1 — Quick wins</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-green"></span>Conversões US$/bu → R$/sc (soja, milho, trigo)</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-green"></span>Conversão café ICE → R$/saca</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-green"></span>WTI/Brent → R$/litro</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-green"></span>Spread WTI–Brent publicado</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-green"></span>Metais LME → R$/t</div>
+    </div>
+    <div class="roadmap-card">
+      <div class="roadmap-phase roadmap-phase-2">Fase 2 — Spreads analíticos</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-amber"></span>Spread Esalq vs. CBOT soja/milho</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-amber"></span>Crack spread petróleo (refino)</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-amber"></span>Paridade etanol/gasolina</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-amber"></span>Mix açúcar vs. etanol (ATR)</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-amber"></span>Gold-Silver ratio tempo real</div>
+    </div>
+    <div class="roadmap-card">
+      <div class="roadmap-phase roadmap-phase-3">Fase 3 — Produtos de IA</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-purple"></span>Agente de paridade de grãos (alertas)</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-purple"></span>Monitor do agronegócio (dashboard)</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-purple"></span>Índice de pressão inflacionária Broadcast</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-purple"></span>Correlações commodity-ação (alertas)</div>
+      <div class="roadmap-item"><span class="roadmap-dot dot-purple"></span>Monitor de energia integrado</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 05 — ESTIMATIVA DE TICKET MÉDIO -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-head">
+    <span class="section-label">05 — Estimativa de ticket médio</span>
+    <div class="section-rule"></div>
+  </div>
+  <p class="section-desc">
+    CME, ICE, LME, CEPEA e FTSE já estão no contrato Broadcast. O custo marginal de cada produto derivado é zero em aquisição de dado — apenas desenvolvimento e distribuição. Commodities têm o maior potencial de ticket unitário por conta da demanda comprovada do setor agro, energia e metalurgia.
+  </p>
+
+  <!-- KPIs custo de aquisição -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">CME Group (variável)</div>
+      <div class="kpi-val neg">R$ 402k</div>
+      <div class="kpi-sub">mai/26 real — maior fornecedor</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">ICE</div>
+      <div class="kpi-val neg">R$ 294k</div>
+      <div class="kpi-sub">mai/26 variável + fixo</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">CEPEA-FEALQ · LME</div>
+      <div class="kpi-val neg">R$ 69k</div>
+      <div class="kpi-sub">mai/26 combinado</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Custo incremental p/ derived data</div>
+      <div class="kpi-val pos">R$ 0</div>
+      <div class="kpi-sub">dados já licenciados — custo = dev</div>
+    </div>
+  </div>
+
+  <!-- Benchmarks -->
+  <div class="two-col">
+    <div class="info-card">
+      <div class="info-title">Benchmarks internacionais — dados de commodities</div>
+      <div class="info-row"><span>Bloomberg Commodity feed (por seat)</span><span class="ir-val">US$ 32k/ano</span></div>
+      <div class="info-row"><span>Refinitiv Eikon Commodities</span><span class="ir-val">~US$ 18k/ano</span></div>
+      <div class="info-row"><span>Agrimoney / Fastmarkets (agro)</span><span class="ir-val">US$ 3–8k/ano</span></div>
+      <div class="info-row"><span>DTN ProphetX (agro EUA)</span><span class="ir-val">US$ 2–5k/ano</span></div>
+      <div class="info-row"><span>Platts (S&amp;P) — energia/metais</span><span class="ir-val">US$ 10–25k/ano</span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-title">Referências mercado brasileiro</div>
+      <div class="info-row"><span>Broadcast Terminal base (com commodities)</span><span class="ir-val">R$ 8–25k/mês</span></div>
+      <div class="info-row"><span>Módulo agro adicional típico</span><span class="ir-val">R$ 800–3k/mês</span></div>
+      <div class="info-row"><span>Feed de paridade p/ cooperativa/trading</span><span class="ir-val">R$ 2–8k/mês</span></div>
+      <div class="info-row"><span>Datafeed API commodity (institucional)</span><span class="ir-val">R$ 5–25k/mês</span></div>
+      <div class="info-row"><span>Conteúdo analítico setorial (agro/energia)</span><span class="ir-val">R$ 500–2k/mês</span></div>
+    </div>
+  </div>
+
+  <!-- Tabela de ticket por produto -->
+  <div class="ticket-tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Produto derivado</th>
+          <th>Entrega</th>
+          <th>Ticket estimado / mês</th>
+          <th>Margem bruta est.</th>
+          <th>Público-alvo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="spread-name">Conversões grãos — soja, milho, trigo (R$/sc)</div>
+            <div class="spread-desc">US$/bu → R$/sc em tempo real com PTAX. Publicação contínua e alertas de movimento</div>
+          </td>
+          <td><span class="dbadge db-blue">Módulo Terminal</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 600–1.200</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:72px"></div><span class="margin-label">&gt;85%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Cooperativas · tradings · produtor</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Conversão café ICE → R$/saca</div>
+            <div class="spread-desc">US¢/lb → R$/sc 60 kg + diferencial NY vs. CEPEA Esalq em tempo real</div>
+          </td>
+          <td><span class="dbadge db-blue">Módulo Terminal</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 800–1.500</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:74px"></div><span class="margin-label">&gt;85%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Exportadores · torrefações</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Petróleo WTI/Brent → R$/litro</div>
+            <div class="spread-desc">US$/barril → R$/litro + spread WTI–Brent publicado continuamente</div>
+          </td>
+          <td><span class="dbadge db-blue">Módulo Terminal</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 600–1.200</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:72px"></div><span class="margin-label">&gt;85%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Distribuidoras · analistas energia</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Metais LME → R$/tonelada</div>
+            <div class="spread-desc">Cu, Al, Zn, Pb, Ni, Sn em R$/t + spread 3M vs. spot (contango/backwardation)</div>
+          </td>
+          <td><span class="dbadge db-blue">Módulo Terminal</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 500–1.000</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:72px"></div><span class="margin-label">&gt;85%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Siderurgia · mineração · indústria</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Spread Esalq vs. CBOT — soja e milho</div>
+            <div class="spread-desc">Prêmio/desconto do produto brasileiro em relação a Chicago. Tempo real</div>
+          </td>
+          <td><span class="dbadge db-purple">Spread analítico</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 1.000–2.000</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:76px"></div><span class="margin-label">&gt;87%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Exportadores · tradings · corretoras</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Crack spread petróleo (refinaria)</div>
+            <div class="spread-desc">Diferencial de refino Brent vs. gasolina + diesel. Proxy margem Petrobras</div>
+          </td>
+          <td><span class="dbadge db-purple">Spread analítico</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 800–1.500</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:76px"></div><span class="margin-label">&gt;87%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Distribuidoras · analistas · energia</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Paridade etanol/gasolina + mix açúcar/etanol (ATR)</div>
+            <div class="spread-desc">Dois spreads do setor sucroalcooleiro em um módulo — ponto de indiferença da usina e do consumidor</div>
+          </td>
+          <td><span class="dbadge db-purple">Spread analítico</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 1.200–2.500</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:76px"></div><span class="margin-label">&gt;87%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Usinas · trading sucroalcooleiro</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Pacote agro completo</div>
+            <div class="spread-desc">Bundle: soja + milho + café + boi + paridade exportação/importação + alertas</div>
+          </td>
+          <td><span class="dbadge db-green">Bundle Terminal</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 3.000–6.000</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:78px"></div><span class="margin-label">&gt;88%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Cooperativas · bancos agrícolas · fundos</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Agente de paridade de grãos (alertas em tempo real)</div>
+            <div class="spread-desc">IA que recalcula paridade ao vivo e dispara alertas por threshold configurável</div>
+          </td>
+          <td><span class="dbadge db-purple">Produto IA</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 2.000–5.000</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:70px"></div><span class="margin-label">~80%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Cooperativas · ERPs agrícolas · fundos</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Monitor do agronegócio (dashboard por cultura)</div>
+            <div class="spread-desc">Rentabilidade estimada por safra e região — soja, milho, boi, café, cana</div>
+          </td>
+          <td><span class="dbadge db-purple">Produto IA</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 3.000–7.000</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:66px"></div><span class="margin-label">~78%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Bancos agrícolas · cooperativas · fundos agro</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="spread-name">Datafeed API commodities (institucional)</div>
+            <div class="spread-desc">Todas as conversões + spreads + alertas via API para ERPs, sistemas de trading e plataformas</div>
+          </td>
+          <td><span class="dbadge db-amber">Datafeed / API</span></td>
+          <td class="mono" style="font-weight:600; color:var(--text)">R$ 8.000–25.000</td>
+          <td><div class="margin-bar-wrap"><div class="margin-bar" style="width:60px"></div><span class="margin-label">~72%</span></div></td>
+          <td style="font-size:12px; color:var(--text-2)">Bancos · tradings · plataformas agro</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Potencial incremental -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Módulos individuais (25 clientes)</div>
+      <div class="kpi-val pos">R$ 25k</div>
+      <div class="kpi-sub">ticket médio R$ 1k/mês/cliente</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Bundle agro (10 clientes)</div>
+      <div class="kpi-val pos">R$ 45k</div>
+      <div class="kpi-sub">ticket médio R$ 4,5k/mês</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Datafeed API (3 instituições)</div>
+      <div class="kpi-val pos">R$ 51k</div>
+      <div class="kpi-sub">ticket médio R$ 17k/mês</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total incremental estimado</div>
+      <div class="kpi-val pos">~R$ 121k</div>
+      <div class="kpi-sub">receita nova/mês — sobre custo zero</div>
+    </div>
+  </div>
+
+  <div class="note-box">
+    <strong>Premissas e pontos de validação interna:</strong> (1) confirmar com a Elissandra se os contratos CME, ICE e CEPEA permitem sublicenciamento de derived data redistribuídos a clientes finais — ponto crítico antes de qualquer proposta comercial; (2) o setor agro é o de maior apetite imediato — cooperativas e tradings são os primeiros candidatos a upsell; (3) tickets acima são estimativas de mercado baseadas em benchmarks públicos (Bloomberg, Refinitiv, Fastmarkets, Platts). A política comercial final é definida internamente pela área de pricing.
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">Broadcast · Agência Estado — Market Data &amp; Product Strategy &nbsp;·&nbsp; <strong style="color:var(--text-2)">Antonio Melo</strong></div>
+    <div class="footer-right">derived-data/commodities · v1.1 · Last update: 16 Jun 2026</div>
+  </div>
+
+</div>
+</body>
+</html>

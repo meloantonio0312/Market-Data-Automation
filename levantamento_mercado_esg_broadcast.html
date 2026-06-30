@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Levantamento de Mercado — Dados ESG | Broadcast Agência Estado</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --verde:    #1A6B4A;
+    --verde-lt: #E6F4EE;
+    --verde-md: #2E9E6E;
+    --ouro:     #B8860B;
+    --ouro-lt:  #FDF6E3;
+    --azul:     #1B3A6B;
+    --azul-lt:  #EAF0FB;
+    --cinza-f:  #F7F7F5;
+    --cinza-b:  #E8E8E4;
+    --texto:    #1A1A18;
+    --texto-s:  #5A5A56;
+    --borda:    #DCDCD6;
+    --branco:   #FFFFFF;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cinza-f);
+    color: var(--texto);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--azul);
+    color: var(--branco);
+    padding: 56px 64px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    background: rgba(46,158,110,0.18);
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: 120px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(184,134,11,0.12);
+  }
+  .header-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(20px, 2.8vw, 40px);
+    font-weight: 800;
+    line-height: 1.2;
+    max-width: 100%;
+    position: relative;
+    white-space: normal;
+    text-align: center;
+  }
+  header h1 em {
+    font-style: normal;
+    color: #5DCAA5;
+  }
+  .header-meta {
+    margin-top: 28px;
+    display: flex;
+    gap: 32px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .header-meta span {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+  }
+  .header-meta strong { color: rgba(255,255,255,0.9); font-weight: 500; }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--branco);
+    border-bottom: 1px solid var(--borda);
+    padding: 0 64px;
+    display: flex;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    display: block;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--texto-s);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  nav a:hover { color: var(--verde); border-bottom-color: var(--verde); }
+
+  /* ── LAYOUT ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 48px 40px 80px; }
+
+  section { margin-bottom: 56px; }
+  section + section { border-top: 1px solid var(--borda); padding-top: 56px; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--verde-md);
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--azul);
+    margin-bottom: 24px;
+  }
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--texto);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  p { color: var(--texto-s); margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── DARK MODE ── */
+  body.dark {
+    --verde:    #5DCAA5;
+    --verde-lt: #0D2E20;
+    --verde-md: #3DB889;
+    --ouro:     #E8B84B;
+    --ouro-lt:  #2A1F06;
+    --azul:     #7BA7E0;
+    --azul-lt:  #0D1E36;
+    --cinza-f:  #111110;
+    --cinza-b:  #2A2A28;
+    --texto:    #EDEDE8;
+    --texto-s:  #9A9A94;
+    --borda:    #2E2E2A;
+    --branco:   #1A1A18;
+  }
+  body.dark header { background: #0D1828; }
+  body.dark header::before { background: rgba(93,202,165,0.12); }
+  body.dark header::after  { background: rgba(232,184,75,0.08); }
+  body.dark nav { background: #1A1A18; border-color: #2E2E2A; }
+  body.dark thead tr { background: #0D1828; }
+  body.dark .badge-green { background: #0D2E20; color: #5DCAA5; }
+  body.dark .badge-gold  { background: #2A1F06; color: #E8B84B; }
+  body.dark .badge-blue  { background: #0D1E36; color: #7BA7E0; }
+  body.dark .badge-red   { background: #2E0E06; color: #F09595; }
+  body.dark .alerta       { background: #1F1A06; border-color: #5C4820; }
+  body.dark .alerta p     { color: #C9A24A; }
+  body.dark .alerta strong{ color: #E8B84B; }
+  body.dark .alerta.danger { background: #1F0D06; border-color: #5C2010; }
+  body.dark .alerta.danger p { color: #F09595; }
+  body.dark .alerta.danger strong { color: #F7C1C1; }
+  body.dark .alerta.info { background: #0A1525; border-color: #1B3A6B; }
+  body.dark .alerta.info p { color: #7BA7E0; }
+  body.dark .opp-card.destaque { background: #0D1828; }
+  body.dark h2 { color: var(--azul); }
+  body.dark footer { background: #0D1828; }
+  body.dark tbody tr:hover { background: #222220; }
+  body.dark .card-icon.v { background: #0D2E20; }
+  body.dark .card-icon.a { background: #2A1F06; }
+  body.dark .card-icon.b { background: #0D1E36; }
+  body.dark .card-icon.c { background: #2E0E06; color: #F09595; }
+  body.dark .tag-v { background: #0D2E20; color: #5DCAA5; }
+  body.dark .tag-b { background: #0D1E36; color: #7BA7E0; }
+  body.dark .tag-o { background: #2A1F06; color: #E8B84B; }
+  body.dark .tag-c { background: #2E0E06; color: #F09595; }
+  body.dark tbody tr.highlight-row { background: #0D1E36; }
+  body.dark tbody tr.highlight-row:hover { background: #112240; }
+  body.dark .progress-track { background: #2A2A28; }
+  body.dark .metric-value { color: var(--azul); }
+
+  /* ── TOGGLE DARK/LIGHT ── */
+  .mode-toggle {
+    position: fixed;
+    top: 16px;
+    right: 24px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: 99px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--texto-s);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    user-select: none;
+  }
+  .mode-toggle:hover { color: var(--texto); border-color: var(--borda); }
+  .mode-toggle .toggle-icon { font-size: 15px; }
+
+  /* ── METRIC CARDS ── */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 900px) {
+    .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .metric-grid { grid-template-columns: 1fr; }
+  }
+  .metric-card {
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .metric-card.verde::before  { background: var(--verde-md); }
+  .metric-card.ouro::before   { background: var(--ouro); }
+  .metric-card.azul::before   { background: var(--azul); }
+  .metric-card.coral::before  { background: #D85A30; }
+
+  .metric-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--texto-s);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--azul);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .metric-sub {
+    font-size: 12px;
+    color: var(--texto-s);
+  }
+  .metric-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-top: 6px;
+  }
+  .badge-green { background: var(--verde-lt); color: var(--verde); }
+  .badge-gold  { background: var(--ouro-lt);  color: var(--ouro); }
+  .badge-blue  { background: var(--azul-lt);  color: var(--azul); }
+  .badge-red   { background: #FAECE7;         color: #993C1D; }
+
+  /* ── INFO CARDS ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+  .card-icon.v { background: var(--verde-lt); color: var(--verde); }
+  .card-icon.a { background: var(--ouro-lt);  color: var(--ouro); }
+  .card-icon.b { background: var(--azul-lt);  color: var(--azul); }
+  .card-icon.c { background: #FAECE7;         color: #D85A30; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--borda); }
+  table { width: 100%; border-collapse: collapse; background: var(--branco); }
+  thead tr { background: var(--azul); }
+  thead th {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    text-align: left;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  tbody tr { border-bottom: 1px solid var(--cinza-b); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--cinza-f); }
+  tbody tr.highlight-row { background: #EAF0FB; }
+  tbody tr.highlight-row:hover { background: #D6E5F7; }
+  td { padding: 12px 16px; font-size: 13px; color: var(--texto-s); vertical-align: top; }
+  td:first-child { font-weight: 500; color: var(--texto); }
+  td strong { color: var(--texto); }
+
+  /* ── ALERTA ── */
+  .alerta {
+    display: flex;
+    gap: 14px;
+    background: #FDF6E3;
+    border: 1px solid #E8C96B;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .alerta-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .alerta p { color: #7A5C0A; margin: 0; font-size: 13.5px; }
+  .alerta strong { color: #5C4108; }
+
+  .alerta.danger {
+    background: #FAECE7;
+    border-color: #F0997B;
+  }
+  .alerta.danger p { color: #7A3010; }
+  .alerta.danger strong { color: #5C1E06; }
+
+  .alerta.info {
+    background: var(--azul-lt);
+    border-color: #85B7EB;
+  }
+  .alerta.info p { color: #0C3060; }
+
+  /* ── OPORTUNIDADE / POSICIONAMENTO ── */
+  .opp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 680px) { .opp-grid { grid-template-columns: 1fr; } }
+
+  .opp-card {
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .opp-card.destaque {
+    background: var(--azul);
+    color: var(--branco);
+    grid-column: 1 / -1;
+  }
+  .opp-card.destaque h3 { color: rgba(255,255,255,0.6); }
+  .opp-card.destaque p { color: rgba(255,255,255,0.85); }
+  .opp-card.light { background: var(--branco); border: 1px solid var(--borda); }
+  .opp-card.light h3 { color: var(--texto-s); }
+
+  /* ── RODAPÉ ── */
+  footer {
+    background: var(--azul);
+    color: rgba(255,255,255,0.55);
+    text-align: center;
+    padding: 28px 40px;
+    font-size: 12px;
+  }
+  footer strong { color: rgba(255,255,255,0.85); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .progress-label { font-size: 13px; color: var(--texto-s); width: 180px; flex-shrink: 0; }
+  .progress-track { flex: 1; height: 8px; background: var(--cinza-b); border-radius: 99px; overflow: hidden; }
+  .progress-fill  { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+  .progress-val   { font-size: 13px; font-weight: 500; color: var(--texto); width: 48px; text-align: right; }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin: 2px 3px 2px 0;
+  }
+  .tag-v { background: var(--verde-lt); color: var(--verde); }
+  .tag-b { background: var(--azul-lt);  color: var(--azul); }
+  .tag-o { background: var(--ouro-lt);  color: var(--ouro); }
+  .tag-c { background: #FAECE7;         color: #993C1D; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="header-eyebrow">Broadcast Agência Estado · Diretoria Comercial</p>
+  <h1>Dados <em>ESG</em> em Tempo Real<br>Levantamento de Mercado &amp; Oportunidade Estratégica</h1>
+  <div class="header-meta">
+    <span style="display:flex;align-items:center;gap:6px;">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="opacity:.6"><rect x="1" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 4V3a3 3 0 016 0v1" stroke="currentColor" stroke-width="1.5"/></svg>
+      <strong>Confidencial</strong> · Uso interno restrito
+    </span>
+    <span><strong>Autor</strong> Antonio Melo</span>
+    <span><strong>Last update</strong> Junho 2026</span>
+  </div>
+</header>
+
+<nav>
+  <a href="#resumo">Resumo</a>
+  <a href="#volume">Volume de Mercado</a>
+  <a href="#publico">Público-Alvo</a>
+  <a href="#regulatorio">Cenário Regulatório</a>
+  <a href="#concorrentes">Concorrentes</a>
+  <a href="#modelo">Modelo Comercial</a>
+  <a href="#fontes">Fontes de Dados</a>
+  <a href="#oportunidade">Oportunidade Broadcast</a>
+  <a href="#carbono">Crédito de Carbono</a>
+</nav>
+
+<main>
+
+  <!-- RESUMO EXECUTIVO -->
+  <section id="resumo">
+    <p class="section-label">Resumo Executivo</p>
+    <h2>O que está em jogo</h2>
+
+    <div class="alerta info">
+      <div class="alerta-icon">💡</div>
+      <p>O mercado global de dados ESG movimenta entre <strong>USD 1,5 bi e USD 4,3 bi</strong> em plataformas de gestão e rating, com CAGR de 8–16% ao ano. No Brasil, a agenda foi turbinada pela regulamentação da CVM e pela COP30 — e a Broadcast tem uma janela única para ser o agregador nacional de dados ESG em tempo real.</p>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric-card verde">
+        <div class="metric-label">Mercado global de dados ESG</div>
+        <div class="metric-value">USD 4,3 bi</div>
+        <div class="metric-sub">Projeção para 2035 em plataformas de gestão</div>
+        <span class="metric-badge badge-green">▲ CAGR ~16%</span>
+      </div>
+      <div class="metric-card ouro">
+        <div class="metric-label">Ativos sob gestão ESG global</div>
+        <div class="metric-value">USD 53 tri</div>
+        <div class="metric-sub">Estimativa para 2025 (Bloomberg Intelligence)</div>
+        <span class="metric-badge badge-gold">+1/3 de todos os ativos</span>
+      </div>
+      <div class="metric-card azul">
+        <div class="metric-label">M&amp;A no setor de dados ESG</div>
+        <div class="metric-value">USD 5 bi</div>
+        <div class="metric-sub">Em aquisições somente em 2024</div>
+        <span class="metric-badge badge-blue">Consolidação acelerada</span>
+      </div>
+      <div class="metric-card coral">
+        <div class="metric-label">Crescimento MSCI ESG Analytics</div>
+        <div class="metric-value">+40%</div>
+        <div class="metric-sub">Receita em 2024 após adição de dados climáticos</div>
+        <span class="metric-badge badge-red">Referência global</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOLUME DE MERCADO -->
+  <section id="volume">
+    <p class="section-label">Tamanho de Mercado</p>
+    <h2>Volume Financeiro Global e Brasil</h2>
+
+    <div class="card-grid" style="margin-bottom: 28px;">
+      <div class="card">
+        <div class="card-icon b">🌍</div>
+        <h3>Rating &amp; Research ESG</h3>
+        <p>Segmento de avaliação e pontuação ESG capturou <strong>38% do mercado</strong> global em 2025. Crescimento liderado por exigências regulatórias da Europa (CSRD) e mandatos do ISSB.</p>
+        <div style="margin-top: 10px;">
+          <span class="tag tag-b">Research &amp; Analysis</span>
+          <span class="tag tag-b">USD 0,9 bi → 1,95 bi até 2035</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon v">📊</div>
+        <h3>Software &amp; Plataformas ESG</h3>
+        <p>Segmento de gestão de dados projetado em <strong>USD 4,3 bi até 2035</strong>. Cloud-based lidera, crescendo de USD 677 mi para USD 3,5 bi no período.</p>
+        <div style="margin-top: 10px;">
+          <span class="tag tag-v">Asset Management: USD 350 mi → 1,75 bi</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon a">🇧🇷</div>
+        <h3>Brasil — Posição Atual</h3>
+        <p>Mercado incipiente, mas com crescimento acelerado impulsionado pela B3 ISE, CVM e agendas de grandes gestoras como Itaú, Bradesco Asset, BTG e XP.</p>
+        <div style="margin-top: 10px;">
+          <span class="tag tag-o">Setor financeiro lidera adoção</span>
+          <span class="tag tag-o">5 de Top 10 são bancos/financeiras</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon c">⚡</div>
+        <h3>Serviços de Verificação</h3>
+        <p>Segmento de asseguração independente cresce a <strong>9,35% ao ano</strong> até 2035, impulsionado pelas exigências de auditoria em relatórios de sustentabilidade.</p>
+        <div style="margin-top: 10px;">
+          <span class="tag tag-c">Auditores Big Four</span>
+          <span class="tag tag-c">Compliance mandatório EU</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label" style="margin-top: 24px;">Participação por tipo de comprador global</p>
+    <div class="progress-row"><div class="progress-label">Gestores de ativos</div><div class="progress-track"><div class="progress-fill" style="width:59%; background: var(--verde-md);"></div></div><div class="progress-val">59%</div></div>
+    <div class="progress-row"><div class="progress-label">Seguradoras</div><div class="progress-track"><div class="progress-fill" style="width:18%; background: var(--azul);"></div></div><div class="progress-val">18%</div></div>
+    <div class="progress-row"><div class="progress-label">Outros inst. financeiros</div><div class="progress-track"><div class="progress-fill" style="width:14%; background: var(--ouro);"></div></div><div class="progress-val">14%</div></div>
+    <div class="progress-row"><div class="progress-label">Corporações / IRs</div><div class="progress-track"><div class="progress-fill" style="width:9%; background: #D85A30;"></div></div><div class="progress-val">9%</div></div>
+  </section>
+
+  <!-- PÚBLICO-ALVO -->
+  <section id="publico">
+    <p class="section-label">Público-Alvo</p>
+    <h2>Quem compra dados ESG no Brasil</h2>
+
+    <div class="table-wrap" style="margin-bottom: 24px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Segmento</th>
+            <th>Caso de uso principal</th>
+            <th>Urgência</th>
+            <th>Ticket potencial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Gestoras de fundos (buy-side)</td>
+            <td>Screening ESG, construção de portfólios sustentáveis, relatório a cotistas</td>
+            <td><span class="metric-badge badge-green">Alta</span></td>
+            <td>R$ 150–500 mil/ano</td>
+          </tr>
+          <tr>
+            <td>Bancos e corretoras</td>
+            <td>Análise de crédito com risco socioambiental, produtos estruturados verdes</td>
+            <td><span class="metric-badge badge-green">Alta</span></td>
+            <td>R$ 200–800 mil/ano</td>
+          </tr>
+          <tr>
+            <td>Seguradoras</td>
+            <td>Precificação de riscos climáticos, compliance com Susep e ISSB</td>
+            <td><span class="metric-badge badge-gold">Média-Alta</span></td>
+            <td>R$ 100–400 mil/ano</td>
+          </tr>
+          <tr>
+            <td>Companhias abertas (B3)</td>
+            <td>Benchmark setorial, preparação de relatório de sustentabilidade, investor relations</td>
+            <td><span class="metric-badge badge-gold">Média-Alta</span></td>
+            <td>R$ 60–200 mil/ano</td>
+          </tr>
+          <tr>
+            <td>Consultorias / Auditorias</td>
+            <td>Base de dados para serviços de assessoria ESG aos clientes</td>
+            <td><span class="metric-badge badge-gold">Média</span></td>
+            <td>R$ 40–120 mil/ano</td>
+          </tr>
+          <tr>
+            <td>Plataformas de dados / Fintechs</td>
+            <td>Enriquecimento de bases, modelos de scoring, redistribuição via API</td>
+            <td><span class="metric-badge badge-blue">Crescente</span></td>
+            <td>R$ 30–150 mil/ano (API)</td>
+          </tr>
+          <tr>
+            <td>Órgãos reguladores e governo</td>
+            <td>Monitoramento de mercado, políticas climáticas, programas verdes</td>
+            <td><span class="metric-badge badge-blue">Crescente</span></td>
+            <td>Licitação / projeto</td>
+          </tr>
+          <tr>
+            <td>Imprensa e análise setorial</td>
+            <td>Jornalismo de dados, rankings, publicações especializadas</td>
+            <td><span class="metric-badge badge-gold">Média</span></td>
+            <td>R$ 20–60 mil/ano</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- REGULATÓRIO -->
+  <section id="regulatorio">
+    <p class="section-label">Cenário Regulatório</p>
+    <h2>Regulação no Brasil — o que mudou</h2>
+
+    <div class="alerta danger">
+      <div class="alerta-icon">🔴</div>
+      <p><strong>Atualização crítica (29/mai/2026):</strong> A CVM publicou a Resolução 244, revertendo a obrigatoriedade de relatórios de sustentabilidade prevista para jan/2026. A adoção dos padrões ISSB/CBPS volta a ser <strong>voluntária</strong>. Empresas comprometidas com mercados globais, como Vale e Renner (pioneiras em IFRS S1/S2), mantêm seus investimentos — mas pequenas companhias abertas tendem a postergar.</p>
+    </div>
+
+    <!-- TIMELINE DE RESOLUÇÕES -->
+    <p class="section-label" style="margin-bottom: 14px;">Linha do tempo regulatória — resumo das normas</p>
+
+    <div style="display: flex; flex-direction: column; gap: 0; margin-bottom: 32px;">
+
+      <!-- RES 193 -->
+      <div style="display: grid; grid-template-columns: 120px 1fr; gap: 0; position: relative;">
+        <div style="padding: 0 20px 0 0; text-align: right; padding-top: 18px;">
+          <span style="font-size: 11px; font-weight: 600; color: var(--verde-md); white-space: nowrap;">Out/2023</span>
+        </div>
+        <div style="border-left: 2px solid var(--borda); padding: 0 0 28px 24px; position: relative;">
+          <div style="width: 10px; height: 10px; background: var(--verde-md); border-radius: 50%; position: absolute; left: -6px; top: 22px;"></div>
+          <div class="card" style="margin-top: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+              <span style="font-size: 13px; font-weight: 600; color: var(--texto);">Resolução CVM nº 193</span>
+              <span class="tag tag-v">Marco fundador</span>
+              <span class="tag tag-b">ISSB / IFRS S1 e S2</span>
+            </div>
+            <p style="margin-bottom: 8px;"><strong style="color:var(--texto);">O que faz:</strong> Incorpora formalmente ao ordenamento brasileiro os padrões IFRS S1 (requisitos gerais de sustentabilidade) e IFRS S2 (riscos e oportunidades climáticas) emitidos pelo ISSB (International Sustainability Standards Board). Torna o Brasil o primeiro país do mundo a adotar formalmente as normas ISSB em regulação de mercado de capitais.</p>
+            <p style="margin-bottom: 8px;"><strong style="color:var(--texto);">Cronograma original:</strong> 2024–2025 (voluntário) → a partir de 01/jan/2026: obrigatório para companhias abertas categorias A e B, com asseguração por auditor independente (limitada até 2025, razoável a partir de 2026).</p>
+            <p><strong style="color:var(--texto);">Impacto ESG:</strong> Criou a demanda imediata por coleta estruturada de dados de sustentabilidade, benchmarking setorial e infraestrutura de relatórios — base do mercado que a Broadcast quer endereçar. Rendeu ao Brasil o prêmio ISAR Honours da ONU em novembro de 2024.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CVM 217/218/219 -->
+      <div style="display: grid; grid-template-columns: 120px 1fr; gap: 0; position: relative;">
+        <div style="padding: 0 20px 0 0; text-align: right; padding-top: 18px;">
+          <span style="font-size: 11px; font-weight: 600; color: var(--ouro); white-space: nowrap;">Out/2024</span>
+        </div>
+        <div style="border-left: 2px solid var(--borda); padding: 0 0 28px 24px; position: relative;">
+          <div style="width: 10px; height: 10px; background: var(--ouro); border-radius: 50%; position: absolute; left: -6px; top: 22px;"></div>
+          <div class="card" style="margin-top: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+              <span style="font-size: 13px; font-weight: 600; color: var(--texto);">Resoluções CVM nº 217, 218 e 219</span>
+              <span class="tag tag-o">Obrigações periódicas</span>
+              <span class="tag tag-o">CBPS 01 e 02</span>
+            </div>
+            <p style="margin-bottom: 8px;"><strong style="color:var(--texto);">O que fazem:</strong> Conjunto de normas que regulamenta o Pronunciamento Técnico CBPS nº 01 (requisitos gerais de divulgação de informações financeiras relacionadas à sustentabilidade) e CBPS nº 02 (requisitos específicos de divulgação relacionados ao clima), emitidos pelo Comitê Brasileiro de Pronunciamentos de Sustentabilidade — o braço nacional do ISSB, composto por Abrasca, Apimec, B3, CFC, Fipecafi e Ibracon.</p>
+            <p style="margin-bottom: 8px;"><strong style="color:var(--texto);">O que exigem das companhias:</strong> Divulgação de riscos e oportunidades vinculados à sustentabilidade que possam impactar fluxos de caixa, acesso a financiamento ou custo de capital; estratégia climática alinhada à TCFD; governança ESG com envolvimento do conselho; métricas e metas verificáveis por auditoria.</p>
+            <p><strong style="color:var(--texto);">Impacto ESG:</strong> Impôs às companhias abertas a necessidade de sistemas de coleta de dados ESG auditáveis — exatamente o tipo de feed estruturado que a Broadcast poderia fornecer em tempo real para investidores acompanharem o cumprimento dessas obrigações.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lei 15.042 / SBCE -->
+      <div style="display: grid; grid-template-columns: 120px 1fr; gap: 0; position: relative;">
+        <div style="padding: 0 20px 0 0; text-align: right; padding-top: 18px;">
+          <span style="font-size: 11px; font-weight: 600; color: var(--verde-md); white-space: nowrap;">2024</span>
+        </div>
+        <div style="border-left: 2px solid var(--borda); padding: 0 0 28px 24px; position: relative;">
+          <div style="width: 10px; height: 10px; background: var(--verde-md); border-radius: 50%; position: absolute; left: -6px; top: 22px;"></div>
+          <div class="card" style="margin-top: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+              <span style="font-size: 13px; font-weight: 600; color: var(--texto);">Lei nº 15.042/2024 — SBCE (Mercado de Carbono)</span>
+              <span class="tag tag-v">Nova fronteira de dados</span>
+            </div>
+            <p style="margin-bottom: 8px;"><strong style="color:var(--texto);">O que faz:</strong> Cria o Sistema Brasileiro de Comércio de Emissões (SBCE), o mercado de carbono regulado do Brasil. Atribui à CVM papel de supervisão sobre ativos relacionados ao carbono quando negociados no mercado de capitais — abrindo um mercado adjacente de dados de preços de créditos de carbono com liquidez financeira.</p>
+            <p><strong style="color:var(--texto);">Impacto ESG:</strong> Gera demanda por dados de emissões verificadas, preços de créditos de carbono e rastreabilidade de compensações — todos distribuíveis via Datafeed da Broadcast como produto complementar ao ESG.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lei 15.103/2025 -->
+      <div style="display: grid; grid-template-columns: 120px 1fr; gap: 0; position: relative;">
+        <div style="padding: 0 20px 0 0; text-align: right; padding-top: 18px;">
+          <span style="font-size: 11px; font-weight: 600; color: var(--azul); white-space: nowrap;">Jan/2025</span>
+        </div>
+        <div style="border-left: 2px solid var(--borda); padding: 0 0 28px 24px; position: relative;">
+          <div style="width: 10px; height: 10px; background: var(--azul); border-radius: 50%; position: absolute; left: -6px; top: 22px;"></div>
+          <div class="card" style="margin-top: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+              <span style="font-size: 13px; font-weight: 600; color: var(--texto);">Lei nº 15.103/2025 — Finanças Sustentáveis</span>
+              <span class="tag tag-b">Programa nacional</span>
+            </div>
+            <p style="margin-bottom: 8px;"><strong style="color:var(--texto);">O que faz:</strong> Cria o Programa Nacional de Finanças Sustentáveis, estruturando o arcabouço legal para emissão de títulos verdes, linhas de crédito vinculadas a metas ESG e incentivos para companhias com melhores práticas socioambientais.</p>
+            <p><strong style="color:var(--texto);">Impacto ESG:</strong> Estimula a demanda de bancos e gestoras por dados ESG de alta qualidade para avaliar elegibilidade e monitorar performance de portfólios de títulos verdes e de renda fixa sustentável.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CVM 244 -->
+      <div style="display: grid; grid-template-columns: 120px 1fr; gap: 0; position: relative;">
+        <div style="padding: 0 20px 0 0; text-align: right; padding-top: 18px;">
+          <span style="font-size: 11px; font-weight: 600; color: #D85A30; white-space: nowrap;">Mai/2026</span>
+        </div>
+        <div style="border-left: 2px solid var(--borda); padding: 0 0 8px 24px; position: relative;">
+          <div style="width: 10px; height: 10px; background: #D85A30; border-radius: 50%; position: absolute; left: -6px; top: 22px; box-shadow: 0 0 0 3px rgba(216,90,48,0.2);"></div>
+          <div class="card" style="margin-top: 10px; border-color: rgba(216,90,48,0.3);">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+              <span style="font-size: 13px; font-weight: 600; color: var(--texto);">Resolução CVM nº 244</span>
+              <span class="tag tag-c">Vigente agora</span>
+              <span class="tag tag-c">Mudança de curso</span>
+            </div>
+            <p style="margin-bottom: 8px;"><strong style="color:var(--texto);">O que faz:</strong> Altera a Resolução CVM 193 e revoga a obrigatoriedade de elaboração e divulgação do relatório de informações financeiras de sustentabilidade e clima para companhias abertas, que entraria em vigor em jan/2026. A adoção dos padrões CBPS/ISSB retorna ao regime voluntário. Mantém intacta a estrutura técnica dos padrões — apenas remove a obrigação de divulgação.</p>
+            <p style="margin-bottom: 8px;"><strong style="color:var(--texto);">Por que a CVM recuou:</strong> A hipótese mais sólida é estratégica: a implementação simultânea do SBCE (mercado de carbono) e de um regime obrigatório de divulgação climática poderia gerar sobreposição de obrigações e aumento dos custos de conformidade enquanto a infraestrutura do mercado de carbono ainda se consolida.</p>
+            <p><strong style="color:var(--texto);">Impacto ESG para a Broadcast:</strong> Reduz pressão regulatória sobre companhias abertas menores no curto prazo. Porém, o buy-side (fundos, bancos, seguradoras) continua precisando monitorar quais empresas divulgam voluntariamente — o que <strong>mantém e pode até ampliar</strong> a demanda por dados em tempo real via Datafeed.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="alerta" style="margin-top: 8px;">
+      <div class="alerta-icon">💬</div>
+      <p><strong>Leitura comercial:</strong> A Resolução 244 pode desacelerar compras por parte de companhias abertas menores, mas <strong>amplia a oportunidade para o buy-side</strong> — fundos, bancos e seguradoras precisam acompanhar quais empresas divulgam ou não, quais emitem títulos verdes, quais se qualificam para o SBCE. Isso gera demanda contínua por dados em tempo real, exatamente o posicionamento da Broadcast.</p>
+    </div>
+  </section>
+
+  <!-- CONCORRENTES -->
+  <section id="concorrentes">
+    <p class="section-label">Mapeamento Competitivo</p>
+    <h2>Panorama completo da concorrência</h2>
+
+    <p style="color: var(--texto-s); margin-bottom: 28px; max-width: 760px;">O mercado de dados ESG é disputado em duas frentes distintas: os <strong style="color:var(--azul);">grandes provedores internacionais</strong> que dominam pelo volume de cobertura global e infraestrutura de dados, e os <strong style="color:var(--verde);">players nacionais</strong> de dados financeiros que têm profundidade local mas ainda não entregam dados ESG estruturados. A Broadcast compete com ambos — e tem vantagens sobre cada grupo.</p>
+
+    <!-- BLOCO INTERNACIONAL -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <div style="width:4px; height:28px; background:var(--azul); border-radius:2px;"></div>
+      <h3 style="font-size:15px; font-weight:600; color:var(--azul); text-transform:none; letter-spacing:0;">Provedores Internacionais — dados globais, ticket em USD</h3>
+    </div>
+
+    <div class="table-wrap" style="margin-bottom: 36px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Receita total / ESG (2024)</th>
+            <th>Cobertura ESG</th>
+            <th>Produto principal</th>
+            <th>Ticket ESG (ano)</th>
+            <th>Presença BR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Bloomberg LP</strong><br><span style="font-size:11px;color:var(--texto-s);">Nova York, EUA · Privada</span></td>
+            <td>~USD 14 bi (total estimado)<br><span style="font-size:11px;color:var(--texto-s);">ESG: segmento integrado ao terminal</span></td>
+            <td>15.500+ empresas / 100 países / 2.000+ campos ESG; emissões Scope 1-2-3 em 130 mil cias via modelo ML</td>
+            <td>Terminal Bloomberg (ESG add-on), Bloomberg ESG Data License, ETF Analytics, Transition Risk (TRACT)</td>
+            <td>USD 20k–30k+/terminal<br><span style="font-size:11px;">Data License: a partir de USD 50k</span></td>
+            <td><span class="metric-badge badge-green">Muito forte</span></td>
+          </tr>
+          <tr>
+            <td><strong>EcoVadis</strong><br><span style="font-size:11px;color:var(--texto-s);">Paris, França · Privada (Unicórnio)</span></td>
+            <td>Receita est. USD 200–300 mi<br><span style="font-size:11px;color:var(--texto-s);">Valoração USD 1 bi+ (unicórnio ESG)</span></td>
+            <td>Foco em cadeias de fornecimento; 130 países; avaliação customizada por empresa</td>
+            <td>Supply Chain Sustainability Ratings, EcoVadis Business Sustainability Ratings por empresa</td>
+            <td>USD 1,5k–10k por avaliação<br><span style="font-size:11px;">Plataforma: USD 5k–30k/ano</span></td>
+            <td><span class="metric-badge badge-blue">Crescente</span></td>
+          </tr>
+          <tr>
+            <td><strong>FactSet Research Systems</strong><br><span style="font-size:11px;color:var(--texto-s);">Norwalk, EUA · NYSE: FDS</span></td>
+            <td>USD 2,2 bi (ASV total 2024, +4,8%)<br><span style="font-size:11px;color:var(--texto-s);">ESG: módulo integrado; mercado total endereçável USD 40 bi+</span></td>
+            <td>Dados ESG temáticos (revenue exposure), integração com Sustainalytics e ISS via marketplace; API-first</td>
+            <td>FactSet ESG Thematic Revenue Exposure, Marketplace ESG (parceiros), workstation + datafeed</td>
+            <td>USD 12k–80k<br><span style="font-size:11px;">Workstation: ~USD 12k–20k/usuário</span></td>
+            <td><span class="metric-badge badge-gold">Média</span></td>
+          </tr>
+          <tr>
+            <td><strong>FenicsMD</strong><br><span style="font-size:11px;color:var(--texto-s);">Brasil · Especialista em dados ESG para mercado de capitais</span></td>
+            <td>Receita não pública; empresa boutique de dados ESG com foco no mercado brasileiro</td>
+            <td>Dados ESG estruturados de companhias abertas brasileiras; relatórios de sustentabilidade processados e padronizados; scoring ESG local com metodologia própria</td>
+            <td>Feed ESG de empresas B3, relatórios de sustentabilidade estruturados, scores para buy-side local, API de dados ESG para fintechs e gestoras brasileiras</td>
+            <td>R$ 30–150k/ano<br><span style="font-size:11px;">Modelo API: por volume</span></td>
+            <td><span class="metric-badge badge-green">Local — foco BR</span></td>
+          </tr>
+          <tr>
+            <td><strong>ISS ESG (Institutional Shareholder Services)</strong><br><span style="font-size:11px;color:var(--texto-s);">Rockville, EUA · Privada</span></td>
+            <td>Receita total ISS: est. USD 500–700 mi<br><span style="font-size:11px;color:var(--texto-s);">ESG: divisão separada do proxy voting; crescimento em climate data</span></td>
+            <td>Global; foco em governance scoring, proxy voting, climate data e normas SFDR/TCFD</td>
+            <td>ISS Governance QS, ESG Corporate Rating, Climate Solutions, Norm-Based Screening</td>
+            <td>USD 15k–100k<br><span style="font-size:11px;">Governance add-on: a partir de USD 8k</span></td>
+            <td><span class="metric-badge badge-gold">Baixa-Média</span></td>
+          </tr>
+          <tr>
+            <td><strong>LSEG / Refinitiv</strong><br><span style="font-size:11px;color:var(--texto-s);">Londres, UK · LSE: LSEG</span></td>
+            <td>GBP 7,7 bi (total LSEG 2024)<br><span style="font-size:11px;color:var(--texto-s);">ESG integrado ao D&amp;A; cobertura: ~80% do market cap global</span></td>
+            <td>13.000+ listadas + 1.000 privadas; atualização semanal de scores; metodologia pública e auditável</td>
+            <td>Refinitiv Eikon ESG, LSEG ESG Scores, Workspace, feeds API/FTP, FTSE Russell índices ESG</td>
+            <td>USD 25k–300k<br><span style="font-size:11px;">Workspace completo: USD 22k–28k/usuário</span></td>
+            <td><span class="metric-badge badge-green">Forte</span></td>
+          </tr>
+          <tr>
+            <td><strong>Moody's ESG Solutions</strong><br><span style="font-size:11px;color:var(--texto-s);">Nova York, EUA · NYSE: MCO</span></td>
+            <td>Moody's total: USD 7,1 bi (2024)<br><span style="font-size:11px;color:var(--texto-s);">ESG: integrado a Ratings e Analytics; adquiriu V.E (Vigeo Eiris) e Four Twenty Seven</span></td>
+            <td>Global; foco em risco climático físico e de transição; integração com análise de crédito</td>
+            <td>Climate Risk Scores, Moody's ESG Assessment, Physical Climate Risk, V.E ESG Ratings</td>
+            <td>USD 15k–120k<br><span style="font-size:11px;">Climate risk: a partir de USD 10k</span></td>
+            <td><span class="metric-badge badge-gold">Média</span></td>
+          </tr>
+          <tr>
+            <td><strong>Morningstar / Sustainalytics</strong><br><span style="font-size:11px;color:var(--texto-s);">Chicago, EUA · NasdaqGS: MORN</span></td>
+            <td>USD 2,3 bi (total Morningstar 2024)<br><span style="font-size:11px;color:var(--texto-s);">Sustainalytics: segmento separado; receita em queda em 2023–24 ("ano desafiador")</span></td>
+            <td>12.500+ empresas, 138 subindústrias; foco em risco ESG material e Low Carbon Transition Ratings (LCTR)</td>
+            <td>ESG Risk Ratings, Controvérsias, LCTR, EU Taxonomy Solution, Fund ESG Ratings (Morningstar Direct)</td>
+            <td>USD 15k–100k<br><span style="font-size:11px;">Gestoras menores: USD 8k–20k</span></td>
+            <td><span class="metric-badge badge-gold">Média</span></td>
+          </tr>
+          <tr>
+            <td><strong>MSCI Inc.</strong><br><span style="font-size:11px;color:var(--texto-s);">Nova York, EUA · NYSE: MSCI</span></td>
+            <td>USD 2,86 bi (total 2024, +13%)<br><span style="font-size:11px;color:var(--texto-s);">ESG &amp; Climate: USD ~326 mi (11,4% da receita total); Run Rate USD 343,7 mi</span></td>
+            <td>~14.000 emissores de renda variável e fixa; ratings desde 1969; crescimento orgânico 10% a.a.</td>
+            <td>MSCI ESG Ratings, ESG Analytics Suite, Climate Risk, Screening, Índices ESG (ETFs benchmarkados)</td>
+            <td>USD 50k–500k+<br><span style="font-size:11px;">Gestoras top: até USD 1 mi+</span></td>
+            <td><span class="metric-badge badge-green">Forte (buy-side)</span></td>
+          </tr>
+          <tr>
+            <td><strong>S&amp;P Global / Trucost</strong><br><span style="font-size:11px;color:var(--texto-s);">Nova York, EUA · NYSE: SPGI</span></td>
+            <td>USD 14,2 bi (total S&amp;P Global 2024)<br><span style="font-size:11px;color:var(--texto-s);">Divisão Sustainable1: integrada a Market Intelligence e Ratings</span></td>
+            <td>~15.000 empresas (Trucost carbono); ~7.000 ratings ESG corporativos diretos; DJSI indices</td>
+            <td>S&amp;P ESG Scores, Trucost Carbon &amp; Environmental Data, DJSI, SAM Corporate Sustainability Assessment</td>
+            <td>USD 20k–150k<br><span style="font-size:11px;">Trucost avulso: a partir de USD 10k</span></td>
+            <td><span class="metric-badge badge-gold">Média</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- BLOCO NACIONAL -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <div style="width:4px; height:28px; background:var(--verde-md); border-radius:2px;"></div>
+      <h3 style="font-size:15px; font-weight:600; color:var(--verde); text-transform:none; letter-spacing:0;">Provedores Nacionais — dados financeiros do Brasil, sem ESG estruturado (ainda)</h3>
+    </div>
+
+    <div class="alerta info" style="margin-bottom: 20px;">
+      <div class="alerta-icon">🔍</div>
+      <p><strong>Gap estratégico confirmado:</strong> Nenhum provedor nacional de dados financeiros oferece atualmente dados ESG estruturados em tempo real. Todos entregam market data de preços e notícias, mas ESG fica de fora do portfólio. Esta é a janela da Broadcast.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Faturamento / porte estimado</th>
+            <th>Produto principal</th>
+            <th>ESG hoje?</th>
+            <th>Risco competitivo ESG</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Broadcast / AE Datafeed</strong><br><span style="font-size:11px;color:var(--texto-s);">São Paulo — Grupo Estado</span></td>
+            <td>Líder em dados financeiros em tempo real no Brasil; receita não divulgada</td>
+            <td>Terminal Broadcast, AE Datafeed (APIs), cobertura de mercados B3, câmbio, renda fixa e notícias financeiras em tempo real; público: buy-side, sell-side e corretoras</td>
+            <td><span class="metric-badge badge-blue">A lançar</span></td>
+            <td><span class="metric-badge badge-green">Pioneiro — janela única 12–18 meses</span></td>
+          </tr>
+          <tr>
+            <td><strong>CMA / Agência Safras</strong><br><span style="font-size:11px;color:var(--texto-s);">São Paulo · Privada — CMA fundada em 1973, fusionada com Safras em 2020</span></td>
+            <td>Receita não pública; opera DataFeed financeiro + agropecuário; distribui sinais de bolsas americanas, europeias e B3</td>
+            <td>CMA DataFeed (APIs em múltiplas linguagens: JSON, Python, FIX etc.), Agência Safras News, cotações em tempo real de B3, commodities e câmbio; perfil: bancos, corretoras, fintechs e tesourarias</td>
+            <td><span class="metric-badge badge-red">Não oferece</span></td>
+            <td><span class="metric-badge badge-gold">Médio — mesma base de clientes; pode pivotar</span></td>
+          </tr>
+          <tr>
+            <td><strong>Enfoque Informações Financeiras</strong><br><span style="font-size:11px;color:var(--texto-s);">São Paulo · Privada — fundada em 1983/1987</span></td>
+            <td>PME especializada; dados desde 1983; receita não divulgada (estimativa: R$ 5–20 mi)</td>
+            <td>e-Data (cotações históricas, streaming B3, câmbio, inflação), gráficos para homebrokers, IR pages para companhias abertas, API de cotações para software houses e robo traders</td>
+            <td><span class="metric-badge badge-red">Não oferece</span></td>
+            <td><span class="metric-badge badge-blue">Baixo — nicho menor, foco em IR pages e dados históricos</span></td>
+          </tr>
+          <tr>
+            <td><strong>FenicsMD</strong><br><span style="font-size:11px;color:var(--texto-s);">Brasil · Especialista em dados ESG para mercado de capitais</span></td>
+            <td>Receita não pública; empresa boutique de dados ESG com foco no mercado brasileiro</td>
+            <td>Feed ESG de empresas B3, relatórios de sustentabilidade estruturados e padronizados, scores ESG locais com metodologia própria, API de dados ESG para fintechs e gestoras brasileiras</td>
+            <td><span class="metric-badge badge-green">Sim — foco ESG</span></td>
+            <td><span class="metric-badge badge-red">Alto — concorrente direto em dados ESG estruturados para o mercado brasileiro</span></td>
+          </tr>
+          <tr>
+            <td><strong>Nelogica</strong><br><span style="font-size:11px;color:var(--texto-s);">Porto Alegre · Privada (valuation R$ 2,9 bi)</span></td>
+            <td>Faturamento não divulgado; crescimento +100% a.a. (3 anos); mercado institucional gera ~R$ 1,5 bi/ano no setor; Nelogica mira 50% desse mercado</td>
+            <td>Plataforma Profit (4 mi traders / 160 países), DataFeed de market data B3 em tempo real, algoritmos, roteamento de ordens; adquiriu Bookmap (Europa) em 2024</td>
+            <td><span class="metric-badge badge-red">Não oferece</span></td>
+            <td><span class="metric-badge badge-gold">Médio — tem infraestrutura de feed; pode adicionar ESG se vir demanda</span></td>
+          </tr>
+          <tr>
+            <td><strong>Neoway (TOTVS)</strong><br><span style="font-size:11px;color:var(--texto-s);">Florianópolis — adquirida pela TOTVS em 2021</span></td>
+            <td>TOTVS: receita R$ 4,4 bi (2024); Neoway: segmento de data intelligence B2B</td>
+            <td>Inteligência de dados empresariais, scoring de crédito e risco, enriquecimento de cadastros, analytics B2B via IA; base de 40 mi+ CNPJs</td>
+            <td><span class="metric-badge badge-gold">Tangencial — dados de governance/risco</span></td>
+            <td><span class="metric-badge badge-gold">Médio — pode agregar ESG scoring a base já existente</span></td>
+          </tr>
+          <tr>
+            <td><strong>Serasa Experian</strong><br><span style="font-size:11px;color:var(--texto-s);">São Paulo — subsidiária da Experian (LSE: EXPN)</span></td>
+            <td>Experian total: USD 6,6 bi (2024); Brasil: segmento relevante de credit bureau</td>
+            <td>Scores de crédito, bureau de dados, analytics B2B; crescente investimento em ESG scoring para concessão de crédito sustentável</td>
+            <td><span class="metric-badge badge-gold">Emergente — ESG no crédito</span></td>
+            <td><span class="metric-badge badge-gold">Médio-Alto — Experian globalmente investe em ESG data para crédito</span></td>
+          </tr>
+          <tr>
+            <td><strong>Trilia Sustentável</strong><br><span style="font-size:11px;color:var(--texto-s);">Brasil · Startup ESG</span></td>
+            <td>Early stage; receita não pública; foco em gestão de resíduos e eventos sustentáveis</td>
+            <td>Hub de soluções para gestão de resíduos sólidos em eventos e empresas; relatórios ESG de impacto ambiental; créditos de logística reversa; educação ambiental</td>
+            <td><span class="metric-badge badge-gold">Parcial — relatórios de resíduos</span></td>
+            <td><span class="metric-badge badge-blue">Baixo — nicho operacional (não dados de mercado financeiro)</span></td>
+          </tr>
+          <tr>
+            <td><strong>ValorPRO / Valor Econômico</strong><br><span style="font-size:11px;color:var(--texto-s);">Rio de Janeiro — Grupo Globo</span></td>
+            <td>Receita não pública; concorrente editorial direto da Broadcast no segmento financeiro profissional</td>
+            <td>Terminal de notícias e dados financeiros, ValorPRO (APIs), cobertura de empresas abertas, IR e análise de mercado; público: buy-side e sell-side</td>
+            <td><span class="metric-badge badge-red">Não estruturado</span></td>
+            <td><span class="metric-badge badge-red">Alto — concorrente editorial direto; pode adicionar ESG antes da Broadcast</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div class="card">
+        <div class="card-icon b">🌍</div>
+        <h3>Fraqueza dos internacionais no Brasil</h3>
+        <p>MSCI, Bloomberg e LSEG têm cobertura limitada de empresas brasileiras fora do Ibovespa. Small e mid caps, debêntures verdes e emissores locais ficam de fora. Preço em USD eleva barreira para clientes menores. Nenhum entrega notícia em português em tempo real.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon v">🇧🇷</div>
+        <h3>Fraqueza dos nacionais</h3>
+        <p>Nelogica, CMA/Safras e Enfoque têm infraestrutura de dados financeiros pronta, mas nenhum investiu em dados ESG estruturados. O gap é de produto, não de infraestrutura — a barreira para eles entrarem é menor do que parece.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODELO COMERCIAL -->
+  <section id="modelo">
+    <p class="section-label">Modelo Comercial</p>
+    <h2>Produto transacional, ticket médio e formatos</h2>
+
+    <div class="alerta info" style="margin-bottom: 24px;">
+      <div class="alerta-icon">💡</div>
+      <p>A maioria dos grandes provedores globais opera com <strong>subscrição anual</strong>. O mercado caminha para <strong>API-first</strong> com consumo por volume (pay-per-use), modelo que se encaixa perfeitamente no Datafeed da Broadcast.</p>
+    </div>
+
+    <div class="card-grid" style="margin-bottom: 28px;">
+      <div class="card">
+        <div class="card-icon v">📋</div>
+        <h3>Assinatura Plataforma</h3>
+        <p>Acesso a painel com dados históricos e alertas de alteração de score ESG. Modelo recorrente mensal/anual. Ticket médio estimado para o Brasil:</p>
+        <div style="margin-top: 10px;">
+          <span class="tag tag-v">R$ 40–200 mil / ano</span>
+          <span class="tag tag-v">Renovação automática</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon b">🔌</div>
+        <h3>API / Datafeed (foco)</h3>
+        <p>Distribuição de dados ESG estruturados em tempo real via API REST/stream. Precificação por emissores cobertos, volume de chamadas ou tiers de acesso.</p>
+        <div style="margin-top: 10px;">
+          <span class="tag tag-b">R$ 50–500 mil / ano</span>
+          <span class="tag tag-b">Integração com sistemas internos</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon a">📰</div>
+        <h3>Conteúdo Editorial (Broadcast)</h3>
+        <p>Alertas noticiosos sobre eventos ESG, rebaixamentos de rating, controvérsias, publicações de relatórios de sustentabilidade em tempo real no terminal.</p>
+        <div style="margin-top: 10px;">
+          <span class="tag tag-o">Incorporado à assinatura Broadcast</span>
+          <span class="tag tag-o">Diferencial de conteúdo</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon c">📦</div>
+        <h3>Licença por Projeto</h3>
+        <p>Para consultorias, auditorias e IRs que precisam de dados pontuais. Modelo transacional por empresa/setor coberto. Menor ticket, maior capilaridade.</p>
+        <div style="margin-top: 10px;">
+          <span class="tag tag-c">R$ 5–30 mil / projeto</span>
+          <span class="tag tag-c">Porta de entrada</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Benchmarks de ticket médio global (referência)</p>
+    <div class="progress-row"><div class="progress-label">Bloomberg Terminal (ESG add-on)</div><div class="progress-track"><div class="progress-fill" style="width:95%; background: var(--azul);"></div></div><div class="progress-val">USD 20k+</div></div>
+    <div class="progress-row"><div class="progress-label">MSCI ESG Research</div><div class="progress-track"><div class="progress-fill" style="width:80%; background: var(--verde-md);"></div></div><div class="progress-val">USD 50k–500k</div></div>
+    <div class="progress-row"><div class="progress-label">Sustainalytics (mid-market)</div><div class="progress-track"><div class="progress-fill" style="width:50%; background: var(--ouro);"></div></div><div class="progress-val">USD 15–100k</div></div>
+    <div class="progress-row"><div class="progress-label">EcoVadis (por avaliação)</div><div class="progress-track"><div class="progress-fill" style="width:20%; background: #D85A30;"></div></div><div class="progress-val">USD 1,5–10k</div></div>
+  </section>
+
+  <!-- FONTES DE DADOS -->
+  <section id="fontes">
+    <p class="section-label">Fontes de Dados</p>
+    <h2>De onde vêm os dados ESG</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon v">🏢</div>
+        <h3>Divulgação das próprias empresas</h3>
+        <p>Relatórios de sustentabilidade (GRI, SASB, TCFD, ISSB/CBPS), Formulários de Referência CVM, relatórios integrados, comunicados ao mercado.</p>
+        <span class="tag tag-v">Primária</span>
+        <span class="tag tag-v">Estruturada</span>
+      </div>
+      <div class="card">
+        <div class="card-icon b">🏛️</div>
+        <h3>Reguladores e órgãos públicos</h3>
+        <p>CVM, B3, Bacen (relatórios de risco climático), IBGE, Ibama, MapBiomas, Sirene, ICMBio — cobertura ambiental e de governança.</p>
+        <span class="tag tag-b">Primária</span>
+        <span class="tag tag-b">Gratuita / pública</span>
+      </div>
+      <div class="card">
+        <div class="card-icon a">📡</div>
+        <h3>Dados alternativos</h3>
+        <p>Satélite (desmatamento, emissões), sensores IoT em ativos, dados de texto (notícias, redes sociais, decisões judiciais) para identificar controvérsias.</p>
+        <span class="tag tag-o">Alta sofisticação</span>
+        <span class="tag tag-o">NLP / IA</span>
+      </div>
+      <div class="card">
+        <div class="card-icon c">🤝</div>
+        <h3>Parcerias com provedores globais</h3>
+        <p>Licenciamento de dados de MSCI, Refinitiv, Sustainalytics ou ISS ESG para complementar cobertura global — e adicionar valor ao ecossistema Broadcast.</p>
+        <span class="tag tag-c">Licenciamento</span>
+        <span class="tag tag-c">Redistribuição</span>
+      </div>
+      <div class="card">
+        <div class="card-icon v">⚡</div>
+        <h3>Coleta ativa via web scraping / IA</h3>
+        <p>Monitoramento automatizado de publicações de relatórios, registros CVM, comunicados de controvérsia, processos ambientais e trabalhistas em tempo real.</p>
+        <span class="tag tag-v">Diferencial competitivo</span>
+        <span class="tag tag-v">Propriedade intelectual</span>
+      </div>
+      <div class="card">
+        <div class="card-icon b">🌊</div>
+        <h3>Mercado de carbono (SBCE)</h3>
+        <p>Com a Lei 15.042/2024 e a CVM supervisionando ativos de carbono, dados de emissões e créditos de carbono tornam-se fonte de dados financeiros ESG com liquidez.</p>
+        <span class="tag tag-b">Nova fronteira</span>
+        <span class="tag tag-b">2025–2026</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPORTUNIDADE BROADCAST -->
+  <section id="oportunidade">
+    <p class="section-label">Posicionamento Estratégico</p>
+    <h2>A Oportunidade para a Broadcast</h2>
+
+    <div class="opp-grid">
+      <div class="opp-card destaque">
+        <h3 style="font-size:11px; letter-spacing:2px; text-transform:uppercase; margin-bottom: 10px;">Tese Central</h3>
+        <p style="font-size:17px; line-height:1.5; font-weight:300;">A Broadcast já é a infraestrutura de informação financeira em tempo real do Brasil. Adicionar dados ESG estruturados ao Datafeed significa <strong style="color:#5DCAA5;">ser o primeiro agregador nacional ESG com velocidade de mercado</strong> — algo que nenhum provedor global oferece com profundidade local.</p>
+      </div>
+
+      <div class="opp-card light">
+        <h3>Vantagens competitivas exclusivas</h3>
+        <p>Base instalada de clientes financeiros já conectados ao Datafeed. Relacionamento editorial com fontes primárias brasileiras. Capacidade de combinar notícia + dado estruturado na mesma plataforma.</p>
+      </div>
+
+      <div class="opp-card light">
+        <h3>Gaps do mercado atual</h3>
+        <p>Provedores globais têm cobertura limitada de empresas brasileiras médias e small caps. Nenhum agrega dados em tempo real (eventos, controvérsias, publicações CVM) com a velocidade da Broadcast.</p>
+      </div>
+
+      <div class="opp-card light">
+        <h3>Riscos e desafios</h3>
+        <p>Custo de estruturação e padronização dos dados. Efeito da Res. CVM 244 na demanda de curto prazo. Concorrência com provedores globais bem capitalizados. Necessidade de metodologia proprietária de scoring.</p>
+      </div>
+
+      <div class="opp-card light">
+        <h3>Próximos passos recomendados</h3>
+        <p>MVP com cobertura das 200 maiores empresas da B3. Parceria de distribuição com gestor de asset de grande porte. Piloto de API Datafeed ESG com 5 clientes âncora. Avaliação de licenciamento de dados MSCI/Refinitiv para complementar cobertura global.</p>
+      </div>
+    </div>
+
+    <div class="metric-grid" style="margin-top: 28px;">
+      <div class="metric-card verde">
+        <div class="metric-label">Empresas B3 — universo inicial</div>
+        <div class="metric-value">~500</div>
+        <div class="metric-sub">Companhias listadas que precisam de monitoramento ESG</div>
+      </div>
+      <div class="metric-card azul">
+        <div class="metric-label">Potencial clientes no Brasil</div>
+        <div class="metric-value">~800</div>
+        <div class="metric-sub">Gestoras, bancos, corretoras, seguradoras e consultorias</div>
+      </div>
+      <div class="metric-card ouro">
+        <div class="metric-label">Ticket médio estimado BR</div>
+        <div class="metric-value">R$ 120k</div>
+        <div class="metric-sub">Média ponderada entre plataforma e API por cliente/ano</div>
+      </div>
+      <div class="metric-card coral">
+        <div class="metric-label">Receita potencial (cenário base)</div>
+        <div class="metric-value">R$ 24M+</div>
+        <div class="metric-sub">200 clientes × R$ 120k médio em 3–4 anos</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INFORMAÇÕES ADICIONAIS -->
+  <section>
+    <p class="section-label">O que mais incluir no levantamento</p>
+    <h2>Tópicos adicionais para aprofundamento</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon v">📐</div>
+        <h3>Metodologia de scoring próprio</h3>
+        <p>Definir se a Broadcast desenvolverá metodologia própria de rating ESG ou apenas distribuirá dados brutos + notícias. Modelos como MSCI e FTSE levaram anos e equipes dedicadas.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon b">🔗</div>
+        <h3>Integração com SBCE e créditos de carbono</h3>
+        <p>O mercado de carbono regulado pode gerar um produto paralelo de preços e negociações de créditos de carbono, adjacent à agenda ESG mas com modelo puramente transacional.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon a">🌎</div>
+        <h3>Demanda de multinacionais no Brasil</h3>
+        <p>Empresas com matrizes na Europa precisam reportar segundo CSRD. Subsidiárias brasileiras são demandadas a fornecer dados para consolidação global — mercado captivo de alta conversão.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon c">🤖</div>
+        <h3>IA e processamento de linguagem natural</h3>
+        <p>Usar IA para extrair automaticamente dados ESG de relatórios em PDF, comunicados ao mercado e documentos regulatórios — viabiliza cobertura ampla com custo operacional controlado.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <!-- ══════════════════════════════════════════
+       SEÇÃO CRÉDITO DE CARBONO
+  ══════════════════════════════════════════ -->
+  <div id="carbono" style="background: linear-gradient(135deg, #0A1F12 0%, #0D2B1A 60%, #0A1828 100%); padding: 64px 0 72px;">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 40px;">
+
+      <!-- HEADER DA SEÇÃO -->
+      <div style="margin-bottom: 40px;">
+        <p style="font-size:10px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:#5DCAA5; margin-bottom:10px;">Nova Fronteira de Dados</p>
+        <h2 style="font-family:'Syne',sans-serif; font-size: clamp(22px,3vw,34px); font-weight:800; color:#FFFFFF; margin-bottom:14px; line-height:1.15;">Crédito de Carbono<br><span style="color:#5DCAA5;">Mercado, Oportunidade &amp; GEOP</span></h2>
+        <p style="color:rgba(255,255,255,0.6); max-width:740px; font-size:14px; line-height:1.7;">O mercado de carbono deixou de ser agenda ambiental e tornou-se infraestrutura financeira. Com a Lei 15.042/2024 criando o SBCE e os créditos sendo definidos como valores mobiliários pela CVM, preços e negociações de carbono passam a exigir a mesma infraestrutura de dados que qualquer outro ativo financeiro — e a Broadcast está posicionada para ser o distribuidor dessas informações em tempo real.</p>
+      </div>
+
+      <!-- KPIs -->
+      <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:40px;">
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(93,202,165,0.25); border-radius:12px; padding:20px; border-top:3px solid #5DCAA5;">
+          <div style="font-size:11px; font-weight:500; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Potencial SBCE até 2030</div>
+          <div style="font-family:'Syne',sans-serif; font-size:26px; font-weight:800; color:#FFFFFF; line-height:1;">R$ 100 bi</div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-top:6px;">Estimativa CNI por ano em pleno funcionamento</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(93,202,165,0.25); border-radius:12px; padding:20px; border-top:3px solid #E8B84B;">
+          <div style="font-size:11px; font-weight:500; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Potencial de geração BR</div>
+          <div style="font-family:'Syne',sans-serif; font-size:26px; font-weight:800; color:#FFFFFF; line-height:1;">370 Mt</div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-top:6px;">Toneladas de créditos até 2030 — 9x a demanda doméstica (PwC, 2025)</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(93,202,165,0.25); border-radius:12px; padding:20px; border-top:3px solid #7BA7E0;">
+          <div style="font-size:11px; font-weight:500; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Empresas obrigadas (fase 1)</div>
+          <div style="font-family:'Syne',sans-serif; font-size:26px; font-weight:800; color:#FFFFFF; line-height:1;">~5.000</div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-top:6px;">Empresas que deverão medir, reportar e compensar emissões</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(93,202,165,0.25); border-radius:12px; padding:20px; border-top:3px solid #F09595;">
+          <div style="font-size:11px; font-weight:500; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Primeiras negociações previstas</div>
+          <div style="font-family:'Syne',sans-serif; font-size:26px; font-weight:800; color:#FFFFFF; line-height:1;">2027</div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-top:6px;">Expectativa B3/Anbima Summit 2025 — plataforma Trademate adaptada</div>
+        </div>
+      </div>
+
+      <!-- GRID PRINCIPAL: CONTEXTO + GEOP -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:28px;">
+
+        <!-- CONTEXTO DO MERCADO -->
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:28px;">
+          <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#5DCAA5; margin-bottom:12px;">Contexto de Mercado</div>
+          <h3 style="font-size:16px; font-weight:600; color:#FFFFFF; margin-bottom:16px; text-transform:none; letter-spacing:0;">Por que o carbono vira dado financeiro agora</h3>
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:28px; height:28px; background:rgba(93,202,165,0.15); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0;">⚖️</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.9); margin-bottom:3px;">Valor mobiliário regulado</div>
+                <div style="font-size:12px; color:rgba(255,255,255,0.55); line-height:1.6;">CBEs (Cotas Brasileiras de Emissão) e CRVEs definidos como valores mobiliários pela CVM — toda negociação passa pela infraestrutura do mercado de capitais.</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:28px; height:28px; background:rgba(232,184,75,0.15); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0;">📈</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.9); margin-bottom:3px;">Demanda cresce 530% até 2030</div>
+                <div style="font-size:12px; color:rgba(255,255,255,0.55); line-height:1.6;">Projeção WayCarbon: demanda passa de 13,5 MtCO₂e em 2024 para 85,2 MtCO₂e em 2030, puxada pelo SBCE e pelo acordo CORSIA (aviação civil).</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:28px; height:28px; background:rgba(123,167,224,0.15); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0;">🏦</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.9); margin-bottom:3px;">Mercado financeiro como player</div>
+                <div style="font-size:12px; color:rgba(255,255,255,0.55); line-height:1.6;">ENGIE Brasil remunerou Banco BV com créditos de carbono numa emissão de R$ 2 bi (abr/2025) — primeira operação da história do mercado de capitais brasileiro com esse ativo.</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:28px; height:28px; background:rgba(240,149,149,0.15); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0;">🌿</div>
+              <div>
+                <div style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.9); margin-bottom:3px;">Brasil = maior ofertante global</div>
+                <div style="font-size:12px; color:rgba(255,255,255,0.55); line-height:1.6;">Com 66% do território em vegetação nativa, clima tropical (sequestro 3x maior) e 12% da água doce mundial, o Brasil tem potencial de capturar 15% do mercado global de carbono até 2030.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GEOP -->
+        <div style="background:linear-gradient(135deg,rgba(93,202,165,0.12),rgba(27,58,107,0.2)); border:1px solid rgba(93,202,165,0.4); border-radius:14px; padding:28px; position:relative; overflow:hidden;">
+          <div style="position:absolute; top:-30px; right:-30px; width:140px; height:140px; border-radius:50%; background:rgba(93,202,165,0.07);"></div>
+          <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#5DCAA5; margin-bottom:12px;">Player em Destaque</div>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="width:42px; height:42px; background:rgba(93,202,165,0.2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">🌱</div>
+            <div>
+              <div style="font-size:18px; font-weight:700; color:#FFFFFF; font-family:'Syne',sans-serif;">GEOP</div>
+              <div style="font-size:12px; color:rgba(255,255,255,0.5);">Plataforma transacional de créditos de carbono</div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:12px 14px;">
+              <div style="font-size:11px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Produto</div>
+              <div style="font-size:13px; color:rgba(255,255,255,0.85);">Plataforma transacional de compra e venda de créditos de carbono — modelo marketplace com precificação em tempo real</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:12px 14px;">
+              <div style="font-size:11px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Modelo de receita</div>
+              <div style="font-size:13px; color:rgba(255,255,255,0.85);">Transacional — spread ou taxa por operação; potencial de comissão sobre volume negociado + assinatura de dados de preços</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:12px 14px;">
+              <div style="font-size:11px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Ticket médio — Broadcast via GEOP</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div style="background:rgba(93,202,165,0.1); border:1px solid rgba(93,202,165,0.25); border-radius:6px; padding:10px 12px;">
+                  <div style="font-size:10px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">Feed de preços (assinatura)</div>
+                  <div style="font-size:15px; font-weight:700; color:#5DCAA5; font-family:'Syne',sans-serif;">R$ 40–120k</div>
+                  <div style="font-size:11px; color:rgba(255,255,255,0.45); margin-top:2px;">por cliente / ano</div>
+                </div>
+                <div style="background:rgba(232,184,75,0.1); border:1px solid rgba(232,184,75,0.25); border-radius:6px; padding:10px 12px;">
+                  <div style="font-size:10px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">Revenue share transacional</div>
+                  <div style="font-size:15px; font-weight:700; color:#E8B84B; font-family:'Syne',sans-serif;">0,5–1,5%</div>
+                  <div style="font-size:11px; color:rgba(255,255,255,0.45); margin-top:2px;">sobre volume negociado</div>
+                </div>
+              </div>
+            </div>
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:12px 14px;">
+              <div style="font-size:11px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Relevância para Broadcast</div>
+              <div style="font-size:13px; color:rgba(255,255,255,0.85);">A GEOP pode ser parceira natural: a Broadcast distribui os dados de preços e liquidez em tempo real via Datafeed, enquanto a GEOP processa as transações — modelo win-win sem concorrência direta</div>
+            </div>
+          </div>
+
+          <div style="background:rgba(93,202,165,0.1); border:1px solid rgba(93,202,165,0.3); border-radius:8px; padding:12px 14px;">
+            <div style="font-size:12px; color:#5DCAA5; font-weight:500;">⚡ Oportunidade imediata</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-top:4px; line-height:1.6;">Propor à GEOP um acordo de distribuição de preços de carbono no Datafeed — similar ao modelo Broadcast × Fenics para FX. A Broadcast entrega audiência qualificada; a GEOP entrega dados transacionais exclusivos.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRONOGRAMA SBCE -->
+      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09); border-radius:14px; padding:28px; margin-bottom:28px;">
+        <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#5DCAA5; margin-bottom:16px;">Cronograma SBCE — Ministério da Fazenda</div>
+        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:0;">
+          <div style="text-align:center; padding:16px 10px; border-right:1px solid rgba(255,255,255,0.08);">
+            <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:#5DCAA5;">2025</div>
+            <div style="font-size:12px; font-weight:600; color:rgba(255,255,255,0.8); margin:6px 0 4px;">Estruturação</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.45); line-height:1.5;">Definição de regras, integração SINARE/ANP/Ibama; Serpro inicia Registro Central (jan/2026)</div>
+          </div>
+          <div style="text-align:center; padding:16px 10px; border-right:1px solid rgba(255,255,255,0.08);">
+            <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:#E8B84B;">2026–27</div>
+            <div style="font-size:12px; font-weight:600; color:rgba(255,255,255,0.8); margin:6px 0 4px;">Pilotos</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.45); line-height:1.5;">Testes em energia, indústria e transportes; B3 Trademate adaptado; primeiras negociações previstas para 2027</div>
+          </div>
+          <div style="text-align:center; padding:16px 10px; border-right:1px solid rgba(255,255,255,0.08);">
+            <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:#7BA7E0;">2028</div>
+            <div style="font-size:12px; font-weight:600; color:rgba(255,255,255,0.8); margin:6px 0 4px;">Expansão</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.45); line-height:1.5;">Integração de agropecuária e resíduos; ~5 mil empresas obrigadas a reportar emissões</div>
+          </div>
+          <div style="text-align:center; padding:16px 10px; border-right:1px solid rgba(255,255,255,0.08);">
+            <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:#5DCAA5;">2030</div>
+            <div style="font-size:12px; font-weight:600; color:rgba(255,255,255,0.8); margin:6px 0 4px;">Consolidação</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.45); line-height:1.5;">Mercado plenamente operacional; interoperável internacionalmente; R$ 100 bi/ano (est. CNI)</div>
+          </div>
+          <div style="text-align:center; padding:16px 10px;">
+            <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:#F09595;">2050</div>
+            <div style="font-size:12px; font-weight:600; color:rgba(255,255,255,0.8); margin:6px 0 4px;">Net-zero</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.45); line-height:1.5;">SBCE como maior vetor de demanda nacional; exportação de ITMOs; Brasil como líder global</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DADOS NECESSÁRIOS + PÚBLICO-ALVO -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:28px;">
+
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09); border-radius:14px; padding:24px;">
+          <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#5DCAA5; margin-bottom:14px;">Dados que o mercado vai precisar</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span style="color:#5DCAA5; font-size:14px;">●</span>
+              <span style="font-size:13px; color:rgba(255,255,255,0.75);">Preços de CBEs e CRVEs em tempo real</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span style="color:#5DCAA5; font-size:14px;">●</span>
+              <span style="font-size:13px; color:rgba(255,255,255,0.75);">Volume e liquidez de negociações no SBCE</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span style="color:#5DCAA5; font-size:14px;">●</span>
+              <span style="font-size:13px; color:rgba(255,255,255,0.75);">Preços por tipo de crédito (REDD+, energia renovável, restauração florestal)</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span style="color:#E8B84B; font-size:14px;">●</span>
+              <span style="font-size:13px; color:rgba(255,255,255,0.75);">Dados de emissões verificadas por setor e empresa</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span style="color:#E8B84B; font-size:14px;">●</span>
+              <span style="font-size:13px; color:rgba(255,255,255,0.75);">Preços internacionais (EUA, EU ETS, Califórnia) para arbitragem</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span style="color:#7BA7E0; font-size:14px;">●</span>
+              <span style="font-size:13px; color:rgba(255,255,255,0.75);">Registro SINARE — rastreabilidade e evitar dupla contagem</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span style="color:#7BA7E0; font-size:14px;">●</span>
+              <span style="font-size:13px; color:rgba(255,255,255,0.75);">Alertas de eventos: emissão de novos créditos, retiradas (retirement), cancelamentos</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span style="color:#F09595; font-size:14px;">●</span>
+              <span style="font-size:13px; color:rgba(255,255,255,0.75);">Dados de ITMOs para exportação (Artigo 6 do Acordo de Paris)</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09); border-radius:14px; padding:24px;">
+          <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#5DCAA5; margin-bottom:14px;">Público-alvo &amp; Ticket Estimado</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; color:rgba(255,255,255,0.8);">Tesourarias de bancos</span>
+              <span style="font-size:12px; font-weight:500; color:#5DCAA5;">R$ 80–300k/ano</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; color:rgba(255,255,255,0.8);">Fundos temáticos / clima</span>
+              <span style="font-size:12px; font-weight:500; color:#5DCAA5;">R$ 60–200k/ano</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; color:rgba(255,255,255,0.8);">Empresas obrigadas SBCE (~5k)</span>
+              <span style="font-size:12px; font-weight:500; color:#E8B84B;">R$ 15–60k/ano</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; color:rgba(255,255,255,0.8);">Corretoras habilitadas SBCE</span>
+              <span style="font-size:12px; font-weight:500; color:#E8B84B;">R$ 40–120k/ano</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; color:rgba(255,255,255,0.8);">Plataformas transacionais (GEOP)</span>
+              <span style="font-size:12px; font-weight:500; color:#7BA7E0;">Parceria / Revenue Share</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; color:rgba(255,255,255,0.8);">Consultoras ESG / auditoras</span>
+              <span style="font-size:12px; font-weight:500; color:#7BA7E0;">R$ 20–80k/ano</span>
+            </div>
+            <div style="margin-top:4px; background:rgba(93,202,165,0.1); border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; font-weight:600; color:#5DCAA5;">Receita potencial (3 anos)</span>
+              <span style="font-size:13px; font-weight:700; color:#FFFFFF;">R$ 8–15M/ano</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONCORRENTES DO SEGMENTO -->
+      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09); border-radius:14px; padding:28px; margin-bottom:28px;">
+        <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#5DCAA5; margin-bottom:16px;">Concorrentes no segmento de dados de carbono</div>
+        <div style="overflow-x:auto; border-radius:10px; border:1px solid var(--borda);">
+          <table style="width:100%; border-collapse:collapse; background:var(--branco); min-width:580px;">
+            <thead>
+              <tr style="background:var(--azul);">
+                <th style="padding:12px 16px; font-size:11px; font-weight:600; color:rgba(255,255,255,0.85); text-align:left; letter-spacing:1px; text-transform:uppercase;">Empresa</th>
+                <th style="padding:12px 16px; font-size:11px; font-weight:600; color:rgba(255,255,255,0.85); text-align:left; letter-spacing:1px; text-transform:uppercase;">Foco</th>
+                <th style="padding:12px 16px; font-size:11px; font-weight:600; color:rgba(255,255,255,0.85); text-align:left; letter-spacing:1px; text-transform:uppercase;">Produto</th>
+                <th style="padding:12px 16px; font-size:11px; font-weight:600; color:rgba(255,255,255,0.85); text-align:left; letter-spacing:1px; text-transform:uppercase;">Risco para Broadcast</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--cinza-b);">
+                <td style="padding:12px 16px; font-size:13px; font-weight:500; color:var(--texto);">GEOP</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Brasil — transacional</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Plataforma de compra e venda de créditos de carbono; modelo marketplace com precificação em tempo real</td>
+                <td style="padding:12px 16px;"><span class="metric-badge badge-green">Parceiro natural</span></td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--cinza-b);">
+                <td style="padding:12px 16px; font-size:13px; font-weight:500; color:var(--texto);">B3 / Trademate</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Brasil — bolsa regulada</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Adaptação do Trademate para SBCE; já opera CBIOs; será o venue oficial de negociação</td>
+                <td style="padding:12px 16px;"><span class="metric-badge badge-red">Alto — fonte primária</span></td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--cinza-b);">
+                <td style="padding:12px 16px; font-size:13px; font-weight:500; color:var(--texto);">Refinitiv / LSEG Carbon</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Global</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Preços de carbono globais (EU ETS, RGGI, Califórnia), derivatives e índices; cobertura incipiente do SBCE</td>
+                <td style="padding:12px 16px;"><span class="metric-badge badge-gold">Médio — sem local</span></td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--cinza-b);">
+                <td style="padding:12px 16px; font-size:13px; font-weight:500; color:var(--texto);">SINARE (Gov. Federal)</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Brasil — registro público</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Plataforma pública de rastreabilidade do SBCE mantida pelo MMA; foco em MRV, não em tempo real</td>
+                <td style="padding:12px 16px;"><span class="metric-badge badge-blue">Baixo — complementar</span></td>
+              </tr>
+              <tr>
+                <td style="padding:12px 16px; font-size:13px; font-weight:500; color:var(--texto);">S&amp;P Trucost / Moody's</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Global</td>
+                <td style="padding:12px 16px; font-size:13px; color:var(--texto-s);">Dados de emissões corporativas e risco climático; não operam dados transacionais de preços de carbono no Brasil</td>
+                <td style="padding:12px 16px;"><span class="metric-badge badge-gold">Médio — complementar</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TESE DE POSICIONAMENTO -->
+      <div style="background:linear-gradient(135deg,rgba(27,58,107,0.5),rgba(13,44,26,0.5)); border:1px solid rgba(93,202,165,0.3); border-radius:14px; padding:28px;">
+        <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#5DCAA5; margin-bottom:12px;">Tese de Posicionamento — Broadcast + GEOP</div>
+        <p style="font-size:15px; color:rgba(255,255,255,0.85); line-height:1.7; margin-bottom:20px; font-weight:300;">O carbono é um ativo financeiro como outro qualquer — precisa de <strong style="color:#FFFFFF;">preço, volume e velocidade</strong>. A Broadcast já entrega isso para ações, câmbio e renda fixa. A GEOP tem o produto transacional que gera esses dados. A combinação natural é um acordo de distribuição: <strong style="color:#5DCAA5;">GEOP fornece os preços de carbono → Broadcast distribui em tempo real via Datafeed → clientes financeiros consomem.</strong></p>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
+          <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:16px;">
+            <div style="font-size:13px; font-weight:600; color:#5DCAA5; margin-bottom:6px;">Curto prazo (2026)</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.6); line-height:1.6;">Acordo de distribuição com GEOP. Publicação de preços de carbono voluntário no terminal Broadcast. Cobertura editorial do SBCE em construção.</div>
+          </div>
+          <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:16px;">
+            <div style="font-size:13px; font-weight:600; color:#E8B84B; margin-bottom:6px;">Médio prazo (2027–28)</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.6); line-height:1.6;">Integração dos preços de CBEs e CRVEs da B3 no Datafeed após início das negociações. Feed de emissões verificadas via SINARE. Índices de carbono proprietários.</div>
+          </div>
+          <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:16px;">
+            <div style="font-size:13px; font-weight:600; color:#7BA7E0; margin-bottom:6px;">Longo prazo (2030+)</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.6); line-height:1.6;">Dados de ITMOs para exportação. Arbitragem entre SBCE e EU ETS. Derivativos de carbono. Receita projetada R$ 15M+/ano apenas neste segmento.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<footer>
+  <p><strong>Broadcast Agência Estado</strong> — Levantamento de Mercado ESG · Junho 2026 · Interno</p>
+  <p style="margin-top: 6px;">Fontes: EY, KPMG, Mordor Intelligence, Market Research Future, Bloomberg Intelligence, CVM, Mattos Filho, Capital Aberto, Baker Tilly</p>
+</footer>
+
+<!-- TOGGLE DARK/LIGHT -->
+<button class="mode-toggle" onclick="toggleMode()" aria-label="Alternar modo escuro/claro">
+  <span class="toggle-icon" id="modeIcon">🌙</span>
+  <span id="modeLabel">Modo escuro</span>
+</button>
+
+<script>
+  function toggleMode() {
+    const isDark = document.body.classList.toggle('dark');
+    document.getElementById('modeIcon').textContent  = isDark ? '☀️' : '🌙';
+    document.getElementById('modeLabel').textContent = isDark ? 'Modo claro' : 'Modo escuro';
+    localStorage.setItem('esg-mode', isDark ? 'dark' : 'light');
+  }
+  // Restaurar preferência salva
+  if (localStorage.getItem('esg-mode') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('modeIcon').textContent  = '☀️';
+    document.getElementById('modeLabel').textContent = 'Modo claro';
+  }
+</script>
+
+</body>
+</html>

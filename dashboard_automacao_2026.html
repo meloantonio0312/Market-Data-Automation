@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoE Automação · Sprint Planning 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg:       #0E0F11;
+    --bg2:      #15171A;
+    --bg3:      #1C1F23;
+    --border:   rgba(255,255,255,0.07);
+    --border2:  rgba(255,255,255,0.12);
+    --text:     #E8E6E0;
+    --muted:    #7A7770;
+    --dim:      #4A4845;
+
+    --blue:     #4A8FD4;
+    --blue-bg:  rgba(74,143,212,0.12);
+    --teal:     #3DB88A;
+    --teal-bg:  rgba(61,184,138,0.12);
+    --purple:   #8B72D8;
+    --purple-bg:rgba(139,114,216,0.12);
+    --amber:    #D49A3D;
+    --amber-bg: rgba(212,154,61,0.12);
+    --coral:    #D46B4A;
+    --coral-bg: rgba(212,107,74,0.12);
+    --gray-bg:  rgba(122,119,112,0.15);
+
+    --radius:   10px;
+    --radius-lg:16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .header-left {}
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -.02em;
+  }
+  .header-meta {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .meta-val { font-size: 20px; font-weight: 500; color: var(--text); line-height: 1.2; }
+
+  /* LAYOUT */
+  .main { padding: 32px 40px; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 14px;
+  }
+
+  /* KPI ROW */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .kpi {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .kpi-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .kpi-val { font-size: 28px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 4px; }
+  .kpi-sub { font-size: 11px; color: var(--dim); }
+
+  /* TWO COL */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 18px;
+  }
+
+  /* DEV BARS */
+  .dev-row { margin-bottom: 14px; }
+  .dev-row:last-child { margin-bottom: 0; }
+  .dev-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .dev-name { font-size: 13px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .dev-du { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .bar-track {
+    background: var(--bg3);
+    border-radius: 4px;
+    height: 10px;
+    overflow: hidden;
+    display: flex;
+  }
+  .bar-seg { height: 100%; transition: width .6s cubic-bezier(.4,0,.2,1); }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+  .leg-sq { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+  /* PROJECT LIST */
+  .proj-list { list-style: none; }
+  .proj-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+  .proj-item:last-child { border-bottom: none; }
+  .proj-name { font-size: 13px; color: var(--text); flex: 1; }
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 20px;
+    padding: 3px 10px;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+
+  /* TEMAS DOS DEVS */
+  .devs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .dev-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+  }
+  .dev-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; flex-shrink: 0;
+  }
+  .dev-card-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .dev-card-du { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 11px;
+    border-radius: 20px;
+    padding: 3px 9px;
+    border: 1px solid transparent;
+    line-height: 1.4;
+  }
+
+  /* TIMELINE */
+  .timeline-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    margin-bottom: 32px;
+  }
+  .months-header {
+    display: flex;
+    margin-left: 80px;
+    margin-bottom: 10px;
+  }
+  .month-cell {
+    flex: 1;
+    font-size: 10px;
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+    text-align: left;
+  }
+  .tl-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .tl-name {
+    width: 80px;
+    font-size: 12px;
+    color: var(--muted);
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tl-track {
+    flex: 1;
+    background: var(--bg3);
+    border-radius: 4px;
+    height: 20px;
+    position: relative;
+    overflow: visible;
+  }
+  .tl-bar {
+    position: absolute;
+    height: 100%;
+    border-radius: 4px;
+    top: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.75);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  /* Today marker */
+  .today-line {
+    position: absolute;
+    top: -6px;
+    bottom: -6px;
+    width: 1px;
+    background: var(--amber);
+    opacity: .7;
+    z-index: 10;
+  }
+  .today-label {
+    position: absolute;
+    top: -18px;
+    font-size: 9px;
+    color: var(--amber);
+    font-family: 'JetBrains Mono', monospace;
+    transform: translateX(-50%);
+  }
+
+  /* NOTICE */
+  .notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    background: rgba(212,154,61,0.07);
+    border: 1px solid rgba(212,154,61,0.2);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-top: 14px;
+  }
+  .notice-icon { color: var(--amber); flex-shrink: 0; margin-top: 1px; }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media (max-width: 900px) {
+    .header { flex-direction: column; align-items: flex-start; padding: 20px; }
+    .main { padding: 20px; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .devs-grid { grid-template-columns: 1fr; }
+    .header-meta { flex-wrap: wrap; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar-seg { transition: none; }
+  }
+
+  .vel-faixas { display:flex; flex-direction:column; gap:5px; margin-bottom:10px; }
+  .faixa-row { display:flex; align-items:center; gap:8px; font-size:11px; }
+  .faixa-label { min-width:58px; color:var(--muted); }
+  .faixa-track { flex:1; background:var(--bg3); border-radius:3px; height:8px; overflow:hidden; }
+  .faixa-bar { height:100%; border-radius:3px; }
+  .faixa-n { min-width:20px; text-align:right; color:var(--dim); font-family:"JetBrains Mono",monospace; }
+  .vel-insight { font-size:11px; color:var(--muted); background:var(--bg3); border-radius:8px; padding:8px 10px; line-height:1.5; }
+  .vel-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .vel-table thead tr { border-bottom:1px solid var(--border2); }
+  .vel-table th { padding:8px 10px; color:var(--muted); font-weight:500; text-align:right; }
+  .vel-table td { padding:8px 10px; text-align:right; border-bottom:1px solid var(--border); }
+  .vel-table tr:last-child td { border-bottom:none; }
+  .mono { font-family:"JetBrains Mono",monospace; }
+
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="eyebrow">Broadcast · Market Data &amp; Automation</div>
+    <h1>CoE Automação · Sprint Planning 2026</h1>
+  </div>
+  <div class="header-meta">
+    <div class="meta-item">
+      <span class="meta-val">4</span>
+      <span>devs</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-val">93</span>
+      <span>histórias</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-val">407</span>
+      <span>dias úteis</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-val">6</span>
+      <span>projetos</span>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Histórias mapeadas</div>
+      <div class="kpi-val">93</div>
+      <div class="kpi-sub">total geral do time</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Maior backlog</div>
+      <div class="kpi-val">Bruno</div>
+      <div class="kpi-sub">142 d.u. · 28 histórias</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Projeto principal</div>
+      <div class="kpi-val">2ª Fase</div>
+      <div class="kpi-sub">51 itens · Automação Manuais</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Alertas de disponib.</div>
+      <div class="kpi-val" style="color:var(--amber)">3</div>
+      <div class="kpi-sub">férias + retorno licença</div>
+    </div>
+  </div>
+
+  <!-- Carga + Projetos -->
+  <div class="grid-2">
+
+    <div class="card">
+      <div class="card-title">carga por desenvolvedor</div>
+      <div class="legend">
+        <span class="leg"><span class="leg-sq" style="background:var(--blue)"></span>Phaseout RPA</span>
+        <span class="leg"><span class="leg-sq" style="background:var(--teal)"></span>2ª Fase Manuais</span>
+        <span class="leg"><span class="leg-sq" style="background:var(--purple)"></span>KPIs</span>
+        <span class="leg"><span class="leg-sq" style="background:var(--coral)"></span>Anbima API</span>
+        <span class="leg"><span class="leg-sq" style="background:var(--amber)"></span>Outros</span>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-info">
+          <span class="dev-name">Mateus</span>
+          <span class="dev-du">126 d.u.</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-seg" style="width:65.9%;background:var(--blue)" title="Phaseout RPA · 83 d.u."></div>
+          <div class="bar-seg" style="width:27%;background:var(--teal)" title="2ª Fase Manuais · 34 d.u."></div>
+          <div class="bar-seg" style="width:7.1%;background:var(--amber)" title="Outros · 9 d.u."></div>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-info">
+          <span class="dev-name">Victoria</span>
+          <span class="dev-du">139 d.u.</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-seg" style="width:86.3%;background:var(--purple)" title="KPIs · 120 d.u."></div>
+          <div class="bar-seg" style="width:13.7%;background:var(--teal)" title="2ª Fase Manuais · 19 d.u."></div>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-info">
+          <span class="dev-name">Bruno</span>
+          <span class="dev-du">142 d.u.</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-seg" style="width:85.9%;background:var(--teal)" title="2ª Fase Manuais · 122 d.u."></div>
+          <div class="bar-seg" style="width:10.6%;background:var(--blue)" title="Phaseout RPA · 15 d.u."></div>
+          <div class="bar-seg" style="width:3.5%;background:var(--coral)" title="Anbima API · 5 d.u."></div>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-info">
+          <span class="dev-name">
+            Kauã
+            <span class="badge" style="background:var(--amber-bg);color:var(--amber)">Retorno 22/jun</span>
+          </span>
+          <span class="dev-du">122 d.u.</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-seg" style="width:100%;background:var(--teal)" title="2ª Fase Manuais · 122 d.u."></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">projetos por quantidade de histórias</div>
+      <ul class="proj-list">
+        <li class="proj-item">
+          <span class="proj-name">Dados – 2ª Fase Automação de Rotinas Manuais</span>
+          <span class="badge" style="background:var(--teal-bg);color:var(--teal)">51</span>
+        </li>
+        <li class="proj-item">
+          <span class="proj-name">Dados – Phaseout Automações com RPA</span>
+          <span class="badge" style="background:var(--blue-bg);color:var(--blue)">28</span>
+        </li>
+        <li class="proj-item">
+          <span class="proj-name">KPIs da Área de Dados – Criação e Automação</span>
+          <span class="badge" style="background:var(--purple-bg);color:var(--purple)">16</span>
+        </li>
+        <li class="proj-item">
+          <span class="proj-name">Anbima – Automatizar Captura dos Dados (API)</span>
+          <span class="badge" style="background:var(--coral-bg);color:var(--coral)">6</span>
+        </li>
+        <li class="proj-item">
+          <span class="proj-name">Redação – Automação de Rotinas Manuais</span>
+          <span class="badge" style="background:var(--amber-bg);color:var(--amber)">1</span>
+        </li>
+        <li class="proj-item">
+          <span class="proj-name">Condicional – Valecard / Tickelog</span>
+          <span class="badge" style="background:var(--gray-bg);color:var(--muted)">2</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Temas por dev -->
+  <p class="section-label">temas das histórias por desenvolvedor</p>
+  <div class="devs-grid">
+
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <div class="avatar" style="background:var(--blue-bg);color:var(--blue)">ML</div>
+        <div>
+          <div class="dev-card-name">Mateus Lacerda</div>
+          <div class="dev-card-du">126 d.u. · 29 histórias · Férias 20/07–31/07</div>
+        </div>
+      </div>
+      <div class="chips">
+        <span class="chip" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(74,143,212,0.2)">BCs / Bancos Centrais estrangeiros</span>
+        <span class="chip" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(74,143,212,0.2)">Phaseout RPA → Injetor NIG</span>
+        <span class="chip" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(74,143,212,0.2)">Indicadores Macro AE Mercado</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">Anbima IDKA's</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">IBGE PIB</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">Feriados globais (20+ países)</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">CEAGESP preços físicos</span>
+        <span class="chip" style="background:var(--amber-bg);color:var(--amber);border-color:rgba(212,154,61,0.2)">Redação – BC Correio</span>
+      </div>
+    </div>
+
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <div class="avatar" style="background:var(--purple-bg);color:var(--purple)">VV</div>
+        <div>
+          <div class="dev-card-name">Victoria Valentina</div>
+          <div class="dev-card-du">139 d.u. · 16 histórias</div>
+        </div>
+      </div>
+      <div class="chips">
+        <span class="chip" style="background:var(--purple-bg);color:var(--purple);border-color:rgba(139,114,216,0.2)">KPIs contribuidores agro / financeiro</span>
+        <span class="chip" style="background:var(--purple-bg);color:var(--purple);border-color:rgba(139,114,216,0.2)">KPIs uso de matérias e cadernos</span>
+        <span class="chip" style="background:var(--purple-bg);color:var(--purple);border-color:rgba(139,114,216,0.2)">KPIs projetos / épicos JIRA</span>
+        <span class="chip" style="background:var(--purple-bg);color:var(--purple);border-color:rgba(139,114,216,0.2)">KPIs robôs e disponibilidade</span>
+        <span class="chip" style="background:var(--purple-bg);color:var(--purple);border-color:rgba(139,114,216,0.2)">KPIs por colaborador (gestor)</span>
+        <span class="chip" style="background:var(--purple-bg);color:var(--purple);border-color:rgba(139,114,216,0.2)">KPIs clientes por produto</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">Bacen indicadores</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">CNA VBP</span>
+      </div>
+    </div>
+
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <div class="avatar" style="background:var(--teal-bg);color:var(--teal)">BB</div>
+        <div>
+          <div class="dev-card-name">Bruno Burian</div>
+          <div class="dev-card-du">142 d.u. · 28 histórias</div>
+        </div>
+      </div>
+      <div class="chips">
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">Estimativas de safras (USDA, FAO, CONAB, IBGE…)</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">Line-ups portuários (13 portos)</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">IBRAFE – preços físicos feijão</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">BGC Partners – títulos públicos</span>
+        <span class="chip" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(74,143,212,0.2)">Phaseout RPA – Bacen Focus</span>
+        <span class="chip" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(74,143,212,0.2)">Phaseout RPA – CONAB custo prod.</span>
+        <span class="chip" style="background:var(--coral-bg);color:var(--coral);border-color:rgba(212,107,74,0.2)">Anbima API – Debêntures, CRI, CRA</span>
+        <span class="chip" style="background:var(--coral-bg);color:var(--coral);border-color:rgba(212,107,74,0.2)">Anbima API – Índices e IDA LIQ</span>
+        <span class="chip" style="background:var(--gray-bg);color:var(--muted)">Valecard / Tickelog (condicional)</span>
+      </div>
+    </div>
+
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <div class="avatar" style="background:var(--amber-bg);color:var(--amber)">KS</div>
+        <div>
+          <div class="dev-card-name">Kauã Santos</div>
+          <div class="dev-card-du">122 d.u. · 17 histórias · Férias 07/12–08/01</div>
+        </div>
+      </div>
+      <div class="chips">
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">Captura agro – Teams, Telegram, e-mail, WhatsApp</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">CFTC – 900 instrumentos</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">Notícias Caderno Agro – B3, CBOT, ICE, CECAFÉ</span>
+        <span class="chip" style="background:var(--teal-bg);color:var(--teal);border-color:rgba(61,184,138,0.2)">BD Agro – Açúcar, Boi, Café, Milho, Soja</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline-card">
+    <div class="card-title">cronograma estimado · 2026</div>
+    <div class="months-header">
+      <span class="month-cell">Jan</span><span class="month-cell">Fev</span><span class="month-cell">Mar</span>
+      <span class="month-cell">Abr</span><span class="month-cell">Mai</span><span class="month-cell">Jun</span>
+      <span class="month-cell">Jul</span><span class="month-cell">Ago</span><span class="month-cell">Set</span>
+      <span class="month-cell">Out</span><span class="month-cell">Nov</span><span class="month-cell">Dez</span>
+    </div>
+
+    <!-- Mateus: jan→nov ~92% -->
+    <div class="tl-row">
+      <span class="tl-name">Mateus</span>
+      <div class="tl-track">
+        <!-- Today marker at ~46.5% (19 jun / 365 * 100) -->
+        <div class="today-line" id="todayLine" style="left:46.5%">
+          <span class="today-label">hoje</span>
+        </div>
+        <div class="tl-bar" style="left:0%;width:91.7%;background:var(--blue)">Jan → Nov</div>
+      </div>
+    </div>
+
+    <!-- Victoria: fev→nov ~75% duration starting ~8.3% -->
+    <div class="tl-row">
+      <span class="tl-name">Victoria</span>
+      <div class="tl-track">
+        <div class="today-line" style="left:46.5%"></div>
+        <div class="tl-bar" style="left:8.3%;width:83.4%;background:var(--purple)">Fev → Nov</div>
+      </div>
+    </div>
+
+    <!-- Bruno: jan→dez 100% -->
+    <div class="tl-row">
+      <span class="tl-name">Bruno</span>
+      <div class="tl-track">
+        <div class="today-line" style="left:46.5%"></div>
+        <div class="tl-bar" style="left:0%;width:100%;background:var(--teal)">Jan → Dez</div>
+      </div>
+    </div>
+
+    <!-- Kauã: retorno 22/jun ~46.6%, até nov ~91.7% -->
+    <div class="tl-row">
+      <span class="tl-name">Kauã</span>
+      <div class="tl-track">
+        <div class="today-line" style="left:46.5%"></div>
+        <div class="tl-bar" style="left:46.6%;width:45.1%;background:var(--amber)">Jun → Nov</div>
+      </div>
+    </div>
+
+    <div class="notice">
+      <span class="notice-icon">⚠</span>
+      <span>Kauã: retorno previsto 22/jun (licença médica – fratura) · Mateus: férias 20/jul–31/jul · Kauã: férias 07/dez–08/jan/2027</span>
+    </div>
+  </div>
+
+
+  <!-- VELOCIDADE -->
+  <p class="section-label">velocidade média por histórias · dias úteis calculados das datas</p>
+
+  <div class="devs-grid" style="margin-bottom:16px">
+
+    <!-- Mateus -->
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <div class="avatar" style="background:var(--blue-bg);color:var(--blue)">ML</div>
+        <div>
+          <div class="dev-card-name">Mateus Lacerda</div>
+          <div class="dev-card-du">29 histórias · 159 d.u. total</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Média</div><div class="kpi-val" style="font-size:20px;color:var(--blue)">5,5</div><div class="kpi-sub">d.u./história</div></div>
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Mediana</div><div class="kpi-val" style="font-size:20px">3,0</div><div class="kpi-sub">d.u./história</div></div>
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Amplitude</div><div class="kpi-val" style="font-size:20px">3–29</div><div class="kpi-sub">d.u.</div></div>
+      </div>
+      <div class="vel-faixas">
+        <div class="faixa-row"><span class="faixa-label">≤ 3 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:62%;background:var(--teal)"></div></div><span class="faixa-n">18</span></div>
+        <div class="faixa-row"><span class="faixa-label">4–5 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:14%;background:var(--blue)"></div></div><span class="faixa-n">4</span></div>
+        <div class="faixa-row"><span class="faixa-label">6–10 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:17%;background:var(--purple)"></div></div><span class="faixa-n">5</span></div>
+        <div class="faixa-row"><span class="faixa-label">&gt; 10 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:7%;background:var(--amber)"></div></div><span class="faixa-n">2</span></div>
+      </div>
+      <div class="vel-insight">62% das histórias concluem em ≤ 3 d.u. — itens unitários de BCs. Outlier: Indicadores Macro AE com 29 d.u.</div>
+    </div>
+
+    <!-- Victoria -->
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <div class="avatar" style="background:var(--purple-bg);color:var(--purple)">VV</div>
+        <div>
+          <div class="dev-card-name">Victoria Valentina</div>
+          <div class="dev-card-du">16 histórias · 160 d.u. total</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Média</div><div class="kpi-val" style="font-size:20px;color:var(--purple)">10,0</div><div class="kpi-sub">d.u./história</div></div>
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Mediana</div><div class="kpi-val" style="font-size:20px">10,0</div><div class="kpi-sub">d.u./história</div></div>
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Amplitude</div><div class="kpi-val" style="font-size:20px">5–35</div><div class="kpi-sub">d.u.</div></div>
+      </div>
+      <div class="vel-faixas">
+        <div class="faixa-row"><span class="faixa-label">≤ 3 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:0%;background:var(--teal)"></div></div><span class="faixa-n">0</span></div>
+        <div class="faixa-row"><span class="faixa-label">4–5 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:38%;background:var(--blue)"></div></div><span class="faixa-n">6</span></div>
+        <div class="faixa-row"><span class="faixa-label">6–10 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:50%;background:var(--purple)"></div></div><span class="faixa-n">8</span></div>
+        <div class="faixa-row"><span class="faixa-label">&gt; 10 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:12%;background:var(--amber)"></div></div><span class="faixa-n">2</span></div>
+      </div>
+      <div class="vel-insight">Média = mediana = 10 d.u. — backlog mais uniforme do time. Dashboards de KPI têm escopo bem definido. Outlier: ctbr Agro com 35 d.u.</div>
+    </div>
+
+    <!-- Bruno -->
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <div class="avatar" style="background:var(--teal-bg);color:var(--teal)">BB</div>
+        <div>
+          <div class="dev-card-name">Bruno Burian</div>
+          <div class="dev-card-du">25 histórias · 178 d.u. total</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Média</div><div class="kpi-val" style="font-size:20px;color:var(--teal)">7,1</div><div class="kpi-sub">d.u./história</div></div>
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Mediana</div><div class="kpi-val" style="font-size:20px">7,0</div><div class="kpi-sub">d.u./história</div></div>
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Amplitude</div><div class="kpi-val" style="font-size:20px">5–10</div><div class="kpi-sub">d.u.</div></div>
+      </div>
+      <div class="vel-faixas">
+        <div class="faixa-row"><span class="faixa-label">≤ 3 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:0%;background:var(--teal)"></div></div><span class="faixa-n">0</span></div>
+        <div class="faixa-row"><span class="faixa-label">4–5 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:48%;background:var(--blue)"></div></div><span class="faixa-n">12</span></div>
+        <div class="faixa-row"><span class="faixa-label">6–10 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:52%;background:var(--purple)"></div></div><span class="faixa-n">13</span></div>
+        <div class="faixa-row"><span class="faixa-label">&gt; 10 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:0%;background:var(--amber)"></div></div><span class="faixa-n">0</span></div>
+      </div>
+      <div class="vel-insight">Perfil mais previsível do time: amplitude 5–10 d.u. sem nenhum outlier. Estimativas de safra e line-ups portuários têm complexidade muito homogênea.</div>
+    </div>
+
+    <!-- Kauã -->
+    <div class="dev-card">
+      <div class="dev-card-header">
+        <div class="avatar" style="background:var(--amber-bg);color:var(--amber)">KS</div>
+        <div>
+          <div class="dev-card-name">Kauã Santos</div>
+          <div class="dev-card-du">17 histórias · 138 d.u. total</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Média</div><div class="kpi-val" style="font-size:20px;color:var(--amber)">8,1</div><div class="kpi-sub">d.u./história</div></div>
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Mediana</div><div class="kpi-val" style="font-size:20px">10,0</div><div class="kpi-sub">d.u./história</div></div>
+        <div class="kpi" style="padding:10px 12px"><div class="kpi-label">Amplitude</div><div class="kpi-val" style="font-size:20px">5–13</div><div class="kpi-sub">d.u.</div></div>
+      </div>
+      <div class="vel-faixas">
+        <div class="faixa-row"><span class="faixa-label">≤ 3 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:0%;background:var(--teal)"></div></div><span class="faixa-n">0</span></div>
+        <div class="faixa-row"><span class="faixa-label">4–5 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:41%;background:var(--blue)"></div></div><span class="faixa-n">7</span></div>
+        <div class="faixa-row"><span class="faixa-label">6–10 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:53%;background:var(--purple)"></div></div><span class="faixa-n">9</span></div>
+        <div class="faixa-row"><span class="faixa-label">&gt; 10 d.u.</span><div class="faixa-track"><div class="faixa-bar" style="width:6%;background:var(--amber)"></div></div><span class="faixa-n">1</span></div>
+      </div>
+      <div class="vel-insight">Média (8,1) abaixo da mediana (10) — capturas via canais puxam para baixo (5 d.u. cada). Banco de dados Agro é o tipo mais longo (9–13 d.u.).</div>
+    </div>
+
+  </div>
+
+  <!-- Tabela comparativa -->
+  <div class="card" style="margin-bottom:32px">
+    <div class="card-title">comparativo de velocidade · time completo</div>
+    <table class="vel-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Dev</th>
+          <th>Histórias</th>
+          <th>Média d.u.</th>
+          <th>Mediana</th>
+          <th>Min</th>
+          <th>Max</th>
+          <th>Total d.u.</th>
+          <th style="text-align:left">Perfil</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:500">Mateus</td>
+          <td class="mono">29</td>
+          <td class="mono" style="color:var(--blue);font-weight:500">5,5</td>
+          <td class="mono">3,0</td>
+          <td class="mono">3</td>
+          <td class="mono" style="color:var(--amber)">29</td>
+          <td class="mono">159</td>
+          <td><span class="chip" style="background:var(--teal-bg);color:var(--teal)">Rápido, alta variância</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500">Victoria</td>
+          <td class="mono">16</td>
+          <td class="mono" style="color:var(--purple);font-weight:500">10,0</td>
+          <td class="mono">10,0</td>
+          <td class="mono">5</td>
+          <td class="mono" style="color:var(--amber)">35</td>
+          <td class="mono">160</td>
+          <td><span class="chip" style="background:var(--purple-bg);color:var(--purple)">Consistente, escopo maior</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500">Bruno</td>
+          <td class="mono">25</td>
+          <td class="mono" style="color:var(--teal);font-weight:500">7,1</td>
+          <td class="mono">7,0</td>
+          <td class="mono">5</td>
+          <td class="mono">10</td>
+          <td class="mono">178</td>
+          <td><span class="chip" style="background:var(--teal-bg);color:var(--teal)">Mais previsível do time</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500">Kauã</td>
+          <td class="mono">17</td>
+          <td class="mono" style="color:var(--amber);font-weight:500">8,1</td>
+          <td class="mono">10,0</td>
+          <td class="mono">5</td>
+          <td class="mono">13</td>
+          <td class="mono">138</td>
+          <td><span class="chip" style="background:var(--amber-bg);color:var(--amber)">Bimodal: rápido ou médio</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="notice" style="margin-top:14px">
+      <span class="notice-icon">ℹ</span>
+      <span>D.u. calculados como dias úteis (seg–sex) entre início e entrega planejados. Feriados não descontados (tabela de feriados em aba separada). Valores podem ser ligeiramente superiores ao NETWORKDAYS do Excel.</span>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <span>Broadcast · Market Data &amp; Automation · Head: Antonio Melo</span>
+  <span id="gen-date"></span>
+</footer>
+
+<script>
+  const d = new Date();
+  document.getElementById('gen-date').textContent =
+    'Gerado em ' + d.toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+
+  // Animate bars on load
+  const segs = document.querySelectorAll('.bar-seg, .tl-bar');
+  segs.forEach(s => {
+    const w = s.style.width;
+    s.style.width = '0';
+    requestAnimationFrame(() => {
+      setTimeout(() => { s.style.width = w; }, 80);
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUB Datafeeds — Dashboard 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e28;
+    --border: rgba(255,255,255,0.06);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8e6df;
+    --text2: #8a8880;
+    --text3: #555450;
+    --blue: #3b82f6;
+    --blue-dim: rgba(59,130,246,0.15);
+    --green: #22c55e;
+    --green-dim: rgba(34,197,94,0.12);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245,158,11,0.12);
+    --red: #ef4444;
+    --red-dim: rgba(239,68,68,0.12);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.12);
+    --teal: #2dd4bf;
+    --accent: #3b82f6;
+  }
+
+  [data-theme="light"] {
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --surface2: #eef0f4;
+    --border: rgba(0,0,0,0.07);
+    --border2: rgba(0,0,0,0.14);
+    --text: #1a1c22;
+    --text2: #4a4d58;
+    --text3: #9096a4;
+    --blue: #2563eb;
+    --blue-dim: rgba(37,99,235,0.1);
+    --green: #16a34a;
+    --green-dim: rgba(22,163,74,0.1);
+    --amber: #d97706;
+    --amber-dim: rgba(217,119,6,0.1);
+    --red: #dc2626;
+    --red-dim: rgba(220,38,38,0.1);
+    --purple: #7c3aed;
+    --purple-dim: rgba(124,58,237,0.1);
+    --teal: #0d9488;
+    --accent: #2563eb;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .header-left h1 span { color: var(--blue); }
+  .header-left p {
+    font-size: 0.8rem;
+    color: var(--text3);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .date-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text3);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 6px;
+  }
+
+  /* Metric cards */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 12px 12px 0 0;
+  }
+  .metric-card.total::before { background: var(--blue); }
+  .metric-card.active::before { background: var(--amber); }
+  .metric-card.done::before { background: var(--green); }
+  .metric-card.cancel::before { background: var(--red); }
+  .metric-card:hover { border-color: var(--border2); }
+  .metric-label {
+    font-size: 0.72rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+  .metric-value {
+    font-size: 2.4rem;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .metric-card.total .metric-value { color: var(--blue); }
+  .metric-card.active .metric-value { color: var(--amber); }
+  .metric-card.done .metric-value { color: var(--green); }
+  .metric-card.cancel .metric-value { color: var(--red); }
+  .metric-sub {
+    font-size: 0.72rem;
+    color: var(--text3);
+  }
+
+  /* Chart grid */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .chart-card.full { grid-column: 1 / -1; }
+  .card-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text2); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+  /* Client bars */
+  .client-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .client-name {
+    width: 180px;
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    color: var(--text2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .client-count {
+    width: 20px;
+    text-align: right;
+    font-size: 0.75rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--text3);
+  }
+
+  /* Status list */
+  .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .status-item {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .status-label { font-size: 0.78rem; color: var(--text2); flex: 1; }
+  .status-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* Priority badges */
+  .prior-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .prior-badge {
+    font-size: 0.68rem;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 4px;
+    width: 70px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .prior-bar-bg { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .prior-bar-fill { height: 100%; border-radius: 3px; }
+  .prior-pct {
+    font-size: 0.72rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--text3);
+    width: 36px;
+    text-align: right;
+  }
+
+  /* Contacts section */
+  .contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .contact-card {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+  .contact-name { font-size: 0.8rem; color: var(--text); margin-bottom: 2px; }
+  .contact-count { font-size: 0.72rem; color: var(--text3); font-family: 'DM Mono', monospace; }
+
+  /* Table */
+  .table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  thead tr { border-bottom: 1px solid var(--border2); }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    font-weight: 400;
+  }
+  td { padding: 9px 12px; color: var(--text2); border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+  }
+  .badge-high { background: rgba(239,68,68,0.15); color: #f87171; }
+  .badge-med { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .badge-done { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .badge-cancel { background: rgba(100,100,120,0.2); color: #9ca3af; }
+  .prog-cell { display: flex; align-items: center; gap: 8px; }
+  .prog-mini-bg { width: 60px; height: 4px; background: var(--surface2); border-radius: 2px; }
+  .prog-mini-fill { height: 4px; border-radius: 2px; background: var(--blue); }
+  .prog-val { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text3); }
+  .title-cell { color: var(--text); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* footer */
+  .footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 5px 12px 5px 8px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text3);
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .theme-toggle:hover { color: var(--text2); border-color: var(--border2); }
+  .theme-toggle-track {
+    width: 28px;
+    height: 15px;
+    background: var(--border2);
+    border-radius: 8px;
+    position: relative;
+    transition: background 0.25s;
+    flex-shrink: 0;
+  }
+  [data-theme="light"] .theme-toggle-track { background: var(--blue); }
+  .theme-toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--text3);
+    transition: transform 0.25s, background 0.25s;
+  }
+  [data-theme="light"] .theme-toggle-thumb { transform: translateX(13px); background: #fff; }
+  .theme-toggle-icon { font-size: 0.8rem; line-height: 1; }
+
+  .filter-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.72rem;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    color: var(--text3);
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { color: var(--text2); border-color: rgba(255,255,255,0.2); }
+  .filter-btn.active { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: rgba(59,130,246,0.4); }
+
+  @media (max-width: 900px) {
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .chart-card.full { grid-column: 1; }
+    .contact-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>HUB <span>Datafeeds</span> — Projetos</h1>
+    <p>BROADCAST · GESTÃO DE PROJETOS · 2026</p>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button class="theme-toggle" id="themeToggle" title="Alternar modo claro/escuro">
+        <span class="theme-toggle-icon" id="themeIcon">🌙</span>
+        <div class="theme-toggle-track"><div class="theme-toggle-thumb"></div></div>
+        <span id="themeLabel">DARK</span>
+      </button>
+      <div class="date-badge">08 MAI 2026</div>
+    </div>
+    <div style="font-size:0.75rem; color:var(--text2); font-family:'DM Mono',monospace; letter-spacing:0.04em;">Antonio Melo</div>
+  </div>
+</div>
+
+<!-- Metrics -->
+<div class="metrics-grid">
+  <div class="metric-card total">
+    <div class="metric-label">Total de projetos</div>
+    <div class="metric-value">46</div>
+    <div class="metric-sub">100% do pipeline</div>
+  </div>
+  <div class="metric-card active">
+    <div class="metric-label">Em andamento</div>
+    <div class="metric-value">31</div>
+    <div class="metric-sub">HIGH + MED</div>
+  </div>
+  <div class="metric-card done">
+    <div class="metric-label">Concluídos</div>
+    <div class="metric-value">9</div>
+    <div class="metric-sub">DONE · 20% do total</div>
+  </div>
+  <div class="metric-card cancel">
+    <div class="metric-label">Cancelados</div>
+    <div class="metric-value">5</div>
+    <div class="metric-sub">CANCEL · 11% do total</div>
+  </div>
+</div>
+
+<!-- Charts row 1 -->
+<div class="charts-grid">
+
+  <div class="chart-card">
+    <div class="card-title">Por tipo</div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:#3b82f6;"></span>Datafeeds (43)</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#22c55e;"></span>Terminal (3)</span>
+    </div>
+    <div style="position:relative; height:200px;">
+      <canvas id="typeChart" role="img" aria-label="Tipo de projeto: 43 Datafeeds, 3 Terminal">Datafeeds: 43, Terminal: 3</canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="card-title">Por status detalhado</div>
+    <div class="status-grid">
+      <div class="status-item"><span class="status-dot" style="background:#3b82f6;"></span><span class="status-label">Em Análise — Dados</span><span class="status-count">12</span></div>
+      <div class="status-item"><span class="status-dot" style="background:#22c55e;"></span><span class="status-label">Concluído</span><span class="status-count">9</span></div>
+      <div class="status-item"><span class="status-dot" style="background:#f59e0b;"></span><span class="status-label">Ag. Retorno Comercial</span><span class="status-count">8</span></div>
+      <div class="status-item"><span class="status-dot" style="background:#a78bfa;"></span><span class="status-label">Aguardando Infos</span><span class="status-count">5</span></div>
+      <div class="status-item"><span class="status-dot" style="background:#6b7280;"></span><span class="status-label">Cancelado</span><span class="status-count">5</span></div>
+      <div class="status-item"><span class="status-dot" style="background:#2dd4bf;"></span><span class="status-label">Em Análise — Produtos</span><span class="status-count">4</span></div>
+      <div class="status-item"><span class="status-dot" style="background:#f472b6;"></span><span class="status-label">Pendente — Dados</span><span class="status-count">2</span></div>
+      <div class="status-item"><span class="status-dot" style="background:#fb923c;"></span><span class="status-label">Direcionado ao DEV</span><span class="status-count">1</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Charts row 2 -->
+<div class="charts-grid">
+
+  <div class="chart-card">
+    <div class="card-title">Top clientes</div>
+    <div id="clientBars"></div>
+  </div>
+
+  <div class="chart-card">
+    <div class="card-title">Por prioridade</div>
+    <div style="margin-bottom: 1rem;">
+      <div class="prior-row">
+        <span class="prior-badge" style="background:rgba(239,68,68,0.12); color:#f87171;">1_HIGH</span>
+        <div class="prior-bar-bg"><div class="prior-bar-fill" style="width:65%; background:#ef4444;"></div></div>
+        <span class="prior-pct">30 proj</span>
+      </div>
+      <div class="prior-row">
+        <span class="prior-badge" style="background:rgba(34,197,94,0.12); color:#4ade80;">4_DONE</span>
+        <div class="prior-bar-bg"><div class="prior-bar-fill" style="width:20%; background:#22c55e;"></div></div>
+        <span class="prior-pct">9 proj</span>
+      </div>
+      <div class="prior-row">
+        <span class="prior-badge" style="background:rgba(100,100,120,0.2); color:#9ca3af;">5_CANCEL</span>
+        <div class="prior-bar-bg"><div class="prior-bar-fill" style="width:11%; background:#6b7280;"></div></div>
+        <span class="prior-pct">5 proj</span>
+      </div>
+      <div class="prior-row">
+        <span class="prior-badge" style="background:rgba(245,158,11,0.12); color:#fbbf24;">2_MED</span>
+        <div class="prior-bar-bg"><div class="prior-bar-fill" style="width:2%; background:#f59e0b;"></div></div>
+        <span class="prior-pct">1 proj</span>
+      </div>
+    </div>
+    <div class="card-title" style="margin-top:1.5rem;">Progresso médio por prioridade</div>
+    <div style="position:relative; height:140px;">
+      <canvas id="priorChart" role="img" aria-label="Progresso médio por prioridade">HIGH: 28%, MED: 0%, DONE: 100%, CANCEL: 100%</canvas>
+    </div>
+  </div>
+
+</div>
+
+<!-- Contacts row -->
+<div class="charts-grid" style="margin-bottom: 12px;">
+  <div class="chart-card">
+    <div class="card-title">Contatos primários</div>
+    <div class="contact-grid">
+      <div class="contact-card"><div class="contact-name">Jackson de Mota Pereira</div><div class="contact-count">8 projetos</div></div>
+      <div class="contact-card"><div class="contact-name">Edgar Jesus</div><div class="contact-count">7 projetos</div></div>
+      <div class="contact-card"><div class="contact-name">Caroline Almeida</div><div class="contact-count">5 projetos</div></div>
+      <div class="contact-card"><div class="contact-name">Mayra Rodrigues</div><div class="contact-count">7 projetos</div></div>
+      <div class="contact-card"><div class="contact-name">Paloma Alves</div><div class="contact-count">3 projetos</div></div>
+      <div class="contact-card"><div class="contact-name">Victor M. de Menezes</div><div class="contact-count">3 projetos</div></div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="card-title">Status por tipo</div>
+    <div style="position:relative; height:200px;">
+      <canvas id="stackedChart" role="img" aria-label="Status por tipo de projeto">Datafeeds vs Terminal por status</canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Vendor ranking -->
+<div class="chart-card full" style="margin-bottom: 12px;">
+  <div class="card-title">Ranking por vendedor</div>
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <div>
+      <div style="font-size:0.72rem; color:var(--text3); font-family:'DM Mono',monospace; margin-bottom:12px; letter-spacing:0.06em;">TICKETS POR VENDEDOR — TODOS</div>
+      <div id="vendorBarsAll"></div>
+    </div>
+    <div>
+      <div style="font-size:0.72rem; color:var(--text3); font-family:'DM Mono',monospace; margin-bottom:8px; letter-spacing:0.06em;">FILTRAR POR STATUS</div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;" id="vendorFilters">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="1_HIGH">HIGH</button>
+        <button class="filter-btn" data-filter="4_DONE">Done</button>
+        <button class="filter-btn" data-filter="5_CANCEL">Cancel</button>
+        <button class="filter-btn" data-filter="2_MED">Med</button>
+      </div>
+      <div id="vendorBarsFiltered"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Full project table -->
+<div class="chart-card full" style="margin-bottom: 12px;">
+  <div class="card-title">Todos os projetos</div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Título</th>
+          <th>Cliente</th>
+          <th>Tipo</th>
+          <th>Prioridade</th>
+          <th>Status</th>
+          <th>Progresso</th>
+          <th>Contato</th>
+        </tr>
+      </thead>
+      <tbody id="projectTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footer">
+  <span>HUB Datafeeds · Pipeline 2026</span>
+  <span>Gerado em 08/05/2026 · 46 projetos</span>
+</div>
+
+<script>
+const projects = [
+  {n:'HUB 028',cliente:'B3',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Retorno - Comercial',pct:0.75,contact:'Claudio Girotto',titulo:'B3 | Portal do Investir | Indices Internacionais'},
+  {n:'HUB 072',cliente:'Itau Custodia',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0.25,contact:'Edgar Jesus',titulo:'Itaú Custódia - Entrega de dados via API'},
+  {n:'HUB 077',cliente:'Banco do Brasil',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Produtos',pct:0.25,contact:'Analu Vieira',titulo:'Cbonds da Ambipar na Fenics MD'},
+  {n:'HUB 093',cliente:'Banco do Brasil',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0.5,contact:'Jackson de Mota Pereira',titulo:'Rating de CDSs soberanos'},
+  {n:'HUB 098',cliente:'Brasilprev',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Produtos',pct:0.25,contact:'Jackson de Mota Pereira',titulo:'C2P - Brasilprev Pacotes Full Credito Privado'},
+  {n:'HUB 107',cliente:'Banco Bradesco',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0.5,contact:'Caroline Almeida',titulo:'Bradesco Fase 2: Expansão Datafeed e Validação'},
+  {n:'HUB 114',cliente:'Itau BBA',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Infos',pct:0.25,contact:'Edgar Jesus',titulo:'Dados de Bolsas Offshore API DAFE Tesouraria'},
+  {n:'HUB 143',cliente:'Banco Sumitomo',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Retorno - Comercial',pct:0.75,contact:'Caroline Almeida',titulo:'Datafeed Sumitomo'},
+  {n:'HUB 147',cliente:'Banco do Brasil',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Retorno - Comercial',pct:0.75,contact:'Jackson de Mota Pereira',titulo:'Dados Macroeconomicos'},
+  {n:'HUB 173',cliente:'Branca Maria Adm.',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Retorno - Comercial',pct:0.75,contact:'Victor Marcio',titulo:'Solução Data Feed / Book de ofertas B3 Real Time'},
+  {n:'HUB 182',cliente:'Caixa Econômica Fed.',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Retorno - Comercial',pct:0.75,contact:'Paloma Alves',titulo:'Broadcast Datafeed - Curvas de Spread de Crédito'},
+  {n:'HUB 207',cliente:'RB Asset',tipo:'Datafeeds',prior:'1_HIGH',status:'Direcionado ao DEV',pct:0.5,contact:'Mayra Rodrigues',titulo:'C2P Continuação Data Feed RB Asset'},
+  {n:'HUB 229',cliente:'State Street - Natixis',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Infos',pct:0.25,contact:'Edgar Jesus',titulo:'State Street - Entrega de Dados via API'},
+  {n:'HUB 231',cliente:'CSD-BR',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Infos',pct:0.25,contact:'Victor Marcio',titulo:'CSD / Bolsas'},
+  {n:'HUB 278',cliente:'Prisma Capital',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Infos',pct:0.5,contact:'Mayra Rodrigues',titulo:'Datafeed - Orçamento Lista Ativos Bloomberg'},
+  {n:'HUB 283',cliente:'—',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Produtos',pct:0,contact:'Luis Felipe Gradwol',titulo:'BM&F em Delay para Alimentação de App aberto'},
+  {n:'HUB 284',cliente:'Itau BBA',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0,contact:'Edgar Jesus',titulo:'Demanda de API Nyse e Nasdaq RT'},
+  {n:'HUB 287',cliente:'B8 Partners',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0.5,contact:'Mayra Rodrigues',titulo:'Datafeed - B8 Partners'},
+  {n:'HUB 295',cliente:'—',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Produtos',pct:0,contact:'Mayra Rodrigues',titulo:'DataFeed - Análise Econômica'},
+  {n:'HUB 300',cliente:'Banco Safra',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Infos',pct:0,contact:'Edgar Jesus',titulo:'Banco Safra - API para Multi Family Office'},
+  {n:'HUB 305',cliente:'BNY Mellon',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0,contact:'Jackson de Mota Pereira',titulo:'BNY Mellon - Ratings Credito Privados e FIDCS'},
+  {n:'HUB 306',cliente:'Desenvolve SP',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Retorno - Comercial',pct:0,contact:'Jackson de Mota Pereira',titulo:'Desenvolve SP - Dados Históricos'},
+  {n:'HUB 315',cliente:'Itau Unibanco',tipo:'Datafeeds',prior:'1_HIGH',status:'Pendente de Análise - Dados',pct:0,contact:'Edgar Jesus',titulo:'Itaú - RFP Licenciamento de Conteúdo IGA'},
+  {n:'HUB 316',cliente:'Bayes Capital',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Retorno - Comercial',pct:0,contact:'Mayra Rodrigues',titulo:'Bayes Capital - Datafeed Histórico Bovespa'},
+  {n:'HUB 318',cliente:'APLICATIVO +DIVIDENDOS',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0,contact:'Caroline Almeida',titulo:'APLICATIVO +DIVIDENDOS Carteira de Investimento'},
+  {n:'HUB 336',cliente:'COFCO',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0,contact:'Ricardo Teodoro Massuci',titulo:'COFCO - Inclusão de dados no Datafeed'},
+  {n:'HUB 339',cliente:'MZ Group',tipo:'Datafeeds',prior:'1_HIGH',status:'Aguardando Retorno - Comercial',pct:0,contact:'Luis Felipe Gradwol',titulo:'Dados para sites de RI - MZ Group'},
+  {n:'HUB 341',cliente:'Compass',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0,contact:'Claudio Giroto',titulo:'Compass - Datafeed renda fixa'},
+  {n:'HUB 346',cliente:'CIELO',tipo:'Datafeeds',prior:'1_HIGH',status:'Em Análise - Dados',pct:0,contact:'Caroline Almeida',titulo:'DATAFEED CIELO - Substituição de BBG'},
+  {n:'HUB 079',cliente:'BDMG',tipo:'Datafeeds',prior:'5_CANCEL',status:'Cancelado',pct:1,contact:'Paloma Alves',titulo:'Broadcast Datafeed - BDMG'},
+  {n:'HUB 118',cliente:'M Dias Branco',tipo:'Datafeeds',prior:'5_CANCEL',status:'Cancelado',pct:1,contact:'Felipe Reusch',titulo:'Datafeed: M Dias Branco'},
+  {n:'HUB 122',cliente:'Absolute',tipo:'Datafeeds',prior:'5_CANCEL',status:'Cancelado',pct:1,contact:'Mayra Rodrigues',titulo:'API Luz - Opção de Calcular no Excel'},
+  {n:'HUB 174',cliente:'Black Midia Ltda',tipo:'Datafeeds',prior:'5_CANCEL',status:'Cancelado',pct:1,contact:'Victor Marcio',titulo:'Black Midia / Datafeed Notícias'},
+  {n:'HUB 180',cliente:'Banco Mercantil',tipo:'Datafeeds',prior:'5_CANCEL',status:'Cancelado',pct:1,contact:'Mayra Rodrigues',titulo:'Dados Letras Financeira - C2P'},
+  {n:'HUB 030',cliente:'Banco Bradesco',tipo:'Datafeeds',prior:'4_DONE',status:'Concluido',pct:1,contact:'Caroline Almeida',titulo:'Datafeed Tesouraria Bradesco'},
+  {n:'HUB 052',cliente:'Banco do Brasil',tipo:'Datafeeds',prior:'4_DONE',status:'Concluido',pct:1,contact:'Jackson de Mota Pereira',titulo:'Preços Commodities AE em R$ Bolsas Internacionais'},
+  {n:'HUB 025',cliente:'B3',tipo:'Datafeeds',prior:'4_DONE',status:'Concluido',pct:1,contact:'Sergio Fernandes',titulo:'Tipo de ativos sinal B3'},
+  {n:'HUB 068',cliente:'RB Asset',tipo:'Datafeeds',prior:'4_DONE',status:'Concluido',pct:1,contact:'Mayra Rodrigues',titulo:'Data Feed - C2P'},
+  {n:'HUB 069',cliente:'Eletrobras',tipo:'Datafeeds',prior:'4_DONE',status:'Concluido',pct:1,contact:'Mariana Gurski Maia',titulo:'Dados para Datafeed'},
+  {n:'HUB 091',cliente:'Itau Private',tipo:'Datafeeds',prior:'4_DONE',status:'Concluido',pct:1,contact:'Edgar Jesus',titulo:'Dados Tempestivos de Fundos via API Itaú'},
+  {n:'HUB 110',cliente:'Banco Central',tipo:'Datafeeds',prior:'4_DONE',status:'Concluido',pct:1,contact:'Paloma Alves',titulo:'Broadcast Datafeed - DEPIN - Banco Central'},
+  {n:'HUB 132',cliente:'Banco do Brasil',tipo:'Datafeeds',prior:'4_DONE',status:'Concluido',pct:1,contact:'Jackson de Mota Pereira',titulo:'Preços Commodities AE'},
+  {n:'HUB 136',cliente:'Warren',tipo:'Datafeeds',prior:'4_DONE',status:'Concluido',pct:1,contact:'Fernanda Felippe',titulo:'Base Histórica - 5 anos'},
+  {n:'HUB 066',cliente:'Banco do Brasil',tipo:'Terminal',prior:'2_MED',status:'Em Análise - Dados',pct:0,contact:'Jackson de Mota Pereira',titulo:'Cotações TOFR'},
+  {n:'HUB 090',cliente:'Itau Asset',tipo:'Terminal',prior:'1_HIGH',status:'Em Análise - Dados',pct:0,contact:'Edgar Jesus',titulo:'Ações da Bolsa do Chile'},
+  {n:'HUB 044',cliente:'Engie',tipo:'Terminal',prior:'—',status:'Pendente de Análise - Dados',pct:0,contact:'Analu Vieira',titulo:'Spread Over B e questões C2P'},
+];
+
+// Client name normalization
+const clientNorm = {'ITAU BBA':'Itau BBA','RB Aseet':'RB Asset'};
+function normalizeClient(name) { return clientNorm[name] || name; }
+
+// Client bars - consolidated
+const clientCounts = {};
+projects.forEach(p => {
+  if (p.cliente && p.cliente !== '—') {
+    const norm = normalizeClient(p.cliente);
+    clientCounts[norm] = (clientCounts[norm] || 0) + 1;
+  }
+});
+const topClients = Object.entries(clientCounts).sort((a,b) => b[1]-a[1]).slice(0, 12);
+const maxCount = topClients[0][1];
+const barColors = ['#3b82f6','#3b82f6','#3b82f6','#60a5fa','#60a5fa','#60a5fa','#93c5fd','#93c5fd','#a78bfa','#2dd4bf','#f59e0b','#22c55e'];
+const clientBarsEl = document.getElementById('clientBars');
+topClients.forEach(([name, count], i) => {
+  const pct = Math.round((count / maxCount) * 100);
+  clientBarsEl.innerHTML += `
+    <div class="client-row">
+      <span class="client-name" title="${name}">${name}</span>
+      <div class="bar-bg"><div class="bar-fill" style="width:${pct}%; background:${barColors[i]};"></div></div>
+      <span class="client-count">${count}</span>
+    </div>`;
+});
+
+// Project table
+const badgeMap = {
+  '1_HIGH':'<span class="badge badge-high">HIGH</span>',
+  '2_MED':'<span class="badge badge-med">MED</span>',
+  '4_DONE':'<span class="badge badge-done">DONE</span>',
+  '5_CANCEL':'<span class="badge badge-cancel">CANCEL</span>',
+  '—':'<span class="badge badge-cancel">—</span>'
+};
+const statusColors = {
+  'Em Análise - Dados':'#3b82f6','Concluido':'#22c55e','Aguardando Retorno - Comercial':'#f59e0b',
+  'Aguardando Infos':'#a78bfa','Cancelado':'#6b7280','Em Análise - Produtos':'#2dd4bf',
+  'Pendente de Análise - Dados':'#f472b6','Direcionado ao DEV':'#fb923c'
+};
+const tbody = document.getElementById('projectTable');
+projects.forEach(p => {
+  const col = statusColors[p.status] || '#6b7280';
+  const pctVal = Math.round(p.pct * 100);
+  tbody.innerHTML += `
+    <tr>
+      <td style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--text3);">${p.n}</td>
+      <td class="title-cell" title="${p.titulo}">${p.titulo}</td>
+      <td>${p.cliente}</td>
+      <td style="font-family:'DM Mono',monospace; font-size:0.72rem;">${p.tipo}</td>
+      <td>${badgeMap[p.prior] || p.prior}</td>
+      <td><span style="color:${col}; font-size:0.75rem;">● </span>${p.status}</td>
+      <td>
+        <div class="prog-cell">
+          <div class="prog-mini-bg"><div class="prog-mini-fill" style="width:${pctVal}%; background:${p.prior==='4_DONE'?'#22c55e':p.prior==='5_CANCEL'?'#6b7280':'#3b82f6'};"></div></div>
+          <span class="prog-val">${pctVal}%</span>
+        </div>
+      </td>
+      <td style="color:var(--text3); font-size:0.75rem;">${p.contact}</td>
+    </tr>`;
+});
+
+// Charts
+const chartDefaults = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false } }
+};
+
+new Chart(document.getElementById('typeChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Datafeeds', 'Terminal'],
+    datasets: [{
+      data: [43, 3],
+      backgroundColor: ['#3b82f6','#22c55e'],
+      borderWidth: 3,
+      borderColor: getComputedStyle(document.documentElement).getPropertyValue('--surface') || '#13161e',
+      hoverBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--surface') || '#13161e'
+    }]
+  },
+  options: {
+    ...chartDefaults,
+    cutout: '70%',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} projetos` } }
+    }
+  }
+});
+
+new Chart(document.getElementById('priorChart'), {
+  type: 'bar',
+  data: {
+    labels: ['1_HIGH', '2_MED', '4_DONE', '5_CANCEL'],
+    datasets: [{
+      label: 'Progresso médio (%)',
+      data: [28, 0, 100, 100],
+      backgroundColor: ['rgba(239,68,68,0.25)','rgba(245,158,11,0.25)','rgba(34,197,94,0.25)','rgba(107,114,128,0.25)'],
+      borderColor: ['#ef4444','#f59e0b','#22c55e','#6b7280'],
+      borderWidth: 1.5,
+      borderRadius: 4,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    ...chartDefaults,
+    scales: {
+      x: { grid: { display:false }, ticks: { color:'#555450', font:{size:11}, fontFamily:'DM Mono' } },
+      y: { grid: { color:'rgba(255,255,255,0.05)' }, ticks: { color:'#555450', callback: v => v+'%' }, max: 110 }
+    },
+    plugins: { legend: { display:false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw}% de progresso médio` } } }
+  }
+});
+
+new Chart(document.getElementById('stackedChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Em An. Dados','Concluído','Ag. Retorno','Ag. Infos','Cancelado','Em An. Prod.','Outros'],
+    datasets: [
+      {
+        label: 'Datafeeds',
+        data: [11, 9, 8, 5, 5, 3, 2],
+        backgroundColor: 'rgba(59,130,246,0.7)',
+        borderRadius: 3, borderSkipped: false
+      },
+      {
+        label: 'Terminal',
+        data: [1, 0, 0, 0, 0, 1, 1],
+        backgroundColor: 'rgba(34,197,94,0.7)',
+        borderRadius: 3, borderSkipped: false
+      }
+    ]
+  },
+  options: {
+    ...chartDefaults,
+    scales: {
+      x: { stacked:true, grid:{display:false}, ticks:{color:'#555450', font:{size:10}, maxRotation:30} },
+      y: { stacked:true, grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#555450', stepSize:2} }
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: { color:'#8a8880', font:{size:11}, boxWidth:10, boxHeight:10, padding:16 }
+      }
+    }
+  }
+});
+
+// Theme toggle
+(function() {
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const icon = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  let dark = true;
+
+  function apply() {
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    icon.textContent = dark ? '🌙' : '☀️';
+    label.textContent = dark ? 'DARK' : 'LIGHT';
+  }
+
+  btn.addEventListener('click', () => { dark = !dark; apply(); });
+  apply();
+})();
+
+// Vendor ranking
+const vendorColors = ['#3b82f6','#60a5fa','#93c5fd','#a78bfa','#2dd4bf','#f59e0b','#22c55e','#f472b6','#fb923c','#34d399','#818cf8','#e879f9'];
+
+function buildVendorBars(containerId, filter) {
+  const counts = {};
+  projects.forEach(p => {
+    if (filter !== 'all' && p.prior !== filter) return;
+    const name = p.contact || '—';
+    counts[name] = (counts[name] || 0) + 1;
+  });
+  const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+  const max = sorted[0]?.[1] || 1;
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  sorted.forEach(([name, count], i) => {
+    const pct = Math.round((count / max) * 100);
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
+    el.innerHTML += `
+      <div class="client-row" style="margin-bottom:9px;">
+        <span style="width:20px; font-size:0.75rem; color:var(--text3); flex-shrink:0; text-align:center;">${medal}</span>
+        <span class="client-name" style="width:160px;" title="${name}">${name}</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%; background:${vendorColors[i % vendorColors.length]};"></div></div>
+        <span class="client-count" style="width:24px;">${count}</span>
+      </div>`;
+  });
+}
+
+buildVendorBars('vendorBarsAll', 'all');
+buildVendorBars('vendorBarsFiltered', 'all');
+
+document.getElementById('vendorFilters').addEventListener('click', e => {
+  if (!e.target.matches('.filter-btn')) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  buildVendorBars('vendorBarsFiltered', e.target.dataset.filter);
+});
+</script>
+</body>
+</html>

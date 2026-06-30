@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inteligência de Mercado – Broadcast+ vs Competidores</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ae-red: #C8102E;
+    --ae-gold: #C9952A;
+  }
+
+  [data-theme="light"] {
+    --ae-dark: #0D0D0D;
+    --ae-light: #F5F2ED;
+    --ae-mid: #E8E3DB;
+    --ae-text: #1A1A1A;
+    --ae-muted: #6B6560;
+    --ae-border: #D4CFC7;
+    --page-bg: white;
+    --row-hover: rgba(200,16,46,0.03);
+    --section-bg: #0D0D0D;
+    --section-color: rgba(255,255,255,0.9);
+    --broadcast-cell-bg: rgba(200,16,46,0.05);
+    --advantage-bg: rgba(200,16,46,0.06);
+    --stars-0-color: #CCCCCC;
+    --summary-bg: #F5F2ED;
+    --comp-bar-bg: #0D0D0D;
+  }
+
+  [data-theme="dark"] {
+    --ae-dark: #1A1A2E;
+    --ae-light: #16213E;
+    --ae-mid: #0F3460;
+    --ae-text: #E0E0E0;
+    --ae-muted: #A0A0B0;
+    --ae-border: #2A2A4A;
+    --page-bg: #0D0D1A;
+    --row-hover: rgba(200,16,46,0.08);
+    --section-bg: #1A1A2E;
+    --section-color: rgba(255,255,255,0.85);
+    --broadcast-cell-bg: rgba(200,16,46,0.1);
+    --advantage-bg: rgba(200,16,46,0.12);
+    --stars-0-color: #555577;
+    --summary-bg: #111128;
+    --comp-bar-bg: #111128;
+  }
+
+  html { font-size: 13px; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--ae-light);
+    color: var(--ae-text);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .page {
+    width: 340mm;
+    min-height: 210mm;
+    margin: 0 auto;
+    background: var(--page-bg);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  /* ── DARK MODE TOGGLE ───────────────────────────────── */
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 9999;
+    background: var(--ae-dark);
+    border: 1px solid rgba(200,16,46,0.4);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .theme-toggle:hover { border-color: var(--ae-red); color: white; }
+  .theme-toggle .toggle-icon { font-size: 1rem; line-height: 1; }
+
+  @media print { .theme-toggle { display: none; } }
+
+  /* ── HEADER ─────────────────────────────────────────── */
+  .header {
+    background: var(--ae-dark);
+    padding: 18px 28px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg, transparent, transparent 12px,
+      rgba(200,16,46,0.06) 12px, rgba(200,16,46,0.06) 24px
+    );
+  }
+
+  .header-left { position: relative; z-index: 1; }
+
+  .brand-mark {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .brand-ae {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: white;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .brand-divider {
+    width: 2px; height: 28px;
+    background: var(--ae-red);
+    margin: 0 4px;
+    align-self: center;
+  }
+
+  .brand-broadcast {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--ae-red);
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  .brand-tag {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    position: relative;
+    z-index: 1;
+    text-align: right;
+  }
+
+  .doc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .doc-subtitle {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .red-stripe {
+    height: 3px;
+    background: linear-gradient(90deg, var(--ae-red) 0%, #FF2D55 50%, var(--ae-red) 100%);
+  }
+
+  /* ── SUMMARY BAR ────────────────────────────────────── */
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: var(--summary-bg);
+    border-bottom: 2px solid var(--ae-border);
+    transition: background 0.3s;
+  }
+
+  .summary-item {
+    padding: 8px 14px;
+    border-right: 1px solid var(--ae-border);
+  }
+  .summary-item:last-child { border-right: none; }
+
+  .summary-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ae-muted);
+    margin-bottom: 2px;
+  }
+
+  .summary-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ae-red);
+    line-height: 1;
+  }
+
+  .summary-note {
+    font-size: 0.65rem;
+    color: var(--ae-muted);
+    margin-top: 1px;
+  }
+
+  /* ── COMPETITOR BAR ─────────────────────────────────── */
+  .competitor-bar {
+    display: grid;
+    grid-template-columns: 180px repeat(8, 1fr);
+    background: var(--comp-bar-bg);
+    border-bottom: 2px solid var(--ae-red);
+    transition: background 0.3s;
+  }
+
+  .comp-header-empty {
+    padding: 8px 10px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .comp-header {
+    padding: 8px 4px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .comp-header.highlight {
+    background: rgba(200,16,46,0.2);
+    border-right: 1px solid rgba(200,16,46,0.3);
+  }
+
+  .comp-header.new-entry {
+    background: rgba(255,165,0,0.12);
+    border-right: 1px solid rgba(255,165,0,0.25);
+  }
+
+  .comp-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+  }
+
+  .comp-header.highlight .comp-name { color: #FF6B7A; }
+  .comp-header.new-entry .comp-name { color: #FFD580; }
+
+  .comp-badge {
+    display: inline-block;
+    font-size: 0.58rem;
+    font-family: 'IBM Plex Mono', monospace;
+    background: rgba(200,16,46,0.5);
+    color: #FFB3BC;
+    padding: 1px 4px;
+    border-radius: 2px;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .comp-badge.new-badge {
+    background: rgba(255,165,0,0.35);
+    color: #FFD580;
+  }
+
+  /* ── MAIN TABLE ─────────────────────────────────────── */
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .section-row td {
+    background: var(--section-bg);
+    color: var(--section-color);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 5px 10px;
+    border-top: 1px solid rgba(200,16,46,0.3);
+    transition: background 0.3s;
+  }
+
+  .section-row td:first-child {
+    border-left: 3px solid var(--ae-red);
+  }
+
+  .data-row td {
+    padding: 5px 5px;
+    border-bottom: 1px solid var(--ae-border);
+    vertical-align: middle;
+    transition: background 0.2s;
+  }
+
+  .data-row:hover td { background: var(--row-hover); }
+
+  .data-row td:first-child {
+    font-size: 0.75rem;
+    color: var(--ae-text);
+    font-weight: 400;
+    padding-left: 10px;
+    border-left: 1px solid var(--ae-border);
+    line-height: 1.3;
+    width: 180px;
+  }
+
+  .data-row td.star-cell {
+    text-align: center;
+    font-size: 0.72rem;
+    letter-spacing: -1px;
+    border-right: 1px solid var(--ae-border);
+  }
+
+  .data-row td.broadcast-cell {
+    background: var(--broadcast-cell-bg);
+    border-right: 1px solid rgba(200,16,46,0.2);
+  }
+
+  .data-row td.trillia-cell {
+    background: rgba(255,165,0,0.05);
+    border-right: 1px solid rgba(255,165,0,0.15);
+  }
+
+  .broadcast-advantage td:first-child { font-weight: 600; }
+  .broadcast-advantage { background: var(--advantage-bg); }
+
+  /* ── STAR RENDERING ─────────────────────────────────── */
+  .stars-4 { color: var(--ae-red); }
+  .stars-3 { color: #E05C00; }
+  .stars-2 { color: var(--ae-gold); }
+  .stars-1 { color: #9E9087; }
+  .stars-0 { color: var(--stars-0-color); font-size: 1rem; line-height: 1; }
+
+  /* ── FOOTER ─────────────────────────────────────────── */
+  .footer {
+    background: var(--ae-dark);
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.3s;
+  }
+
+  .legend { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+  .legend-title {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-right: 4px;
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-stars { font-size: 0.7rem; }
+  .legend-label { font-size: 0.68rem; color: rgba(255,255,255,0.5); }
+
+  .footer-meta { text-align: right; }
+
+  .footer-date {
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.3);
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-brand {
+    font-size: 0.7rem;
+    color: var(--ae-red);
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  /* ── PRINT ──────────────────────────────────────────── */
+  @media print {
+    @page { size: A4 landscape; margin: 6mm 8mm; }
+    body { background: white; }
+    .page { width: 100%; box-shadow: none; }
+    html { font-size: 9px; }
+  }
+
+  @media screen {
+    body { padding: 20px; background: #2A2A2A; }
+    [data-theme="dark"] body { background: #050510; }
+    .page { box-shadow: 0 20px 80px rgba(0,0,0,0.5); border-radius: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- DARK MODE TOGGLE -->
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+  <span class="toggle-icon" id="themeIcon">🌙</span>
+  <span id="themeLabel">Dark Mode</span>
+</button>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="brand-mark">
+        <span class="brand-ae">AE</span>
+        <div class="brand-divider"></div>
+        <span class="brand-broadcast">BROADCAST+</span>
+      </div>
+      <div class="brand-tag">Agência Estado · Grupo Estado</div>
+    </div>
+    <div class="header-right">
+      <div class="doc-title">Inteligência de Mercado</div>
+      <div class="doc-subtitle">Análise Competitiva de Terminais Financeiros · 2025–2026</div>
+    </div>
+  </div>
+  <div class="red-stripe"></div>
+
+  <!-- KPI SUMMARY BAR -->
+  <div class="summary-bar">
+    <div class="summary-item">
+      <div class="summary-label">Critérios Avaliados</div>
+      <div class="summary-value">41</div>
+      <div class="summary-note">em 8 categorias</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Plataformas Comparadas</div>
+      <div class="summary-value">8</div>
+      <div class="summary-note">incl. Trillia (B3) · novo 2026</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Vantagem Broadcast+</div>
+      <div class="summary-value">12</div>
+      <div class="summary-note">critérios com nota máxima ⭐⭐⭐⭐</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Diferencial Exclusivo</div>
+      <div class="summary-value">BR #1</div>
+      <div class="summary-note">Custo-benefício, Suporte e Commodities locais</div>
+    </div>
+  </div>
+
+  <!-- COMPETITOR HEADER BAR -->
+  <div class="competitor-bar">
+    <div class="comp-header-empty"></div>
+    <div class="comp-header highlight">
+      <div class="comp-name">Broadcast+</div>
+      <div class="comp-badge">AE · NOSSO</div>
+    </div>
+    <div class="comp-header">
+      <div class="comp-name">Bloomberg</div>
+    </div>
+    <div class="comp-header">
+      <div class="comp-name">LSEG / Refinitiv</div>
+    </div>
+    <div class="comp-header">
+      <div class="comp-name">Valor Pro</div>
+    </div>
+    <div class="comp-header">
+      <div class="comp-name">Economática</div>
+    </div>
+    <div class="comp-header">
+      <div class="comp-name">CMA</div>
+    </div>
+    <div class="comp-header">
+      <div class="comp-name">Quantum</div>
+    </div>
+    <div class="comp-header new-entry">
+      <div class="comp-name">Trillia</div>
+      <div class="comp-badge new-badge">B3 · 2026</div>
+    </div>
+  </div>
+
+  <!-- MATRIX TABLE -->
+  <table class="matrix-table">
+
+    <!-- COMERCIAL -->
+    <tr class="section-row"><td colspan="9">Comercial</td></tr>
+    <tr class="data-row">
+      <td>Custo x Benefício</td>
+      <td class="star-cell broadcast-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell trillia-cell stars-2">⭐⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>Presença local (BR)</td>
+      <td class="star-cell broadcast-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell trillia-cell stars-4">⭐⭐⭐⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>Suporte e atendimento local (BR)</td>
+      <td class="star-cell broadcast-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell trillia-cell stars-3">⭐⭐⭐</td>
+    </tr>
+
+    <!-- TEMPO REAL -->
+    <tr class="section-row"><td colspan="9">Acompanhamento dos Mercados em Tempo Real</td></tr>
+    <tr class="data-row">
+      <td>Insights de mercado em real-time</td>
+      <td class="star-cell broadcast-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Cobertura cenário político/macroeconomia</td>
+      <td class="star-cell broadcast-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Cobertura internacional</td>
+      <td class="star-cell broadcast-cell stars-1">⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Estimativas e Projeções macroeconômicas</td>
+      <td class="star-cell broadcast-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Heat map</td>
+      <td class="star-cell broadcast-cell stars-0">—</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+
+    <!-- AÇÕES -->
+    <tr class="section-row"><td colspan="9">Ações e Renda Variável</td></tr>
+    <tr class="data-row">
+      <td>Cotações nacionais e internacionais</td>
+      <td class="star-cell broadcast-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell trillia-cell stars-3">⭐⭐⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>Dados financeiros das Empresas</td>
+      <td class="star-cell broadcast-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell trillia-cell stars-3">⭐⭐⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>Análise de empresas e setores</td>
+      <td class="star-cell broadcast-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell trillia-cell stars-4">⭐⭐⭐⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>Análises quantitativas</td>
+      <td class="star-cell broadcast-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-4">⭐⭐⭐⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>DataSets multiregionais de empresas</td>
+      <td class="star-cell broadcast-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-3">⭐⭐⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>Informações de Ownership</td>
+      <td class="star-cell broadcast-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-2">⭐⭐</td>
+    </tr>
+
+    <!-- FUNDOS -->
+    <tr class="section-row"><td colspan="9">Fundos de Investimento</td></tr>
+    <tr class="data-row">
+      <td>Screener / Screening</td>
+      <td class="star-cell broadcast-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Análise de fundos</td>
+      <td class="star-cell broadcast-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Comparativo de fundos</td>
+      <td class="star-cell broadcast-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Dados históricos e cadastrais</td>
+      <td class="star-cell broadcast-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+
+    <!-- COMMODITIES -->
+    <tr class="section-row"><td colspan="9">Commodities</td></tr>
+    <tr class="data-row">
+      <td>Commodities bolsas</td>
+      <td class="star-cell broadcast-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Preços Futuros Brasil</td>
+      <td class="star-cell broadcast-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row broadcast-advantage">
+      <td>Preços Físicos Brasil</td>
+      <td class="star-cell broadcast-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row broadcast-advantage">
+      <td>Fretes</td>
+      <td class="star-cell broadcast-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+
+    <!-- OUTROS MERCADOS -->
+    <tr class="section-row"><td colspan="9">Outros Mercados</td></tr>
+    <tr class="data-row">
+      <td>Derivativos</td>
+      <td class="star-cell broadcast-cell stars-1">⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Renda Fixa e Mercado Balcão</td>
+      <td class="star-cell broadcast-cell stars-1">⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Dados estruturados</td>
+      <td class="star-cell broadcast-cell stars-0">—</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-4">⭐⭐⭐⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>Cobertura Private Equity</td>
+      <td class="star-cell broadcast-cell stars-0">—</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Deals de M&amp;A</td>
+      <td class="star-cell broadcast-cell stars-0">—</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+
+    <!-- FUNCIONALIDADES -->
+    <tr class="section-row"><td colspan="9">Funcionalidades</td></tr>
+    <tr class="data-row">
+      <td>Gráficos</td>
+      <td class="star-cell broadcast-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell trillia-cell stars-1">⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>Curvas (Juros, Câmbio, Títulos Públicos)</td>
+      <td class="star-cell broadcast-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Funções de Addin do MS Office</td>
+      <td class="star-cell broadcast-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Gestão de Portfólio/Risco</td>
+      <td class="star-cell broadcast-cell stars-0">—</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>OMS Negociação Eletrônica</td>
+      <td class="star-cell broadcast-cell stars-1">⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Gestão de Research <span style="font-size:0.6rem;color:var(--ae-red);font-weight:600;">· Awards</span></td>
+      <td class="star-cell broadcast-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+    <tr class="data-row">
+      <td>Inteligência Artificial <span style="font-size:0.6rem;color:var(--ae-red);font-weight:600;">· BroaderIA</span></td>
+      <td class="star-cell broadcast-cell stars-1">⭐</td>
+      <td class="star-cell stars-3">⭐⭐⭐</td>
+      <td class="star-cell stars-1">⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-4">⭐⭐⭐⭐</td>
+    </tr>
+    <tr class="data-row">
+      <td>Chat</td>
+      <td class="star-cell broadcast-cell stars-1">⭐</td>
+      <td class="star-cell stars-4">⭐⭐⭐⭐</td>
+      <td class="star-cell stars-2">⭐⭐</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell stars-0">—</td>
+      <td class="star-cell trillia-cell stars-0">—</td>
+    </tr>
+
+  </table>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="legend">
+      <span class="legend-title">Legenda:</span>
+      <div class="legend-item">
+        <span class="legend-stars stars-4">⭐⭐⭐⭐</span>
+        <span class="legend-label">Excelente</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-stars stars-3">⭐⭐⭐</span>
+        <span class="legend-label">Bom</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-stars stars-2">⭐⭐</span>
+        <span class="legend-label">Regular</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-stars stars-1">⭐</span>
+        <span class="legend-label">Básico</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-stars stars-0">—</span>
+        <span class="legend-label">Não oferece</span>
+      </div>
+      <div style="margin-left:10px; padding-left:10px; border-left:1px solid rgba(255,255,255,0.15);">
+        <span style="font-size:0.6rem; color:rgba(255,165,0,0.7); font-style:italic;">★ Trillia: nova marca de dados &amp; IA da B3, lançada em fev/2026</span>
+      </div>
+    </div>
+    <div class="footer-meta">
+      <div class="footer-brand">BROADCAST+  ·  AGÊNCIA ESTADO</div>
+      <div class="footer-date">Versão 1.1  ·  Uso Comercial Interno</div>
+      <div class="footer-date">Last update: 08/Jun/2026  ·  Updated by: Antonio Melo</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+    document.getElementById('themeLabel').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+  }
+</script>
+</body>
+</html>

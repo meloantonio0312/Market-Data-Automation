@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breakeven por Produto — Maio 2026</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0c10;--surf:#12161d;--surf2:#1a2030;--bord:#252d3e;
+  --green:#00e5a0;--blue:#0099ff;--red:#ff4d6d;--amber:#ffd43b;--orange:#ff6b35;--purple:#c77dff;
+  --text:#e8ecf4;--muted:#6b7a99;
+}
+body.light{--bg:#f0f2f7;--surf:#fff;--surf2:#e4e8f0;--bord:#d0d6e4;--text:#1a2030;--muted:#6b7a99}
+body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:28px;transition:background .3s,color .3s;font-size:13px}
+
+/* HEADER */
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bord)}
+.hdr h1{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.hdr p{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:1.5px;text-transform:uppercase}
+.hdr-r{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.badge{background:var(--surf2);border:1px solid var(--bord);border-radius:7px;padding:7px 14px;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.badge b{color:var(--green)}
+.meta{font-size:10px;color:var(--muted);text-align:right;line-height:1.9;letter-spacing:.5px}
+.meta span{color:var(--text)}
+#toggle{background:var(--surf2);border:1px solid var(--bord);border-radius:7px;padding:7px 13px;cursor:pointer;font-size:15px;color:var(--text)}
+
+/* NOTA inline (tabs) */
+.nota{background:var(--surf2);border:1px solid var(--bord);border-left:3px solid var(--amber);border-radius:8px;padding:12px 16px;margin-bottom:22px;font-size:11px;color:var(--muted);line-height:1.7}
+.nota b{color:var(--amber)}
+
+/* METODOLOGIA BOX */
+.metbox{background:var(--surf);border:1px solid var(--bord);border-radius:12px;margin-bottom:24px;overflow:hidden}
+.metbox-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.metbox-header:hover{background:var(--surf2)}
+.metbox-header.open{border-bottom-color:var(--bord)}
+.metbox-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,212,59,.12);border:1px solid rgba(255,212,59,.25);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.metbox-htitle{font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--text);margin-left:12px;flex:1}
+.metbox-htag{font-size:10px;color:var(--amber);background:rgba(255,212,59,.1);border:1px solid rgba(255,212,59,.2);border-radius:4px;padding:2px 8px;letter-spacing:1px;text-transform:uppercase;margin-right:12px}
+.metbox-chevron{font-size:12px;color:var(--muted);transition:transform .25s}
+.metbox-chevron.open{transform:rotate(180deg)}
+.metbox-body{display:none;padding:20px}
+.metbox-body.open{display:block}
+.met-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.met-item{background:var(--surf2);border:1px solid var(--bord);border-radius:9px;padding:14px 16px}
+.met-item-icon{font-size:18px;margin-bottom:8px}
+.met-item-title{font-size:11px;font-weight:700;color:var(--text);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase}
+.met-item-desc{font-size:11px;color:var(--muted);line-height:1.65}
+.met-item-desc b{color:var(--text)}
+.met-divider{border:none;border-top:1px solid var(--bord);margin:14px 0}
+.met-footer{font-size:11px;color:var(--muted);line-height:1.7;padding:10px 14px;background:rgba(255,212,59,.05);border:1px solid rgba(255,212,59,.15);border-radius:8px}
+.met-footer b{color:var(--amber)}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:var(--surf);border:1px solid var(--bord);border-radius:11px;padding:18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.g::before{background:var(--green)}.kpi.b::before{background:var(--blue)}
+.kpi.r::before{background:var(--red)}.kpi.a::before{background:var(--amber)}.kpi.p::before{background:var(--purple)}
+.kpi-l{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.kpi-v{font-size:21px;font-weight:800;line-height:1}
+.kpi.g .kpi-v{color:var(--green)}.kpi.b .kpi-v{color:var(--blue)}.kpi.r .kpi-v{color:var(--red)}.kpi.a .kpi-v{color:var(--amber)}.kpi.p .kpi-v{color:var(--purple)}
+.kpi-s{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
+.tab-btn{padding:7px 16px;border-radius:7px;font-family:inherit;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:1px solid var(--bord);background:transparent;color:var(--muted);transition:all .2s}
+.tab-btn:hover{border-color:var(--green);color:var(--green)}
+.tab-btn.active{background:var(--green);color:#0a0c10;border-color:var(--green);font-weight:700}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* CARD */
+.card{background:var(--surf);border:1px solid var(--bord);border-radius:11px;padding:22px}
+.card+.card{margin-top:16px}
+.card-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:7px;color:var(--text)}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:16px;margin-bottom:16px}
+
+/* TABLE */
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+thead th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--bord);white-space:nowrap}
+th.r,td.r{text-align:right}
+tbody tr{border-bottom:1px solid rgba(37,45,62,.5);transition:background .1s}
+tbody tr:hover{background:var(--surf2)}
+tbody td{padding:10px 10px}
+td.mono{font-family:'SF Mono','Consolas','Courier New',monospace}
+.rank{font-size:10px;color:var(--muted);width:20px;display:inline-block;text-align:right}
+.pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px}
+.ok{background:rgba(0,229,160,.15);color:var(--green)}
+.warn{background:rgba(255,212,59,.15);color:var(--amber)}
+.neg{background:rgba(255,77,109,.15);color:var(--red)}
+.neu{background:rgba(107,122,153,.15);color:var(--muted)}
+tr.tot td{font-weight:700;border-top:2px solid var(--bord)}
+
+/* SVG BARS */
+.svg-chart{width:100%;overflow:visible}
+.bar-label{font-size:10px;fill:var(--muted)}
+.bar-val{font-size:10px;font-weight:600}
+.axis-line{stroke:var(--bord);stroke-width:1}
+.chart-wrap{width:100%;overflow-x:auto}
+
+/* INLINE BAR */
+.ibar-bg{flex:1;height:5px;background:var(--bord);border-radius:3px;overflow:hidden;min-width:50px}
+.ibar-fill{height:100%;border-radius:3px}
+.ibar-row{display:flex;align-items:center;gap:8px}
+
+/* FOOTNOTE */
+.fn{font-size:10px;color:var(--muted);margin-top:12px;letter-spacing:.3px;line-height:1.6}
+
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.g2,.g3{grid-template-columns:1fr}body{padding:14px}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <h1>Análise de Breakeven por Produto</h1>
+    <p>Broadcast · Receita × Despesa de Dados · Maio 2026</p>
+  </div>
+  <div class="hdr-r">
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="badge">Período: <b>Maio 2026</b></div>
+      <button id="toggle" onclick="toggleTheme()">🌙</button>
+    </div>
+    <div class="meta">Author: <span>Antonio Melo</span><br>Last update: <span>10 Jun 2026</span></div>
+  </div>
+</div>
+
+<!-- METODOLOGIA BOX -->
+<div class="metbox">
+  <div class="metbox-header" onclick="toggleMet(this)" id="metHeader">
+    <div class="metbox-icon">⚙️</div>
+    <div class="metbox-htitle">Metodologia de Alocação de Custos</div>
+    <div class="metbox-htag">Como lemos os dados</div>
+    <div class="metbox-chevron" id="metChevron">▼</div>
+  </div>
+  <div class="metbox-body" id="metBody">
+    <div class="met-grid">
+      <div class="met-item">
+        <div class="met-item-icon">🔀</div>
+        <div class="met-item-title">Dados Transversais</div>
+        <div class="met-item-desc">Bolsas como <b>BM&FBOVESPA, CME, ICE e Nasdaq</b> são insumos compartilhados — os mesmos feeds de cotações trafegam simultaneamente por Broadcast+, Agro, Datafeed, OTC e White Label. Não é possível atribuir custo exclusivo a um único produto.</div>
+      </div>
+      <div class="met-item">
+        <div class="met-item-icon">📐</div>
+        <div class="met-item-title">Critério de Alocação</div>
+        <div class="met-item-desc"><b>Custo variável de bolsas</b> é alocado proporcionalmente à receita de cotações de cada produto sobre o total (R$ 2,61M). <b>Custos fixos de plataforma</b> (IDC, ANBIMA, CEPEA, FENICS, Trading Econ.) são distribuídos pela participação de receita total de cada produto.</div>
+      </div>
+      <div class="met-item">
+        <div class="met-item-icon">📊</div>
+        <div class="met-item-title">O que Este Dashboard Mostra</div>
+        <div class="met-item-desc">A visão representa a <b>margem de contribuição por produto</b> após o custo de insumos de dados — não um P&L isolado. Custos de pessoal, infraestrutura e operação não estão incluídos. O breakeven aqui é sobre <b>cobertura de dados de mercado</b>.</div>
+      </div>
+    </div>
+    <hr class="met-divider">
+    <div class="met-footer">
+      <b>⚠ Limitação importante:</b> A alocação por receita é uma proxy — o consumo real de dados por produto pode diferir da proporção de receita. Produtos com muitos contratos de baixo ticket (ex: Broadcast+ com 5.476 terminais de cotação) podem ter custo de dados maior do que a receita de cotações sugere. Uma análise mais precisa exigiria rastreamento de consumo por feed/terminal.
+    </div>
+  </div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="kpi-grid" style="grid-template-columns:repeat(6,1fr)">
+  <div class="kpi g"><div class="kpi-l">Receita Total</div><div class="kpi-v">R$ 16,82M</div><div class="kpi-s">Faturamento Mai/26</div></div>
+  <div class="kpi r"><div class="kpi-l">Despesa de Dados</div><div class="kpi-v">R$ 2,77M</div><div class="kpi-s">Fornecedores Mai/26</div></div>
+  <div class="kpi b"><div class="kpi-l">Margem Bruta Dados</div><div class="kpi-v">R$ 14,05M</div><div class="kpi-s">Antes de opex/pessoal</div></div>
+  <div class="kpi a"><div class="kpi-l">% Médio Custo/Rec.</div><div class="kpi-v">16,5%</div><div class="kpi-s">Benchmark interno</div></div>
+  <div class="kpi p"><div class="kpi-l">Breakeven (dados)</div><div class="kpi-v">R$ 2,77M</div><div class="kpi-s">Receita mín. p/ cobrir dados</div></div>
+  <div class="kpi" style="border-color:rgba(0,229,160,.3)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--blue))"></div><div class="kpi-l">Produtos Saudáveis</div><div class="kpi-v" style="color:var(--green)">9 / 14</div><div class="kpi-s" style="color:var(--green)">Custo &lt; 16,5% receita</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('geral',this)">Visão Geral</button>
+  <button class="tab-btn" onclick="switchTab('produto',this)">Por Produto</button>
+  <button class="tab-btn" onclick="switchTab('bolsas',this)">Bolsas por Produto</button>
+  <button class="tab-btn" onclick="switchTab('usuarios',this)">Consumo por Usuários</button>
+</div>
+
+<!-- TAB GERAL -->
+<div id="tab-geral" class="tab-panel active">
+  <div class="g2">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--green)"></span>Receita vs. Custo de Dados por Produto</div>
+      <div class="chart-wrap" id="chartBarGeral"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--amber)"></span>% Custo sobre Receita por Produto</div>
+      <div class="chart-wrap" id="chartPctCusto"></div>
+      <div class="fn">Verde = abaixo da média (16,5%) · Amarelo = 16,5–25% · Vermelho = acima de 25%</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Composição de Despesas de Dados — Mai/26</div>
+      <div id="chartPieDesp"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--purple)"></span>Margem de Contribuição (Receita − Custo Dados)</div>
+      <div class="chart-wrap" id="chartMargem"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB PRODUTO -->
+<div id="tab-produto" class="tab-panel">
+
+  <!-- STATUS METHODOLOGY BOX -->
+  <div class="metbox" style="margin-bottom:16px">
+    <div class="metbox-header" onclick="toggleMetProd(this)">
+      <div class="metbox-icon">📋</div>
+      <div class="metbox-htitle">Como interpretar a coluna Status</div>
+      <div class="metbox-htag">Metodologia</div>
+      <div class="metbox-chevron">▼</div>
+    </div>
+    <div class="metbox-body" style="display:none">
+      <div class="met-grid">
+        <div class="met-item">
+          <div class="met-item-icon">🟢</div>
+          <div class="met-item-title">Saudável — abaixo de 18%</div>
+          <div class="met-item-desc">O produto gasta <b>menos de 18% da sua receita</b> para pagar os insumos de dados de mercado. Está abaixo da média geral do portfólio (16,5%), indicando boa eficiência na relação custo-receita.</div>
+        </div>
+        <div class="met-item">
+          <div class="met-item-icon">🟡</div>
+          <div class="met-item-title">Atenção — entre 18% e 30%</div>
+          <div class="met-item-desc">O produto ainda cobre seus custos de dados, mas com <b>folga menor que a média</b>. Pode indicar subprecificação, crescimento de custo de bolsa acima da receita, ou mix de clientes com muitos contratos de baixo ticket.</div>
+        </div>
+        <div class="met-item">
+          <div class="met-item-icon">🔴</div>
+          <div class="met-item-title">Alto custo — acima de 30%</div>
+          <div class="met-item-desc">Mais de <b>30% da receita do produto</b> é consumida apenas pelo custo de dados. Requer atenção: ou o produto está subprecificado em relação ao volume de bolsas que consome, ou há oportunidade de renegociação de contratos com fornecedores.</div>
+        </div>
+      </div>
+      <hr class="met-divider">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="met-footer">
+          <b>📐 Base de cálculo:</b> Status = Custo Total de Dados ÷ Receita do Produto. O custo inclui bolsas variáveis (alocadas por participação de cotações) + custos fixos de plataforma (alocados por participação de receita). A média do portfólio em Mai/26 é <b>16,5%</b>.
+        </div>
+        <div class="met-footer">
+          <b>⚠ Importante:</b> Os limiares de 18% e 30% são referências internas iniciais — não benchmarks de mercado. Recomenda-se que o CFO defina metas formais de custo de dados por produto para que o Status reflita uma política de pricing estabelecida.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--green)"></span>Breakeven Detalhado por Produto — Maio 2026</div>
+    <div class="twrap">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Produto</th>
+          <th class="r">Receita</th><th class="r">% Rec.</th>
+          <th class="r">Custo Bolsas</th><th class="r">Custo Fix. Plat.</th>
+          <th class="r">Total Custo</th><th class="r">Margem Dados</th>
+          <th class="r">% Custo/Rec.</th><th class="r">Clientes</th><th class="r">Contratos</th>
+          <th>Status</th>
+        </tr></thead>
+        <tbody id="tbProd"></tbody>
+      </table>
+    </div>
+    <div class="fn">* Custo bolsas = alocado pela proporção de cotações sobre a receita de cada produto. Custo fixo = proporcional à receita total.</div>
+  </div>
+</div>
+
+<!-- TAB BOLSAS -->
+<div id="tab-bolsas" class="tab-panel">
+  <div class="nota"><b>📌 Leitura:</b> Como os dados de bolsas são insumos transversais, esta visão mostra qual produto consome quais bolsas e em que proporção, usando a participação de cotações na receita como proxy.</div>
+  <div class="g2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Custo de Dados Alocado por Produto</div>
+      <div class="chart-wrap" id="chartBolsasProd"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--amber)"></span>Principais Bolsas — Custo Variável</div>
+      <div id="bolsasList"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--green)"></span>Matriz de Alocação: Bolsa × Produto (Top 6 × Top 6)</div>
+    <div class="twrap"><table id="tblMatriz"></table></div>
+    <div class="fn">Valores = custo alocado estimado (R$) por bolsa por produto, com base na proporção de cotações sobre receita total do produto.</div>
+  </div>
+</div>
+
+<!-- TAB USUARIOS -->
+<div id="tab-usuarios" class="tab-panel">
+  <div class="nota"><b>📌 Usuários por bolsa:</b> Cada contrato de cotação representa um acesso ativo a uma bolsa. O <em>custo por usuário</em> é o custo da bolsa dividido pelos contratos ativos que consomem aquela fonte. ROI Dados = Receita Cotações / Custo da Bolsa.</div>
+
+  <!-- EFICIÊNCIA METHODOLOGY BOX -->
+  <div class="metbox" style="margin-bottom:16px">
+    <div class="metbox-header" onclick="toggleMetProd(this)">
+      <div class="metbox-icon">📡</div>
+      <div class="metbox-htitle">Como interpretar a coluna Eficiência</div>
+      <div class="metbox-htag">Metodologia</div>
+      <div class="metbox-chevron">▼</div>
+    </div>
+    <div class="metbox-body" style="display:none">
+      <div class="met-grid">
+        <div class="met-item">
+          <div class="met-item-icon">🟢</div>
+          <div class="met-item-title">Eficiente — ROI acima de 3×</div>
+          <div class="met-item-desc">Para cada R$ 1,00 gasto com esta bolsa, o Broadcast gera <b>mais de R$ 3,00 em receita de cotações</b> associada. A bolsa está gerando retorno sólido sobre o custo de licença — pricing adequado ou alta demanda dos clientes por este mercado.</div>
+        </div>
+        <div class="met-item">
+          <div class="met-item-icon">🟡</div>
+          <div class="met-item-title">Razoável — ROI entre 1,5× e 3×</div>
+          <div class="met-item-desc">A bolsa cobre seu custo e gera margem, mas com <b>retorno moderado</b>. Pode haver espaço para aumentar o número de usuários/contratos dessa bolsa, rever o preço cobrado ao cliente, ou renegociar o contrato com o fornecedor.</div>
+        </div>
+        <div class="met-item">
+          <div class="met-item-icon">🔴</div>
+          <div class="met-item-title">Revisar — ROI abaixo de 1,5×</div>
+          <div class="met-item-desc">A receita gerada por esta bolsa é <b>menos de 1,5× o seu custo</b>. A margem de contribuição é baixa. Recomenda-se revisar: número de usuários ativos, precificação do pacote que inclui esta bolsa, ou viabilidade de manter o contrato com o fornecedor.</div>
+        </div>
+      </div>
+      <hr class="met-divider">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="met-footer">
+          <b>📐 Fórmula do ROI Dados:</b> ROI = Receita de Cotações Associada ÷ Custo da Bolsa. A receita associada é calculada proporcionalmente ao custo da bolsa sobre o total de custos variáveis (R$ 2,06M), aplicado sobre a receita total de cotações (R$ 2,61M). Um ROI de 2,0× significa que cada real investido na bolsa retorna R$ 2,00 em receita.
+        </div>
+        <div class="met-footer">
+          <b>⚠ Limitação:</b> O ROI aqui mede apenas a receita de <em>cotações</em> — não captura o valor indireto que uma bolsa gera ao viabilizar outros serviços do pacote (noticiário, análises, agro). Bolsas como BM&FBOVESPA podem ter ROI aparentemente baixo por serem insumo de produtos mais amplos. Use como sinal de atenção, não como decisão definitiva de corte.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="g2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--green)"></span>Usuários Estimados vs. Custo por Bolsa</div>
+      <div class="chart-wrap" id="chartUsersVsCost"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--purple)"></span>Custo por Usuário / Contrato por Bolsa</div>
+      <div class="chart-wrap" id="chartCostPerUser"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--amber)"></span>Bolsas — Consumo de Usuários e Custo Unitário</div>
+    <div class="twrap">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Bolsa / Fornecedor</th><th class="r">Tipo</th>
+          <th class="r">Custo Mai/26</th><th class="r">Usuários Est.</th>
+          <th class="r">Custo / Usuário</th><th class="r">Rec. Cotações Assoc.</th>
+          <th class="r">ROI Dados</th><th>Eficiência</th>
+        </tr></thead>
+        <tbody id="tbUsers"></tbody>
+      </table>
+    </div>
+    <div class="fn">* Usuários estimados = contratos ativos de Cotações ponderados pela participação de receita de cada bolsa. ROI Dados = Receita Cotações / Custo da Bolsa.</div>
+  </div>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────
+const totalReceita = 16820975.04;
+const recCotacoes  =  2606516.21;
+const totalDespVar =  2060479.10;
+const totalDespFix =   713573.52;
+const totalDesp    = totalDespVar + totalDespFix;
+
+const produtos = [
+  {n:'BROADCAST+',          r:13757179.20, cl:2413, ct:11482, cs:0.157},
+  {n:'BROADCAST+ AGRO',     r:802960.95,   cl:488,  ct:1059,  cs:0.393},
+  {n:'BROADCAST DATAFEED',  r:495796.27,   cl:81,   ct:100,   cs:0.052},
+  {n:'BROADCAST LINK',      r:394992.55,   cl:37,   ct:59,    cs:0},
+  {n:'BROADCAST WEB',       r:368302.18,   cl:2,    ct:442,   cs:0.001},
+  {n:'BROADCAST TICKER',    r:327839.92,   cl:7,    ct:7,     cs:0.051},
+  {n:'PAINEL CORPORATIVO',  r:126894.70,   cl:10,   ct:20,    cs:0.197},
+  {n:'BROADCAST OTC',       r:110265.00,   cl:4,    ct:103,   cs:0},
+  {n:'BROADCAST WHITE LBL', r:91029.37,    cl:4,    ct:510,   cs:0.365},
+  {n:'BCAST LINK ANTIGO',   r:79692.11,    cl:3,    ct:4,     cs:0},
+  {n:'BCAST WEB TN AGORA',  r:60645.15,    cl:1,    ct:303,   cs:0},
+  {n:'BROADCAST FACTSET',   r:56125.23,    cl:11,   ct:14,    cs:0},
+  {n:'BCAST WEB AGRO',      r:40534.10,    cl:0,    ct:0,     cs:0.30},
+  {n:'BROADCAST POLÍTICO',  r:35216.24,    cl:18,   ct:51,    cs:0},
+];
+
+const bolsasVar = [
+  {n:'BM&FBOVESPA', c:1257046.92},
+  {n:'CME Group',   c:402500.52},
+  {n:'ICE',         c:253140.31},
+  {n:'Nasdaq',      c:51731.06},
+  {n:'NYSE',        c:34517.89},
+  {n:'FTSE',        c:27208.66},
+  {n:'Euronext',    c:20454.30},
+  {n:'Deutsche B.', c:7921.92},
+  {n:'CBOE',        c:5187.32},
+  {n:'LME',         c:771.20},
+];
+const plataformaFix = [
+  {n:'IDC',          c:199550.28},
+  {n:'CME (fix)',    c:70754.80},
+  {n:'CEPEA-FEALQ', c:57484.88},
+  {n:'NYSE (fix)',   c:45443.08},
+  {n:'ICE (fix)',    c:40954.41},
+  {n:'UP2Data B3',   c:35498.56},
+  {n:'FENICS',       c:34671.53},
+  {n:'ANBIMA',       c:33228.74},
+  {n:'Nasdaq (fix)', c:30901.34},
+  {n:'Trading Ec.',  c:24112.95},
+  {n:'Outros fix.',  c:140972.95},
+];
+
+const contratosCotas = 6057; // B+(5476)+AGRO(474)+WHITE(100)+TICKER(7)
+
+// Compute produto data
+const pd = produtos.map(p => {
+  const recCot  = p.r * p.cs;
+  const fracCot = recCot / recCotacoes;
+  const cBolsas = fracCot * totalDespVar;
+  const cFix    = (p.r / totalReceita) * totalDespFix;
+  const cTot    = cBolsas + cFix;
+  const margem  = p.r - cTot;
+  const pctC    = cTot / p.r;
+  return {...p, cBolsas, cFix, cTot, margem, pctC};
+}).sort((a,b)=>b.r-a.r);
+
+// ── FORMAT ───────────────────────────────────────────────────────────
+function fR(v){
+  if(v===null||isNaN(v))return'–';
+  const s=v<0?'-':'';
+  const a=Math.abs(v);
+  if(a>=1e6)return s+'R$ '+(a/1e6).toFixed(2).replace('.',',')+'M';
+  if(a>=1e3)return s+'R$ '+(a/1e3).toFixed(1).replace('.',',')+'K';
+  return s+'R$ '+a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function pct(v){return(v*100).toFixed(1)+'%'}
+
+const PAL=['#00e5a0','#0099ff','#ff6b35','#c77dff','#ffd43b','#00c5cc','#ff4d6d','#69db7c','#ffa94d','#748ffc','#f06595','#4dabf7','#a9e34b','#da77f2'];
+
+// ── SVG HORIZONTAL BAR ───────────────────────────────────────────────
+function svgHBar(containerId, rows, opts){
+  // rows: [{label, val, color, val2?, color2?}]
+  // opts: {width, barH, gap, labelW, valW, maxVal, grouped}
+  const W = opts.width||700, bH=opts.barH||16, gap=opts.gap||8;
+  const lW=opts.labelW||130, vW=opts.valW||80, pad=12;
+  const maxV = opts.maxVal || Math.max(...rows.map(r=>Math.max(r.val, r.val2||0)));
+  const chartW = W - lW - vW - pad*2;
+  const rowH = opts.grouped ? bH*2+4+gap : bH+gap;
+  const H = rows.length*rowH + 24;
+
+  let svg = `<svg class="svg-chart" viewBox="0 0 ${W} ${H}" style="max-width:100%">`;
+
+  rows.forEach((row,i)=>{
+    const y0 = i*rowH;
+    const bW1 = Math.max(0,(row.val/maxV)*chartW);
+    const bW2 = row.val2!=null ? Math.max(0,(row.val2/maxV)*chartW) : 0;
+    const x0  = lW+pad;
+
+    // label
+    svg+=`<text x="${lW-4}" y="${y0+(opts.grouped?bH:bH/2)+5}" text-anchor="end" class="bar-label" font-size="10" fill="var(--muted)">${row.label}</text>`;
+
+    // bar1
+    svg+=`<rect x="${x0}" y="${y0}" width="${bW1}" height="${bH}" rx="3" fill="${row.color}88"/>`;
+    svg+=`<rect x="${x0}" y="${y0}" width="${bW1}" height="${bH}" rx="3" fill="none" stroke="${row.color}" stroke-width="1.2"/>`;
+
+    // bar2
+    if(opts.grouped && row.val2!=null){
+      const c2=row.color2||'#c77dff';
+      svg+=`<rect x="${x0}" y="${y0+bH+3}" width="${bW2}" height="${bH}" rx="3" fill="${c2}66"/>`;
+      svg+=`<rect x="${x0}" y="${y0+bH+3}" width="${bW2}" height="${bH}" rx="3" fill="none" stroke="${c2}" stroke-width="1.2"/>`;
+    }
+
+    // value
+    svg+=`<text x="${x0+Math.max(bW1,bW2)+6}" y="${y0+(opts.grouped?bH:bH/2)+5}" class="bar-val" font-size="10" fill="var(--text)">${fR(row.val)}</text>`;
+    if(opts.grouped && row.val2!=null)
+      svg+=`<text x="${x0+Math.max(bW1,bW2)+6}" y="${y0+bH*2+2}" font-size="10" fill="var(--muted)">${fR(row.val2)}</text>`;
+  });
+
+  // axis
+  svg+=`<line x1="${lW+pad}" y1="${H-2}" x2="${lW+pad+chartW}" y2="${H-2}" stroke="var(--bord)" stroke-width="1"/>`;
+  svg+=`</svg>`;
+  document.getElementById(containerId).innerHTML=svg;
+}
+
+function svgVBar(containerId, rows, opts){
+  // vertical bars for % chart
+  const W=opts.width||700, bW=opts.barW||30, gap=opts.gap||14, maxV=opts.maxVal||100;
+  const H=opts.height||220, padB=32, padT=16;
+  const chartH=H-padB-padT;
+  const totalW=rows.length*(bW+gap)+gap;
+  const svgW=Math.max(W,totalW);
+
+  let svg=`<svg class="svg-chart" viewBox="0 0 ${svgW} ${H}" style="max-width:100%">`;
+
+  // avg line
+  if(opts.avgLine!=null){
+    const avgY=padT+chartH*(1-opts.avgLine/maxV);
+    svg+=`<line x1="0" x2="${svgW}" y1="${avgY}" y2="${avgY}" stroke="var(--red)" stroke-width="1.2" stroke-dasharray="5,4"/>`;
+    svg+=`<text x="4" y="${avgY-4}" font-size="9" fill="var(--red)">média ${(opts.avgLine).toFixed(1)}%</text>`;
+  }
+
+  rows.forEach((row,i)=>{
+    const x0=gap+i*(bW+gap);
+    const bH=Math.max(2,(row.val/maxV)*chartH);
+    const y0=padT+chartH-bH;
+    svg+=`<rect x="${x0}" y="${y0}" width="${bW}" height="${bH}" rx="3" fill="${row.color}88"/>`;
+    svg+=`<rect x="${x0}" y="${y0}" width="${bW}" height="${bH}" rx="3" fill="none" stroke="${row.color}" stroke-width="1.2"/>`;
+    svg+=`<text x="${x0+bW/2}" y="${y0-4}" text-anchor="middle" font-size="9" fill="${row.color}">${row.val.toFixed(0)}%</text>`;
+    // label rotated
+    svg+=`<text transform="translate(${x0+bW/2+4},${H-4}) rotate(-40)" text-anchor="end" font-size="9" fill="var(--muted)">${row.label}</text>`;
+  });
+
+  svg+=`<line x1="0" y1="${padT+chartH}" x2="${svgW}" y2="${padT+chartH}" stroke="var(--bord)" stroke-width="1"/>`;
+  svg+=`</svg>`;
+  document.getElementById(containerId).innerHTML=svg;
+}
+
+// ── LEGEND ───────────────────────────────────────────────────────────
+function legend(el, items){
+  el.insertAdjacentHTML('beforeend',
+    `<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;font-size:10px;color:var(--muted)">
+    ${items.map(it=>`<span style="display:flex;align-items:center;gap:5px">
+      <span style="width:10px;height:10px;border-radius:2px;background:${it.c};display:inline-block"></span>${it.l}</span>`).join('')}
+    </div>`);
+}
+
+// ── BUILD CHARTS ─────────────────────────────────────────────────────
+
+// 1) Bar: Receita vs Custo
+const geralEl=document.getElementById('chartBarGeral');
+legend(geralEl,[{c:'#00e5a0',l:'Receita'},{c:'#ff4d6d',l:'Custo Dados'}]);
+svgHBar('chartBarGeral',pd.map(p=>({
+  label:p.n.replace('BROADCAST ','B.').replace('BROADCAST+','B+').substring(0,14),
+  val:p.r, color:'#00e5a0', val2:p.cTot, color2:'#ff4d6d'
+})),{width:700,barH:13,gap:5,labelW:120,grouped:true,maxVal:pd[0].r*1.05});
+
+// 2) % custo
+const pctEl=document.getElementById('chartPctCusto');
+svgVBar('chartPctCusto',pd.map(p=>({
+  label:p.n.replace('BROADCAST ','B.').replace('BROADCAST+','B+').substring(0,11),
+  val:p.pctC*100,
+  color:p.pctC>0.25?'#ff4d6d':p.pctC>0.165?'#ffd43b':'#00e5a0'
+})),{width:700,barW:38,gap:10,maxVal:50,height:240,avgLine:16.5});
+
+// 3) Pie despesas — horizontal bars como substituto visual
+(function(){
+  const el=document.getElementById('chartPieDesp');
+  const items=[
+    {n:'BM&FBOVESPA (var)', v:1257046.92},
+    {n:'CME Group (var+fix)',v:473255.32},
+    {n:'ICE (var+fix)',      v:294094.72},
+    {n:'IDC (fix)',          v:199550.28},
+    {n:'Nasdaq (var+fix)',   v:82632.40},
+    {n:'CEPEA-FEALQ',       v:57484.88},
+    {n:'FENICS',            v:34671.53},
+    {n:'ANBIMA',            v:33228.74},
+    {n:'NYSE (var+fix)',    v:79960.97},
+    {n:'Demais',            v:totalDesp-1257046.92-473255.32-294094.72-199550.28-82632.40-57484.88-34671.53-33228.74-79960.97},
+  ].sort((a,b)=>b.v-a.v);
+  const maxV=items[0].v;
+  let html=`<div style="display:flex;flex-direction:column;gap:7px;padding:4px 0">`;
+  items.forEach((it,i)=>{
+    const w=(it.v/maxV*100).toFixed(1);
+    const pctTot=(it.v/totalDesp*100).toFixed(1);
+    html+=`<div style="display:flex;align-items:center;gap:10px;font-size:11px">
+      <div style="width:120px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0">${it.n}</div>
+      <div style="flex:1;height:7px;background:var(--bord);border-radius:4px;overflow:hidden"><div style="width:${w}%;height:100%;background:${PAL[i]};border-radius:4px"></div></div>
+      <div style="width:70px;text-align:right;font-family:monospace;color:var(--text)">${fR(it.v)}</div>
+      <div style="width:36px;text-align:right;color:var(--muted);font-size:10px">${pctTot}%</div>
+    </div>`;
+  });
+  html+=`</div>`;
+  el.innerHTML=html;
+})();
+
+// 4) Margem de contribuição
+const margEl=document.getElementById('chartMargem');
+legend(margEl,[{c:'#00e5a0',l:'Margem positiva'},{c:'#ff4d6d',l:'Margem negativa'}]);
+svgHBar('chartMargem',pd.map(p=>({
+  label:p.n.replace('BROADCAST ','B.').replace('BROADCAST+','B+').substring(0,14),
+  val:p.margem,
+  color:p.margem>0?'#00e5a0':'#ff4d6d'
+})),{width:700,barH:14,gap:6,labelW:120,maxVal:pd[0].margem*1.05});
+
+// ── TABLE PRODUTO ─────────────────────────────────────────────────────
+(function(){
+  const tb=document.getElementById('tbProd');
+  pd.forEach((p,i)=>{
+    const sc=p.pctC>0.30?'neg':p.pctC>0.18?'warn':'ok';
+    const st=p.pctC>0.30?'Alto custo':p.pctC>0.18?'Atenção':'Saudável';
+    tb.innerHTML+=`<tr>
+      <td><span class="rank">${i+1}</span></td>
+      <td style="font-weight:600;white-space:nowrap">${p.n}</td>
+      <td class="r mono">${fR(p.r)}</td>
+      <td class="r">${pct(p.r/totalReceita)}</td>
+      <td class="r mono" style="color:var(--orange)">${fR(p.cBolsas)}</td>
+      <td class="r mono" style="color:var(--purple)">${fR(p.cFix)}</td>
+      <td class="r mono" style="color:var(--red);font-weight:700">${fR(p.cTot)}</td>
+      <td class="r mono" style="color:${p.margem>0?'var(--green)':'var(--red)'};font-weight:700">${fR(p.margem)}</td>
+      <td class="r">${pct(p.pctC)}</td>
+      <td class="r">${p.cl.toLocaleString('pt-BR')}</td>
+      <td class="r">${p.ct.toLocaleString('pt-BR')}</td>
+      <td><span class="pill ${sc}">${st}</span></td>
+    </tr>`;
+  });
+  // total
+  const sR=pd.reduce((a,b)=>a+b.r,0), sCB=pd.reduce((a,b)=>a+b.cBolsas,0);
+  const sCF=pd.reduce((a,b)=>a+b.cFix,0), sCT=pd.reduce((a,b)=>a+b.cTot,0);
+  const sM=pd.reduce((a,b)=>a+b.margem,0), sCl=pd.reduce((a,b)=>a+b.cl,0), sCt=pd.reduce((a,b)=>a+b.ct,0);
+  tb.innerHTML+=`<tr class="tot">
+    <td></td><td>TOTAL</td>
+    <td class="r mono">${fR(sR)}</td><td class="r">100%</td>
+    <td class="r mono" style="color:var(--orange)">${fR(sCB)}</td>
+    <td class="r mono" style="color:var(--purple)">${fR(sCF)}</td>
+    <td class="r mono" style="color:var(--red)">${fR(sCT)}</td>
+    <td class="r mono" style="color:var(--green)">${fR(sM)}</td>
+    <td class="r">${pct(sCT/sR)}</td>
+    <td class="r">${sCl.toLocaleString('pt-BR')}</td>
+    <td class="r">${sCt.toLocaleString('pt-BR')}</td>
+    <td></td>
+  </tr>`;
+})();
+
+// ── BOLSAS TAB ────────────────────────────────────────────────────────
+// Stacked bar por produto
+const bpEl=document.getElementById('chartBolsasProd');
+legend(bpEl,[{c:'#ff6b35',l:'Custo Bolsas (var.)'},{c:'#c77dff',l:'Custo Fix. Plataforma'}]);
+svgHBar('chartBolsasProd',pd.map(p=>({
+  label:p.n.replace('BROADCAST ','B.').replace('BROADCAST+','B+').substring(0,14),
+  val:p.cBolsas, color:'#ff6b35', val2:p.cFix, color2:'#c77dff'
+})),{width:700,barH:13,gap:5,labelW:120,grouped:true,maxVal:Math.max(...pd.map(p=>p.cBolsas+p.cFix))*1.1});
+
+// Lista bolsas
+(function(){
+  const el=document.getElementById('bolsasList');
+  const maxV=bolsasVar[0].c;
+  let html=`<div style="display:flex;flex-direction:column;gap:6px">`;
+  bolsasVar.forEach((b,i)=>{
+    const w=(b.c/maxV*100).toFixed(1);
+    html+=`<div style="display:flex;align-items:center;gap:10px;font-size:11px">
+      <div style="width:95px;color:var(--muted);flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.n}</div>
+      <div style="flex:1;height:7px;background:var(--bord);border-radius:4px;overflow:hidden"><div style="width:${w}%;height:100%;background:${PAL[i]};border-radius:4px"></div></div>
+      <div style="width:80px;text-align:right;font-family:monospace">${fR(b.c)}</div>
+    </div>`;
+  });
+  html+=`<div style="margin-top:10px;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;border-top:1px solid var(--bord);padding-top:8px">Custos Fixos de Plataforma</div>`;
+  plataformaFix.slice(0,8).forEach((b,i)=>{
+    const w=(b.c/plataformaFix[0].c*100).toFixed(1);
+    html+=`<div style="display:flex;align-items:center;gap:10px;font-size:11px">
+      <div style="width:95px;color:var(--muted);flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.n}</div>
+      <div style="flex:1;height:7px;background:var(--bord);border-radius:4px;overflow:hidden"><div style="width:${w}%;height:100%;background:${PAL[(i+5)%14]}88;border-radius:4px"></div></div>
+      <div style="width:80px;text-align:right;font-family:monospace">${fR(b.c)}</div>
+    </div>`;
+  });
+  html+=`</div>`;
+  el.innerHTML=html;
+})();
+
+// Matriz bolsa × produto
+(function(){
+  const tb=document.getElementById('tblMatriz');
+  const tB=bolsasVar.slice(0,6), tP=pd.slice(0,6);
+  let html=`<thead><tr><th>Bolsa</th>`;
+  tP.forEach(p=>html+=`<th class="r" style="font-size:9px">${p.n.replace('BROADCAST ','B.').replace('BROADCAST+','B+').substring(0,12)}</th>`);
+  html+=`<th class="r">Total Bolsa</th></tr></thead><tbody>`;
+  tB.forEach((b,bi)=>{
+    html+=`<tr><td style="font-weight:600;font-size:11px">${b.n}</td>`;
+    tP.forEach(p=>{
+      const frac=(p.r*p.cs)/recCotacoes;
+      const val=frac*b.c;
+      html+=`<td class="r mono" style="font-size:11px;color:${val>5000?'var(--orange)':val>500?'var(--text)':'var(--muted)'}">${val>100?fR(val):'–'}</td>`;
+    });
+    html+=`<td class="r mono" style="font-weight:700;color:var(--orange)">${fR(b.c)}</td></tr>`;
+  });
+  html+=`</tbody>`;
+  tb.innerHTML=html;
+})();
+
+// ── USUARIOS TAB ──────────────────────────────────────────────────────
+const bolsasU=bolsasVar.map(b=>{
+  const share=b.c/totalDespVar;
+  const users=Math.round(share*contratosCotas);
+  const cpu=users>0?b.c/users:null;
+  const recA=share*recCotacoes;
+  const roi=recA/b.c;
+  return{...b,users,cpu,recA,roi};
+});
+
+// Users vs cost
+const uvEl=document.getElementById('chartUsersVsCost');
+legend(uvEl,[{c:'#0099ff',l:'Usuários estimados (eixo dir.)'},{c:'#ff6b35',l:'Custo (R$)'}]);
+svgHBar('chartUsersVsCost',bolsasU.map(b=>({
+  label:b.n.substring(0,13),
+  val:b.c, color:'#ff6b35',
+  val2:null
+})),{width:680,barH:14,gap:6,labelW:110,maxVal:bolsasU[0].c*1.1});
+
+// Cost per user
+(function(){
+  const el=document.getElementById('chartCostPerUser');
+  svgHBar('chartCostPerUser',bolsasU.map((b,i)=>({
+    label:b.n.substring(0,13),
+    val:b.cpu||0,
+    color:PAL[i]
+  })),{width:680,barH:14,gap:6,labelW:110,maxVal:Math.max(...bolsasU.map(b=>b.cpu||0))*1.1});
+})();
+
+// Users table
+(function(){
+  const tb=document.getElementById('tbUsers');
+  bolsasU.forEach((b,i)=>{
+    const sc=b.roi>3?'ok':b.roi>1.5?'warn':'neg';
+    const st=b.roi>3?'Eficiente':b.roi>1.5?'Razoável':'Revisar';
+    tb.innerHTML+=`<tr>
+      <td><span class="rank">${i+1}</span></td>
+      <td style="font-weight:600;font-size:11px">${b.n}</td>
+      <td class="r"><span class="pill neu">Variável</span></td>
+      <td class="r mono" style="color:var(--orange)">${fR(b.c)}</td>
+      <td class="r mono" style="color:var(--blue)">${b.users.toLocaleString('pt-BR')}</td>
+      <td class="r mono">${b.cpu?'R$ '+b.cpu.toFixed(2).replace('.',','):'–'}</td>
+      <td class="r mono" style="color:var(--green)">${fR(b.recA)}</td>
+      <td class="r" style="font-weight:700;color:${b.roi>2?'var(--green)':b.roi>1?'var(--amber)':'var(--red)'}">${b.roi.toFixed(1)}×</td>
+      <td><span class="pill ${sc}">${st}</span></td>
+    </tr>`;
+  });
+  tb.innerHTML+=`<tr class="tot">
+    <td></td>
+    <td style="font-size:11px">Custos Fixos Plataforma</td>
+    <td class="r"><span class="pill neu">Fixo</span></td>
+    <td class="r mono" style="color:var(--purple)">${fR(totalDespFix)}</td>
+    <td class="r" style="color:var(--muted)">– (todos produtos)</td>
+    <td class="r" style="color:var(--muted)">–</td>
+    <td class="r" style="color:var(--muted)">–</td>
+    <td class="r" style="color:var(--muted)">–</td>
+    <td><span class="pill neu">Distribuído</span></td>
+  </tr>`;
+})();
+
+// ── UI ────────────────────────────────────────────────────────────────
+function toggleMetProd(header){
+  const body=header.nextElementSibling;
+  const chev=header.querySelector('.metbox-chevron');
+  const isOpen=body.style.display==='block';
+  body.style.display=isOpen?'none':'block';
+  header.classList.toggle('open',!isOpen);
+  chev.classList.toggle('open',!isOpen);
+}
+function toggleMet(header){
+  const body=document.getElementById('metBody');
+  const chev=document.getElementById('metChevron');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  header.classList.toggle('open',!isOpen);
+  chev.classList.toggle('open',!isOpen);
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleTheme(){
+  const l=document.body.classList.toggle('light');
+  document.getElementById('toggle').textContent=l?'☀️':'🌙';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheatsheet de Fees — Bolsas e Fornecedores</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F7F6F3; --surface: #FFFFFF; --surface2: #F0EFE9; --surface3: #E8E7E1;
+    --border: rgba(0,0,0,0.08); --border-med: rgba(0,0,0,0.14);
+    --text: #1A1916; --text-2: #6B6960; --text-3: #9A9890;
+    --blue: #1A56A0; --blue-light: #E6EFF9;
+    --purple: #4F45B0; --purple-light: #EDECF9;
+    --green: #2A7A4B; --green-bg: #E8F5EE;
+    --amber: #8A5A0A; --amber-bg: #FBF0D8;
+    --red: #B03030; --red-bg: #FAE8E8;
+    --font: 'Inter', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 13px; line-height: 1.45; }
+
+  /* ── HEADER ── */
+  .header { background: var(--surface); border-bottom: 1px solid var(--border-med); padding: 18px 28px 0; }
+  .header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+  .header-brand { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+  .header-title { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+  .header-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  .header-meta { font-size: 11px; color: var(--text-3); font-family: var(--mono); text-align: right; }
+  .header-meta strong { color: var(--text-2); }
+  .controls { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-bottom: 14px; flex-wrap: wrap; }
+  .search-input { padding: 7px 10px 7px 32px; background: var(--surface2); border: 1px solid var(--border-med); border-radius: 7px; font-family: var(--font); font-size: 12px; color: var(--text); outline: none; width: 220px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%239A9890' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 9px center; }
+  .search-input:focus { border-color: var(--blue); }
+  .fp { padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border-med); background: var(--surface); color: var(--text-2); transition: all .12s; user-select: none; }
+  .fp.active { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .hint { font-size: 11px; color: var(--text-3); margin-left: auto; }
+  .theme-btn { background: var(--surface2); border: 1px solid var(--border-med); border-radius: 7px; padding: 5px 11px; font-family: var(--font); font-size: 12px; font-weight: 500; color: var(--text-2); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all .12s; white-space: nowrap; }
+  .theme-btn:hover { background: var(--surface3); color: var(--text); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer { background: var(--amber-bg); border-left: 3px solid var(--amber); padding: 10px 16px; font-size: 11.5px; color: var(--amber); margin: 0; display: flex; gap: 8px; align-items: flex-start; }
+
+  /* ── MAIN ── */
+  .main { padding: 20px 28px 32px; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 28px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .section-flag { font-size: 20px; line-height: 1; }
+  .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-2); }
+  .section-count { font-size: 11px; color: var(--text-3); background: var(--surface2); padding: 2px 8px; border-radius: 10px; }
+  .section-divider { height: 1px; background: var(--border-med); flex: 1; }
+
+  /* ── GRID DE COLUNAS ── */
+  .cols-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 10px;
+  }
+
+  /* ── CARD ── */
+  .fee-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: box-shadow .12s; }
+  .fee-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.08); }
+  .fee-card[data-hidden="true"] { display: none; }
+
+  /* cabeçalho do card */
+  .card-head { padding: 10px 12px 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .card-flag { font-size: 18px; line-height: 1; flex-shrink: 0; }
+  .card-name { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; line-height: 1.2; }
+  .card-region { font-size: 10px; color: var(--text-3); font-weight: 500; margin-top: 1px; }
+  .tag-row { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tag { font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: .03em; white-space: nowrap; }
+  .tag-var { background: var(--blue-light); color: var(--blue); }
+  .tag-fix { background: var(--purple-light); color: var(--purple); }
+  .tag-pub { background: var(--green-bg); color: var(--green); }
+  .tag-neg { background: var(--amber-bg); color: var(--amber); }
+
+  /* linhas de fee */
+  .fee-rows { padding: 0; }
+  .fee-row { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; padding: 7px 12px; border-bottom: 1px solid var(--border); }
+  .fee-row:last-child { border-bottom: none; }
+  .fee-icon { width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+  .fi-r { background: var(--blue-light); }
+  .fi-u { background: var(--green-bg); }
+  .fi-a { background: var(--purple-light); }
+  .fee-content { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; min-width: 0; }
+  .fee-label { font-size: 11px; color: var(--text-2); line-height: 1.35; flex: 1; min-width: 0; }
+  .fee-label strong { display: block; font-size: 11px; color: var(--text); font-weight: 600; margin-bottom: 1px; }
+  .fee-val-block { text-align: right; flex-shrink: 0; }
+  .fee-val { font-family: var(--mono); font-size: 11.5px; font-weight: 600; color: var(--text); white-space: nowrap; }
+  .fee-unit { font-size: 9.5px; color: var(--text-3); display: block; margin-top: 1px; }
+  .fee-src { font-size: 9.5px; font-weight: 600; display: block; margin-top: 2px; }
+  .src-pub { color: var(--green); }
+  .src-neg { color: var(--amber); }
+
+  /* rodapé do card */
+  .card-foot { padding: 7px 12px 8px; background: var(--surface2); font-size: 10.5px; color: var(--text-3); line-height: 1.4; border-top: 1px solid var(--border); }
+  .card-foot a { color: var(--blue); text-decoration: none; font-weight: 500; }
+  .card-foot a:hover { text-decoration: underline; }
+
+  /* ── DARK MODE ── */
+  body.dark {
+    --bg:#141412; --surface:#1E1D1A; --surface2:#28271F; --surface3:#323028;
+    --border:rgba(255,255,255,0.07); --border-med:rgba(255,255,255,0.13);
+    --text:#F0EFE9; --text-2:#A09E96; --text-3:#6B6960;
+    --blue:#5B9FE0; --blue-light:#0D2A47;
+    --purple:#8A84D0; --purple-light:#1F1C40;
+    --green:#5AAF7A; --green-bg:#0E2A1A;
+    --amber:#D4A030; --amber-bg:#2A1E08;
+    --red:#E07070; --red-bg:#2E1010;
+  }
+
+  /* ── FOOTER ── */
+  .footer { border-top: 1px solid var(--border); padding: 12px 28px; font-size: 10.5px; color: var(--text-3); display: flex; justify-content: space-between; align-items: center; background: var(--surface); flex-wrap: wrap; gap: 6px; }
+
+  @media (max-width: 600px) {
+    .main, .header { padding-left: 14px; padding-right: 14px; }
+    .cols-grid { grid-template-columns: 1fr; }
+    .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-brand">Agência Estado · Broadcast — Referência Comercial</div>
+      <div class="header-title">Cheatsheet de Fees — Bolsas & Fornecedores</div>
+      <div class="header-sub">Redistribuição · Usuário/Terminal · API/Feed &nbsp;·&nbsp; Nacional e Internacional</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <div class="header-meta">2026 &nbsp;·&nbsp; Autor: <strong>Antonio Melo</strong><br>Fontes: políticas públicas + estimativas de mercado</div>
+      <button class="theme-btn" onclick="toggleTheme(this)"><span>🌙</span> Modo escuro</button>
+    </div>
+  </div>
+  <div class="controls">
+    <input class="search-input" type="text" id="searchInput" placeholder="Buscar bolsa…" oninput="filterAll()">
+    <span class="fp active" data-f="all"   onclick="setFilter('all',this)">Todas</span>
+    <span class="fp"        data-f="var"   onclick="setFilter('var',this)">Variável</span>
+    <span class="fp"        data-f="fix"   onclick="setFilter('fix',this)">Fixa</span>
+    <span class="fp"        data-f="pub"   onclick="setFilter('pub',this)">✓ Política pública</span>
+    <span class="hint" id="hint">17 bolsas/fornecedores</span>
+  </div>
+</div>
+
+<div class="disclaimer">
+  <span>⚠️</span>
+  <span><strong>Atenção:</strong> valores <strong style="color:var(--green)">✓ Política pública</strong> extraídos das tabelas oficiais vigentes 2026.
+  Valores <strong style="color:var(--amber)">~ Negociação contratual</strong> indicam que a bolsa não publica tabela aberta — confirmar com o contrato antes de usar em proposta.</span>
+</div>
+
+<div class="main" id="main"></div>
+
+<div class="footer">
+  <span>Agência Estado · Broadcast — Cheatsheet de Fees · 2026</span>
+  <span>Fontes: B3 Commercial Policy 2026 · CME Fee List Jan/2026 · NYSE Pricing Guide Mai/2026 · Nasdaq Price List 2026 · Euronext Fee Schedule Jan/2026 &nbsp;·&nbsp; <strong style="color:var(--amber)">Confirmar antes de usar em proposta</strong></span>
+</div>
+
+<script>
+function toggleTheme(btn) {
+  const d = document.body.classList.toggle('dark');
+  btn.innerHTML = d ? '<span>☀️</span> Modo claro' : '<span>🌙</span> Modo escuro';
+}
+
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+const data = {
+  nacional: [
+    {
+      name:'BM&FBOVESPA (B3)', flag:'🇧🇷', region:'Brasil — Renda Variável & Derivativos',
+      type:'var', srcType:'pub',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de Distribuição (Listed, RT)', val:'R$ 6.000 / USD 4.000', unit:'por dataset/mês', src:'pub', srcLabel:'✓ B3 Commercial Policy 2026', note:'Por dataset (Cash, Futures/FX, TPF, TP). Delayed Continuous: R$ 1.920 / USD 960.' },
+        { icon:'👤', cls:'fi-u', label:'Terminal Profissional — L1 (por dataset)', val:'R$ 145 / USD 97', unit:'por usuário/mês', src:'pub', srcLabel:'✓ B3 Commercial Policy 2026', note:'L2 Full Order Book: R$ 209 / USD 127. Não-profissional: R$ 1,86 / USD 0,93.' },
+        { icon:'⚡', cls:'fi-a', label:'Non-Display Trading (co-location)', val:'R$ 500 / USD 250', unit:'por app/mês (por dataset)', src:'pub', srcLabel:'✓ B3 Commercial Policy 2026', note:'Enterprise (Trading+Non-Trading): R$ 7.000. Enterprise Trading Platform: R$ 15.000.' },
+      ],
+      obs:'Maior custo da área (R$ 6,6M YTD 2026). Fee por dataset: Cash, Futures/FX, TPF e TP cobrados separadamente. Reporte mensal obrigatório à B3.',
+      url:'https://www.b3.com.br/en_us/market-data-and-indices/data-services/market-data/distributors/contracts-and-commercial-policy/'
+    },
+    {
+      name:'ANBIMA', flag:'🇧🇷', region:'Brasil — Renda Fixa Doméstica',
+      type:'fix', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ ANBIMA (contrato)', note:'Taxas indicativas de debêntures, CRI, CRA, LCI, LCA. Contrato específico com ANBIMA.' },
+        { icon:'👤', cls:'fi-u', label:'ANBIMA Data — portal', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ ANBIMA (contrato)', note:'Taxas indicativas, duration, yield curve, índices ANBIMA.' },
+        { icon:'⚡', cls:'fi-a', label:'ANBIMA Data API', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ ANBIMA (contrato)', note:'REST API cobrindo renda fixa doméstica. Essencial para marcação a mercado de fundos.' },
+      ],
+      obs:'Custo estável ~R$ 33K/mês. Essencial para gestores de fundos, assets e plataformas de investimento com renda fixa doméstica.',
+      url:'https://data.anbima.com.br'
+    },
+    {
+      name:'CEPEA-FEALQ', flag:'🇧🇷', region:'Brasil — Agronegócio',
+      type:'fix', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ CEPEA-FEALQ (contrato)', note:'Boi, soja, milho, açúcar, café, etanol, algodão. Redistribuição exige contrato com FEALQ/ESALQ-USP.' },
+        { icon:'👤', cls:'fi-u', label:'Acesso à plataforma CEPEA', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ CEPEA-FEALQ (contrato)', note:'Consultas diretas vs redistribuição são licenças diferentes.' },
+        { icon:'⚡', cls:'fi-a', label:'Feed de dados (CSV/XML diário)', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ CEPEA-FEALQ (contrato)', note:'Sem API REST padronizada. Entrega via arquivo. Frequência definida contratualmente.' },
+      ],
+      obs:'Custo estável ~R$ 57K/mês. Indispensável para clientes do agronegócio — tradings, cooperativas, empresas de alimentos.',
+      url:'https://www.cepea.esalq.usp.br'
+    },
+    {
+      name:'UP2Data (B3 Dados)', flag:'🇧🇷', region:'Brasil — Dados B3 Analíticos & Históricos',
+      type:'fix', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição UP2Data', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ UP2Data / B3 (contrato)', note:'Dados analíticos e históricos da B3 via subsidiária UP2Data. Exige contrato específico.' },
+        { icon:'👤', cls:'fi-u', label:'Plataforma UP2Data', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ UP2Data / B3 (contrato)', note:'Histórico de negócios, posições em aberto, dados de derivativos.' },
+        { icon:'⚡', cls:'fi-a', label:'UP2Data API', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ UP2Data / B3 (contrato)', note:'Complementa feed real-time da B3 com dados históricos e analíticos.' },
+      ],
+      obs:'📈 Crescimento +316% YTD 2026 vs 2025 (R$ 93K). Produto novo de alto potencial.',
+      url:'https://www.b3.com.br/en_us/market-data-and-indices/data-services/'
+    },
+    {
+      name:'IIFE', flag:'🇧🇷', region:'Brasil — Renda Fixa',
+      type:'fix', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ IIFE (contrato)', note:'Dados de renda fixa doméstica: CDBs, LCIs, debêntures. Complementar ao ANBIMA.' },
+        { icon:'👤', cls:'fi-u', label:'Acesso à plataforma IIFE', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ IIFE (contrato)', note:'Taxas de emissão, estoque e fluxos de renda fixa.' },
+        { icon:'⚡', cls:'fi-a', label:'IIFE Feed/API', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ IIFE (contrato)', note:'Verificar formato e frequência de atualização com o fornecedor.' },
+      ],
+      obs:'Custo estável ~R$ 10K/mês. Complementa ANBIMA para cobertura de renda fixa doméstica.',
+      url:null
+    },
+  ],
+  internacional: [
+    {
+      name:'CME Group', flag:'🇺🇸', region:'EUA — Futuros & Commodities',
+      type:'var', srcType:'pub',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Distribution License (Real-Time)', val:'USD 29.280', unit:'por exchange/ano (Licensee Group)', src:'pub', srcLabel:'✓ CME Fee List Jan/2026', note:'Por exchange (CME, CBOT, NYMEX, COMEX — cada um separado). Delayed: USD 21.840/ano.' },
+        { icon:'👤', cls:'fi-u', label:'Display Device — Professional (RT)', val:'USD 134,50', unit:'por device/mês', src:'pub', srcLabel:'✓ CME Fee List Jan/2026', note:'E-Mini (CME apenas): USD 73. Não-prof. Top of Book: USD 1,55. Bundle 4 exchanges: USD 36,50.' },
+        { icon:'⚡', cls:'fi-a', label:'Data Feed (Real-Time)', val:'USD 610', unit:'por data feed/mês', src:'pub', srcLabel:'✓ CME Fee List Jan/2026', note:'Non-Display Cat. A1 Enterprise ≥4 apps: USD 3.640/mês. Delayed feed: USD 304/mês.' },
+      ],
+      obs:'2º maior custo (R$ 1,97M YTD). Atenção: CME, CBOT, NYMEX e COMEX são cobrados separadamente. USD 29.280/ano ≈ USD 2.440/mês por exchange.',
+      url:'https://www.cmegroup.com/market-data/license-data/market-data-policy-education-center.html'
+    },
+    {
+      name:'ICE (Intercontinental Exchange)', flag:'🇺🇸', region:'EUA — Energia, FX, Crédito',
+      type:'var', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição ICE Futures', val:'Neg. contratual', unit:'por exchange/produto', src:'neg', srcLabel:'~ ICE Data (não publicado)', note:'ICE não publica tabela. Varia por exchange (ICE Europe, ICE US, ICE Endex) e classe de ativo. Contato: marketdata@theice.com' },
+        { icon:'👤', cls:'fi-u', label:'ICE Connect / View Only', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ ICE Data (não publicado)', note:'Acesso web real-time com depth of market. Precificação por assinatura não pública.' },
+        { icon:'⚡', cls:'fi-a', label:'ICE Global Network / Consolidated Feed', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ ICE Data (não publicado)', note:'Conectividade de baixa latência. Precificação por volume e número de exchanges.' },
+      ],
+      obs:'3º maior custo (R$ 1,24M YTD). Inclui NYSE e diversas subsidiárias. Contrato master via ICE Data Services cobre múltiplos produtos.',
+      url:'https://www.theice.com/market-data/agreements'
+    },
+    {
+      name:'Nasdaq', flag:'🇺🇸', region:'EUA — Renda Variável & Índices',
+      type:'var', srcType:'pub',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Nasdaq Depth Data — External Distribution', val:'USD 4.230', unit:'por distribuidor/mês', src:'pub', srcLabel:'✓ Nasdaq Price List 2026', note:'Internal Distribution: USD 1.690/mês. Direct Access: USD 3.340/mês. MDS License: USD 2.750/mês.' },
+        { icon:'👤', cls:'fi-u', label:'TotalView — Professional/Corporate', val:'USD 84,00', unit:'por subscriber/mês', src:'pub', srcLabel:'✓ Nasdaq Price List 2026', note:'Não-profissional: USD 15,00. Enhanced Display Solution Professional: USD 88,00.' },
+        { icon:'⚡', cls:'fi-a', label:'Non-Display (1–39 subs)', val:'USD 412', unit:'por subscriber/mês', src:'pub', srcLabel:'✓ Nasdaq Price List 2026', note:'40–99 subs: USD 16.490/firma. 250+ subs: USD 75.000/firma. Non-Display Platform: USD 5.480.' },
+      ],
+      obs:'Tabela pública com 3 anos (2025/2026/2027). NordPool/OMX (mercados escandinavos) têm tabela europeia separada.',
+      url:'https://www.nasdaqtrader.com/content/ProductsServices/PriceList/Nasdaq_US_Equities_Price_List_2025_2026_2027.pdf'
+    },
+    {
+      name:'NYSE (via ICE Data)', flag:'🇺🇸', region:'EUA — Renda Variável',
+      type:'var', srcType:'pub',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'NYSE Integrated — Redistribution Fee', val:'USD 4.400', unit:'por mês (External Redistrib.)', src:'pub', srcLabel:'✓ NYSE Pricing Guide Mai/2026', note:'Access Fee adicional: USD 8.400/mês. Multiple Datafeed Fee: USD 200/mês.' },
+        { icon:'👤', cls:'fi-u', label:'User Fee por produto (BBO, Trades, etc.)', val:'Consultar ICE Data', unit:'por usuário/mês', src:'neg', srcLabel:'~ NYSE Pricing Guide (ver nota)', note:'Pricing Guide lista fees por produto específico. Valor consolidado por usuário requer contato com ICE Data.' },
+        { icon:'⚡', cls:'fi-a', label:'Non-Display — por categoria de uso', val:'Consultar ICE Data', unit:'por mês', src:'neg', srcLabel:'~ NYSE Appendix (ver nota)', note:'Declaração anual obrigatória até 31/jan. Apêndice Non-Display do Pricing Guide cobre categorias.' },
+      ],
+      obs:'Gerenciado via ICE Data Services — mesmo contrato ICE. No SAP aparece separado de ICE, mas o contrato master é único.',
+      url:'https://www.nyse.com/data/real-time-market-data-subscriptions'
+    },
+    {
+      name:'FTSE Russell (LSEG)', flag:'🇬🇧', region:'Reino Unido — Índices Globais',
+      type:'both', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição de índices', val:'Neg. contratual', unit:'por índice redistribuído/mês', src:'neg', srcLabel:'~ LSEG/FTSE (não publicado)', note:'Fee baseado em: quais índices (FTSE 100, 250, Russell 2000…), frequência (RT vs EOD), tipo de uso.' },
+        { icon:'👤', cls:'fi-u', label:'Acesso a índices FTSE', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ LSEG/FTSE (não publicado)', note:'Acesso via LSEG Workspace (antigo Eikon) licenciado separadamente. Fee puro de índice FTSE não é publicado.' },
+        { icon:'⚡', cls:'fi-a', label:'FTSE Analytics / Feed API', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ LSEG/FTSE (não publicado)', note:'Disponível via LSEG ou feed direto. Precificação por conjunto de índices e frequência.' },
+      ],
+      obs:'⚡ Crescimento +385% YTD 2026 vs 2025 (R$ 133K). Novo contrato ampliou cobertura. Redistribuição exige lista de clientes que recebem o dado.',
+      url:'https://www.lseg.com/en/ftse-russell/data-and-services'
+    },
+    {
+      name:'Euronext', flag:'🇫🇷', region:'Europa Continental (7 mercados)',
+      type:'var', srcType:'pub',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Real-Time Data Redistribution Licence', val:'EUR (por produto)', unit:'por Information Product/mês', src:'pub', srcLabel:'✓ Euronext Fee Schedule Jan/2026', note:'Valores por produto (Continental Cash, Oslo, Dublin…). Novos redistributores: 50% desconto nos 12 primeiros meses.' },
+        { icon:'👤', cls:'fi-u', label:'Display Use Fee — Professional', val:'EUR (por mercado)', unit:'por usuário/mês', src:'pub', srcLabel:'✓ Euronext Fee Schedule Jan/2026', note:'Delayed data para uso interno é gratuita. Tabela completa no portal Connect (login gratuito).' },
+        { icon:'⚡', cls:'fi-a', label:'Non-Display — 4 categorias', val:'EUR (por categoria)', unit:'por mês', src:'pub', srcLabel:'✓ Euronext Fee Schedule Jan/2026', note:'Cat. 1: Trading Principal. Cat. 2: Broking/Agents. Cat. 3: Trading Platform. Cat. 4: Other. Fee Schedule v15.418.0 disponível publicamente.' },
+      ],
+      obs:'Cobre Amsterdam, Bruxelas, Dublin, Lisboa, Oslo, Paris e Milano. Fee Schedule público — valores específicos exigem login gratuito no portal Connect.',
+      url:'https://www.euronext.com/en/data/real-time-data/pricing-specs-agreements/market-data-pricing-policies'
+    },
+    {
+      name:'Deutsche Börse (Xetra/Eurex)', flag:'🇩🇪', region:'Alemanha',
+      type:'var', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição Xetra/Eurex', val:'Neg. contratual', unit:'por exchange/produto', src:'neg', srcLabel:'~ Deutsche Börse (restrito)', note:'Tabelas existem mas são restritas a membros. Separar Xetra (ações) de Eurex (derivativos) — contratos e preços distintos.' },
+        { icon:'👤', cls:'fi-u', label:'Terminal profissional Xetra', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ Deutsche Börse (restrito)', note:'Pacotes via DB1 Market Data & Services. Eurex tem fee específico para derivativos europeus.' },
+        { icon:'⚡', cls:'fi-a', label:'Deutsche Börse MDaS API', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ Deutsche Börse (restrito)', note:'Market Data + Services (MDaS). FIX/FAST feed via parceiros licenciados.' },
+      ],
+      obs:'Atenção: Xetra e Eurex têm custo muito diferente. Clientes com derivativos europeus têm fee Eurex adicional além do Xetra.',
+      url:'https://www.deutsche-boerse.com/dbg-en/market-data-and-indices'
+    },
+    {
+      name:'CBOE Global Markets', flag:'🇺🇸', region:'EUA — Opções & Volatilidade',
+      type:'var', srcType:'pub',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'External Distributor Fee — Cboe One Feed', val:'Consultar Cboe', unit:'por mês', src:'pub', srcLabel:'✓ Cboe Fee Schedule Jun/2026', note:'Novos External Distributors: sem cobrança nos primeiros 1–3 meses. Crédito: User Fees descontados até o limite do Distributor Fee.' },
+        { icon:'👤', cls:'fi-u', label:'User Fee — Professional/External', val:'Consultar Cboe', unit:'por usuário/mês', src:'pub', srcLabel:'✓ Cboe Fee Schedule Jun/2026', note:'Historical Depth Data: somente uso interno, redistribuição não permitida. User Fee cobre usuários internos e externos.' },
+        { icon:'⚡', cls:'fi-a', label:'Non-Display / ECDD API', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ Cboe Data Services', note:'ECDD: fee adicional para distribuidores com API aos assinantes. VIX real-time tem licença separada.' },
+      ],
+      obs:'VIX e índices de volatilidade licenciados separadamente. Fee schedule público mas valores exatos requerem login no portal Cboe.',
+      url:'https://www.cboe.com/us/equities/membership/fee_schedule/bzx/'
+    },
+    {
+      name:'LME (London Metal Exchange)', flag:'🇬🇧', region:'Reino Unido — Metais',
+      type:'var', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição LME', val:'Neg. contratual', unit:'por produto/mês', src:'neg', srcLabel:'~ LME/HKEX (não publicado)', note:'LMEselect e Official Prices com licenças separadas. Official Prices muito usadas em contratos físicos de metais.' },
+        { icon:'👤', cls:'fi-u', label:'Terminal profissional LME', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ LME/HKEX (não publicado)', note:'Acesso via LSEG Refinitiv ou plataformas aprovadas. Contato: data@lme.com' },
+        { icon:'⚡', cls:'fi-a', label:'LME Data API / Official Prices', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ LME/HKEX (não publicado)', note:'Nenhuma tabela pública disponível desde aquisição pela HKEX (2012).' },
+      ],
+      obs:'⚠️ Queda de -72% YTD 2026 vs 2025 (R$ 3,5K). Official Prices (cobre, alumínio, zinco, níquel) são referência mundial para contratos físicos de metais.',
+      url:'https://www.lme.com/en/market-data'
+    },
+    {
+      name:'IDC (ICE Data Connectivity)', flag:'🇺🇸', region:'EUA — Dados Avaliatórios',
+      type:'fix', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição IDC', val:'Neg. contratual', unit:'por dataset/classe de ativo', src:'neg', srcLabel:'~ ICE Data Services (não pub.)', note:'Evaluated pricing para renda fixa, ETFs, derivativos OTC. Pricing por dataset — não publicado.' },
+        { icon:'👤', cls:'fi-u', label:'Acesso a preços avaliatórios IDC', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ ICE Data Services (não pub.)', note:'EOD vs intraday evaluated pricing têm fees distintos. Essencial para marcação a mercado de fundos.' },
+        { icon:'⚡', cls:'fi-a', label:'ICE Data Services API', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ ICE Data Services (não pub.)', note:'REST API com dados avaliatórios, referência, curvas de yield. Contato: datasales@theice.com' },
+      ],
+      obs:'Maior custo fixo da área (R$ 1,02M YTD 2026). Fundamental para gestores de fundos, custodiantes e treasuries com renda fixa.',
+      url:'https://www.theice.com/market-data/pricing-and-evaluations'
+    },
+    {
+      name:'FENICS (BGC Partners)', flag:'🇺🇸', region:'EUA — FX & Renda Fixa Internacional',
+      type:'fix', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição FENICS MD', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ BGC/FENICS (contrato)', note:'US Treasuries, FX Spot, FX Options, NDF. Redistribuição exige aprovação BGC.' },
+        { icon:'👤', cls:'fi-u', label:'FENICS Market Data terminal', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ BGC/FENICS (contrato)', note:'Terminal para traders de FX e Treasuries. Cobre on/off-the-run US Treasuries, FX Spot, FX Options.' },
+        { icon:'⚡', cls:'fi-a', label:'FENICS Market Data API', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ BGC/FENICS (contrato)', note:'REST API + FIX. Parceria Broadcast × Fenics facilita acesso.' },
+      ],
+      obs:'⭐ Parceria estratégica Broadcast × Fenics ativa. Oportunidade para clientes de câmbio e renda fixa internacional. Crescimento forte (R$ 159K YTD 2026).',
+      url:'https://www.fenicsmktdata.com'
+    },
+    {
+      name:'SIX Financial Information', flag:'🇨🇭', region:'Suíça — Reference Data Global',
+      type:'fix', srcType:'neg',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Licença de redistribuição SIX', val:'Neg. contratual', unit:'por dataset/mês', src:'neg', srcLabel:'~ SIX Financial (contrato)', note:'Reference data (ISIN, VALOR, SEDOL), preços EOD, corporate actions. Renovação de addendum em andamento em 2026.' },
+        { icon:'👤', cls:'fi-u', label:'SIX iD — plataforma', val:'Neg. contratual', unit:'por usuário/mês', src:'neg', srcLabel:'~ SIX Financial (contrato)', note:'Identificadores, classificações, perfis de instrumento. Muito usado por back-offices e custodiantes.' },
+        { icon:'⚡', cls:'fi-a', label:'SIX Financial Data API', val:'Neg. contratual', unit:'por mês', src:'neg', srcLabel:'~ SIX Financial (contrato)', note:'SIX Exante Data API. Reference data, pricing, corporate actions.' },
+      ],
+      obs:'Renovação de addendum em andamento (2026). Reference data essencial para back-offices, custodiantes e plataformas de gestão de carteiras.',
+      url:'https://www.six-group.com/en/products-services/financial-information.html'
+    },
+    {
+      name:'Trading Economics', flag:'🌐', region:'Global — Macro & Indicadores',
+      type:'fix', srcType:'pub',
+      rows:[
+        { icon:'↔️', cls:'fi-r', label:'Enterprise Plan (redistribuição)', val:'USD 2.695+', unit:'por mês (Enterprise)', src:'pub', srcLabel:'✓ Trading Economics site oficial', note:'Business: USD 400/mês (1 usuário). Enterprise customizado a partir de ~USD 2.695/mês para redistribuição comercial.' },
+        { icon:'👤', cls:'fi-u', label:'Business Plan — por usuário', val:'USD 400', unit:'por usuário/mês', src:'pub', srcLabel:'✓ Trading Economics site oficial', note:'196 países, 20M+ indicadores macroeconômicos. Planos individuais a partir de USD 19,95/mês.' },
+        { icon:'⚡', cls:'fi-a', label:'Trading Economics API', val:'USD 350', unit:'por mês (API Basic)', src:'pub', srcLabel:'✓ Trading Economics site oficial', note:'REST API por número de chamadas e países. Enterprise: preço customizado para redistribuição.' },
+      ],
+      obs:'Crescimento forte em 2026 (R$ 139K YTD, do zero em 2025). Relevante para research macro, jornalismo econômico e gestores com exposição global.',
+      url:'https://tradingeconomics.com/pricing'
+    },
+  ]
+};
+
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+let activeFilter = 'all';
+
+function buildCard(ex) {
+  const typeLabel = ex.type === 'var' ? 'Variável' : ex.type === 'fix' ? 'Fixa' : 'Var+Fixa';
+  const typeCls   = ex.type === 'fix' ? 'tag-fix' : 'tag-var';
+  const srcTag    = ex.srcType === 'pub'
+    ? '<span class="tag tag-pub">✓ Pol. pública</span>'
+    : '<span class="tag tag-neg">~ Contratual</span>';
+
+  const rows = ex.rows.map(r => {
+    const srcCls = r.src === 'pub' ? 'src-pub' : 'src-neg';
+    return `<div class="fee-row">
+      <div class="fee-icon ${r.cls}">${r.icon}</div>
+      <div class="fee-content">
+        <div class="fee-label"><strong>${r.label}</strong>${r.note}</div>
+        <div class="fee-val-block">
+          <div class="fee-val">${r.val}</div>
+          <span class="fee-unit">${r.unit}</span>
+          <span class="fee-src ${srcCls}">${r.srcLabel}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const foot = `${ex.obs}${ex.url ? ` <a href="${ex.url}" target="_blank">→ Política oficial</a>` : ''}`;
+
+  const card = document.createElement('div');
+  card.className = 'fee-card';
+  card.dataset.name = ex.name.toLowerCase();
+  card.dataset.region = ex.region.toLowerCase();
+  card.dataset.type = ex.type;
+  card.dataset.src = ex.srcType;
+  card.innerHTML = `
+    <div class="card-head">
+      <span class="card-flag">${ex.flag}</span>
+      <div style="flex:1;min-width:0"><div class="card-name">${ex.name}</div><div class="card-region">${ex.region}</div></div>
+      <div class="tag-row"><span class="tag ${typeCls}">${typeLabel}</span>${srcTag}</div>
+    </div>
+    <div class="fee-rows">${rows}</div>
+    <div class="card-foot">${foot}</div>`;
+  return card;
+}
+
+function buildSection(key, label, flag, items) {
+  const sec = document.createElement('div');
+  sec.className = 'section';
+  sec.dataset.section = key;
+  sec.innerHTML = `<div class="section-header">
+    <span class="section-flag">${flag}</span>
+    <span class="section-title">${label}</span>
+    <span class="section-count" id="cnt-${key}">${items.length} itens</span>
+    <div class="section-divider"></div>
+  </div>
+  <div class="cols-grid" id="grid-${key}"></div>`;
+  document.getElementById('main').appendChild(sec);
+  const grid = sec.querySelector(`#grid-${key}`);
+  items.forEach(ex => grid.appendChild(buildCard(ex)));
+}
+
+buildSection('nacional',      'Nacional',      '🇧🇷', data.nacional);
+buildSection('internacional', 'Internacional', '🌐',  data.internacional);
+
+function filterAll() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let total = 0;
+  document.querySelectorAll('.fee-card').forEach(card => {
+    const matchQ   = !q || card.dataset.name.includes(q) || card.dataset.region.includes(q);
+    const matchF   = activeFilter === 'all'
+      || (activeFilter === 'var' && (card.dataset.type === 'var' || card.dataset.type === 'both'))
+      || (activeFilter === 'fix' && (card.dataset.type === 'fix' || card.dataset.type === 'both'))
+      || (activeFilter === 'pub' && card.dataset.src === 'pub');
+    const show = matchQ && matchF;
+    card.dataset.hidden = show ? 'false' : 'true';
+    if (show) total++;
+  });
+  // update section counts
+  ['nacional','internacional'].forEach(k => {
+    const visible = document.querySelectorAll(`#grid-${k} .fee-card:not([data-hidden="true"])`).length;
+    document.getElementById(`cnt-${k}`).textContent = visible + ' itens';
+    document.querySelector(`[data-section="${k}"]`).style.display = visible === 0 ? 'none' : '';
+  });
+  document.getElementById('hint').textContent = total + ' de ' + (data.nacional.length + data.internacional.length) + ' bolsas/fornecedores';
+}
+
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.fp').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  filterAll();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloomberg B-PIPE × Broadcast — Matriz Competitiva</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05080f;
+    --surface: #0a1020;
+    --surface2: #0f1a2e;
+    --border: #1a2540;
+    --accent-b: #f7a614;
+    --accent-bcast: #38bdf8;
+    --accent-blue: #3b82f6;
+    --accent-blue-light: #60a5fa;
+    --neutral: #6b7280;
+    --text: #dde6f5;
+    --muted: #7a8fae;
+    --win-b: rgba(247,166,20,0.09);
+    --win-bcast: rgba(56,189,248,0.09);
+    --win-both: rgba(59,130,246,0.06);
+    --topbar-bg: #040711;
+    --topbar-text: #7a8fae;
+    --sc-text-color: #b8cce8;
+    --header-grad-start: #05080f;
+    --header-grad-end: #081428;
+    --h1-grad: linear-gradient(90deg, #e0eeff 40%, #38bdf8 100%);
+    --h1-sep: #1a2540;
+  }
+
+  body.light {
+    --bg: #f0f4fb;
+    --surface: #ffffff;
+    --surface2: #e8eef8;
+    --border: #c8d6eb;
+    --accent-b: #d4860a;
+    --accent-bcast: #0284c7;
+    --accent-blue: #1d4ed8;
+    --accent-blue-light: #1d4ed8;
+    --neutral: #6b7280;
+    --text: #0f172a;
+    --muted: #4b6080;
+    --win-b: rgba(212,134,10,0.07);
+    --win-bcast: rgba(2,132,199,0.07);
+    --win-both: rgba(29,78,216,0.05);
+    --topbar-bg: #1e3a5f;
+    --topbar-text: #c8daf0;
+    --sc-text-color: #1e3a5f;
+    --header-grad-start: #dbeafe;
+    --header-grad-end: #eff6ff;
+    --h1-grad: linear-gradient(90deg, #1e3a5f 40%, #0284c7 100%);
+    --h1-sep: #c8d6eb;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--topbar-bg);
+    padding: 9px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .topbar-left {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .topbar-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--topbar-text);
+  }
+  .topbar-item span.icon { font-size: 13px; }
+  .topbar-divider {
+    width: 1px; height: 14px;
+    background: rgba(255,255,255,0.15);
+  }
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 999px;
+    padding: 4px 12px 4px 8px;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--topbar-text);
+    transition: background .2s;
+  }
+  .theme-toggle:hover { background: rgba(255,255,255,0.14); }
+  .toggle-icon { font-size: 14px; transition: transform .4s; }
+
+  @media (max-width: 700px) {
+    .topbar { padding-left: 20px; padding-right: 20px; }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    padding: 56px 60px 44px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--header-grad-start) 60%, var(--header-grad-end) 100%);
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -60px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 160px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(56,189,248,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-meta {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    background: var(--h1-grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  h1 .sep { -webkit-text-fill-color: var(--h1-sep); font-weight: 400; margin: 0 12px; }
+
+  .header-sub {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 600px;
+  }
+
+  .badges {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .badge-b     { background: var(--win-b);    color: var(--accent-b);    border-color: rgba(247,166,20,0.3); }
+  .badge-bcast { background: var(--win-bcast); color: var(--accent-bcast); border-color: rgba(56,189,248,0.3); }
+  .badge-tie   { background: var(--win-both);  color: var(--muted);       border-color: var(--border); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    gap: 4px;
+    padding: 20px 60px 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    background: var(--surface);
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .2s, border-color .2s;
+    margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent-blue-light); border-bottom-color: var(--accent-blue-light); }
+
+  /* ── MAIN ── */
+  main { padding: 40px 60px 80px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── STRATEGIC COMMENT ── */
+  .strategic-comment {
+    background: linear-gradient(135deg, rgba(59,130,246,0.10), rgba(56,189,248,0.06));
+    border: 1px solid rgba(59,130,246,0.28);
+    border-left: 4px solid var(--accent-blue);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .sc-icon {
+    font-size: 20px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .sc-body {}
+  .sc-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-blue-light);
+    margin-bottom: 5px;
+    font-weight: 700;
+  }
+  .sc-text {
+    font-size: 13.5px;
+    color: var(--sc-text-color);
+    line-height: 1.65;
+  }
+  .sc-text strong { color: var(--accent-blue-light); font-weight: 600; }
+
+  /* ── TABLE ── */
+  .matrix-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 860px;
+  }
+  thead th {
+    padding: 14px 20px;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  thead th:nth-child(2) { color: var(--accent-b); }
+  thead th:nth-child(3) { color: var(--accent-bcast); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(59,130,246,0.04); }
+
+  td {
+    padding: 14px 20px;
+    vertical-align: top;
+  }
+  td:first-child {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+    width: 180px;
+    border-right: 1px solid var(--border);
+  }
+
+  .row-b     { background: var(--win-b); }
+  .row-bcast { background: var(--win-bcast); }
+  .row-both  { background: var(--win-both); }
+
+  .winner-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 6px;
+    font-family: 'Syne', sans-serif;
+    letter-spacing: 0.06em;
+  }
+  .winner-b     { background: rgba(247,166,20,0.15);  color: var(--accent-b); }
+  .winner-bcast { background: rgba(56,189,248,0.15);   color: var(--accent-bcast); }
+  .winner-tie   { background: rgba(59,130,246,0.12);   color: var(--accent-blue-light); }
+
+  /* ── UNIVERSE ── */
+  .universe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .uni-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .uni-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .uni-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .uni-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .uni-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .uni-desc { font-size: 13px; color: var(--muted); }
+
+  /* bar */
+  .bar-section { margin-top: 32px; }
+  .bar-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .bar-label { width: 220px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .bar-track {
+    flex: 1; height: 10px;
+    background: var(--surface2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent-blue), rgba(56,189,248,0.5));
+    transition: width 1s cubic-bezier(.4,0,.2,1);
+  }
+  .bar-pct {
+    width: 44px;
+    text-align: right;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-blue-light);
+  }
+  .bar-note { font-size: 12px; color: var(--muted); margin-left: 2px; flex: 1; }
+
+  /* ── DATA CARDS ── */
+  .data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .data-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .data-metric {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .data-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent-blue-light);
+    margin-bottom: 6px;
+  }
+  .data-source {
+    font-size: 11px;
+    color: var(--neutral);
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+    padding-top: 8px;
+  }
+
+  /* ── NOTICE ── */
+  .notice {
+    margin-top: 28px;
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.20);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .notice-icon { font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface);
+  }
+
+  @media (max-width: 700px) {
+    header, nav, main, footer { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-item"><span class="icon">📅</span> Versão Atualizada: 08/06/2026</span>
+    <div class="topbar-divider"></div>
+    <span class="topbar-item"><span class="icon">👤</span> Antonio Melo</span>
+    <div class="topbar-divider"></div>
+    <span class="topbar-item"><span class="icon">🔒</span> Uso Interno</span>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+    <span class="toggle-icon" id="themeIcon">🌙</span>
+    <span id="themeLabel">Light Mode</span>
+  </button>
+</div>
+
+<header>
+  <p class="header-meta">Análise Competitiva · Uso Interno · Jun/2026</p>
+  <h1>Bloomberg B-PIPE <span class="sep">×</span> Broadcast</h1>
+  <p class="header-sub">Matriz comparativa para suporte à decisão comercial — cobertura, dados, entrega e posicionamento de mercado.</p>
+  <div class="badges">
+    <span class="badge badge-b"><span class="dot"></span>Vantagem B-PIPE</span>
+    <span class="badge badge-bcast"><span class="dot"></span>Vantagem Broadcast</span>
+    <span class="badge badge-tie"><span class="dot"></span>Depende do contexto</span>
+  </div>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="showTab('matriz', this)">Matriz Competitiva</button>
+  <button class="tab-btn" onclick="showTab('universo', this)">Universo B-PIPE</button>
+  <button class="tab-btn" onclick="showTab('dados', this)">Dados Oficiais</button>
+</nav>
+
+<main>
+
+  <!-- TAB 1: MATRIZ -->
+  <div id="tab-matriz" class="tab-panel active">
+
+    <div class="strategic-comment">
+      <span class="sc-icon">🎯</span>
+      <div class="sc-body">
+        <div class="sc-label">Embasamento Estratégico — Matriz Competitiva</div>
+        <div class="sc-text">
+          A matriz a seguir cobre <strong>13 dimensões críticas</strong> de decisão. O padrão que emerge é claro: o <strong>B-PIPE domina em escala e infraestrutura global</strong>, enquanto o <strong>Broadcast lidera em profundidade local, custo e aderência ao mercado brasileiro</strong>. Não são concorrentes diretos — são complementares. Para instituições com operação exclusivamente doméstica (asset managers, setor público, agro, corporate), o Broadcast entrega mais valor por real investido. Para players com exposição cross-border ou necessidade de dados globais normalizados, o B-PIPE justifica o prêmio. A decisão deve ser guiada pelo perfil do cliente, não pela amplitude do catálogo.
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Dimensão</th>
+            <th>Bloomberg B-PIPE</th>
+            <th>Broadcast (Agência Estado)</th>
+            <th>Veredito</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-b">
+            <td>Foco Geográfico</td>
+            <td>Global — mercados desenvolvidos e emergentes em escala mundial.</td>
+            <td>Brasil — profundidade no mercado local (B3, RF local, câmbio, macro BR).</td>
+            <td><span class="winner-b winner-tag">B-PIPE: amplitude global</span><br><span class="winner-bcast winner-tag">Broadcast: profundidade BR</span></td>
+          </tr>
+          <tr class="row-b">
+            <td>Universo de Instrumentos</td>
+            <td>~35 milhões de instrumentos, de 350+ bolsas e 5.000+ contribuidores.</td>
+            <td>~662 mil instrumentos, de 59 bolsas/fontes.</td>
+            <td><span class="winner-b winner-tag">B-PIPE (escala)</span><br><span class="winner-bcast winner-tag">Broadcast (relevância local)</span></td>
+          </tr>
+          <tr class="row-b">
+            <td>Classes de Ativo</td>
+            <td>Equity, FX & money markets, fixed income, commodities e derivativos (global).</td>
+            <td>Ações e RF brasileiras, câmbio (USD/BRL e crosses), commodities agro, indicadores macro BR.</td>
+            <td><span class="winner-b winner-tag">B-PIPE (amplitude)</span></td>
+          </tr>
+          <tr class="row-bcast">
+            <td>Notícias</td>
+            <td>Bloomberg News — cobertura global, em inglês, integrada ao feed.</td>
+            <td>Agência Estado — jornalismo econômico PT-BR, tempo real, política e setorial local.</td>
+            <td><span class="winner-bcast winner-tag">Broadcast (PT-BR + local)</span></td>
+          </tr>
+          <tr class="row-bcast">
+            <td>Agronegócio</td>
+            <td>Commodities globais; granularidade limitada no físico/regional brasileiro.</td>
+            <td>Vertical dedicada — preços físicos, safras, basis regional, cadeia do agro BR.</td>
+            <td><span class="winner-bcast winner-tag">Broadcast</span></td>
+          </tr>
+          <tr class="row-bcast">
+            <td>Dados Gov / Regulatório BR</td>
+            <td>Foco em mercado; pouca cobertura de DOU, licitações e indicadores setoriais BR.</td>
+            <td>Forte — integração com fontes públicas BR (DOU, transparência, indicadores).</td>
+            <td><span class="winner-bcast winner-tag">Broadcast</span></td>
+          </tr>
+          <tr class="row-b">
+            <td>Modelo de Entrega</td>
+            <td>Feed enterprise: managed appliance on-prem OU cloud-native (Azure/AWS/GCP via Private Link).</td>
+            <td>API Datafeed.</td>
+            <td><span class="winner-b winner-tag">B-PIPE (infra madura)</span></td>
+          </tr>
+          <tr class="row-b">
+            <td>API & Acesso Programático</td>
+            <td>BLPAPI (Open API) madura — real-time, intraday tick, histórico, lookup; SDKs multi-linguagem.</td>
+            <td>API Datafeed.</td>
+            <td><span class="winner-b winner-tag">B-PIPE (maturidade)</span></td>
+          </tr>
+          <tr class="row-both">
+            <td>Normalização & Qualidade</td>
+            <td>Cross-venue; Security Status 2.0; EOD reference; BVAL para pricing.</td>
+            <td>Dados consolidados e normalizados; EOD reference e real-time.</td>
+            <td><span class="winner-b winner-tag">B-PIPE (escopo global)</span><br><span class="winner-bcast winner-tag">Broadcast (ajuste BR)</span></td>
+          </tr>
+          <tr class="row-both">
+            <td>Latência</td>
+            <td>Ticker plants globais + instalações locais nos hubs financeiros.</td>
+            <td>Ticker plant local (BR) — baixa latência para dados domésticos.</td>
+            <td><span class="winner-tie winner-tag">Empate no Brasil</span><br><span class="winner-b winner-tag">B-PIPE cross-border</span></td>
+          </tr>
+          <tr class="row-bcast">
+            <td>Idioma & Suporte</td>
+            <td>Inglês; suporte global.</td>
+            <td>PT-BR nativo; suporte local, fuso e cultura de mercado BR.</td>
+            <td><span class="winner-bcast winner-tag">Broadcast (mercado BR)</span></td>
+          </tr>
+          <tr class="row-bcast">
+            <td>Modelo de Custo</td>
+            <td>Premium, contrato enterprise em USD, mínimo 2 anos; negociado por escopo.</td>
+            <td>Significativamente menor; precificação em BRL; pacotes modulares por vertical.</td>
+            <td><span class="winner-bcast winner-tag">Broadcast (acessibilidade)</span></td>
+          </tr>
+          <tr class="row-both">
+            <td>Público-Alvo Típico</td>
+            <td>Tier-1 global, front-office, sell-side/buy-side enterprise, black-box/quant.</td>
+            <td>Asset managers BR, instituições financeiras, setor público, agro, corporate.</td>
+            <td><span class="winner-tie winner-tag">Mercados distintos</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notice">
+      <span class="notice-icon">⚠️</span>
+      <span>Campos marcados com <strong>[dado interno]</strong> no documento original devem ser completados com números internos do Broadcast antes de uso externo ou apresentações a clientes.</span>
+    </div>
+  </div>
+
+  <!-- TAB 2: UNIVERSO B-PIPE -->
+  <div id="tab-universo" class="tab-panel">
+
+    <div class="strategic-comment">
+      <span class="sc-icon">📊</span>
+      <div class="sc-body">
+        <div class="sc-label">Embasamento Estratégico — Universo B-PIPE</div>
+        <div class="sc-text">
+          O B-PIPE apresenta <strong>~35 milhões de instrumentos em tempo real</strong> — número que impõe respeito em qualquer conversa enterprise. Contudo, é fundamental contextualizar: <strong>40% desse universo são derivativos listados</strong>, cuja contagem é inflacionada por cadeias de opções (strikes × vencimentos × call/put). Para clientes brasileiros com foco em renda variável e renda fixa local, a <strong>cobertura relevante efetiva é muito menor</strong> do que o número headline sugere. Use esta aba para calibrar a narrativa comercial — o total de 35M é um argumento de autoridade global, mas a vantagem do Broadcast está na <strong>densidade e qualidade dos ~662 mil instrumentos que realmente importam para o mercado brasileiro</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="universe-grid">
+      <div class="uni-card">
+        <div class="uni-card-header">
+          <div class="uni-icon" style="background:rgba(59,130,246,0.12);">🌐</div>
+          <span class="uni-label">Total de Instrumentos</span>
+        </div>
+        <div class="uni-value" style="color:var(--accent-blue-light);">~35M</div>
+        <div class="uni-desc">Instrumentos em tempo real — B-PIPE feed</div>
+      </div>
+      <div class="uni-card">
+        <div class="uni-card-header">
+          <div class="uni-icon" style="background:rgba(56,189,248,0.12);">🏛️</div>
+          <span class="uni-label">Bolsas Agregadas</span>
+        </div>
+        <div class="uni-value" style="color:var(--accent-bcast);">350+</div>
+        <div class="uni-desc">Bolsas e fontes de preço (Bloomberg Press, mar/2024)</div>
+      </div>
+      <div class="uni-card">
+        <div class="uni-card-header">
+          <div class="uni-icon" style="background:rgba(59,130,246,0.12);">📡</div>
+          <span class="uni-label">Contribuidores de Preço</span>
+        </div>
+        <div class="uni-value" style="color:var(--accent-blue-light);">5.000+</div>
+        <div class="uni-desc">Fontes de contribuição de preço</div>
+      </div>
+      <div class="uni-card">
+        <div class="uni-card-header">
+          <div class="uni-icon" style="background:rgba(107,114,128,0.10);">📚</div>
+          <span class="uni-label">Data License (Ref. Total)</span>
+        </div>
+        <div class="uni-value" style="color:var(--muted);">70M+</div>
+        <div class="uni-desc">Inclui inativos e históricos — não é o B-PIPE real-time</div>
+      </div>
+    </div>
+
+    <div class="bar-section">
+      <p class="bar-title">Estimativa de Distribuição por Classe de Ativo — B-PIPE (~35M)</p>
+      <div class="bar-row">
+        <span class="bar-label">Derivativos listados</span>
+        <div class="bar-track"><div class="bar-fill" style="width:40%"></div></div>
+        <span class="bar-pct">40%</span>
+        <span class="bar-note">Maior driver: cadeias de opções (strikes × vencimentos × call/put)</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Renda fixa</span>
+        <div class="bar-track"><div class="bar-fill" style="width:30%; background:linear-gradient(90deg,#818cf8,rgba(129,140,248,0.4));"></div></div>
+        <span class="bar-pct" style="color:#818cf8">30%</span>
+        <span class="bar-note">Govt, corp, muni, MBS/ABS, money market</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Ações & fundos</span>
+        <div class="bar-track"><div class="bar-fill" style="width:22%; background:linear-gradient(90deg,#34d399,rgba(52,211,153,0.4));"></div></div>
+        <span class="bar-pct" style="color:#34d399">22%</span>
+        <span class="bar-note">Equities globais, ETFs (~12k), warrants, fundos cotados</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Commodities</span>
+        <div class="bar-track"><div class="bar-fill" style="width:4%; background:linear-gradient(90deg,#f472b6,rgba(244,114,182,0.4));"></div></div>
+        <span class="bar-pct" style="color:#f472b6">4%</span>
+        <span class="bar-note">Futuros + físico; concentração em poucas bolsas</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">FX & money markets</span>
+        <div class="bar-track"><div class="bar-fill" style="width:3%; background:linear-gradient(90deg,var(--accent-bcast),rgba(56,189,248,0.4));"></div></div>
+        <span class="bar-pct" style="color:var(--accent-bcast)">3%</span>
+        <span class="bar-note">Pequeno em contagem; altíssimo em volume de mensagens</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Índices & compostos</span>
+        <div class="bar-track"><div class="bar-fill" style="width:1%; background:linear-gradient(90deg,#a78bfa,rgba(167,139,250,0.4));"></div></div>
+        <span class="bar-pct" style="color:#a78bfa">1%</span>
+        <span class="bar-note">Bloomberg calcula 50k+ índices/dia</span>
+      </div>
+    </div>
+
+    <div class="notice">
+      <span class="notice-icon">ℹ️</span>
+      <span>Os percentuais acima são <strong>estimativas internas</strong> baseadas na estrutura conhecida dos mercados globais. O único dado oficial é o total (~35M). Não citar a quebra por classe como dado Bloomberg.</span>
+    </div>
+  </div>
+
+  <!-- TAB 3: DADOS OFICIAIS -->
+  <div id="tab-dados" class="tab-panel">
+
+    <div class="strategic-comment">
+      <span class="sc-icon">📌</span>
+      <div class="sc-body">
+        <div class="sc-label">Embasamento Estratégico — Dados Oficiais</div>
+        <div class="sc-text">
+          Esta aba consolida exclusivamente <strong>métricas com fonte verificada e pública</strong> do Bloomberg B-PIPE — fontes primárias como Azure Marketplace, Bloomberg Press e Bloomberg Professional. Dois pontos de atenção para o discurso comercial: (1) o <strong>preço do B-PIPE não é público</strong>, o que dificulta comparações diretas de custo — use isso a favor do Broadcast ao destacar transparência e previsibilidade em BRL; (2) a distinção entre <strong>B-PIPE (35M, real-time)</strong> e <strong>Data License (70M+, referência/EOD)</strong> é frequentemente confundida pelo mercado — dominar essa nuance demonstra maturidade técnica e gera credibilidade na conversa com CTOs e heads de dados.
+        </div>
+      </div>
+    </div>
+
+    <div class="data-grid">
+      <div class="data-card">
+        <div class="data-metric">Total de Instrumentos</div>
+        <div class="data-value">~35 milhões</div>
+        <div class="uni-desc">Todas as classes de ativo — feed real-time B-PIPE</div>
+        <div class="data-source">📌 Bloomberg / Microsoft Azure Marketplace (B-PIPE), 2025</div>
+      </div>
+      <div class="data-card">
+        <div class="data-metric">Universo de Referência (Data License)</div>
+        <div class="data-value">70M+ instrumentos</div>
+        <div class="uni-desc">40k+ campos; 100B+ data points/dia. Inclui inativos e históricos.</div>
+        <div class="data-source">📌 Bloomberg Data License — bloomberg.com/professional, 2025</div>
+      </div>
+      <div class="data-card">
+        <div class="data-metric">Bolsas Agregadas</div>
+        <div class="data-value">350+</div>
+        <div class="uni-desc">Fonte mais recente: Bloomberg Press, mar/2024.</div>
+        <div class="data-source">📌 Bloomberg Press — TradingTech Insight Awards, mar/2024</div>
+      </div>
+      <div class="data-card">
+        <div class="data-metric">Contribuidores de Preço</div>
+        <div class="data-value">5.000+</div>
+        <div class="uni-desc">Contribuidores ativos no feed B-PIPE.</div>
+        <div class="data-source">📌 Bloomberg / Azure Marketplace</div>
+      </div>
+      <div class="data-card">
+        <div class="data-metric">Pricing Avaliado (BVAL)</div>
+        <div class="data-value">2,5M+ securities</div>
+        <div class="uni-desc">Pricing independente via BVAL.</div>
+        <div class="data-source">📌 BST Americas — lista de produtos Bloomberg</div>
+      </div>
+      <div class="data-card">
+        <div class="data-metric">Índices Calculados</div>
+        <div class="data-value">50.000+/dia</div>
+        <div class="uni-desc">Em 120 países e 42 moedas.</div>
+        <div class="data-source">📌 Bloomberg — página de Índices</div>
+      </div>
+      <div class="data-card">
+        <div class="data-metric">Entrega</div>
+        <div class="data-value" style="font-size:14px; color:var(--text); font-weight:500">On-prem · Cloud-native</div>
+        <div class="uni-desc">Managed appliance on-prem ou cloud-native (Azure/AWS/GCP via Private Link).</div>
+        <div class="data-source">📌 Bloomberg + Azure/AWS Marketplace; The DESK, 2025</div>
+      </div>
+      <div class="data-card">
+        <div class="data-metric">API</div>
+        <div class="data-value" style="font-size:14px; color:var(--text); font-weight:500">BLPAPI (Open API)</div>
+        <div class="uni-desc">Current, real-time, intraday tick, histórico, lookup.</div>
+        <div class="data-source">📌 MathWorks / Bloomberg Open API</div>
+      </div>
+      <div class="data-card">
+        <div class="data-metric">Preço</div>
+        <div class="data-value" style="font-size:13px; color:var(--muted); font-weight:500">Não publicado</div>
+        <div class="uni-desc">Contrato enterprise em USD, mínimo 2 anos, negociado por escopo.</div>
+        <div class="data-source">📌 Confirmado: ausência de preço público nas fontes</div>
+      </div>
+      <div class="data-card">
+        <div class="data-metric">Limitação Funcional</div>
+        <div class="data-value" style="font-size:13px; color:var(--muted); font-weight:500">Data-only</div>
+        <div class="uni-desc">Execução de ordens exige integração FIX/order router separada.</div>
+        <div class="data-source">📌 ARQA Technologies (integrador B-PIPE)</div>
+      </div>
+    </div>
+
+    <div class="notice" style="margin-top:32px;">
+      <span class="notice-icon">📝</span>
+      <span>Faixas de bolsas (330 vs 350) refletem datas de fonte diferentes — a infraestrutura cresce ao longo do tempo. Distinção B-PIPE (~35M = real-time) vs Data License (70M+ = referência/EOD inclui inativos).</span>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>Uso Interno — Diretor Comercial · Jun/2026</span>
+  <span>Fontes: Bloomberg Professional, Azure Marketplace, Bloomberg Press (mar/2024)</span>
+</footer>
+
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleTheme() {
+    const body = document.body;
+    const isLight = body.classList.toggle('light');
+    document.getElementById('themeIcon').textContent = isLight ? '☀️' : '🌙';
+    document.getElementById('themeLabel').textContent = isLight ? 'Dark Mode' : 'Light Mode';
+  }
+</script>
+</body>
+</html>

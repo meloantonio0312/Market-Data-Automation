@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contratos de Bolsa — Broadcast · Market Data</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #131920;
+    --bg3: #1a2230;
+    --bg4: #1f2c3d;
+    --navy: #0f2540;
+    --border: #1e3352;
+    --border2: #243c58;
+    --gold: #c8972a;
+    --gold2: #e8b84b;
+    --gold-dim: #7a5c1a;
+    --text: #d8e6f3;
+    --text2: #8ba8c4;
+    --text3: #5a7a96;
+    --white: #f0f6fc;
+    --green: #2dbd6e;
+    --green-bg: #0d2e1e;
+    --green-border: #1a5c3b;
+    --amber: #f0a020;
+    --amber-bg: #2a1f08;
+    --amber-border: #5a3c0f;
+    --red: #e05c5c;
+    --red-bg: #2a1010;
+    --red-border: #5a2020;
+    --blue: #4a90d9;
+    --blue-bg: #0d1f35;
+    --blue-border: #1a3a5c;
+    --purple: #9b72d0;
+    --purple-bg: #1a1030;
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'Consolas', 'Monaco', monospace;
+  }
+  [data-theme="light"] {
+    --bg: #f0f4f8; --bg2: #e8eef5; --bg3: #dde6f0; --bg4: #d2dcea;
+    --border: #bfcfe0; --border2: #aabcd0; --text: #1a2c3d; --text2: #3a5570;
+    --text3: #6a8aaa; --white: #0a1520;
+    --green-bg: #e8f7ee; --green-border: #8adbb0;
+    --amber-bg: #fff3dc; --amber-border: #f0c060;
+    --red-bg: #fde8e8; --red-border: #f0a0a0;
+    --blue-bg: #e8f0fa; --blue-border: #90b8e8;
+    --purple-bg: #f0eafa; --purple-border: #c8a8e8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-body); font-size: 13px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #0a1928 0%, #0f2540 60%, #1a3a5c 100%);
+    border-bottom: 1px solid var(--gold);
+    padding: 18px 28px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-left h1 {
+    font-family: var(--font-display); font-size: 20px;
+    color: var(--gold2); letter-spacing: 0.5px; font-weight: 400;
+  }
+  .header-left p { color: var(--text2); font-size: 11px; margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .btn-theme {
+    background: var(--bg4); border: 1px solid var(--border2);
+    color: var(--text2); padding: 5px 12px; border-radius: 4px;
+    cursor: pointer; font-size: 11px;
+  }
+  .btn-theme:hover { border-color: var(--gold); color: var(--gold2); }
+  .header-meta { color: var(--text3); font-size: 11px; }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    display: flex; gap: 0; overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 10px 18px; cursor: pointer; font-size: 12px;
+    color: var(--text2); border-bottom: 2px solid transparent;
+    white-space: nowrap; transition: all 0.15s;
+    background: none; border-top: none; border-left: none; border-right: none;
+  }
+  .nav-tab:hover { color: var(--text); border-color: var(--border2); }
+  .nav-tab.active { color: var(--gold2); border-color: var(--gold); font-weight: 600; }
+
+  /* ── MAIN ── */
+  .main { padding: 24px 28px; max-width: 1600px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── KPI STRIP ── */
+  .kpi-strip {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .kpi {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 14px 16px;
+    border-left: 3px solid var(--gold);
+  }
+  .kpi-label { color: var(--text3); font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
+  .kpi-value { color: var(--gold2); font-size: 22px; font-weight: 700; margin: 4px 0 2px; font-family: var(--font-mono); }
+  .kpi-sub { color: var(--text2); font-size: 10px; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text3); border-bottom: 1px solid var(--border);
+    padding-bottom: 8px; margin-bottom: 16px; margin-top: 24px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title:first-child { margin-top: 0; }
+  .section-title .line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; border-radius: 6px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--bg3); color: var(--text2); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.7px; padding: 10px 12px;
+    text-align: left; border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:hover { background: var(--bg3); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td { padding: 9px 12px; color: var(--text); vertical-align: middle; }
+  .td-bold { font-weight: 600; color: var(--white); }
+  .td-mono { font-family: var(--font-mono); font-size: 12px; }
+  .td-muted { color: var(--text3); font-size: 11px; }
+
+  /* ── STATUS BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: 12px; font-size: 10px;
+    font-weight: 600; letter-spacing: 0.5px; white-space: nowrap;
+  }
+  .badge::before { content: '●'; font-size: 7px; }
+  .badge-active { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .badge-pending { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .badge-expired { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .badge-signed { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+  .badge-nda { background: var(--purple-bg); color: var(--purple); border: 1px solid #5c3a8c; }
+  .badge-free { background: #1a2a1a; color: #6aaa6a; border: 1px solid #2a4a2a; }
+
+  /* ── REGION LABEL ── */
+  .region { display: inline-block; font-size: 9px; padding: 1px 6px; border-radius: 3px; font-weight: 600; }
+  .region-br { background: #1a2a08; color: #8bc850; border: 1px solid #3a5a18; }
+  .region-us { background: #08182a; color: #5090d0; border: 1px solid #183858; }
+  .region-eu { background: #1a0a28; color: #a870e8; border: 1px solid #380a58; }
+  .region-asia { background: #2a1a08; color: #e89050; border: 1px solid #583818; }
+  .region-latam { background: #2a0a08; color: #e06858; border: 1px solid #581818; }
+  .region-uk { background: #082028; color: #50c0d8; border: 1px solid #185068; }
+
+  /* ── EXCHANGE CARD GRID ── */
+  .exchange-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px; margin-top: 16px;
+  }
+  .exchange-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+  }
+  .exchange-card:hover { border-color: var(--border2); box-shadow: 0 0 0 1px var(--border2); }
+  .exchange-card.expanded { border-color: var(--gold-dim); }
+  .card-header {
+    padding: 14px 16px 10px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--bg3) 0%, var(--bg2) 100%);
+  }
+  .card-name { font-size: 14px; font-weight: 700; color: var(--white); }
+  .card-full { font-size: 10px; color: var(--text3); margin-top: 2px; }
+  .card-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .card-body { padding: 14px 16px; }
+  .card-row {
+    display: flex; justify-content: space-between;
+    padding: 5px 0; border-bottom: 1px solid var(--border);
+    font-size: 11px;
+  }
+  .card-row:last-child { border-bottom: none; }
+  .card-row-label { color: var(--text3); }
+  .card-row-val { color: var(--text); text-align: right; font-family: var(--font-mono); }
+  .card-detail { display: none; padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg3); }
+  .exchange-card.expanded .card-detail { display: block; }
+  .detail-section { margin-bottom: 10px; }
+  .detail-section h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--gold); margin-bottom: 6px; }
+  .detail-item { font-size: 11px; color: var(--text2); padding: 2px 0; line-height: 1.5; }
+  .detail-item strong { color: var(--text); }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .pill {
+    background: var(--bg4); border: 1px solid var(--border2);
+    color: var(--text2); font-size: 10px; padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .pill-ok { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+  .pill-no { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
+  .pill-partial { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber); }
+  .expand-btn {
+    background: none; border: none; color: var(--text3); cursor: pointer;
+    font-size: 14px; padding: 0; flex-shrink: 0; margin-left: 8px;
+  }
+  .expand-btn:hover { color: var(--gold2); }
+
+  /* ── SEARCH ── */
+  .search-bar {
+    display: flex; gap: 10px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;
+  }
+  .search-input {
+    background: var(--bg2); border: 1px solid var(--border2);
+    color: var(--text); padding: 7px 12px; border-radius: 5px;
+    font-size: 12px; width: 260px; outline: none;
+  }
+  .search-input:focus { border-color: var(--gold-dim); }
+  .filter-select {
+    background: var(--bg2); border: 1px solid var(--border2);
+    color: var(--text2); padding: 7px 10px; border-radius: 5px;
+    font-size: 11px; cursor: pointer; outline: none;
+  }
+  .filter-select:focus { border-color: var(--gold-dim); }
+  .search-count { color: var(--text3); font-size: 11px; margin-left: 4px; }
+
+  /* ── FEE TABLE SPECIFIC ── */
+  .fee-category-header {
+    background: var(--bg4); padding: 8px 12px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--gold); border-bottom: 1px solid var(--border);
+    grid-column: 1 / -1;
+  }
+  .amount-col { font-family: var(--font-mono); color: var(--gold2); font-size: 12px; }
+  .amount-col.tbd { color: var(--text3); font-style: italic; font-size: 11px; }
+
+  /* ── ALERT BOX ── */
+  .alert {
+    border-left: 3px solid; border-radius: 5px; padding: 12px 14px;
+    margin-bottom: 12px; font-size: 12px; line-height: 1.6;
+  }
+  .alert-amber { background: var(--amber-bg); border-color: var(--amber); color: var(--amber); }
+  .alert-green { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .alert-blue { background: var(--blue-bg); border-color: var(--blue); color: var(--blue); }
+
+  .footer {
+    text-align: center; color: var(--text3); font-size: 10px;
+    padding: 20px 28px; border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  @media (max-width: 700px) {
+    .header { flex-direction: column; gap: 10px; }
+    .main { padding: 16px; }
+    .kpi-strip { grid-template-columns: 1fr 1fr; }
+    .exchange-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Broadcast · Contratos de Bolsas de Valores</h1>
+    <p>Mapeamento completo de licenciamentos — Nacionais &amp; Internacionais</p>
+  </div>
+  <div class="header-right">
+    <button class="btn-theme" onclick="toggleTheme()">☀ / ☾ Tema</button>
+    <span class="header-meta">Atualizado: Jun 2026 · Antonio Melo</span>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showTab('overview')">Visão Geral</button>
+  <button class="nav-tab" onclick="showTab('cards')">Fichas por Bolsa</button>
+  <button class="nav-tab" onclick="showTab('fees')">Tabela de Fees</button>
+  <button class="nav-tab" onclick="showTab('usage')">Uso: Display / Non-Display / Redistrib.</button>
+  <button class="nav-tab" onclick="showTab('contracts')">Documentos &amp; Contratos</button>
+  <button class="nav-tab" onclick="showTab('pending')">Em Licenciamento</button>
+</div>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════════════════════ TAB: OVERVIEW -->
+<div id="tab-overview" class="tab-panel active">
+
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="kpi-label">Bolsas Totais</div>
+      <div class="kpi-value">32</div>
+      <div class="kpi-sub">nacionais + internacionais</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Contratos Ativos</div>
+      <div class="kpi-value">23</div>
+      <div class="kpi-sub">licenças vigentes</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Em Licenciamento</div>
+      <div class="kpi-value">6</div>
+      <div class="kpi-sub">negociação / assinatura</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Sem Custo</div>
+      <div class="kpi-value">5</div>
+      <div class="kpi-sub">acesso free / autorização</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Regiões</div>
+      <div class="kpi-value">7</div>
+      <div class="kpi-sub">BR, US, EU, UK, Ásia, LATAM</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Contratos ICE via IDC</div>
+      <div class="kpi-value">9+</div>
+      <div class="kpi-sub">addenda sobre MSA 2021</div>
+    </div>
+  </div>
+
+  <div class="section-title"><span>Status por Região</span><span class="line"></span></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Bolsa / Provedor</th>
+          <th>Região</th>
+          <th>Tipo</th>
+          <th>Status</th>
+          <th>Contrato Principal</th>
+          <th>Vigência</th>
+          <th>Fee Referência</th>
+          <th>Obs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- NACIONAIS -->
+        <tr><td colspan="8" class="fee-category-header">🇧🇷 NACIONAIS</td></tr>
+        <tr>
+          <td class="td-bold">B3 — Equities/Derivativos</td>
+          <td><span class="region region-br">BR</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Política Comercial MD 2026</td>
+          <td>01/01/2026 – 31/12/2026</td>
+          <td class="amount-col">USD 4.000/mês (dist. RT)</td>
+          <td class="td-muted">Licença por dataset; relatório periódico obrigatório</td>
+        </tr>
+        <tr>
+          <td class="td-bold">B3 — Up2Data (Curvas/RF)</td>
+          <td><span class="region region-br">BR</span></td>
+          <td>Plataforma</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Anexo III Master Up2Data — 26/03/2026</td>
+          <td>26/03/2026</td>
+          <td class="amount-col">Negociado (sem custo adicional p/ canais)</td>
+          <td class="td-muted">Non-Display via canal especializado; sem Open Website</td>
+        </tr>
+        <tr>
+          <td class="td-bold">B3 — Trademate</td>
+          <td><span class="region region-br">BR</span></td>
+          <td>Feed</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Certificação TradeMate — Launch I, II, III</td>
+          <td>2026</td>
+          <td class="amount-col">Incluso no contrato B3</td>
+          <td class="td-muted">Feed de Renda Fixa; Message Spec v2.2</td>
+        </tr>
+        <tr>
+          <td class="td-bold">BBCE</td>
+          <td><span class="region region-br">BR</span></td>
+          <td>Mercado</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Contrato 2017</td>
+          <td>2017 +</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">Câmara de Comércio de Energia</td>
+        </tr>
+        <tr>
+          <td class="td-bold">IIFE</td>
+          <td><span class="region region-br">BR</span></td>
+          <td>Índices</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>1º Aditivo 117062 – 4600007898</td>
+          <td>Vigente</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">Inteligência em Finanças e Economia</td>
+        </tr>
+        <tr>
+          <td class="td-bold">A5X</td>
+          <td><span class="region region-br">BR</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-nda">NDA</span></td>
+          <td>NDA Bilateral — modelo PT</td>
+          <td>Em análise (deferre 2027)</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">Pendente aprovação Banco Central; deferred to 2027</td>
+        </tr>
+        <!-- USA -->
+        <tr><td colspan="8" class="fee-category-header">🇺🇸 ESTADOS UNIDOS</td></tr>
+        <tr>
+          <td class="td-bold">NYSE / ICE Equities</td>
+          <td><span class="region region-us">US</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>NYSE 4600003335 + GIF Agreement + CTA</td>
+          <td>Múltiplos (2013–2022)</td>
+          <td class="amount-col">Negociado via ICE Data</td>
+          <td class="td-muted">GIF (Global Index Feed) + CTA + US non-display 2013</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Nasdaq — Global (UTP + Indices)</td>
+          <td><span class="region region-us">US</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Nasdaq GDA + Aditivo 4600003556</td>
+          <td>Vigente</td>
+          <td class="amount-col">Negociado</td>
+          <td class="td-muted">UTP (2017); Global Indexes (2021); Smart Options (mai/2026)</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Nasdaq Basic + NLS Plus</td>
+          <td><span class="region region-us">US</span></td>
+          <td>Feed</td>
+          <td><span class="badge badge-signed">ASSINADO</span></td>
+          <td>Service Order 00128475.0 — mai/2025</td>
+          <td>16/05/2025 +</td>
+          <td class="amount-col">USD 2.000/mês + USD 26/prof. subscriber</td>
+          <td class="td-muted">Admin fee: USD 100 (Nasdaq) + 100 (BX) + 100 (PSX)</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Cboe Global Markets</td>
+          <td><span class="region region-us">US</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>CBOE Data Agreement Executed 2022 + New GDA 2025</td>
+          <td>2022 → 2025 renovado</td>
+          <td class="amount-col">Negociado</td>
+          <td class="td-muted">CSMI (internal + external via ICE); VIX incluído</td>
+        </tr>
+        <tr>
+          <td class="td-bold">CME Group (CME/CBOT/NYMEX/COMEX)</td>
+          <td><span class="region region-us">US</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>ILA-A326927 + Aditivos + S&amp;P SPDJI Executed</td>
+          <td>2013 + reajuste 2023/2026</td>
+          <td class="amount-col">USD 29.280/ano (dist. RT) ou USD 134,50/device</td>
+          <td class="td-muted">Fee List jan/2026; Derived Data request declined nov/2025</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Markit / IHS Markit</td>
+          <td><span class="region region-us">US</span></td>
+          <td>Dados</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>MARKIT GROUP LTD BPM_7665_4600006379 + Aditivo</td>
+          <td>Vigente</td>
+          <td class="amount-col">Negociado</td>
+          <td class="td-muted">IHS Markit (agora S&amp;P Global); WM Reuters incluso</td>
+        </tr>
+        <tr>
+          <td class="td-bold">ICE Data Services (MSA + Feeds)</td>
+          <td><span class="region region-us">US</span></td>
+          <td>Consolidado</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>MSA mai/2021 + Feeds Schedule No.2 fev/2022 + 9 Addenda</td>
+          <td>2021 em diante</td>
+          <td class="amount-col">Múltiplos itens (ver aba Fees)</td>
+          <td class="td-muted">Addendum 9 aguarda assinatura (Nível 2 mercados)</td>
+        </tr>
+        <!-- EUROPA -->
+        <tr><td colspan="8" class="fee-category-header">🇪🇺 EUROPA CONTINENTAL</td></tr>
+        <tr>
+          <td class="td-bold">Euronext (Paris/Amsterdam/Lisboa/Dublin/Oslo)</td>
+          <td><span class="region region-eu">EU</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Euronext_4600003557 + EMDA Form V4.0 (out/2025)</td>
+          <td>2025 renovado; fee schedule jun/2025</td>
+          <td class="amount-col">€826,50/mês (All Indices) | €4.849,95 (Cash L2)</td>
+          <td class="td-muted">EMDA v4.0 assinado out/2025; inclui Liffe derivativos</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Deutsche Börse (XETRA/DAX)</td>
+          <td><span class="region region-eu">EU</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>DEUTSCHE BORSE AG 4600002258</td>
+          <td>Vigente</td>
+          <td class="amount-col">Negociado</td>
+          <td class="td-muted">BIP reajuste dez/2022 registrado</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Bolsa de Madrid (BME)</td>
+          <td><span class="region region-eu">EU</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>SOCIEDAD DE BOLSAS BME 4600003568 + IDC Addendum 2 jan/2025</td>
+          <td>2025 em diante</td>
+          <td class="amount-col">Negociado (EOD via IDC)</td>
+          <td class="td-muted">BME incluído no EOD via IDC Addendum; e-mail cancelamento arquivado</td>
+        </tr>
+        <tr>
+          <td class="td-bold">SIX Financial (Swiss Exchange)</td>
+          <td><span class="region region-eu">EU</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-signed">ASSINADO</span></td>
+          <td>Contrato 25732 + Add#1 (2014) + Add#2 (2019) + Add#3 (jun/2026)</td>
+          <td>01/Jul/2026 – 30/Jun/2028 (Addendum 3)</td>
+          <td class="amount-col">USD 18.396,39/ano (Corporate Actions N.Am. Equity)</td>
+          <td class="td-muted">Add#3 assinado jun/2026 (Rodrigo + Gustavo); migração CARS → SIX Flex</td>
+        </tr>
+        <tr>
+          <td class="td-bold">FOEX (Papel/Celulose)</td>
+          <td><span class="region region-eu">EU</span></td>
+          <td>Índices</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Foex_4600003526</td>
+          <td>Vigente</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">Índices de papel e celulose</td>
+        </tr>
+        <!-- UK -->
+        <tr><td colspan="8" class="fee-category-header">🇬🇧 REINO UNIDO</td></tr>
+        <tr>
+          <td class="td-bold">FTSE / FTSE Russell (LSEG)</td>
+          <td><span class="region region-uk">UK</span></td>
+          <td>Índices</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>FTSE Internacional assinado 2020 (Variation Agreement)</td>
+          <td>Abr/2020 em diante</td>
+          <td class="amount-col">Negociado</td>
+          <td class="td-muted">Distribuição somente; subscriber não pode redistribuir</td>
+        </tr>
+        <tr>
+          <td class="td-bold">LME (London Metal Exchange)</td>
+          <td><span class="region region-uk">UK</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Dist. License Agreement 2018 + Info Dist. Agreement jun/2024</td>
+          <td>2024 renovado</td>
+          <td class="amount-col">Negociado</td>
+          <td class="td-muted">Auditoria ativa (LME Confidential Classification)</td>
+        </tr>
+        <tr>
+          <td class="td-bold">LSEG WMR (FX Rates)</td>
+          <td><span class="region region-uk">UK</span></td>
+          <td>Dados FX</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>WMR Service Alterations + Questionnaire</td>
+          <td>Publicação contínua</td>
+          <td class="amount-col">Negociado</td>
+          <td class="td-muted">WM Reuters FX Spot/Forward/NDF; via Markit/LSEG</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Asian Metal (metais base)</td>
+          <td><span class="region region-uk">UK</span></td>
+          <td>Dados</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Asian Metal 2018</td>
+          <td>2018 +</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">Preços de metais base/scrap</td>
+        </tr>
+        <!-- ÁSIA -->
+        <tr><td colspan="8" class="fee-category-header">🌏 ÁSIA-PACÍFICO</td></tr>
+        <tr>
+          <td class="td-bold">Nikkei (Japão)</td>
+          <td><span class="region region-asia">ÁSIA</span></td>
+          <td>Índices</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>NIKKEI INC 113842 + Confirmation Letter 2023</td>
+          <td>2023 em diante</td>
+          <td class="amount-col">Sem custo de licença</td>
+          <td class="td-muted">Display EOD somente; via ICE Data; crédito "© Nikkei Inc." obrigatório</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Bursa Malaysia Derivatives</td>
+          <td><span class="region region-asia">ÁSIA</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>ISLA Stamped + BURSA Malaysia 119944</td>
+          <td>2025 (sem alteração fees 2026)</td>
+          <td class="amount-col">Sem alteração (conf. set/2025)</td>
+          <td class="td-muted">Contact: Fazlina Tarudin; confirmou manutenção fees 2026</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Stock Exchange of Thailand (SET)</td>
+          <td><span class="region region-asia">ÁSIA</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Thailand2 (principal) + confirmação fee 2026</td>
+          <td>2025 sem alteração</td>
+          <td class="amount-col">USD 300/trimestre (Equity Index EOD)</td>
+          <td class="td-muted">InfoProducts@set.or.th; confirmado em set/2025</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Korea Exchange (KRX)</td>
+          <td><span class="region region-asia">ÁSIA</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Korea.pdf + carta de autorização</td>
+          <td>Vigente</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">KOSPI; autorizações de distribuição indexadas</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Taiwan Stock Exchange (TWSE)</td>
+          <td><span class="region region-asia">ÁSIA</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Taiwan_Agencia Estado Ltda + Delayed index info</td>
+          <td>2018 +</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">Dados com delay; pedido de informações básicas</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Shanghai Stock Exchange (SSE)</td>
+          <td><span class="region region-asia">ÁSIA</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Shanghai.pdf</td>
+          <td>Vigente</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">Composit Index; distribuição em análise</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Hong Kong (HSI / HKEX)</td>
+          <td><span class="region region-asia">ÁSIA</span></td>
+          <td>Índices</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>HongKong_Re_Agencia Estado - HSI.msg</td>
+          <td>Autorização por e-mail</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">HSI (Hang Seng Index); autorização informal</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Australia (ASX)</td>
+          <td><span class="region region-asia">ÁSIA</span></td>
+          <td>Índices</td>
+          <td><span class="badge badge-free">FREE</span></td>
+          <td>ASX Free Indices display.msg</td>
+          <td>Autorização gratuita</td>
+          <td class="amount-col">Sem custo</td>
+          <td class="td-muted">Display de índices free via email; acesso gratuito</td>
+        </tr>
+        <!-- LATAM -->
+        <tr><td colspan="8" class="fee-category-header">🌎 LATAM</td></tr>
+        <tr>
+          <td class="td-bold">NUAM — Chile (Bolsa de Santiago / ex-BCS)</td>
+          <td><span class="region region-latam">LATAM</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-pending">EM LICENCIAMENTO</span></td>
+          <td>Contrato MD VENDOR HBR + Anexos 2 e 3</td>
+          <td>Negociação em andamento</td>
+          <td class="amount-col">USD 1.500/mês (fixo) + USD 30/terminal/mês</td>
+          <td class="td-muted">Comissionamento: USD 2.000 + 40h suporte; IGPA/IPSA isentos; fatura em CLP equivalente USD</td>
+        </tr>
+        <tr>
+          <td class="td-bold">NUAM — Peru (BVL)</td>
+          <td><span class="region region-latam">LATAM</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-pending">EM LICENCIAMENTO</span></td>
+          <td>BVL Peru_05212026.docx</td>
+          <td>mai/2026 — em revisão</td>
+          <td class="amount-col">A definir</td>
+          <td class="td-muted">Bolsa de Valores de Lima; contrato template em análise</td>
+        </tr>
+        <tr>
+          <td class="td-bold">NUAM — Colombia (BVC)</td>
+          <td><span class="region region-latam">LATAM</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-pending">EM LICENCIAMENTO</span></td>
+          <td>NUAM BVC Colombia_05202026.docx + F-ME-GQ-0654</td>
+          <td>mai/2026 — em revisão</td>
+          <td class="amount-col">A definir</td>
+          <td class="td-muted">Bolsa de Valores de Colombia; cláusulas Bolsa de Comercio</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Bolsa de Santiago — IPSA (acesso direto)</td>
+          <td><span class="region region-latam">LATAM</span></td>
+          <td>Índices</td>
+          <td><span class="badge badge-free">FREE</span></td>
+          <td>IPSA Agreement 2021 + msg autorização</td>
+          <td>Jun/2021</td>
+          <td class="amount-col">Sem custo</td>
+          <td class="td-muted">IPSA via ICE Data; apenas nome, valor e variação; sem custo</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Bolsa de Comercio de Buenos Aires (BCBA)</td>
+          <td><span class="region region-latam">LATAM</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>Contrato Vendor BCBA firmado + Argentina 2019</td>
+          <td>2019 +</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">Contrato vendor assinado; Merval/BCBA</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Bolsa de Valores de México (BMV)</td>
+          <td><span class="region region-latam">LATAM</span></td>
+          <td>Bolsa</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>E-mail autorização México #1001256</td>
+          <td>Autorização por e-mail</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">IPC; autorização informal via e-mail</td>
+        </tr>
+        <tr>
+          <td class="td-bold">BBA (Bangkok Bharat/outros)</td>
+          <td><span class="region region-latam">LATAM</span></td>
+          <td>Dados</td>
+          <td><span class="badge badge-active">ATIVO</span></td>
+          <td>BBA Enterprises Limited 4600003522</td>
+          <td>Vigente</td>
+          <td class="amount-col">—</td>
+          <td class="td-muted">Contrato de empresa BBA</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div><!-- end overview -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: CARDS -->
+<div id="tab-cards" class="tab-panel">
+  <div class="search-bar">
+    <input type="text" class="search-input" id="cardSearch" placeholder="🔍  Buscar bolsa, região, produto..." oninput="filterCards()">
+    <select class="filter-select" id="filterRegion" onchange="filterCards()">
+      <option value="">Todas as regiões</option>
+      <option value="br">🇧🇷 Brasil</option>
+      <option value="us">🇺🇸 EUA</option>
+      <option value="eu">🇪🇺 Europa</option>
+      <option value="uk">🇬🇧 Reino Unido</option>
+      <option value="asia">🌏 Ásia-Pacífico</option>
+      <option value="latam">🌎 LATAM</option>
+    </select>
+    <select class="filter-select" id="filterStatus" onchange="filterCards()">
+      <option value="">Todos os status</option>
+      <option value="active">✅ Ativo</option>
+      <option value="pending">⏳ Em Licenciamento</option>
+      <option value="signed">🖊 Assinado</option>
+      <option value="free">🆓 Sem Custo</option>
+      <option value="nda">🔒 NDA</option>
+    </select>
+    <span class="search-count" id="cardCount">32 bolsas</span>
+  </div>
+
+  <div class="exchange-grid" id="exchangeGrid">
+
+    <!-- ICE DATA SERVICES -->
+    <div class="exchange-card" data-region="us" data-status="active" data-name="ICE Data Services Consolidated Feed" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">ICE Data Services</div>
+          <div class="card-full">ICE Data Connectivity &amp; Feeds / ICE Data LLP</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-us">US</span>
+            <span class="badge" style="background:#1a1a2a;color:#8888ff;border-color:#3a3a6a">Consolidado</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">MSA</span><span class="card-row-val">01/Mai/2021</span></div>
+        <div class="card-row"><span class="card-row-label">Feeds Schedule No.2</span><span class="card-row-val">01/Fev/2022</span></div>
+        <div class="card-row"><span class="card-row-label">Addenda assinados</span><span class="card-row-val">1–8 assinados; #9 pendente</span></div>
+        <div class="card-row"><span class="card-row-label">Vendor Account</span><span class="card-row-val">CQIIF-1001256</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Estrutura Contratual</h4>
+          <div class="detail-item"><strong>MSA:</strong> ICE Data Services, Inc. — mai/2021</div>
+          <div class="detail-item"><strong>Schedule No.2:</strong> ICE Data Connectivity &amp; Feeds — fev/2022 (substitui Schedule No.1)</div>
+          <div class="detail-item"><strong>Add.1:</strong> Conectividade/hosting (Link Internacional)</div>
+          <div class="detail-item"><strong>Add.2 (IDC/BME EOD):</strong> Jan/2025 — dados IDC + BME EOD; até 43 user IDs</div>
+          <div class="detail-item"><strong>Add.3–6:</strong> Mercados adicionais, FX, índices globais</div>
+          <div class="detail-item"><strong>Add.7:</strong> IDD FX Volatility Surfaces — set/2025</div>
+          <div class="detail-item"><strong>Add.8:</strong> Fev/2026 — assinado</div>
+          <div class="detail-item"><strong>Add.9:</strong> Nível 2 Mercados — PENDENTE assinatura</div>
+        </div>
+        <div class="detail-section">
+          <h4>Produtos Cobertos via ICE (além dos próprios)</h4>
+          <div class="pill-row">
+            <span class="pill pill-ok">NYSE / ICE Equities</span>
+            <span class="pill pill-ok">Cboe (CSMI)</span>
+            <span class="pill pill-ok">Nikkei 225 (EOD)</span>
+            <span class="pill pill-ok">Santiago IPSA</span>
+            <span class="pill pill-ok">BME/Madrid EOD</span>
+            <span class="pill pill-ok">GIF (Global Index)</span>
+            <span class="pill pill-ok">IBA LIBOR/SOFR</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>Restrições Chave</h4>
+          <div class="detail-item">• Proibido storage em third-party cloud (sem aprovação escrita)</div>
+          <div class="detail-item">• Uso com IA (RAG/grounding): permitido com restrições</div>
+          <div class="detail-item">• User IDs adicionais além de 43: USD 100/mês cada</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B3 -->
+    <div class="exchange-card" data-region="br" data-status="active" data-name="B3 Equities Derivativos Renda Fixa" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">B3 — Brasil Bolsa Balcão</div>
+          <div class="card-full">Equities · Derivativos · Renda Fixa · Up2Data · Trademate</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-br">BR</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Política Comercial MD</span><span class="card-row-val">2026 (OC 104/2025-PRE)</span></div>
+        <div class="card-row"><span class="card-row-label">Dist. RT (por dataset)</span><span class="card-row-val">USD 4.000/mês (intl)</span></div>
+        <div class="card-row"><span class="card-row-label">Terminal Prof. L2</span><span class="card-row-val">USD 127/mês/device</span></div>
+        <div class="card-row"><span class="card-row-label">Up2Data Annexo III</span><span class="card-row-val">26/03/2026</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Licenças (Mercados Listados — Internacional USD/mês/dataset)</h4>
+          <div class="detail-item">Distribuição RT: <strong>USD 4.000</strong></div>
+          <div class="detail-item">Distribuição Delay Contínuo: <strong>USD 960</strong></div>
+          <div class="detail-item">Distribuição Delay Snapshot: <strong>USD 160</strong></div>
+          <div class="detail-item">Uso Próprio RT: <strong>USD 1.600</strong></div>
+          <div class="detail-item">Plataformas de Negociação RT: <strong>USD 3.000</strong></div>
+        </div>
+        <div class="detail-section">
+          <h4>Display (Mercados Listados — por device)</h4>
+          <div class="detail-item">Terminal Prof. L1: USD 97 | L2: <strong>USD 127</strong></div>
+          <div class="detail-item">Terminal Não Prof. L2: USD 0,93/device</div>
+          <div class="detail-item">Wallboard L2: USD 508/mês</div>
+        </div>
+        <div class="detail-section">
+          <h4>Non-Display (aplicações)</h4>
+          <div class="detail-item">Trading dentro co-loc: USD 250 | Não-trading: USD 150</div>
+          <div class="detail-item">Enterprise (incl. Trading+Non-Trading): USD 3.500</div>
+        </div>
+        <div class="detail-section">
+          <h4>Up2Data — Canais autorizados (Anexo III)</h4>
+          <div class="pill-row">
+            <span class="pill pill-no">Display ❌</span>
+            <span class="pill pill-ok">Non-Display ✓</span>
+            <span class="pill pill-no">Open Website ❌</span>
+          </div>
+          <div class="detail-item" style="margin-top:6px">Canais: Commodities, Juros, Moedas, Renda Variável, US Treasury</div>
+          <div class="detail-item">Canal especializado autorizado: <strong>Curvas</strong></div>
+        </div>
+        <div class="detail-section">
+          <h4>Obrigações</h4>
+          <div class="detail-item">• Relatório Periódico obrigatório (Portal B3)</div>
+          <div class="detail-item">• Leitura conjunta: Política de Consumo + Manual Relatório</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CME Group -->
+    <div class="exchange-card" data-region="us" data-status="active" data-name="CME Group CBOT NYMEX COMEX Chicago" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">CME Group</div>
+          <div class="card-full">CME · CBOT · NYMEX · COMEX · S&amp;P SPDJI</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-us">US</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Contrato base</span><span class="card-row-val">ILA-A326927 (2013)</span></div>
+        <div class="card-row"><span class="card-row-label">Dist. RT (por grupo)</span><span class="card-row-val">USD 29.280/ano</span></div>
+        <div class="card-row"><span class="card-row-label">Display device RT</span><span class="card-row-val">USD 134,50/device/mês</span></div>
+        <div class="card-row"><span class="card-row-label">Fee list vigente</span><span class="card-row-val">Jan/2026</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Distribution Fees (Licensee Group/ano)</h4>
+          <div class="detail-item">Real Time: <strong>USD 29.280</strong>/ano por grupo</div>
+          <div class="detail-item">Delayed: USD 21.840/ano</div>
+          <div class="detail-item">Historical: USD 35.220/ano</div>
+        </div>
+        <div class="detail-section">
+          <h4>Display Device (por device/mês)</h4>
+          <div class="detail-item">RT Bundle (todas as bolsas): USD 36,50/device</div>
+          <div class="detail-item">CME individual: USD 73 | CBOT: USD 48,75 | NYMEX: USD 53,75</div>
+          <div class="detail-item">Non-Prof. Depth of Market: USD 1,55 | Non-Prof. Top: USD 4,65</div>
+          <div class="detail-item">Data Feed RT: USD 610 | Delay: USD 304</div>
+        </div>
+        <div class="detail-section">
+          <h4>Non-Display — Category A (Trading as Principal)</h4>
+          <div class="detail-item">Enterprise (4+): USD 3.640 | Premium (2-3): USD 1.820 | Basic: USD 609</div>
+        </div>
+        <div class="detail-section">
+          <h4>S&amp;P SPDJI</h4>
+          <div class="detail-item">Contrato executado (SPDJI_Agreement_Agencia_Estado_Executed.pdf)</div>
+          <div class="detail-item">DowJones renovado 2018; Schedule5 Draft em revisão</div>
+        </div>
+        <div class="detail-section">
+          <h4>Histórico relevante</h4>
+          <div class="detail-item">• Reajuste fee CME jan/2023 (BIP registrado)</div>
+          <div class="detail-item">• Derived Data Agro (BRL/USD paridades): <strong>Declined nov/2025</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NASDAQ -->
+    <div class="exchange-card" data-region="us" data-status="active" data-name="Nasdaq Basic NLS Plus UTP Global Indexes Smart Options" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Nasdaq</div>
+          <div class="card-full">Nasdaq Basic · NLS Plus · UTP · Global Indexes · Smart Options</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="badge badge-signed">Add. Assinado</span>
+            <span class="region region-us">US</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Nasdaq Basic + NLS</span><span class="card-row-val">USD 2.000/mês (mai/2025)</span></div>
+        <div class="card-row"><span class="card-row-label">Prof. Subscriber Fee</span><span class="card-row-val">USD 26/mês/usuário</span></div>
+        <div class="card-row"><span class="card-row-label">Admin (Nasdaq+BX+PSX)</span><span class="card-row-val">3× USD 100/mês</span></div>
+        <div class="card-row"><span class="card-row-label">ID do cliente</span><span class="card-row-val">AGEL (A-00002855)</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Contratos Vigentes</h4>
+          <div class="detail-item"><strong>Nasdaq GDA</strong> — base para todos os produtos</div>
+          <div class="detail-item"><strong>UTP Agreement</strong> — fev/2017 (Nasdaq Stock Market 4600003556)</div>
+          <div class="detail-item"><strong>Global Indexes</strong> — mai/2021</div>
+          <div class="detail-item"><strong>Nasdaq Basic + NLS Plus</strong> — Service Order mai/2025 (Account Manager: Trey Anderson)</div>
+          <div class="detail-item"><strong>Smart Options</strong> — mai/2026</div>
+          <div class="detail-item"><strong>MBBO (Smart Options)</strong> — Nasdaq_Agreement_for_Agencia_Estado_Ltda_00.pdf</div>
+        </div>
+        <div class="detail-section">
+          <h4>Relatórios</h4>
+          <div class="detail-item">Report mai/2026: invoice USD 13.852,00 (0526MDD073152)</div>
+          <div class="detail-item">Report abr/2026: invoice USD 11.657,50 (0426MDD069053)</div>
+          <div class="detail-item">Reporting via Data-Client Portal (ops: Diego Braga)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EURONEXT -->
+    <div class="exchange-card" data-region="eu" data-status="active" data-name="Euronext Paris Amsterdam Lisboa Dublin Oslo Liffe" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Euronext</div>
+          <div class="card-full">Paris · Amsterdam · Lisboa · Dublin · Oslo · Liffe · Milan</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-eu">EU</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">EMDA Form V4.0</span><span class="card-row-val">02/Out/2025</span></div>
+        <div class="card-row"><span class="card-row-label">All Indices (Direct)</span><span class="card-row-val">€826,50/mês</span></div>
+        <div class="card-row"><span class="card-row-label">Continental Cash L2</span><span class="card-row-val">€4.849,95/mês</span></div>
+        <div class="card-row"><span class="card-row-label">Fee schedule</span><span class="card-row-val">Jun/2025 v15.1</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Direct Access Fees (por mês, por produto)</h4>
+          <div class="detail-item">All Indices: <strong>€826,50</strong></div>
+          <div class="detail-item">Continental Cash Consolidated Pack: L2 €4.849,95 | Last Price €1.284,80</div>
+          <div class="detail-item">Dublin Equities: €235,15 | Oslo Børs Cash: €340,75</div>
+          <div class="detail-item">Derivatives (Equity&amp;Index): L2 €1.037,30</div>
+          <div class="detail-item">Milan AFF: €1.512,65 | MOT: €1.026,45</div>
+          <div class="detail-item">EuroTLX: L2 €356,55</div>
+        </div>
+        <div class="detail-section">
+          <h4>Redistribution Licence Fees — Real-Time</h4>
+          <div class="detail-item">Aplica-se por Contracting Party, por produto</div>
+          <div class="detail-item">RT inclui Delayed e After Midnight Redistribution</div>
+          <div class="detail-item">(ver fee schedule v15.1, pág. 6-9)</div>
+        </div>
+        <div class="detail-section">
+          <h4>Documentos</h4>
+          <div class="detail-item">Contrato original: Euronext_4600003557</div>
+          <div class="detail-item">Liffe: Euronext_Liffe_20140609 + AF 3 (jul/2008)</div>
+          <div class="detail-item">EMDA Admin Form V4.0 assinado: out/2025</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIX -->
+    <div class="exchange-card" data-region="eu" data-status="signed" data-name="SIX Financial Swiss Exchange CARS SIX Flex Corporate Actions" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">SIX Financial Information</div>
+          <div class="card-full">Swiss Exchange · Corporate Actions · SIX Flex</div>
+          <div class="card-badges">
+            <span class="badge badge-signed">ASSINADO</span>
+            <span class="region region-eu">EU</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Contrato base</span><span class="card-row-val">No. 25732 (SIXTELEKURS)</span></div>
+        <div class="card-row"><span class="card-row-label">Addendum 3 (atual)</span><span class="card-row-val">Assinado jun/2026</span></div>
+        <div class="card-row"><span class="card-row-label">Vigência Addum 3</span><span class="card-row-val">01/Jul/2026 – 30/Jun/2028</span></div>
+        <div class="card-row"><span class="card-row-label">Valor anual</span><span class="card-row-val">USD 18.396,39</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Histórico de Addenda</h4>
+          <div class="detail-item"><strong>Addendum #1:</strong> 02/Mai/2014 — contrato SIXTELEKURS (4600005090)</div>
+          <div class="detail-item"><strong>Addendum #2:</strong> 19/Fev/2019</div>
+          <div class="detail-item"><strong>Addendum #3:</strong> Assinado 24-25/Jun/2026 (Rodrigo Galasini + Gustavo Ioriatti)</div>
+          <div class="detail-item">Subscriber no.: US26944 | Ref: CDR06792</div>
+        </div>
+        <div class="detail-section">
+          <h4>Serviço (Addendum 3)</h4>
+          <div class="detail-item">Serviço: Corporate Action N. America Equity — Managed</div>
+          <div class="detail-item">Plataforma: <strong>SIX Flex</strong> (migração de CARS)</div>
+          <div class="detail-item">Service ID: 31763</div>
+          <div class="detail-item">Entrega: SIX Flex Delivery — Managed Subscription</div>
+        </div>
+        <div class="detail-section">
+          <h4>Migração CARS → SIX Flex</h4>
+          <div class="detail-item">Notificação sunset CARS: ago/2025</div>
+          <div class="detail-item">Apresentação SIX Data Suite: ago/2025 (3 versões)</div>
+          <div class="detail-item">Price Increase Letter 2026: recebido set/2025</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LME -->
+    <div class="exchange-card" data-region="uk" data-status="active" data-name="LME London Metal Exchange metais" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">LME — London Metal Exchange</div>
+          <div class="card-full">Metais base, alumínio, cobre, zinco</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-uk">UK</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Contrato mais recente</span><span class="card-row-val">Jun/2024</span></div>
+        <div class="card-row"><span class="card-row-label">Contrato anterior</span><span class="card-row-val">Set/2018</span></div>
+        <div class="card-row"><span class="card-row-label">Fee</span><span class="card-row-val">Negociado (contratual)</span></div>
+        <div class="card-row"><span class="card-row-label">Auditoria ativa</span><span class="card-row-val">Sim (Confidential)</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Documentos</h4>
+          <div class="detail-item">LME Distribution License Agreement — Set/2018</div>
+          <div class="detail-item">LME Information Distribution Agreement — Jun/2024 (renovação)</div>
+          <div class="detail-item">Auditoria: Classification Confidential (fev/2026, 32MB)</div>
+          <div class="detail-item">Agencia Estado SA - Audit Preparation — Jan/2026</div>
+        </div>
+        <div class="detail-section">
+          <h4>Atenção</h4>
+          <div class="detail-item">⚠ Processo de auditoria em andamento — manter documentação de usuários atualizada</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FTSE -->
+    <div class="exchange-card" data-region="uk" data-status="active" data-name="FTSE Russell LSEG índices UK" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">FTSE / FTSE Russell (LSEG)</div>
+          <div class="card-full">FTSE 100, Russell, índices UK</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-uk">UK</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Variation Agreement</span><span class="card-row-val">01/Abr/2020</span></div>
+        <div class="card-row"><span class="card-row-label">Acordo original</span><span class="card-row-val">01/Jan/2011</span></div>
+        <div class="card-row"><span class="card-row-label">Modelo</span><span class="card-row-val">Distribuição (sem redistribuição)</span></div>
+        <div class="card-row"><span class="card-row-label">User report mai/2026</span><span class="card-row-val">Entregue (xlsx)</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Restrições Contratuais</h4>
+          <div class="detail-item">• Subscriber pode usar somente para fins internos ou pessoais</div>
+          <div class="detail-item">• <strong>Redistribuição proibida</strong> para terceiros</div>
+          <div class="detail-item">• Cláusula 1.6(c) e Schedule 1 atualizados em 2020</div>
+        </div>
+        <div class="detail-section">
+          <h4>Relatórios</h4>
+          <div class="detail-item">052026_FTSE INDEX_Agencia Estado User Report.xlsx — entregue jun/2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CBOE -->
+    <div class="exchange-card" data-region="us" data-status="active" data-name="CBOE Cboe VIX volatilidade" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Cboe Global Markets</div>
+          <div class="card-full">CBOE · BZX · BYX · EDGX · VIX</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-us">US</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Contrato original</span><span class="card-row-val">29/Mai/2009</span></div>
+        <div class="card-row"><span class="card-row-label">Data Agreement Exec.</span><span class="card-row-val">2022 (DocuSign)</span></div>
+        <div class="card-row"><span class="card-row-label">Global Data Agree.</span><span class="card-row-val">2025 (renovação)</span></div>
+        <div class="card-row"><span class="card-row-label">Delivery</span><span class="card-row-val">CSMI int.+ext. via ICE</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Produtos</h4>
+          <div class="detail-item">CBOE Global Markets Data Feed (CSMI) — interno e externo</div>
+          <div class="detail-item">Inclui: VIX, Cboe indexes, options data</div>
+          <div class="detail-item">Order Form Signed: 2022 (System Description v7)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NIKKEI -->
+    <div class="exchange-card" data-region="asia" data-status="free" data-name="Nikkei 225 Japão índice" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Nikkei Inc.</div>
+          <div class="card-full">Nikkei 225 — Japão</div>
+          <div class="card-badges">
+            <span class="badge badge-free">SEM CUSTO</span>
+            <span class="region region-asia">ÁSIA</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Confirmation Letter</span><span class="card-row-val">2023</span></div>
+        <div class="card-row"><span class="card-row-label">Acesso via</span><span class="card-row-val">ICE Data Services</span></div>
+        <div class="card-row"><span class="card-row-label">Tipo de uso</span><span class="card-row-val">RT recebe, display EOD</span></div>
+        <div class="card-row"><span class="card-row-label">Fee</span><span class="card-row-val">Sem custo de licença</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Termos</h4>
+          <div class="detail-item">• Recebe RT via ICE, exibe somente EOD em broadcast.com.br</div>
+          <div class="detail-item">• Clientes podem exibir em seus próprios sites</div>
+          <div class="detail-item">• Crédito obrigatório: <em>"Nikkei 225 © Nikkei Inc."</em></div>
+          <div class="detail-item">• Proibido alterar conteúdo ou formato do índice</div>
+          <div class="detail-item">• Nikkei não é responsável por decisões baseadas nos dados</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NUAM Chile -->
+    <div class="exchange-card" data-region="latam" data-status="pending" data-name="NUAM Chile Bolsa Santiago BCS" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">NUAM — Chile</div>
+          <div class="card-full">Holding Bursátil Regional S.A. (ex-Bolsa de Santiago)</div>
+          <div class="card-badges">
+            <span class="badge badge-pending">EM LICENCIAMENTO</span>
+            <span class="region region-latam">LATAM</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Template contrato</span><span class="card-row-val">MD VENDOR HBR (abr/2023)</span></div>
+        <div class="card-row"><span class="card-row-label">Fee fixo mensal</span><span class="card-row-val">USD 1.500 + VAT</span></div>
+        <div class="card-row"><span class="card-row-label">Fee variável</span><span class="card-row-val">USD 30/terminal/mês</span></div>
+        <div class="card-row"><span class="card-row-label">Comissionamento</span><span class="card-row-val">USD 2.000 (único)</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Estrutura de Fees (Annex 1 — Level 1 Equities)</h4>
+          <div class="detail-item">Conexão direta: USD 2.000 único + 40h suporte (2 meses)</div>
+          <div class="detail-item">Via ROUTER autorizado: sem comissionamento</div>
+          <div class="detail-item">Mensal fixo: <strong>USD 1.500 + VAT</strong></div>
+          <div class="detail-item">Por terminal RT (real-time): <strong>USD 30 + VAT/terminal/mês</strong></div>
+          <div class="detail-item">Fatura em CLP equivalente ao USD (incluem cotação USD no invoice)</div>
+        </div>
+        <div class="detail-section">
+          <h4>Isenções</h4>
+          <div class="detail-item">✅ IGPA, IPSA e INTER-10 em real-time — <strong>Isentos de cobrança</strong> para publicação para todos os usuários</div>
+        </div>
+        <div class="detail-section">
+          <h4>Documentos</h4>
+          <div class="detail-item">Contrato MD VENDOR HBR.docx</div>
+          <div class="detail-item">Anexo 2: RV Equities</div>
+          <div class="detail-item">Contrato Anexo 3: Vendor HBR.docx</div>
+          <div class="detail-item">US$ Vendor Fee annex level 1 HBR.docx</div>
+        </div>
+        <div class="detail-section">
+          <h4>Atenção</h4>
+          <div class="detail-item">⚠ Acesso ao IPSA via Bolsa de Santiago (contrato 2021) permanece GRATUITO e separado. Este contrato NUAM é para equity data ampliada.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NUAM Peru -->
+    <div class="exchange-card" data-region="latam" data-status="pending" data-name="NUAM Peru BVL Bolsa Valores Lima" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">NUAM — Peru (BVL)</div>
+          <div class="card-full">Bolsa de Valores de Lima S.A.</div>
+          <div class="card-badges">
+            <span class="badge badge-pending">EM LICENCIAMENTO</span>
+            <span class="region region-latam">LATAM</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Documento</span><span class="card-row-val">NUAM BVL Peru_05212026.docx</span></div>
+        <div class="card-row"><span class="card-row-label">Data</span><span class="card-row-val">Mai/2026</span></div>
+        <div class="card-row"><span class="card-row-label">CNPJ BVL</span><span class="card-row-val">20607835544</span></div>
+        <div class="card-row"><span class="card-row-label">Status</span><span class="card-row-val">Template em análise</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Estrutura</h4>
+          <div class="detail-item">Information Distribution Agreement entre BVL e Agência Estado</div>
+          <div class="detail-item">Representantes BVL: Miguel Angel Zapatero Alba + Mariella Karina Cordova Vargas</div>
+          <div class="detail-item">Registro: Entry 14656362 (Registry of Legal Entities, Lima)</div>
+          <div class="detail-item">Distribuição de dados de valores de mercado peruano</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NUAM Colombia -->
+    <div class="exchange-card" data-region="latam" data-status="pending" data-name="NUAM Colombia BVC Bolsa Valores Colombia" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">NUAM — Colombia (BVC)</div>
+          <div class="card-full">Bolsa de Valores de Colombia S.A.</div>
+          <div class="card-badges">
+            <span class="badge badge-pending">EM LICENCIAMENTO</span>
+            <span class="region region-latam">LATAM</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Documento</span><span class="card-row-val">BVC Colombia_05202026.docx</span></div>
+        <div class="card-row"><span class="card-row-label">Template adicional</span><span class="card-row-val">F-ME-GQ-0654 + Anexo 3 V.5</span></div>
+        <div class="card-row"><span class="card-row-label">Data</span><span class="card-row-val">Mai/2026</span></div>
+        <div class="card-row"><span class="card-row-label">Lei aplicável</span><span class="card-row-val">Lei mercantil colombiana</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Estrutura</h4>
+          <div class="detail-item">Contrato de Suministro de Información através de Carrier vinculado à BVC</div>
+          <div class="detail-item">Modalidade: distribuição via carrier/router autorizado</div>
+          <div class="detail-item">Contrato Bolsa de Comercio de Santiago também referenciado nos templates</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIX/SWISS (separado) -->
+    <div class="exchange-card" data-region="eu" data-status="active" data-name="Swiss Exchange índices suiços" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Swiss Exchange (SWX)</div>
+          <div class="card-full">Índices suíços via SIX Exfeed</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-eu">EU</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Confirmation Letter</span><span class="card-row-val">SIX Exfeed 2022</span></div>
+        <div class="card-row"><span class="card-row-label">Produto</span><span class="card-row-val">Índices suíços (SMI etc.)</span></div>
+        <div class="card-row"><span class="card-row-label">Fee</span><span class="card-row-val">Negociado</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Documentos</h4>
+          <div class="detail-item">Swiss_SIX_Exfeed_Confirmation_Letter_Agencia_Estado_LOC_2022.pdf</div>
+          <div class="detail-item">Swiss_indice.pdf</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thailand -->
+    <div class="exchange-card" data-region="asia" data-status="active" data-name="Thailand SET Stock Exchange Thailand" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">SET — Stock Exchange of Thailand</div>
+          <div class="card-full">Equity Index EOD</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-asia">ÁSIA</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Fee 2026</span><span class="card-row-val">USD 300/trimestre (inalterado)</span></div>
+        <div class="card-row"><span class="card-row-label">Tipo</span><span class="card-row-val">Equity Index EOD</span></div>
+        <div class="card-row"><span class="card-row-label">Contato</span><span class="card-row-val">InfoProducts@set.or.th</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Confirmação Fee 2026</h4>
+          <div class="detail-item">E-mail recebido set/2025: fee mantido em USD 300/trimestre</div>
+          <div class="detail-item">Contrato principal: Thailand2.pdf + Thailand.pdf</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A5X -->
+    <div class="exchange-card" data-region="br" data-status="nda" data-name="A5X bolsa alternativa Brasil CSD-BR" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">A5X S.A.</div>
+          <div class="card-full">Bolsa alternativa — Brasil (em implantação)</div>
+          <div class="card-badges">
+            <span class="badge badge-nda">NDA</span>
+            <span class="region region-br">BR</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Status contratual</span><span class="card-row-val">NDA Bilateral (PT) assinado</span></div>
+        <div class="card-row"><span class="card-row-label">Previsão go-live</span><span class="card-row-val">Deferred 2027</span></div>
+        <div class="card-row"><span class="card-row-label">Motivo</span><span class="card-row-val">Pendente aprovação Banco Central</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Contexto</h4>
+          <div class="detail-item">CNPJ A5X: 52.652.163/0001-52 — Av. JK 1830, Vila Nova Conceição</div>
+          <div class="detail-item">NDA bilateral estabelecido para exploração de negócio (Informações Sigilosas)</div>
+          <div class="detail-item">Integração no roadmap 2027 (junto com CSD-BR)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deutsche Börse -->
+    <div class="exchange-card" data-region="eu" data-status="active" data-name="Deutsche Börse Xetra DAX Alemanha" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Deutsche Börse</div>
+          <div class="card-full">XETRA · DAX · Eurex (Alemanha)</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-eu">EU</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Contrato</span><span class="card-row-val">DEUTSCHE BORSE AG 4600002258</span></div>
+        <div class="card-row"><span class="card-row-label">Reajuste registrado</span><span class="card-row-val">Dez/2022 (BIP)</span></div>
+        <div class="card-row"><span class="card-row-label">Fee</span><span class="card-row-val">Negociado</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Documentos</h4>
+          <div class="detail-item">DEUTSCHE BORSE AG_4600002258.pdf</div>
+          <div class="detail-item">Deutsche Börse_Serviço (parte 1)_4600002258.pdf</div>
+          <div class="detail-item">BIP06_22 e BIP06.01_22 — Reajuste de Fee Deutsche Börse</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Markit/S&P -->
+    <div class="exchange-card" data-region="us" data-status="active" data-name="Markit IHS Markit S&P Global WMR" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Markit / S&amp;P Global Market Intelligence</div>
+          <div class="card-full">IHS Markit · MARKIT NORTH AMERICA · WM Reuters</div>
+          <div class="card-badges">
+            <span class="badge badge-active">ATIVO</span>
+            <span class="region region-us">US</span>
+          </div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Contrato principal</span><span class="card-row-val">BPM_7665_4600006379</span></div>
+        <div class="card-row"><span class="card-row-label">Aditivo</span><span class="card-row-val">MARKIT_ADITIVO_4600006379</span></div>
+        <div class="card-row"><span class="card-row-label">Fee</span><span class="card-row-val">Negociado</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Produtos</h4>
+          <div class="detail-item">Markit North America: CDS, crédito, dados de referência</div>
+          <div class="detail-item">WMR (WM Reuters): FX Rates Spot/Forward/NDF (via LSEG)</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end exchange-grid -->
+</div><!-- end cards tab -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: FEES -->
+<div id="tab-fees" class="tab-panel">
+  <div class="alert alert-amber">⚠ Valores marcados como "Negociado" são cobertos por NDA/contrato confidencial. Os demais refletem tarifas públicas ou documentos disponíveis no arquivo.</div>
+
+  <div class="section-title"><span>🇧🇷 Bolsas Nacionais</span><span class="line"></span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Bolsa</th><th>Produto/Serviço</th><th>Tipo</th><th>Valor</th><th>Moeda</th><th>Periodicidade</th><th>Fonte</th></tr></thead>
+      <tbody>
+        <tr><td class="td-bold">B3 — Mercados Listados</td><td>Licença Distribuição RT</td><td>Display</td><td class="amount-col">4.000</td><td>USD</td><td>Mês/dataset</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Licença Distribuição Delay Contínuo</td><td>Display</td><td class="amount-col">960</td><td>USD</td><td>Mês/dataset</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Licença Distribuição Delay Snapshot</td><td>Display</td><td class="amount-col">160</td><td>USD</td><td>Mês/dataset</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Licença Uso Próprio RT</td><td>Display</td><td class="amount-col">1.600</td><td>USD</td><td>Mês/dataset</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Terminal Profissional L1 (por device)</td><td>Display</td><td class="amount-col">97</td><td>USD</td><td>Mês/device</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Terminal Profissional L2 (por device)</td><td>Display</td><td class="amount-col">127</td><td>USD</td><td>Mês/device</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Terminal Não-Profissional L2</td><td>Display</td><td class="amount-col">0,93</td><td>USD</td><td>Mês/device</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Wallboard L2</td><td>Display</td><td class="amount-col">508</td><td>USD</td><td>Mês</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Non-Display Trading (co-loc)</td><td>Non-Display</td><td class="amount-col">250</td><td>USD</td><td>Mês/dataset</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Non-Display Non-Trading (co-loc)</td><td>Non-Display</td><td class="amount-col">150</td><td>USD</td><td>Mês/dataset</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3</td><td>Enterprise Non-Display (Trading+Non)</td><td>Non-Display</td><td class="amount-col">3.500</td><td>USD</td><td>Mês/dataset</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3 RF</td><td>Terminal Profissional RF L2</td><td>Display</td><td class="amount-col">60</td><td>USD</td><td>Mês/device</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3 RF</td><td>Licença Dist. RT Renda Fixa</td><td>Display</td><td class="amount-col">1.120</td><td>USD</td><td>Mês/dataset</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td>B3 RF</td><td>Licença Uso Próprio RT RF</td><td>Display</td><td class="amount-col">560</td><td>USD</td><td>Mês/dataset</td><td class="td-muted">Política MD 2026</td></tr>
+        <tr><td class="td-bold">B3 Up2Data</td><td>Anexo III — Canais básicos (Commodities, Juros, FX, EQ)</td><td>Non-Display</td><td class="amount-col tbd">Sem custo adicional</td><td>—</td><td>—</td><td class="td-muted">Annex III mar/2026</td></tr>
+        <tr><td class="td-bold">Thailand SET</td><td>Equity Index EOD</td><td>Display</td><td class="amount-col">300</td><td>USD</td><td>Trimestral</td><td class="td-muted">Email set/2025</td></tr>
+        <tr><td class="td-bold">Nikkei</td><td>Nikkei 225 EOD (via ICE)</td><td>Display</td><td class="amount-col tbd">Sem custo</td><td>—</td><td>—</td><td class="td-muted">Confirmation 2023</td></tr>
+        <tr><td class="td-bold">Santiago (IPSA)</td><td>IPSA Index (nome, valor, variação)</td><td>Display</td><td class="amount-col tbd">Sem custo</td><td>—</td><td>—</td><td class="td-muted">Agreement jun/2021</td></tr>
+        <tr><td class="td-bold">ASX</td><td>Índices ASX (display)</td><td>Display</td><td class="amount-col tbd">Sem custo</td><td>—</td><td>—</td><td class="td-muted">Email autorização</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title" style="margin-top:28px"><span>🇺🇸 Bolsas USA</span><span class="line"></span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Bolsa</th><th>Produto/Serviço</th><th>Tipo</th><th>Valor</th><th>Moeda</th><th>Periodicidade</th><th>Fonte</th></tr></thead>
+      <tbody>
+        <tr><td class="td-bold">CME Group</td><td>Distribution RT (Licensee Group)</td><td>Display</td><td class="amount-col">29.280</td><td>USD</td><td>Ano/grupo</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td>CME Group</td><td>Distribution Delayed</td><td>Display</td><td class="amount-col">21.840</td><td>USD</td><td>Ano/grupo</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td>CME Group</td><td>Distribution Historical</td><td>Display</td><td class="amount-col">35.220</td><td>USD</td><td>Ano/grupo</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td>CME Group</td><td>Display Device RT (bundle all exchanges)</td><td>Display</td><td class="amount-col">36,50</td><td>USD</td><td>Mês/device</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td>CME Group</td><td>Display Device RT (CME individual)</td><td>Display</td><td class="amount-col">73,00</td><td>USD</td><td>Mês/device</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td>CME Group</td><td>Data Feed RT</td><td>Display</td><td class="amount-col">610</td><td>USD</td><td>Mês/feed</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td>CME Group</td><td>Non-Display Cat A1 Enterprise (4+)</td><td>Non-Display</td><td class="amount-col">3.640</td><td>USD</td><td>Mês/grupo</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td>CME Group</td><td>Non-Display Cat A1 Basic</td><td>Non-Display</td><td class="amount-col">609</td><td>USD</td><td>Mês/grupo</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td>CME Group</td><td>Non-Display Cat A2 Enterprise</td><td>Non-Display</td><td class="amount-col">1.820</td><td>USD</td><td>Mês/grupo</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td>CME Group</td><td>Wallboard RT</td><td>Display</td><td class="amount-col">487</td><td>USD</td><td>Mês</td><td class="td-muted">Fee List jan/2026</td></tr>
+        <tr><td class="td-bold">Nasdaq Basic + NLS</td><td>External Distributor (mensal fixo)</td><td>Display</td><td class="amount-col">2.000</td><td>USD</td><td>Mês</td><td class="td-muted">Service Order mai/2025</td></tr>
+        <tr><td>Nasdaq Basic</td><td>All Tapes Professional Subscriber Fee</td><td>Display</td><td class="amount-col">26</td><td>USD</td><td>Mês/usuário</td><td class="td-muted">Service Order mai/2025</td></tr>
+        <tr><td>Nasdaq Basic</td><td>Monthly Admin Fee (Nasdaq)</td><td>Admin</td><td class="amount-col">100</td><td>USD</td><td>Mês</td><td class="td-muted">Service Order mai/2025</td></tr>
+        <tr><td>Nasdaq Basic</td><td>Monthly Admin Fee (BX)</td><td>Admin</td><td class="amount-col">100</td><td>USD</td><td>Mês</td><td class="td-muted">Service Order mai/2025</td></tr>
+        <tr><td>Nasdaq Basic</td><td>Monthly Admin Fee (PSX)</td><td>Admin</td><td class="amount-col">100</td><td>USD</td><td>Mês</td><td class="td-muted">Service Order mai/2025</td></tr>
+        <tr><td class="td-bold">NYSE / ICE</td><td>GIF + CTA + Acordos</td><td>Display</td><td class="amount-col tbd">Negociado (contratual)</td><td>USD</td><td>—</td><td class="td-muted">4600003335; via ICE</td></tr>
+        <tr><td class="td-bold">CBOE</td><td>CSMI (interno + externo)</td><td>Display</td><td class="amount-col tbd">Negociado (contratual)</td><td>USD</td><td>—</td><td class="td-muted">Agreement 2022/2025</td></tr>
+        <tr><td class="td-bold">ICE Data Feeds</td><td>Consolidated Feed + múltiplos addenda</td><td>Display+ND</td><td class="amount-col tbd">Negociado (contratual)</td><td>USD</td><td>—</td><td class="td-muted">MSA 2021 / Schedule No.2</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title" style="margin-top:28px"><span>🌍 Europa &amp; Reino Unido</span><span class="line"></span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Bolsa</th><th>Produto/Serviço</th><th>Tipo</th><th>Valor</th><th>Moeda</th><th>Periodicidade</th><th>Fonte</th></tr></thead>
+      <tbody>
+        <tr><td class="td-bold">Euronext</td><td>All Indices (Direct Access)</td><td>Display</td><td class="amount-col">826,50</td><td>EUR</td><td>Mês</td><td class="td-muted">Fee Schedule v15.1 jun/2025</td></tr>
+        <tr><td>Euronext</td><td>Continental Cash Consolidated Pack L2</td><td>Display</td><td class="amount-col">4.849,95</td><td>EUR</td><td>Mês</td><td class="td-muted">Fee Schedule v15.1</td></tr>
+        <tr><td>Euronext</td><td>Continental Cash Last Price</td><td>Display</td><td class="amount-col">1.284,80</td><td>EUR</td><td>Mês</td><td class="td-muted">Fee Schedule v15.1</td></tr>
+        <tr><td>Euronext</td><td>Dublin Equities L2</td><td>Display</td><td class="amount-col">235,15</td><td>EUR</td><td>Mês</td><td class="td-muted">Fee Schedule v15.1</td></tr>
+        <tr><td>Euronext</td><td>Oslo Børs Cash L2</td><td>Display</td><td class="amount-col">340,75</td><td>EUR</td><td>Mês</td><td class="td-muted">Fee Schedule v15.1</td></tr>
+        <tr><td>Euronext</td><td>Derivatives (Equity&amp;Index) L2</td><td>Display</td><td class="amount-col">1.037,30</td><td>EUR</td><td>Mês</td><td class="td-muted">Fee Schedule v15.1</td></tr>
+        <tr><td>Euronext</td><td>Milan AFF / DER L2</td><td>Display</td><td class="amount-col">1.512,65</td><td>EUR</td><td>Mês</td><td class="td-muted">Fee Schedule v15.1</td></tr>
+        <tr><td>Euronext</td><td>EuroTLX L2</td><td>Display</td><td class="amount-col">356,55</td><td>EUR</td><td>Mês</td><td class="td-muted">Fee Schedule v15.1</td></tr>
+        <tr><td class="td-bold">SIX Financial</td><td>Corporate Actions N.Am. Equity — Managed</td><td>Display</td><td class="amount-col">18.396,39</td><td>USD</td><td>Ano</td><td class="td-muted">Addendum 3 jun/2026</td></tr>
+        <tr><td class="td-bold">Deutsche Börse</td><td>Dados XETRA/DAX</td><td>Display</td><td class="amount-col tbd">Negociado</td><td>EUR</td><td>—</td><td class="td-muted">4600002258</td></tr>
+        <tr><td class="td-bold">LME</td><td>Metais base (distribuição)</td><td>Display</td><td class="amount-col tbd">Negociado</td><td>USD/GBP</td><td>—</td><td class="td-muted">Agreement 2024</td></tr>
+        <tr><td class="td-bold">FTSE Russell</td><td>FTSE 100 / Russell (distribuição)</td><td>Display</td><td class="amount-col tbd">Negociado</td><td>GBP/USD</td><td>—</td><td class="td-muted">Var. Agreement 2020</td></tr>
+        <tr><td class="td-bold">BME (Bolsa Madrid)</td><td>EOD via IDC Addendum 2</td><td>Display</td><td class="amount-col tbd">Negociado via ICE</td><td>EUR</td><td>—</td><td class="td-muted">Addendum jan/2025</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title" style="margin-top:28px"><span>🌎 LATAM</span><span class="line"></span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Bolsa</th><th>Produto/Serviço</th><th>Tipo</th><th>Valor</th><th>Moeda</th><th>Periodicidade</th><th>Fonte</th></tr></thead>
+      <tbody>
+        <tr><td class="td-bold">NUAM Chile</td><td>Fixed Monthly Rate (Vendor Lvl 1 Equities)</td><td>Display</td><td class="amount-col">1.500</td><td>USD + VAT</td><td>Mês</td><td class="td-muted">Annex 1 HBR</td></tr>
+        <tr><td>NUAM Chile</td><td>Por terminal real-time (usuário final)</td><td>Display</td><td class="amount-col">30</td><td>USD + VAT</td><td>Mês/terminal</td><td class="td-muted">Annex 1 HBR</td></tr>
+        <tr><td>NUAM Chile</td><td>Comissionamento (conexão direta)</td><td>Setup</td><td class="amount-col">2.000</td><td>USD</td><td>Único</td><td class="td-muted">Annex 1 HBR</td></tr>
+        <tr><td>NUAM Chile</td><td>IGPA / IPSA / INTER-10 RT</td><td>Display</td><td class="amount-col tbd">Isentos</td><td>—</td><td>—</td><td class="td-muted">Annex 1 HBR</td></tr>
+        <tr><td class="td-bold">Santiago (IPSA direto)</td><td>IPSA: nome, valor, variação</td><td>Display</td><td class="amount-col tbd">Sem custo</td><td>—</td><td>—</td><td class="td-muted">Agreement 2021</td></tr>
+        <tr><td class="td-bold">NUAM Peru (BVL)</td><td>Distribution equities Lima</td><td>Display</td><td class="amount-col tbd">A definir</td><td>USD/PEN</td><td>—</td><td class="td-muted">Template mai/2026</td></tr>
+        <tr><td class="td-bold">NUAM Colombia (BVC)</td><td>Distribution equities Colombia</td><td>Display</td><td class="amount-col tbd">A definir</td><td>USD/COP</td><td>—</td><td class="td-muted">Template mai/2026</td></tr>
+        <tr><td class="td-bold">BCBA (Buenos Aires)</td><td>Merval / equities Argentina</td><td>Display</td><td class="amount-col tbd">Negociado</td><td>USD/ARS</td><td>—</td><td class="td-muted">Contrato assinado</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><!-- end fees -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: USAGE RULES -->
+<div id="tab-usage" class="tab-panel">
+  <div class="alert alert-blue">ℹ Esta aba consolida as regras de uso autorizadas por contrato. "✅" = permitido | "⚠ Parcial" = permitido com restrições | "❌" = proibido</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Bolsa / Feed</th>
+          <th>Display Interno</th>
+          <th>Display Externo (clientes)</th>
+          <th>Open Website (público)</th>
+          <th>Non-Display (algorítmico/AI)</th>
+          <th>Redistribuição a terceiros</th>
+          <th>Dados Derivados</th>
+          <th>Obs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-bold">B3 — Equities</td>
+          <td>✅</td><td>✅ (licença dist.)</td><td>⚠ Parcial</td><td>✅ (Non-Display fee)</td><td>⚠ Redistribuidor requer contrato próprio</td><td>✅</td>
+          <td class="td-muted">Política MD 2026; relatório periódico</td>
+        </tr>
+        <tr>
+          <td class="td-bold">B3 Up2Data</td>
+          <td>❌</td><td>✅ Non-Display</td><td>❌</td><td>✅</td><td>❌</td><td>⚠</td>
+          <td class="td-muted">Apenas Non-Display; canais específicos do Anexo III</td>
+        </tr>
+        <tr>
+          <td class="td-bold">ICE Data Services</td>
+          <td>✅</td><td>✅</td><td>⚠</td><td>✅</td><td>⚠ Per Schedule</td><td>✅</td>
+          <td class="td-muted">AI/RAG permitido com restrições; sem cloud storage sem aprovação</td>
+        </tr>
+        <tr>
+          <td class="td-bold">CME Group</td>
+          <td>✅</td><td>✅ (dist. license)</td><td>✅ (fee público: USD 487)</td><td>✅ (Non-Display A/B/C)</td><td>⚠ Contrato sub-licença</td><td>❌ (Declined)</td>
+          <td class="td-muted">Derived Data Agro (BRL paridades): Declined nov/2025</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Nasdaq Basic</td>
+          <td>✅</td><td>✅ (Ext. Distributor)</td><td>⚠</td><td>⚠</td><td>⚠ Indirect normalized</td><td>⚠</td>
+          <td class="td-muted">GDA regula; relatório mensal via portal</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Euronext</td>
+          <td>✅</td><td>✅ (Redistrib. License)</td><td>✅ (Public Display fee)</td><td>✅ (Non-Display cat.)</td><td>✅ (Sub Vendor fee)</td><td>✅</td>
+          <td class="td-muted">Fee structure completo jun/2025 v15.1; EMDA 2025</td>
+        </tr>
+        <tr>
+          <td class="td-bold">FTSE Russell</td>
+          <td>✅</td><td>✅ (dist. somente)</td><td>⚠</td><td>❌ (não licenciado)</td><td>❌</td><td>❌</td>
+          <td class="td-muted">Subscriber não pode redistribuir (Var. Agreement 2020 Clause 1.6c)</td>
+        </tr>
+        <tr>
+          <td class="td-bold">LME</td>
+          <td>✅</td><td>✅</td><td>⚠</td><td>⚠</td><td>⚠</td><td>⚠</td>
+          <td class="td-muted">Auditoria ativa — verificar relatórios de usuários</td>
+        </tr>
+        <tr>
+          <td class="td-bold">SIX Financial</td>
+          <td>✅</td><td>✅</td><td>⚠</td><td>⚠</td><td>❌</td><td>⚠</td>
+          <td class="td-muted">Corporate Actions; permitted use per Contract 25732</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Nikkei 225</td>
+          <td>✅ (RT receber)</td><td>✅ (EOD display only)</td><td>✅ (com crédito)</td><td>❌</td><td>✅ (clientes exibem em seus sites)</td><td>❌</td>
+          <td class="td-muted">SOMENTE EOD display; crédito "© Nikkei Inc." obrigatório; sem alteração</td>
+        </tr>
+        <tr>
+          <td class="td-bold">CBOE</td>
+          <td>✅</td><td>✅ (CSMI via ICE)</td><td>⚠</td><td>⚠</td><td>⚠</td><td>⚠</td>
+          <td class="td-muted">VIX incluso; GDA Cboe regula</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Thailand SET</td>
+          <td>✅</td><td>✅ (EOD)</td><td>⚠</td><td>❌</td><td>❌</td><td>❌</td>
+          <td class="td-muted">USD 300/trimestre Equity Index EOD</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Bursa Malaysia</td>
+          <td>✅</td><td>✅</td><td>⚠</td><td>⚠</td><td>⚠</td><td>⚠</td>
+          <td class="td-muted">ISLA Stamped; T&C via bursamalaysia.com</td>
+        </tr>
+        <tr>
+          <td class="td-bold">NUAM Chile</td>
+          <td>✅</td><td>✅ (RT por terminal)</td><td>✅ (IGPA/IPSA/INTER-10 RT gratuito)</td><td>⚠</td><td>⚠</td><td>⚠</td>
+          <td class="td-muted">Em licenciamento; USD 30/terminal + USD 1.500/mês</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Santiago (IPSA direto)</td>
+          <td>✅</td><td>✅ (website + terminal)</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td>
+          <td class="td-muted">APENAS nome, valor e variação do IPSA; sem custo</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Buenos Aires (BCBA)</td>
+          <td>✅</td><td>✅</td><td>⚠</td><td>⚠</td><td>⚠</td><td>⚠</td>
+          <td class="td-muted">Contrato Vendor assinado</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Markit / LSEG WMR</td>
+          <td>✅</td><td>✅</td><td>⚠</td><td>⚠</td><td>⚠</td><td>⚠</td>
+          <td class="td-muted">WMR FX Rates Spot/Forward/NDF</td>
+        </tr>
+        <tr>
+          <td class="td-bold">Deutsche Börse</td>
+          <td>✅</td><td>✅</td><td>⚠</td><td>⚠</td><td>⚠</td><td>⚠</td>
+          <td class="td-muted">Contrato 4600002258</td>
+        </tr>
+        <tr>
+          <td class="td-bold">BME / Bolsa Madrid</td>
+          <td>✅</td><td>✅ (EOD)</td><td>⚠</td><td>⚠</td><td>⚠</td><td>⚠</td>
+          <td class="td-muted">Via ICE IDC Addendum; EOD coverage</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div><!-- end usage -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: CONTRACTS -->
+<div id="tab-contracts" class="tab-panel">
+  <div class="section-title"><span>Índice de Documentos por Bolsa</span><span class="line"></span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Pasta</th><th>Documento Principal</th><th>Tipo</th><th>Data</th><th>Observações</th></tr></thead>
+      <tbody>
+        <tr><td class="td-bold">A5X</td><td>A5X - Modelo NDA (PT) (Bilateral).docx</td><td>NDA</td><td>—</td><td class="td-muted">Acordo de Confidencialidade bilateral PT</td></tr>
+        <tr><td class="td-bold">B3</td><td>Politica Comercial de Market Data_2026.pdf</td><td>Política</td><td>Jan/2026</td><td class="td-muted">OC 104/2025-PRE; vigente até 31/12/2026</td></tr>
+        <tr><td>B3</td><td>B3_Termo_de_Acesso_CAS_2018.pdf / BMF_Termo_CAS_2018.pdf</td><td>Termo</td><td>2018</td><td class="td-muted">Acesso CAS histórico</td></tr>
+        <tr><td>B3_Up2Data</td><td>B3_Up2data_03262026.pdf</td><td>Contrato</td><td>26/Mar/2026</td><td class="td-muted">Anexo III vigente — Non-Display canais</td></tr>
+        <tr><td>B3_Up2Data</td><td>UP2DATA_Politica Comercial_2.4.4.pdf</td><td>Política</td><td>—</td><td class="td-muted">Termos gerais Up2Data</td></tr>
+        <tr><td>B3_Trademate</td><td>TradeMate Launch I, II, III.jpeg</td><td>Certificação</td><td>2026</td><td class="td-muted">Certificados de lançamento TradeMate</td></tr>
+        <tr><td class="td-bold">BBCE</td><td>BBCE_20170106180456044.pdf</td><td>Contrato</td><td>2017</td><td class="td-muted">Câmara de Energia</td></tr>
+        <tr><td class="td-bold">Buenos Aires</td><td>BuenosAires_Contrato Vendor BCBA - firmado.pdf</td><td>Contrato</td><td>—</td><td class="td-muted">Vendor firmado + Argentina_2019.pdf</td></tr>
+        <tr><td class="td-bold">CBOE</td><td>CBOE_Agencia Estado Data Agreement - Fully Executed_2022.pdf</td><td>Contrato</td><td>2022</td><td class="td-muted">DocuSign; + novo GDA 2025</td></tr>
+        <tr><td>CBOE</td><td>Cboe_CBOE_Global_Markets_Data_Feed_Order_Form_...Signed.pdf</td><td>Order Form</td><td>2022</td><td class="td-muted">CSMI System Desc. v7</td></tr>
+        <tr><td class="td-bold">CME Group</td><td>CME_Chicago_Mercantile_ILA5-A326927_aditivo_120713_1.pdf + série</td><td>ILA + Aditivos</td><td>2013→2026</td><td class="td-muted">8 aditivos arquivados; Fee List 2026</td></tr>
+        <tr><td>CME Group</td><td>SPDJI_Agreement_Agencia_Estado_Executed.pdf</td><td>Contrato</td><td>—</td><td class="td-muted">S&P Dow Jones Indices</td></tr>
+        <tr><td>CME Group</td><td>CME Group_ILA-subscriber-addendum-september-2024.pdf</td><td>Aditivo</td><td>Set/2024</td><td class="td-muted">ILA subscriber</td></tr>
+        <tr><td class="td-bold">Deutsche</td><td>DEUTSCHE BORSE AG_4600002258.pdf</td><td>Contrato</td><td>—</td><td class="td-muted">+ Deutsche Börse_Serviço(parte 1)</td></tr>
+        <tr><td class="td-bold">Euronext</td><td>Euronext_4600003557.pdf</td><td>Contrato</td><td>—</td><td class="td-muted">Contrato principal</td></tr>
+        <tr><td>Euronext</td><td>Euronext_Liffe_20140609 + AF 3 (Jul/2008)</td><td>Contrato</td><td>2008/2014</td><td class="td-muted">Liffe derivatives</td></tr>
+        <tr><td>Euronext</td><td>2025_10_02_EMDA_Administration Form_V4.0_Agencia Estado.pdf</td><td>EMDA</td><td>Out/2025</td><td class="td-muted">Formulário EMDA vigente; + User Guide v0.6</td></tr>
+        <tr><td>Euronext</td><td>Product Fee Schedule (effective 1 June 2025).pdf</td><td>Fee Schedule</td><td>Jun/2025</td><td class="td-muted">Versão 15.1 — fee schedule vigente</td></tr>
+        <tr><td class="td-bold">FTSE</td><td>FTSE Internacional_assinado_2020.pdf</td><td>Variation Agree.</td><td>Abr/2020</td><td class="td-muted">Substituiu contrato 2011; + FTSE_document.pdf</td></tr>
+        <tr><td class="td-bold">ICE Data</td><td>ICE_Market_103682.pdf (Quote Vendor Agreement)</td><td>MSA base</td><td>2021</td><td class="td-muted">Quote Vendor Agree.; Vendor Account CQIIF-1001256</td></tr>
+        <tr><td>ICE Data</td><td>Vendor Agreement with Agencia Estado.pdf</td><td>Vendor Agree.</td><td>Set/2025</td><td class="td-muted">ICE Data Services Vendor Agreement</td></tr>
+        <tr><td>ICE Data</td><td>Feeds Schedule No. 2 TO MASTER SERVICES AGREEMENT.pdf</td><td>Schedule</td><td>Fev/2022</td><td class="td-muted">Substitui Schedule No.1 de mai/2021</td></tr>
+        <tr><td>ICE Data</td><td>Feeds Addendum 7 (FX Vol.) — set/2025</td><td>Addendum</td><td>Set/2025</td><td class="td-muted">IDD FX Volatility Surfaces</td></tr>
+        <tr><td>ICE Data</td><td>Feeds Addendum 8 — fev/2026</td><td>Addendum</td><td>Fev/2026</td><td class="td-muted">Assinado</td></tr>
+        <tr><td>ICE Data</td><td>Agencia _ Feeds Addendum 9 _ Level 2 Markets.final.docx</td><td>Addendum</td><td>Pendente</td><td class="td-muted">⚠ AGUARDA ASSINATURA</td></tr>
+        <tr><td>ICE Data</td><td>IDC_Agencia Estado Addendum 2 to Order Schedule No 2 (01.01.2025).pdf</td><td>IDC Addendum</td><td>Jan/2025</td><td class="td-muted">IDC / BME EOD; até 43 user IDs</td></tr>
+        <tr><td>ICE Data</td><td>ICE_Data_Global_Index_Feed_2025_Fee.pdf / Delay_Fee.pdf</td><td>Fee Schedule</td><td>2025</td><td class="td-muted">GIF fees RT e Delay</td></tr>
+        <tr><td class="td-bold">IIFE</td><td>IFE Inteligência em Finanças_102748.pdf + 1º Aditivo 4600007898</td><td>Contrato</td><td>—</td><td class="td-muted">IIFE contrato e aditivo</td></tr>
+        <tr><td class="td-bold">Korea</td><td>Korea.pdf + Korea_letter.pdf</td><td>Contrato + Carta</td><td>—</td><td class="td-muted">KRX KOSPI</td></tr>
+        <tr><td class="td-bold">LME</td><td>LME_Distribution License Agreement_092018.pdf</td><td>Contrato</td><td>Set/2018</td><td class="td-muted">+ Renovação jun/2024</td></tr>
+        <tr><td>LME</td><td>Agencia Estado SA - Audit Preparation(1).pdf</td><td>Auditoria</td><td>Jan/2026</td><td class="td-muted">⚠ Auditoria em andamento</td></tr>
+        <tr><td class="td-bold">LSEG WMR</td><td>wmr-service-alterations.pdf + WMR Client Questionnaire.docx</td><td>Serviço</td><td>Ago/2025</td><td class="td-muted">WM Reuters FX Rates publication schedule</td></tr>
+        <tr><td class="td-bold">Madri (BME)</td><td>SOCIEDAD DE BOLSAS_BME_4600003568.pdf</td><td>Contrato</td><td>—</td><td class="td-muted">+ IDC Addendum jan/2025 + e-mail cancelamento</td></tr>
+        <tr><td class="td-bold">Malasia</td><td>Malasia_BURSA_Malaysia_119944.pdf</td><td>Contrato</td><td>—</td><td class="td-muted">ISLA Stamped; 09/02/2025 fee confirmation email</td></tr>
+        <tr><td class="td-bold">Markit</td><td>MARKIT GROUP LIMITED_BPM_7665_4600006379.pdf + Aditivo</td><td>Contrato</td><td>—</td><td class="td-muted">+ MARKIT NORTH AMERICA.pdf</td></tr>
+        <tr><td class="td-bold">NUAM Chile</td><td>Contrato MD VENDOR- HBR.docx + Anexo 2 + Anexo 3</td><td>Contrato</td><td>Em negociação</td><td class="td-muted">+ US$ Vendor Fee annex level 1 HBR.docx</td></tr>
+        <tr><td class="td-bold">NUAM Colombia</td><td>NUAM BVC Colombia_05202026.docx + F-ME-GQ-0654 + Anexo 3 V.5</td><td>Contrato</td><td>Mai/2026</td><td class="td-muted">Em análise</td></tr>
+        <tr><td class="td-bold">NUAM Peru</td><td>NUAM BVL Peru_05212026.docx</td><td>Contrato</td><td>Mai/2026</td><td class="td-muted">Template em análise</td></tr>
+        <tr><td class="td-bold">NYSE</td><td>NYSE_4600003335 + GIF_Agreement + CTA + non-display 2013</td><td>Múltiplos</td><td>2013–2022</td><td class="td-muted">ICE_Nybot_Agencia Estado Agreement (Nybot/IFUS)</td></tr>
+        <tr><td class="td-bold">Nasdaq</td><td>Nasdaq Stock Market_4600003556 + Aditivo + GDA + UTP 2017</td><td>Múltiplos</td><td>2017→2026</td><td class="td-muted">Smart Options mai/2026; MBBO Agreement</td></tr>
+        <tr><td>Nasdaq Basic</td><td>052025_Nasdaq Basic with NLS Plus.pdf (Service Order 00128475.0)</td><td>Order</td><td>Mai/2025</td><td class="td-muted">External Distributor AGEL</td></tr>
+        <tr><td class="td-bold">Nikkei</td><td>NIKKEI_2023.pdf (Confirmation Letter 2023)</td><td>Confirm. Letter</td><td>2023</td><td class="td-muted">+ NIKKEI INC_113842 + 2018 + Indices2013</td></tr>
+        <tr><td class="td-bold">Santiago</td><td>Santiago_IPSA agreement - Agencia Estado_2021.pdf</td><td>Agreement</td><td>Jun/2021</td><td class="td-muted">Felipe Urrutia (Bolsa de Comercio de Santiago)</td></tr>
+        <tr><td class="td-bold">Shanghai</td><td>Shanghai.pdf</td><td>Contrato</td><td>—</td><td class="td-muted">SSE Composite Index</td></tr>
+        <tr><td class="td-bold">Six-Group</td><td>SIXTELEKURS_1ºAditivo_4600005090 + Add#1(2014) + Add#2(2019) + Add#3(2026)</td><td>Contrato + 3 Addenda</td><td>2014→Jun/2026</td><td class="td-muted">Add#3 assinado 24/Jun/2026; SIX Flex Jul/2026</td></tr>
+        <tr><td>Six-Group</td><td>Swiss_SIX_Exfeed_Confirmation_Letter_2022.pdf</td><td>Confirm. Letter</td><td>2022</td><td class="td-muted">Índices suíços via Exfeed</td></tr>
+        <tr><td class="td-bold">Taiwan</td><td>Taiwan_Agencia Estado Ltda.pdf + Delayed index info</td><td>Contrato</td><td>2018 +</td><td class="td-muted">TWSE dados com delay</td></tr>
+        <tr><td class="td-bold">Thailand</td><td>Thailand2.pdf + 09/04/2025 fee confirmation email</td><td>Contrato + Email</td><td>2025</td><td class="td-muted">USD 300/trimestre confirmado</td></tr>
+        <tr><td class="td-bold">Asian Metal</td><td>Asian_Metal_2018.pdf</td><td>Contrato</td><td>2018</td><td class="td-muted">Metais base</td></tr>
+        <tr><td class="td-bold">FOEX</td><td>Foex_4600003526.pdf</td><td>Contrato</td><td>—</td><td class="td-muted">Papel e celulose</td></tr>
+        <tr><td class="td-bold">Hong Kong</td><td>HongKong_Re_Agencia Estado - HSI.msg</td><td>E-mail auth.</td><td>—</td><td class="td-muted">Hang Seng Index; autorização informal</td></tr>
+        <tr><td class="td-bold">México</td><td>Mexico_RE Agencia Estado LTDA #1001256.msg</td><td>E-mail auth.</td><td>—</td><td class="td-muted">IPC BMV; autorização informal</td></tr>
+        <tr><td class="td-bold">Australia</td><td>ASX_Free Indices display.msg</td><td>E-mail auth.</td><td>—</td><td class="td-muted">Free display; sem custo</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ TAB: PENDING -->
+<div id="tab-pending" class="tab-panel">
+  <div class="alert alert-amber">⏳ Estas são as bolsas em fase ativa de licenciamento, negociação ou com documentos pendentes de assinatura.</div>
+
+  <div class="exchange-grid">
+
+    <div class="exchange-card" style="border-left:3px solid var(--amber)" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">ICE Data — Addendum 9</div>
+          <div class="card-full">Level 2 Markets — Feeds Schedule No.2</div>
+          <div class="card-badges"><span class="badge badge-pending">AGUARDA ASSINATURA</span><span class="region region-us">US</span></div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Documento</span><span class="card-row-val">Feeds Addendum 9 Level 2 Markets.final.docx</span></div>
+        <div class="card-row"><span class="card-row-label">Base</span><span class="card-row-val">Feeds Schedule No. 2 (fev/2022)</span></div>
+        <div class="card-row"><span class="card-row-label">Prioridade</span><span class="card-row-val">Alta — mercados de Nível 2</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Próximos Passos</h4>
+          <div class="detail-item">• Revisar escopo de mercados cobertos no Addendum</div>
+          <div class="detail-item">• Confirmar com Elissandra para assinatura</div>
+          <div class="detail-item">• Addenda 1-8 já assinados; este é o próximo da série</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" style="border-left:3px solid var(--amber)" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">NUAM Chile</div>
+          <div class="card-full">Holding Bursátil Regional S.A. — Equities Level 1</div>
+          <div class="card-badges"><span class="badge badge-pending">EM NEGOCIAÇÃO</span><span class="region region-latam">LATAM</span></div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Template disponível</span><span class="card-row-val">MD VENDOR HBR (abr/2023)</span></div>
+        <div class="card-row"><span class="card-row-label">Fee mensal fixo</span><span class="card-row-val">USD 1.500 + VAT</span></div>
+        <div class="card-row"><span class="card-row-label">Por terminal RT</span><span class="card-row-val">USD 30 + VAT/mês</span></div>
+        <div class="card-row"><span class="card-row-label">Setup</span><span class="card-row-val">USD 2.000 (conexão direta)</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Próximos Passos</h4>
+          <div class="detail-item">• Preencher campos XXXX no template do contrato</div>
+          <div class="detail-item">• Confirmar modelo de conexão: direto ou via ROUTER</div>
+          <div class="detail-item">• Validar isenções IGPA/IPSA/INTER-10 com equipe comercial</div>
+          <div class="detail-item">• Assinar Anexos 2, 3 e Fee Annex Level 1</div>
+          <div class="detail-item">• Nota: IPSA gratuito (contrato 2021 com Bolsa de Santiago) permanece separado</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" style="border-left:3px solid var(--amber)" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">NUAM Peru (BVL)</div>
+          <div class="card-full">Bolsa de Valores de Lima</div>
+          <div class="card-badges"><span class="badge badge-pending">EM ANÁLISE</span><span class="region region-latam">LATAM</span></div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Documento</span><span class="card-row-val">BVL Peru_05212026.docx</span></div>
+        <div class="card-row"><span class="card-row-label">Data documento</span><span class="card-row-val">Mai/2026</span></div>
+        <div class="card-row"><span class="card-row-label">Fee</span><span class="card-row-val">A negociar</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Próximos Passos</h4>
+          <div class="detail-item">• Revisar cláusulas de pagamento (USD via SWIFT ou PEN?)</div>
+          <div class="detail-item">• Confirmar contatos: Zapatero Alba / Cordova Vargas (BVL)</div>
+          <div class="detail-item">• Alinhar com Diego Braga para negociação de fee</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" style="border-left:3px solid var(--amber)" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">NUAM Colombia (BVC)</div>
+          <div class="card-full">Bolsa de Valores de Colombia</div>
+          <div class="card-badges"><span class="badge badge-pending">EM ANÁLISE</span><span class="region region-latam">LATAM</span></div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Documentos</span><span class="card-row-val">BVC_05202026.docx + F-ME-GQ-0654</span></div>
+        <div class="card-row"><span class="card-row-label">Modelo</span><span class="card-row-val">Suministro via Carrier/Router</span></div>
+        <div class="card-row"><span class="card-row-label">Lei aplicável</span><span class="card-row-val">Lei mercantil colombiana</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Próximos Passos</h4>
+          <div class="detail-item">• Revisar cláusulas de responsabilidade (lei colombiana)</div>
+          <div class="detail-item">• Negociar fee com BVC</div>
+          <div class="detail-item">• Preencher Anexo 3 V.5 e Form F-ME-GQ-0654</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" style="border-left:3px solid var(--purple)" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">A5X S.A.</div>
+          <div class="card-full">Bolsa alternativa brasileira — pendente aprovação BCB</div>
+          <div class="card-badges"><span class="badge badge-nda">NDA ATIVO</span><span class="region region-br">BR</span></div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Status</span><span class="card-row-val">NDA assinado; aguarda BCB</span></div>
+        <div class="card-row"><span class="card-row-label">Roadmap</span><span class="card-row-val">Deferred 2027</span></div>
+        <div class="card-row"><span class="card-row-label">Motivo</span><span class="card-row-val">Autorização regulatória Banco Central</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Contexto</h4>
+          <div class="detail-item">• Nova bolsa alternativa (CNPJ 52.652.163/0001-52)</div>
+          <div class="detail-item">• Integração planejada junto com CSD-BR no roadmap 2027</div>
+          <div class="detail-item">• Manter acompanhamento regulatório BCB</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-card" style="border-left:3px solid var(--red)" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div>
+          <div class="card-name">LME — Auditoria em Andamento</div>
+          <div class="card-full">London Metal Exchange — Audit Process</div>
+          <div class="card-badges"><span class="badge badge-expired">AUDITORIA</span><span class="region region-uk">UK</span></div>
+        </div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="card-body">
+        <div class="card-row"><span class="card-row-label">Auditoria iniciada</span><span class="card-row-val">Jan/2026</span></div>
+        <div class="card-row"><span class="card-row-label">Classificação</span><span class="card-row-val">Confidential</span></div>
+        <div class="card-row"><span class="card-row-label">Contato</span><span class="card-row-val">Via LME / Diego Braga</span></div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-section">
+          <h4>Documentos</h4>
+          <div class="detail-item">• Agencia Estado SA - Audit Preparation(1).pdf — Jan/2026</div>
+          <div class="detail-item">• Classification Confidential.pdf — Fev/2026 (32MB)</div>
+        </div>
+        <div class="detail-section">
+          <h4>Ações Necessárias</h4>
+          <div class="detail-item">⚠ Manter relatórios de usuários atualizados</div>
+          <div class="detail-item">⚠ Verificar adequação de uso com contrato (Display vs Non-Display)</div>
+          <div class="detail-item">⚠ Responder eventuais requisições do LME Compliance</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- end pending -->
+
+</div><!-- .main -->
+
+<div class="footer">
+  Broadcast · Agência Estado S/A — Market Data &amp; Automation · Elaborado por Antonio Melo · Jun/2026<br>
+  Documento para uso interno — contém informações contratuais confidenciais
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggleCard(card) {
+    // Don't toggle when clicking expand button itself
+    card.classList.toggle('expanded');
+    const btn = card.querySelector('.expand-btn');
+    if (btn) btn.textContent = card.classList.contains('expanded') ? '▴' : '▾';
+  }
+
+  function filterCards() {
+    const q = document.getElementById('cardSearch').value.toLowerCase();
+    const region = document.getElementById('filterRegion').value;
+    const status = document.getElementById('filterStatus').value;
+    let count = 0;
+    document.querySelectorAll('.exchange-card').forEach(card => {
+      const name = (card.dataset.name || '').toLowerCase();
+      const r = card.dataset.region || '';
+      const s = card.dataset.status || '';
+      const matchQ = !q || name.includes(q);
+      const matchR = !region || r === region;
+      const matchS = !status || s === status;
+      const show = matchQ && matchR && matchS;
+      card.style.display = show ? '' : 'none';
+      if (show) count++;
+    });
+    document.getElementById('cardCount').textContent = count + ' bolsa' + (count !== 1 ? 's' : '');
+  }
+
+  function toggleTheme() {
+    document.documentElement.toggleAttribute('data-theme');
+    const isDark = !document.documentElement.hasAttribute('data-theme');
+    document.documentElement.removeAttribute('data-theme');
+    if (!isDark) document.documentElement.setAttribute('data-theme', 'light');
+  }
+</script>
+</body>
+</html>

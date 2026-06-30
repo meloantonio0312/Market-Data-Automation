@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Broadcast Market Data — Destaques Nov/Dez 2025</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F5F5F0;
+      color: #1A1A1A;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .nl-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .nl-header {
+      background: #FFFFFF;
+      border: 0.5px solid #E0DFD9;
+      border-radius: 14px;
+      padding: 28px 28px 22px;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .nl-ticker-wrap {
+      overflow: hidden;
+      margin-bottom: 22px;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    }
+
+    .nl-ticker-inner {
+      display: flex;
+      gap: 28px;
+      animation: ticker 20s linear infinite;
+      white-space: nowrap;
+      width: max-content;
+    }
+
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .nl-tick-item {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: #888780;
+      letter-spacing: 0.04em;
+    }
+
+    .nl-tick-item .up { color: #0F6E56; }
+    .nl-tick-item .dn { color: #A32D2D; }
+
+    .nl-header-meta {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nl-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888780;
+      margin-bottom: 5px;
+    }
+
+    .nl-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: #1A1A1A;
+      line-height: 1.12;
+    }
+
+    .nl-edition {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: #888780;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .nl-edition strong {
+      display: block;
+      font-size: 17px;
+      font-weight: 700;
+      color: #1A1A1A;
+    }
+
+    /* ── Metric grid ── */
+    .nl-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .nl-metric {
+      background: #FFFFFF;
+      border: 0.5px solid #E0DFD9;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .nl-metric .m-label {
+      font-size: 12px;
+      color: #888780;
+      margin-bottom: 3px;
+      line-height: 1.4;
+    }
+
+    .nl-metric .m-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #1A1A1A;
+    }
+
+    .nl-metric .m-desc {
+      font-size: 11px;
+      color: #888780;
+      margin-top: 2px;
+    }
+
+    /* ── Sections ── */
+    .nl-section {
+      background: #FFFFFF;
+      border: 0.5px solid #E0DFD9;
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-bottom: 14px;
+    }
+
+    .nl-section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .nl-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nl-icon-badge i { font-size: 17px; }
+    .badge-blue   { background: #E6F1FB; }
+    .badge-blue i { color: #185FA5; }
+    .badge-teal   { background: #E1F5EE; }
+    .badge-teal i { color: #0F6E56; }
+    .badge-amber  { background: #FAEEDA; }
+    .badge-amber i{ color: #854F0B; }
+    .badge-purple { background: #EEEDFE; }
+    .badge-purple i{ color: #534AB7; }
+
+    .nl-section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1A1A1A;
+    }
+
+    .nl-section-sub {
+      font-size: 12px;
+      color: #888780;
+      margin-top: 1px;
+    }
+
+    /* ── Highlight cards ── */
+    .nl-highlight-card {
+      background: #F8F8F5;
+      border-radius: 8px;
+      padding: 13px 15px;
+      margin-bottom: 9px;
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+    }
+
+    .nl-highlight-card:last-child { margin-bottom: 0; }
+
+    .nl-hc-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    .dot-blue   { background: #185FA5; }
+    .dot-teal   { background: #0F6E56; }
+    .dot-amber  { background: #854F0B; }
+    .dot-purple { background: #534AB7; }
+    .dot-gray   { background: #888780; }
+
+    .nl-hc-content p {
+      font-size: 14px;
+      color: #1A1A1A;
+      line-height: 1.6;
+    }
+
+    .nl-hc-content p strong { font-weight: 500; }
+
+    .tag {
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      margin-right: 4px;
+    }
+
+    .tag-blue   { background: #E6F1FB; color: #185FA5; }
+    .tag-teal   { background: #E1F5EE; color: #0F6E56; }
+    .tag-amber  { background: #FAEEDA; color: #854F0B; }
+    .tag-purple { background: #EEEDFE; color: #534AB7; }
+    .tag-gray   { background: #F1EFE8; color: #5F5E5A; border: 0.5px solid #D3D1C7; }
+
+    /* ── Partners grid ── */
+    .nl-partners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .nl-partner-pill {
+      background: #F8F8F5;
+      border: 0.5px solid #E0DFD9;
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1A1A1A;
+    }
+
+    .nl-partner-pill .pp-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: #888780;
+      margin-top: 2px;
+    }
+
+    .nl-partner-pill i {
+      font-size: 15px;
+      vertical-align: -2px;
+      margin-right: 5px;
+    }
+
+    /* ── Footer ── */
+    .nl-footer {
+      background: #FFFFFF;
+      border: 0.5px solid #E0DFD9;
+      border-radius: 14px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nl-footer-text {
+      font-size: 12px;
+      color: #888780;
+      line-height: 1.65;
+    }
+
+    .nl-footer-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1A1A1A;
+      margin-bottom: 2px;
+    }
+
+    .nl-footer-text a {
+      color: #185FA5;
+      text-decoration: none;
+    }
+
+    .nl-footer-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1A1A1A;
+      letter-spacing: 0.02em;
+      border: 0.5px solid #D3D1C7;
+      border-radius: 8px;
+      padding: 6px 14px;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 20px 12px; }
+      .nl-title { font-size: 22px; }
+      .nl-metric .m-val { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="nl-wrap">
+
+  <!-- Header -->
+  <div class="nl-header">
+    <div class="nl-ticker-wrap" aria-hidden="true">
+      <div class="nl-ticker-inner">
+        <span class="nl-tick-item">UST 10Y <span class="dn">4.312% ▼</span></span>
+        <span class="nl-tick-item">BRL/USD <span class="dn">5.7840 ▼</span></span>
+        <span class="nl-tick-item">IBOV <span class="up">130.450 ▲</span></span>
+        <span class="nl-tick-item">EUR/USD <span class="up">1.0847 ▲</span></span>
+        <span class="nl-tick-item">DXY <span class="dn">104.21 ▼</span></span>
+        <span class="nl-tick-item">WTI <span class="up">72.30 ▲</span></span>
+        <span class="nl-tick-item">SELIC <span>13.75%</span></span>
+        <span class="nl-tick-item">CDI <span>13.65%</span></span>
+        <span class="nl-tick-item">Trading Economics <span class="up">+5.000 dados ▲</span></span>
+        <!-- duplicado para loop contínuo -->
+        <span class="nl-tick-item">UST 10Y <span class="dn">4.312% ▼</span></span>
+        <span class="nl-tick-item">BRL/USD <span class="dn">5.7840 ▼</span></span>
+        <span class="nl-tick-item">IBOV <span class="up">130.450 ▲</span></span>
+        <span class="nl-tick-item">EUR/USD <span class="up">1.0847 ▲</span></span>
+        <span class="nl-tick-item">DXY <span class="dn">104.21 ▼</span></span>
+        <span class="nl-tick-item">WTI <span class="up">72.30 ▲</span></span>
+        <span class="nl-tick-item">SELIC <span>13.75%</span></span>
+        <span class="nl-tick-item">CDI <span>13.65%</span></span>
+        <span class="nl-tick-item">Trading Economics <span class="up">+5.000 dados ▲</span></span>
+      </div>
+    </div>
+    <div class="nl-header-meta">
+      <div>
+        <p class="nl-label">Broadcast · Market Data</p>
+        <h1 class="nl-title">Destaques do Mês</h1>
+      </div>
+      <div class="nl-edition">
+        Edição
+        <strong>Nov — Dez 2025</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métricas -->
+  <div class="nl-grid-2">
+    <div class="nl-metric">
+      <p class="m-label">Novos dados adicionados</p>
+      <p class="m-val">+5.000</p>
+      <p class="m-desc">via Trading Economics</p>
+    </div>
+    <div class="nl-metric">
+      <p class="m-label">Novas parcerias estratégicas</p>
+      <p class="m-val">7</p>
+      <p class="m-desc">segmentos cobertos</p>
+    </div>
+    <div class="nl-metric">
+      <p class="m-label">Automação implementada</p>
+      <p class="m-val">100%</p>
+      <p class="m-desc">dados Trading Economics</p>
+    </div>
+    <div class="nl-metric">
+      <p class="m-label">Sistemas a unificar</p>
+      <p class="m-val">3 → 1</p>
+      <p class="m-desc">iniciativa AE Instrumentos</p>
+    </div>
+  </div>
+
+  <!-- Novo Parceiro -->
+  <div class="nl-section">
+    <div class="nl-section-header">
+      <div class="nl-icon-badge badge-blue"><i class="ti ti-sparkles"></i></div>
+      <div>
+        <p class="nl-section-title">Novo Parceiro — Trading Economics</p>
+        <p class="nl-section-sub">Maior cobertura de dados macroeconômicos</p>
+      </div>
+    </div>
+    <div class="nl-highlight-card">
+      <span class="nl-hc-dot dot-blue"></span>
+      <div class="nl-hc-content">
+        <span class="tag tag-blue">Destaque</span>
+        <p>Incorporamos aproximadamente <strong>5.000 novos dados</strong> à plataforma com a chegada da Trading Economics — uma expansão significativa frente à cobertura anterior da ActionEconomics, tanto em volume quanto em qualidade.</p>
+      </div>
+    </div>
+    <div class="nl-highlight-card">
+      <span class="nl-hc-dot dot-teal"></span>
+      <div class="nl-hc-content">
+        <span class="tag tag-teal">Automação</span>
+        <p>Todo o pipeline de ingestão foi <strong>automatizado</strong>, garantindo atualização contínua e eficiente dos dados sem intervenção manual.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parcerias Estratégicas -->
+  <div class="nl-section">
+    <div class="nl-section-header">
+      <div class="nl-icon-badge badge-purple"><i class="ti ti-building-bank"></i></div>
+      <div>
+        <p class="nl-section-title">Novas Parcerias Estratégicas</p>
+        <p class="nl-section-sub">Expansão da oferta de relatórios e índices</p>
+      </div>
+    </div>
+    <div class="nl-partners-grid">
+      <div class="nl-partner-pill">
+        <i class="ti ti-chart-line" style="color:#185FA5"></i>CSD
+        <p class="pp-sub">Índices · Mercado Financeiro</p>
+      </div>
+      <div class="nl-partner-pill">
+        <i class="ti ti-file-text" style="color:#185FA5"></i>LEVI
+        <p class="pp-sub">Títulos Públicos</p>
+      </div>
+      <div class="nl-partner-pill">
+        <i class="ti ti-shield-check" style="color:#534AB7"></i>Austin Rating
+        <p class="pp-sub">CRI, CRA, Fiagro, FIDCs</p>
+      </div>
+      <div class="nl-partner-pill">
+        <i class="ti ti-report" style="color:#854F0B"></i>Carlos Jordaky
+        <p class="pp-sub">Boletim Financeiro</p>
+      </div>
+      <div class="nl-partner-pill">
+        <i class="ti ti-plant" style="color:#0F6E56"></i>IBRAFI
+        <p class="pp-sub">Agronegócio · Feijão</p>
+      </div>
+      <div class="nl-partner-pill">
+        <i class="ti ti-plant-2" style="color:#0F6E56"></i>ABRAPA
+        <p class="pp-sub">Agronegócio · Algodão</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Atividades -->
+  <div class="nl-section">
+    <div class="nl-section-header">
+      <div class="nl-icon-badge badge-teal"><i class="ti ti-check"></i></div>
+      <div>
+        <p class="nl-section-title">Principais Atividades Realizadas</p>
+        <p class="nl-section-sub">Capacitação, integrações e entregas internas</p>
+      </div>
+    </div>
+    <div class="nl-highlight-card">
+      <span class="nl-hc-dot dot-teal"></span>
+      <div class="nl-hc-content">
+        <span class="tag tag-teal">Capacitação</span>
+        <p>Treinamentos realizados para as equipes de <strong>Service Desk</strong> e <strong>Customer Success</strong> sobre novos produtos e fluxos de atendimento.</p>
+      </div>
+    </div>
+    <div class="nl-highlight-card">
+      <span class="nl-hc-dot dot-teal"></span>
+      <div class="nl-hc-content">
+        <span class="tag tag-gray">Técnico</span>
+        <p>Ajustes de BIPs das Bolsas <strong>B3 e Internacionais</strong>, garantindo integridade na entrega dos dados de mercado.</p>
+      </div>
+    </div>
+    <div class="nl-highlight-card">
+      <span class="nl-hc-dot dot-blue"></span>
+      <div class="nl-hc-content">
+        <span class="tag tag-blue">Vendas</span>
+        <p>Apresentações aos times de Vendas e Atendimento sobre <strong>Nasdaq Basic</strong> e <strong>Trading Economics</strong>.</p>
+      </div>
+    </div>
+    <div class="nl-highlight-card">
+      <span class="nl-hc-dot dot-gray"></span>
+      <div class="nl-hc-content">
+        <span class="tag tag-gray">Editorial</span>
+        <p>Gráficos avaliados pela equipe de Dados com repercussão no mercado, entregues para suporte ao time editorial.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Próximos Passos -->
+  <div class="nl-section">
+    <div class="nl-section-header">
+      <div class="nl-icon-badge badge-amber"><i class="ti ti-arrow-right"></i></div>
+      <div>
+        <p class="nl-section-title">Próximos Passos</p>
+        <p class="nl-section-sub">Agenda de desenvolvimento e parcerias</p>
+      </div>
+    </div>
+    <div class="nl-highlight-card">
+      <span class="nl-hc-dot dot-amber"></span>
+      <div class="nl-hc-content">
+        <span class="tag tag-amber">Em andamento</span>
+        <p>Conclusão do processo de integração <strong>Trademate B3</strong>.</p>
+      </div>
+    </div>
+    <div class="nl-highlight-card">
+      <span class="nl-hc-dot dot-amber"></span>
+      <div class="nl-hc-content">
+        <span class="tag tag-amber">Em breve</span>
+        <p>Avanço da Parceria <strong>Prescia</strong> — novos dados do mercado local Colombiano em chegada.</p>
+      </div>
+    </div>
+    <div class="nl-highlight-card">
+      <span class="nl-hc-dot dot-purple"></span>
+      <div class="nl-hc-content">
+        <span class="tag tag-purple">Nova Iniciativa</span>
+        <p>Reformulação do sistema <strong>AE Instrumentos</strong> — unificação de 3 sistemas de cadastro em uma única plataforma, reduzindo fricção operacional.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="nl-footer">
+    <div class="nl-footer-text">
+      <strong>Broadcast · Agência Estado</strong>
+      <a href="mailto:vendas.ae@broadcast.com.br">vendas.ae@broadcast.com.br</a>
+      <a href="https://www.broadcast.com.br" target="_blank">www.broadcast.com.br</a>
+    </div>
+    <div class="nl-footer-logo">Broadcast</div>
+  </div>
+
+</div>
+</body>
+</html>

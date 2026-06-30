@@ -1,0 +1,2629 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICE Data Services — Contratos Consolidados | Agência Estado</title>
+<style>
+:root{
+  --bg:#0d1117;--sf:#161b22;--sf2:#1c2230;--bd:#2a3347;
+  --gd:#c9a84c;--gd2:#8a6e2f;--gg:rgba(201,168,76,.10);
+  --nv:#1a2744;--tx:#e6edf3;--tm:#8b949e;--td:#6e7681;
+  --gn:#3fb950;--rd:#f85149;--bl:#58a6ff;--or:#f0883e;
+  --tb:rgba(201,168,76,.1);--r:8px;
+  --mn:'SF Mono','Fira Code',monospace;
+  --sidebar:240px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:linear-gradient(135deg,#0d1117 0%,#1a2744 60%,#0d1117 100%);
+  border-bottom:1px solid var(--bd);
+  padding:18px 32px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  position:sticky;top:0;z-index:100;
+}
+.topbar-left{display:flex;flex-direction:column;}
+.top-eye{font-size:9.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gd);margin-bottom:3px;}
+.top-title{font-size:18px;font-weight:700;letter-spacing:-.3px;color:var(--tx);}
+.top-title span{color:var(--gd);}
+.top-sub{font-size:11px;color:var(--tm);margin-top:2px;}
+.topbar-right{display:flex;gap:24px;font-size:11px;color:var(--td);line-height:1.85;text-align:right;}
+.topbar-right strong{color:var(--tm);}
+
+/* ── LAYOUT ── */
+.layout{display:flex;flex:1;min-height:0;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar);min-width:var(--sidebar);
+  background:var(--sf);border-right:1px solid var(--bd);
+  position:sticky;top:57px;height:calc(100vh - 57px);
+  overflow-y:auto;flex-shrink:0;
+}
+.sb-group{padding:16px 0 4px;}
+.sb-group-label{
+  font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gd2);padding:0 16px 6px;
+}
+.sb-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 16px;font-size:12px;font-weight:500;color:var(--tm);
+  cursor:pointer;border-left:3px solid transparent;
+  transition:color .15s,background .15s,border-color .15s;
+  user-select:none;
+}
+.sb-item:hover{color:var(--tx);background:var(--gg);}
+.sb-item.active{color:var(--gd);border-left-color:var(--gd);background:rgba(201,168,76,.07);}
+.sb-item .ico{font-size:13px;flex-shrink:0;opacity:.8;}
+.sb-badge{
+  margin-left:auto;font-size:9px;font-weight:700;
+  padding:1px 6px;border-radius:10px;
+  background:var(--tb);color:var(--gd);border:1px solid var(--gd2);
+}
+.sb-badge.r{background:rgba(248,81,73,.1);color:var(--rd);border-color:rgba(248,81,73,.3);}
+.sb-badge.o{background:rgba(240,136,62,.1);color:var(--or);border-color:rgba(240,136,62,.3);}
+.sb-badge.g{background:rgba(63,185,80,.1);color:var(--gn);border-color:rgba(63,185,80,.3);}
+.sb-divider{height:1px;background:var(--bd);margin:6px 16px;}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:28px 36px 48px;}
+.panel{display:none;animation:fadein .18s ease;}.panel.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+/* ── SECTION TITLE ── */
+.st{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gd2);margin-bottom:13px;padding-bottom:7px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:7px;}
+.st::before{content:'';width:3px;height:12px;background:var(--gd);border-radius:2px;display:inline-block;}
+
+/* ── CARDS ── */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:24px;}
+.cd{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;position:relative;transition:border-color .15s;}.cd:hover{border-color:var(--gd2);}
+.cl{font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--td);margin-bottom:4px;}
+.cv{font-size:17px;font-weight:700;color:var(--tx);letter-spacing:-.2px;}.cv.g{color:var(--gd);}
+.cs{font-size:11px;color:var(--tm);margin-top:3px;}
+.cbg{position:absolute;top:9px;right:11px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:20px;background:var(--tb);color:var(--gd);border:1px solid var(--gd2);}
+
+/* ── TABLES ── */
+.dt{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:13px;}
+.dt th{background:var(--nv);color:var(--gd);font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--bd);}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--bd);color:var(--tx);vertical-align:top;}
+.dt tr:last-child td{border-bottom:none;}.dt tr:hover td{background:var(--gg);}
+.dt td:first-child{color:var(--tm);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+.mn{font-family:var(--mn);font-size:11px;color:var(--bl);}
+.am{font-weight:700;color:var(--gd);font-variant-numeric:tabular-nums;}
+.am2{color:var(--tm);font-variant-numeric:tabular-nums;}
+.ftw{margin-bottom:24px;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;}
+.ft{width:100%;border-collapse:collapse;font-size:12.5px;}
+.ft thead tr{background:var(--nv);}
+.ft th{padding:8px 13px;text-align:right;font-size:9.5px;font-weight:600;color:var(--gd);letter-spacing:.1em;text-transform:uppercase;}
+.ft th:first-child{text-align:left;}
+.ft td{padding:9px 13px;border-top:1px solid var(--bd);text-align:right;color:var(--tx);font-variant-numeric:tabular-nums;}
+.ft td:first-child{text-align:left;color:var(--tm);font-weight:600;}
+.ft tr.hl td{background:rgba(201,168,76,.06);}
+.ft td.b{font-weight:700;color:var(--gd);}
+.ptw{border:1px solid var(--bd);border-radius:var(--r);overflow-x:auto;margin-bottom:24px;}
+.pt{width:100%;border-collapse:collapse;font-size:11px;}
+.pt th{background:var(--nv);color:var(--gd);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:7px 10px;text-align:left;border-right:1px solid var(--bd);}
+.pt th:last-child{border-right:none;}
+.pt td{padding:8px 10px;border-top:1px solid var(--bd);border-right:1px solid var(--bd);color:var(--tx);vertical-align:middle;}
+.pt td:last-child{border-right:none;}.pt tr:hover td{background:var(--gg);}
+.ovw{border:1px solid var(--bd);border-radius:var(--r);overflow-x:auto;margin-bottom:24px;}
+.ot{width:100%;border-collapse:collapse;font-size:11.5px;}
+.ot th{background:var(--nv);color:var(--gd);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:9px 12px;text-align:left;border-right:1px solid var(--bd);}
+.ot th:last-child{border-right:none;}
+.ot td{padding:9px 12px;border-top:1px solid var(--bd);border-right:1px solid var(--bd);color:var(--tx);vertical-align:middle;}
+.ot td:last-child{border-right:none;}.ot tr:hover td{background:var(--gg);}
+
+/* ── TAGS ── */
+.tg{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9.5px;font-weight:600;background:rgba(88,166,255,.1);color:var(--bl);border:1px solid rgba(88,166,255,.25);}
+.tg.g{background:rgba(63,185,80,.1);color:var(--gn);border-color:rgba(63,185,80,.25);}
+.tg.gd{background:var(--tb);color:var(--gd);border-color:var(--gd2);}
+.tg.r{background:rgba(248,81,73,.1);color:var(--rd);border-color:rgba(248,81,73,.25);}
+.tg.o{background:rgba(240,136,62,.1);color:var(--or);border-color:rgba(240,136,62,.25);}
+
+/* ── ALERTS ── */
+.al{border-radius:var(--r);padding:13px 16px;margin-bottom:20px;font-size:12px;line-height:1.7;}
+.al h4{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.al.w{background:rgba(248,81,73,.07);border:1px solid rgba(248,81,73,.3);border-left:3px solid var(--rd);}.al.w h4{color:var(--rd);}
+.al.i{background:rgba(201,168,76,.06);border:1px solid var(--gd2);border-left:3px solid var(--gd);}.al.i h4{color:var(--gd);}
+.al.b{background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.25);border-left:3px solid var(--bl);}.al.b h4{color:var(--bl);}
+.ri{display:flex;gap:8px;margin-bottom:5px;color:var(--tm);}.ri::before{content:'›';color:var(--gd2);flex-shrink:0;}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;}
+.dot.g{background:var(--gn);box-shadow:0 0 5px var(--gn);}.dot.o{background:var(--or);}.dot.b{background:var(--bl);}
+.an{font-weight:700;color:var(--gd);font-size:13px;}
+.num{font-variant-numeric:tabular-nums;font-weight:600;color:var(--gd);}
+.mu{color:var(--td);font-size:11px;}
+.page-title{font-size:22px;font-weight:700;letter-spacing:-.4px;color:var(--tx);margin-bottom:4px;}
+.page-title span{color:var(--gd);}
+.page-sub{font-size:12px;color:var(--tm);margin-bottom:24px;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--gd2);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .content{padding:20px 18px;}
+  .topbar{padding:14px 18px;}
+  .topbar-right{display:none;}
+}
+
+/* ── PDF BUTTON ── */
+.pdf-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);
+  padding:10px 16px;margin-bottom:22px;
+}
+.pdf-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(201,168,76,.12);border:1px solid var(--gd2);
+  color:var(--gd);font-size:11.5px;font-weight:600;
+  padding:6px 14px;border-radius:6px;cursor:pointer;
+  text-decoration:none;transition:background .15s,border-color .15s;
+}
+.pdf-btn:hover{background:rgba(201,168,76,.22);border-color:var(--gd);}
+.pdf-btn .ico{font-size:14px;}
+.pdf-label{font-size:11px;color:var(--tm);}
+.pdf-docx{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(88,166,255,.10);border:1px solid rgba(88,166,255,.3);
+  color:var(--bl);font-size:11.5px;font-weight:600;
+  padding:6px 14px;border-radius:6px;cursor:pointer;
+  text-decoration:none;transition:background .15s;
+}
+.pdf-docx:hover{background:rgba(88,166,255,.2);}
+
+
+/* ── GLOSSÁRIO ── */
+.gloss-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:14px;
+  margin-bottom:32px;
+}
+.gcard{
+  background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+  padding:16px 18px;cursor:default;
+  transition:border-color .15s,transform .15s;
+}
+.gcard:hover{border-color:var(--gd2);transform:translateY(-1px);}
+.gcard.hidden{display:none;}
+.gterm{
+  font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px;
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+}
+.gabbr{
+  font-size:10px;font-weight:700;letter-spacing:.08em;
+  background:var(--tb);color:var(--gd);border:1px solid var(--gd2);
+  padding:1px 7px;border-radius:10px;
+}
+.gdef{font-size:12px;color:var(--tm);line-height:1.65;margin-bottom:10px;}
+.gdocs{display:flex;flex-wrap:wrap;gap:5px;}
+.gdoc{
+  font-size:9.5px;font-weight:600;
+  background:rgba(88,166,255,.08);color:var(--bl);
+  border:1px solid rgba(88,166,255,.2);
+  padding:1px 7px;border-radius:4px;
+}
+/* category pills */
+.gcat{
+  font-size:10.5px;font-weight:600;padding:4px 12px;border-radius:20px;cursor:pointer;
+  background:var(--sf2);border:1px solid var(--bd);color:var(--tm);
+  transition:background .15s,color .15s,border-color .15s;user-select:none;
+}
+.gcat:hover{color:var(--tx);border-color:var(--gd2);}
+.gcat.active{background:var(--tb);color:var(--gd);border-color:var(--gd2);}
+#gloss-search::placeholder{color:var(--td);}
+
+
+/* ── DASHBOARD KPI ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:28px;}
+.kpi-card{
+  background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+  padding:16px 18px;display:flex;align-items:flex-start;gap:12px;
+  position:relative;transition:border-color .15s,transform .15s;
+}
+.kpi-card:hover{transform:translateY(-2px);}
+.kpi-gold{border-left:3px solid var(--gd);}
+.kpi-blue{border-left:3px solid var(--bl);}
+.kpi-green{border-left:3px solid var(--gn);}
+.kpi-red{border-left:3px solid var(--rd);}
+.kpi-orange{border-left:3px solid var(--or);}
+.kpi-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.kpi-body{flex:1;}
+.kpi-value{font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.5px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.kpi-gold .kpi-value{color:var(--gd);}
+.kpi-red .kpi-value{color:var(--rd);}
+.kpi-orange .kpi-value{color:var(--or);font-size:18px;}
+.kpi-label{font-size:11px;font-weight:600;color:var(--tm);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;}
+.kpi-sub{font-size:10px;color:var(--td);margin-top:2px;line-height:1.4;}
+.kpi-alert-dot{position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--rd);box-shadow:0 0 8px var(--rd);animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* ── DASHBOARD ROWS ── */
+.dash-row2{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+.dash-row3{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+.dash-card{
+  background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+  padding:18px 20px;flex:1;min-width:260px;
+}
+.dash-card-alert{border-color:rgba(248,81,73,.25);}
+.dash-card-title{
+  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gd2);margin-bottom:14px;padding-bottom:8px;
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:6px;
+}
+
+/* ── MRC BARS ── */
+.mrc-list{display:flex;flex-direction:column;gap:9px;}
+.mrc-item{display:flex;align-items:center;gap:10px;}
+.mrc-bar-wrap{flex:1;}
+.mrc-name{font-size:11px;color:var(--tm);margin-bottom:4px;}
+.mrc-bar{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;}
+.mrc-fill{height:100%;background:var(--gd);border-radius:3px;transition:width .6s ease;}
+.mrc-fill-blue{background:var(--bl);}
+.mrc-val{font-size:12px;font-weight:700;color:var(--gd);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:58px;text-align:right;}
+.mrc-divider{height:1px;background:var(--bd);margin:4px 0;}
+.mrc-total .mrc-bar-wrap{display:none;}
+.mrc-total .mrc-val{font-size:15px;color:var(--gd);}
+
+/* ── ESCALATION ── */
+.escal-grid{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.escal-item{flex:1;min-width:80px;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:10px 12px;text-align:center;}
+.escal-active{border-color:var(--gd);background:rgba(201,168,76,.08);}
+.escal-year{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--td);margin-bottom:4px;}
+.escal-val{font-size:16px;font-weight:700;color:var(--gd);font-variant-numeric:tabular-nums;}
+.escal-sub{font-size:10px;color:var(--tm);margin-top:2px;}
+.escal-arrow{color:var(--td);font-size:16px;flex-shrink:0;}
+
+/* ── ALERT ITEMS ── */
+.alert-item{display:flex;align-items:flex-start;gap:10px;}
+.alert-dot-r{width:8px;height:8px;border-radius:50%;background:var(--rd);box-shadow:0 0 6px var(--rd);flex-shrink:0;margin-top:4px;animation:pulse 1.8s infinite;}
+.alert-dot-o{width:8px;height:8px;border-radius:50%;background:var(--or);flex-shrink:0;margin-top:4px;}
+
+
+/* ── THEME VARIABLES ── */
+body.light {
+  --bg:#f0f2f5; --sf:#ffffff; --sf2:#f5f7fa; --bd:#d0d7e2;
+  --gd:#a67c2e; --gd2:#c9973a; --gg:rgba(166,124,46,.08);
+  --nv:#1a2744; --tx:#1a2233; --tm:#4a5568; --td:#8a96a8;
+  --gn:#1e8c3a; --rd:#c0392b; --bl:#1a5fa8; --or:#b5590a;
+  --tb:rgba(166,124,46,.1);
+}
+
+/* ── FIXED FOOTER ── */
+.app-footer {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  height: 36px;
+  background: var(--sf);
+  border-top: 1px solid var(--bd);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px 0 calc(var(--sidebar) + 20px);
+  font-size: 10.5px; color: var(--td);
+  gap: 16px;
+}
+.footer-left  { display:flex; align-items:center; gap:16px; }
+.footer-right { display:flex; align-items:center; gap:10px; }
+.footer-sep   { width:1px; height:14px; background:var(--bd); }
+.footer-author{ color:var(--tm); font-weight:600; }
+.footer-update{ color:var(--td); }
+.footer-conf  {
+  font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--rd); opacity:.7;
+}
+
+/* ── THEME TOGGLE ── */
+.theme-toggle {
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+  padding: 3px 10px; border-radius: 20px;
+  border: 1px solid var(--bd);
+  background: var(--sf2);
+  transition: background .2s, border-color .2s;
+  user-select: none;
+}
+.theme-toggle:hover { border-color: var(--gd2); background: var(--gg); }
+.theme-toggle-track {
+  width: 28px; height: 15px; border-radius: 8px;
+  background: var(--bd); position: relative;
+  transition: background .25s;
+  flex-shrink: 0;
+}
+body.light .theme-toggle-track { background: var(--gd); }
+.theme-toggle-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: #fff; transition: transform .25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+body.light .theme-toggle-thumb { transform: translateX(13px); }
+.theme-toggle-label {
+  font-size: 10px; font-weight: 600; color: var(--tm);
+  letter-spacing: .06em; text-transform: uppercase;
+}
+
+/* push content above footer */
+.content { padding-bottom: 52px !important; }
+
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="top-eye">ICE Data Services · Agência Estado S.A.</div>
+    <div class="top-title">Contratos &amp; Aditivos <span>Consolidados</span></div>
+    <div class="top-sub">MSA 01/Mai/2021 · Schedule Nº 2 ativo · 9 Addenda registrados</div>
+  </div>
+  <div class="topbar-right">
+    <div><strong>Atualizado:</strong> Jun/2026<br><strong>Responsável:</strong> Market Data &amp; Automation</div>
+    <div><strong>Vendor:</strong> ICE Data Connectivity &amp; Feeds<br><strong style="color:var(--rd);">Confidencial</strong> — uso interno</div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+
+  <div class="sb-group">
+    <div class="sb-group-label">Visão Geral</div>
+    <div class="sb-item active" onclick="T('ov')"><span class="ico">📊</span>Dashboard</div>
+    <div class="sb-item" onclick="T('ct')"><span class="ico">📁</span>Todos os Contratos</div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-group">
+    <div class="sb-group-label">Contratos Base</div>
+    <div class="sb-item" onclick="T('msa')"><span class="ico">📜</span>MSA — Mai/2021</div>
+    <div class="sb-item" onclick="T('os2')"><span class="ico">📋</span>Order Schedule Nº 2<span class="sb-badge g">Ativo</span></div>
+    <div class="sb-item" onclick="T('os1')"><span class="ico">📄</span>Order Schedule Nº 1<span class="sb-badge o">Supersed.</span></div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-group">
+    <div class="sb-group-label">Infraestrutura</div>
+    <div class="sb-item" onclick="T('a1')"><span class="ico">🖥</span>Add. 1 — Migração Infra</div>
+    <div class="sb-item" onclick="T('a3')"><span class="ico">🔄</span>Add. 3 — Renovação + MRC</div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-group">
+    <div class="sb-group-label">Dados de Mercado</div>
+    <div class="sb-item" onclick="T('a2')"><span class="ico">📈</span>Add. 2 — History / EOD</div>
+    <div class="sb-item" onclick="T('a6')"><span class="ico">💹</span>Add. 6 — Nasdaq Basic</div>
+    <div class="sb-item" onclick="T('a8')"><span class="ico">🌍</span>Add. 8 — Exchange Content</div>
+    <div class="sb-item" onclick="T('a9')"><span class="ico">📉</span>Add. 9 — Level 2 Markets<span class="sb-badge o">Draft</span></div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-group">
+    <div class="sb-group-label">Derivativos / OTC</div>
+    <div class="sb-item" onclick="T('a5')"><span class="ico">📐</span>Add. 5 — IDD FX + IR Curves</div>
+    <div class="sb-item" onclick="T('a7')"><span class="ico">📐</span>Add. 7 — IDD FX Vol. (14 pairs)</div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-group">
+    <div class="sb-group-label">Alertas</div>
+    <div class="sb-item" onclick="T('alertas')"><span class="ico">🚨</span>Vencimentos &amp; Alertas<span class="sb-badge o">1</span></div>
+  </div>
+
+  <div class="sb-divider"></div>
+  <div class="sb-group">
+    <div class="sb-group-label">Referência</div>
+    <div class="sb-item" onclick="T('inv')"><span class="ico">🗂</span>Inventário Contratado</div>
+    <div class="sb-item" onclick="T('gloss')"><span class="ico">📖</span>Glossário</div>
+  </div>
+
+</nav>
+
+<!-- CONTENT -->
+<div class="content" id="content">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="panel active" id="tab-ov">
+  <div class="page-title">Dashboard <span>Executivo</span></div>
+  <div class="page-sub">Visão consolidada — ICE Data Services · Agência Estado · atualizado Jun/2026</div>
+
+  <!-- ── ROW 1: KPI CARDS ── -->
+  <div class="kpi-row">
+
+    <div class="kpi-card kpi-gold">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-body">
+        <div class="kpi-value">$50.654</div>
+        <div class="kpi-label">MRC Total / mês</div>
+        <div class="kpi-sub">OS2 + Add.3 (Ano 1) + Add.5,6,7,8</div>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-gold">
+      <div class="kpi-icon">📅</div>
+      <div class="kpi-body">
+        <div class="kpi-value">$607.848</div>
+        <div class="kpi-label">Custo anual estimado</div>
+        <div class="kpi-sub">12 × $50.654 (Ano 1 do escalonamento)</div>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-blue">
+      <div class="kpi-icon">📋</div>
+      <div class="kpi-body">
+        <div class="kpi-value">2</div>
+        <div class="kpi-label">Order Schedules</div>
+        <div class="kpi-sub">OS Nº 1 (supersedido) · OS Nº 2 (ativo)</div>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-blue">
+      <div class="kpi-icon">📎</div>
+      <div class="kpi-body">
+        <div class="kpi-value">9</div>
+        <div class="kpi-label">Addenda ao OS Nº 2</div>
+        <div class="kpi-sub">8 ativos · 1 draft (Add.9)</div>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-green">
+      <div class="kpi-icon">🌍</div>
+      <div class="kpi-body">
+        <div class="kpi-value">75+</div>
+        <div class="kpi-label">Exchange Packages</div>
+        <div class="kpi-sub">Américas · Europa · Ásia · OTC · IDD</div>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-green">
+      <div class="kpi-icon">📦</div>
+      <div class="kpi-body">
+        <div class="kpi-value">7</div>
+        <div class="kpi-label">Produtos redistribuídos</div>
+        <div class="kpi-sub">5 Broadcast + Itaú Câmbio + Itaú Trader Agro</div>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-red">
+      <div class="kpi-icon">🚨</div>
+      <div class="kpi-body">
+        <div class="kpi-value">1</div>
+        <div class="kpi-label">Alerta ativo</div>
+        <div class="kpi-sub">Add.9 draft não assinado · infraestrutura pronta ✓</div>
+      </div>
+      <div class="kpi-alert-dot"></div>
+    </div>
+
+    <div class="kpi-card kpi-orange">
+      <div class="kpi-icon">⏰</div>
+      <div class="kpi-body">
+        <div class="kpi-value">Out/2027</div>
+        <div class="kpi-label">Próximo vencimento crítico</div>
+        <div class="kpi-sub">Notice 90d para não renovar OS2 (Dez/2027)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── ROW 2: MRC BREAKDOWN + TIMELINE ── -->
+  <div class="dash-row2">
+
+    <!-- MRC breakdown -->
+    <div class="dash-card">
+      <div class="dash-card-title">💸 Composição do MRC mensal</div>
+      <div class="mrc-list">
+        <div class="mrc-item">
+          <div class="mrc-bar-wrap">
+            <div class="mrc-name">OS2 base — License Fees</div>
+            <div class="mrc-bar"><div class="mrc-fill" style="width:63.7%"></div></div>
+          </div>
+          <div class="mrc-val">$32.267</div>
+        </div>
+        <div class="mrc-item">
+          <div class="mrc-bar-wrap">
+            <div class="mrc-name">OS2 — Connectivity</div>
+            <div class="mrc-bar"><div class="mrc-fill" style="width:8.6%"></div></div>
+          </div>
+          <div class="mrc-val">$4.377</div>
+        </div>
+        <div class="mrc-item">
+          <div class="mrc-bar-wrap">
+            <div class="mrc-name">OS2 — Feeds Infrastructure</div>
+            <div class="mrc-bar"><div class="mrc-fill" style="width:4.3%"></div></div>
+          </div>
+          <div class="mrc-val">$2.169</div>
+        </div>
+        <div class="mrc-item">
+          <div class="mrc-bar-wrap">
+            <div class="mrc-name">Add.8 — Exchange Content</div>
+            <div class="mrc-bar"><div class="mrc-fill mrc-fill-blue" style="width:11.6%"></div></div>
+          </div>
+          <div class="mrc-val">$5.850</div>
+        </div>
+        <div class="mrc-item">
+          <div class="mrc-bar-wrap">
+            <div class="mrc-name">Add.7 — IDD FX Volatility (14 pairs)</div>
+            <div class="mrc-bar"><div class="mrc-fill mrc-fill-blue" style="width:6.7%"></div></div>
+          </div>
+          <div class="mrc-val">$3.408</div>
+        </div>
+        <div class="mrc-item">
+          <div class="mrc-bar-wrap">
+            <div class="mrc-name">Add.6 — Nasdaq Basic</div>
+            <div class="mrc-bar"><div class="mrc-fill mrc-fill-blue" style="width:3.0%"></div></div>
+          </div>
+          <div class="mrc-val">$1.500</div>
+        </div>
+        <div class="mrc-item">
+          <div class="mrc-bar-wrap">
+            <div class="mrc-name">Add.5 — IDD FX + IR (Itaú)</div>
+            <div class="mrc-bar"><div class="mrc-fill mrc-fill-blue" style="width:2.1%"></div></div>
+          </div>
+          <div class="mrc-val">$1.083</div>
+        </div>
+        <div class="mrc-divider"></div>
+        <div class="mrc-item mrc-total">
+          <div class="mrc-name" style="font-weight:700;color:var(--tx);">Total</div>
+          <div class="mrc-val" style="font-size:15px;color:var(--gd);">$50.654</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Escalation + Alerts -->
+    <div style="display:flex;flex-direction:column;gap:16px;flex:1;min-width:280px;">
+
+      <!-- Escalonamento -->
+      <div class="dash-card">
+        <div class="dash-card-title">📈 Escalonamento MRC — 3 anos (Add.3)</div>
+        <div class="escal-grid">
+          <div class="escal-item escal-active">
+            <div class="escal-year">Ano 1 <span style="font-size:9px;color:var(--gn);">← atual</span></div>
+            <div class="escal-val">$38.813</div>
+            <div class="escal-sub">OS2 base</div>
+          </div>
+          <div class="escal-arrow">→</div>
+          <div class="escal-item">
+            <div class="escal-year">Ano 2</div>
+            <div class="escal-val">$41.530</div>
+            <div class="escal-sub">+6,99%</div>
+          </div>
+          <div class="escal-arrow">→</div>
+          <div class="escal-item">
+            <div class="escal-year">Ano 3</div>
+            <div class="escal-val">$44.437</div>
+            <div class="escal-sub">+6,99%</div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--td);margin-top:8px;">* Valores de OS2 base apenas (Add.3). Addenda somam ~$11.841/mês adicionais.</div>
+      </div>
+
+      <!-- Alertas -->
+      <div class="dash-card dash-card-alert">
+        <div class="dash-card-title" style="color:var(--rd);">🚨 Alertas ativos</div>
+        <div class="alert-item alert-red">
+          <div class="alert-dot-o"></div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--tx);">Upgrade de rede — <span style="color:var(--gn);">concluído ✓</span></div>
+            <div style="font-size:11px;color:var(--tm);margin-top:2px;">Link Internacional atualizado em <strong style="color:var(--gn);">Mai/2026</strong>. Add.8 habilitado. Add.9 aguarda assinatura.</div>
+          </div>
+        </div>
+        <div class="alert-item alert-orange" style="margin-top:10px;">
+          <div class="alert-dot-o"></div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--tx);">Notice OS2 — Out/2027</div>
+            <div style="font-size:11px;color:var(--tm);margin-top:2px;">90 dias para não renovar automaticamente por mais 36 meses (Dez/2027).</div>
+          </div>
+        </div>
+        <div class="alert-item alert-orange" style="margin-top:10px;">
+          <div class="alert-dot-o"></div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--tx);">Add.9 — Draft não assinado</div>
+            <div style="font-size:11px;color:var(--tm);margin-top:2px;">Level 2 Markets · MRC $4.400 · Appendix B em branco · Mar/2026.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── ROW 3: CONTRATOS STATUS + REPORTING ── -->
+  <div class="dash-row3">
+
+    <!-- Status dos contratos -->
+    <div class="dash-card" style="flex:1.5;">
+      <div class="dash-card-title">📋 Status dos contratos</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="background:var(--nv);">
+            <th style="padding:7px 10px;text-align:left;color:var(--gd);font-size:9px;text-transform:uppercase;letter-spacing:.1em;">Documento</th>
+            <th style="padding:7px 10px;text-align:left;color:var(--gd);font-size:9px;text-transform:uppercase;letter-spacing:.1em;">Vigência</th>
+            <th style="padding:7px 10px;text-align:right;color:var(--gd);font-size:9px;text-transform:uppercase;letter-spacing:.1em;">MRC</th>
+            <th style="padding:7px 10px;text-align:center;color:var(--gd);font-size:9px;text-transform:uppercase;letter-spacing:.1em;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid var(--bd);">
+            <td style="padding:8px 10px;color:var(--tx);font-weight:600;">Order Schedule Nº 2</td>
+            <td style="padding:8px 10px;color:var(--tm);">Mai/2021 → Dez/2027 (renovado)</td>
+            <td style="padding:8px 10px;text-align:right;color:var(--gd);font-weight:700;">$38.813</td>
+            <td style="padding:8px 10px;text-align:center;"><span class="tg g">Ativo</span></td>
+          </tr>
+          <tr style="border-top:1px solid var(--bd);">
+            <td style="padding:8px 10px;color:var(--tx);">Add.1 — Infra</td>
+            <td style="padding:8px 10px;color:var(--tm);">Fev/2022 · coterminoso OS2</td>
+            <td style="padding:8px 10px;text-align:right;color:var(--tm);">$5.725 infra</td>
+            <td style="padding:8px 10px;text-align:center;"><span class="tg g">Ativo</span></td>
+          </tr>
+          <tr style="border-top:1px solid var(--bd);">
+            <td style="padding:8px 10px;color:var(--tx);">Add.2 — History / EOD</td>
+            <td style="padding:8px 10px;color:var(--tm);">Jan/2025 · conforme OS2</td>
+            <td style="padding:8px 10px;text-align:right;color:var(--tm);">$0 (waived)</td>
+            <td style="padding:8px 10px;text-align:center;"><span class="tg g">Ativo</span></td>
+          </tr>
+          <tr style="border-top:1px solid var(--bd);">
+            <td style="padding:8px 10px;color:var(--tx);">Add.5 — IDD FX + IR</td>
+            <td style="padding:8px 10px;color:var(--tm);">Mar/2025 · conforme OS2</td>
+            <td style="padding:8px 10px;text-align:right;color:var(--gd);font-weight:600;">$1.083</td>
+            <td style="padding:8px 10px;text-align:center;"><span class="tg g">Ativo</span></td>
+          </tr>
+          <tr style="border-top:1px solid var(--bd);">
+            <td style="padding:8px 10px;color:var(--tx);">Add.6 — Nasdaq Basic</td>
+            <td style="padding:8px 10px;color:var(--tm);">Mai/2025 · conforme OS2</td>
+            <td style="padding:8px 10px;text-align:right;color:var(--gd);font-weight:600;">$1.500</td>
+            <td style="padding:8px 10px;text-align:center;"><span class="tg g">Ativo</span></td>
+          </tr>
+          <tr style="border-top:1px solid var(--bd);">
+            <td style="padding:8px 10px;color:var(--tx);">Add.7 — IDD FX Vol. (14)</td>
+            <td style="padding:8px 10px;color:var(--tm);">Ago/2025 → Ago/2028 (3 anos)</td>
+            <td style="padding:8px 10px;text-align:right;color:var(--gd);font-weight:600;">$3.408</td>
+            <td style="padding:8px 10px;text-align:center;"><span class="tg g">Ativo</span></td>
+          </tr>
+          <tr style="border-top:1px solid var(--bd);background:rgba(248,81,73,.04);">
+            <td style="padding:8px 10px;color:var(--tx);">Add.8 — Exchange Content</td>
+            <td style="padding:8px 10px;color:var(--tm);">Fev/2026 · conforme OS2</td>
+            <td style="padding:8px 10px;text-align:right;color:var(--gd);font-weight:600;">$5.850</td>
+            <td style="padding:8px 10px;text-align:center;"><span class="tg g">✓ Ativo</span></td>
+          </tr>
+          <tr style="border-top:1px solid var(--bd);background:rgba(240,136,62,.04);">
+            <td style="padding:8px 10px;color:var(--tx);">Add.9 — Level 2 Markets</td>
+            <td style="padding:8px 10px;color:var(--tm);">Mar/2026 · proposta</td>
+            <td style="padding:8px 10px;text-align:right;color:var(--or);">$4.400</td>
+            <td style="padding:8px 10px;text-align:center;"><span class="tg o">Draft</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Reporting calendar -->
+    <div class="dash-card" style="flex:1;">
+      <div class="dash-card-title">📬 Obrigações de reporting</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+
+        <div style="background:var(--sf2);border-radius:6px;padding:12px 14px;border:1px solid var(--bd);">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gn);margin-bottom:6px;">Mensal — até dia 7</div>
+          <div style="font-size:12px;color:var(--tm);line-height:1.6;">
+            End User Report via <strong style="color:var(--tx);">RAAMS</strong><br>
+            <span style="font-size:11px;">Add.5 · 6 · 7 · 8 · (9 quando ativo)</span>
+          </div>
+          <div style="font-size:10px;color:var(--rd);margin-top:4px;">Atraso: 1,5%/mês ou $1.000 · >2 meses: suspensão</div>
+        </div>
+
+        <div style="background:var(--sf2);border-radius:6px;padding:12px 14px;border:1px solid var(--bd);">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--bl);margin-bottom:6px;">Trimestral — até 7 dias após o quarter</div>
+          <div style="font-size:12px;color:var(--tm);line-height:1.6;">
+            Usage Report → <span class="mn" style="font-size:10px;">RTS-UsageReports@theice.com</span><br>
+            <span style="font-size:11px;">OS2 + todos os addenda</span>
+          </div>
+        </div>
+
+        <div style="background:var(--sf2);border-radius:6px;padding:12px 14px;border:1px solid var(--bd);">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--or);margin-bottom:6px;">Trimestral — Tullett Prebon</div>
+          <div style="font-size:12px;color:var(--tm);line-height:1.6;">
+            Enviar para <span class="mn" style="font-size:10px;">accountsreceivables@tpicap.com</span><br>
+            <span style="font-size:11px;">+ cópia ICE · OS2 Appendix B</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+</div>
+
+<!-- ═══ TODOS OS CONTRATOS ═══ -->
+<div class="panel" id="tab-ct">
+  <div class="page-title">📁 <span>Todos os Contratos</span></div>
+  <div class="page-sub">MSA → Order Schedules → Addenda — hierarquia contratual completa</div>
+  <div class="al i"><h4>📁 Visão completa de todos os contratos e aditivos</h4>
+    <div class="ri">Esta aba consolida todos os documentos assinados e em draft encontrados nos arquivos. Hierarquia: MSA → Order Schedules → Addenda.</div>
+    <div class="ri">Order Schedule Nº 1 foi <strong>supersedido</strong> pelo OS Nº 2 em 01/Fev/2022 com efeito retroativo. OS Nº 2 é o contrato-base ativo.</div>
+  </div>
+
+  <!-- CAMADA 1: MSA -->
+  <div class="st">Camada 1 — Master Services Agreement</div>
+  <div class="ovw"><table class="ot">
+    <thead><tr><th>Documento</th><th>Partes</th><th>Vigência</th><th>Propósito</th><th>Signatários</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Master Services Agreement</strong><br><span class="mn" style="font-size:10px;">MSA · 01/Mai/2021</span></td>
+        <td>Agência Estado S.A.<br>ICE Data Services, Inc.</td>
+        <td>Indeterminado (base de todos os schedules)</td>
+        <td>Documento raiz: define termos gerais, confidencialidade, responsabilidade, pagamento e governança de toda a relação</td>
+        <td>Miresh Kirtikumar (MD)<br><span class="mu">Elissandra Manzano (Fin. Mgr)</span></td>
+        <td><span class="tg g">Ativo</span></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <!-- CAMADA 2: ORDER SCHEDULES -->
+  <div class="st">Camada 2 — Feeds Order Schedules</div>
+  <div class="ovw"><table class="ot">
+    <thead><tr><th>Schedule</th><th>Effective Date</th><th>Initial Term</th><th>Renewal</th><th>MRC Base</th><th>NRC</th><th>Feeds Ref.</th><th>Signatários AE</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr style="opacity:.5;">
+        <td><strong>Feeds Schedule Nº 1</strong><br><span class="mu">Supercede ComStock Jul/2003</span></td>
+        <td>01/Mai/2021</td>
+        <td>Até 31/Dez/2024</td>
+        <td>36 meses consecutivos</td>
+        <td class="num">$42.213</td>
+        <td class="mu">N/A</td>
+        <td><span class="mn" style="font-size:10px;">O-0221-280430<br>O-0221-280431</span></td>
+        <td>Miresh Kirtikumar (MD)<br>Elissandra Manzano (FM)<br><span class="mu">Jul/2021</span></td>
+        <td><span class="tg o">Supersedido</span></td>
+      </tr>
+      <tr>
+        <td><strong>Feeds Schedule Nº 2</strong><br><span class="mu">Supercede OS Nº 1 retroat. 01/Mai/2021</span></td>
+        <td>01/Fev/2022</td>
+        <td>Até 31/Dez/2024<br><span class="mu">Renovado via Add.3 até Dez/2027</span></td>
+        <td>36 meses consecutivos</td>
+        <td class="num">$35.453</td>
+        <td class="mu">N/A</td>
+        <td><span class="mn" style="font-size:10px;">—</span></td>
+        <td>Elissandra Manzano (FM)<br>Rui Pires (Prod.Dev.Mgr)<br><span class="mu">Mai/2022</span></td>
+        <td><span class="tg g">Ativo</span></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <!-- CAMADA 3: ADDENDA -->
+  <div class="st">Camada 3 — Addenda ao Order Schedule Nº 2 (9 aditivos)</div>
+  <div class="ovw"><table class="ot">
+    <thead><tr>
+      <th>Add.</th><th>Título</th><th>Effective Date</th><th>Propósito</th><th>NRC</th><th>MRC incr.</th>
+      <th>Cliente redistribuído</th><th>Term/Notice</th><th>Feeds Ref.</th><th>Signatários AE</th><th>Signatários ICE</th><th>Status</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="an">01</span></td>
+        <td>Substituição de Infraestrutura<br><span class="mu">Dedicated → Shared Farm NY4 Secaucus</span></td>
+        <td>Fev/2022<br><span class="mu">(data instalação)</span></td>
+        <td>Migrar CSPs e conectividade para NY4 Equinix. Parallel Run de 30 dias autorizado.</td>
+        <td class="mu">N/A</td>
+        <td class="num">$5.725<br><span class="mu">(infra)</span></td>
+        <td class="mu">N/A</td>
+        <td>Coterminoso OS2</td>
+        <td><span class="mn" style="font-size:10px;">—</span></td>
+        <td>Elissandra Manzano<br>Rui Pires<br><span class="mu">Mai/2022</span></td>
+        <td>E. Addvensky<br>R. Dawley<br><span class="mu">Mai/2022</span></td>
+        <td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr>
+        <td><span class="an">02</span></td>
+        <td>History Services — EOD &amp; Reference Data<br><span class="mu">Hang Seng · Nikkei · OTC MM · BME · SET · SIX · Taiwan</span></td>
+        <td>01/Jan/2025</td>
+        <td>Adicionar History Services (EOD Summary Pricing + Ongoing Reference Data) para 7 exchanges — fee integralmente waived.</td>
+        <td class="mu">$0</td>
+        <td class="num">$0</td>
+        <td class="mu">N/A</td>
+        <td>Conforme MSA/OS</td>
+        <td><span class="mn" style="font-size:10px;">O-1224-372818</span></td>
+        <td>Elissandra Manzano<br>Denis N. Piovezan (CEO)<br><span class="mu">Jan/2025</span></td>
+        <td>E. Addvensky<br><span class="mu">Jan/2025</span></td>
+        <td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr style="background:rgba(201,168,76,.03);">
+        <td><span class="an">03</span></td>
+        <td>Renovação Contratual + MRC Escalonado 3 anos<br><span class="mu">Substitui OTC FX Global (687) → FX Professional (1321)</span></td>
+        <td>11/Abr/2024<br><span class="mu">Commencement: 31/Dez/2024</span></td>
+        <td>Renovar OS2 por 36 meses (Dez/2024→Dez/2027). Define MRC escalonado por 3 anos para toda a relação. Troca fonte OTC FX.</td>
+        <td class="mu">$0</td>
+        <td class="num">Ver escal.</td>
+        <td class="mu">N/A</td>
+        <td>36m: Dez/2024→Dez/2027<br>Renov. 12m</td>
+        <td><span class="mn" style="font-size:10px;">O-0224-352590</span></td>
+        <td>Elissandra Manzano<br>Paulo Pessoa (CCO)<br><span class="mu">Mai/2024</span></td>
+        <td>E. Addvensky<br><span class="mu">Mai/2024</span></td>
+        <td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr style="opacity:.55;">
+        <td><span class="an" style="color:var(--td);">04</span></td>
+        <td>Não encontrado nos arquivos<br><span class="mu">Citado no Add.5 como "incorrectly named Addendum No.2"</span></td>
+        <td>01/Jan/2025</td>
+        <td>Propósito desconhecido — possivelmente o mesmo arquivo IDC_Addendum_2 (renomeação administrativa).</td>
+        <td class="mu">—</td>
+        <td class="mu">—</td>
+        <td class="mu">—</td>
+        <td>—</td>
+        <td><span class="mn" style="font-size:10px;">—</span></td>
+        <td>—</td>
+        <td>—</td>
+        <td><span class="tg" style="background:rgba(110,118,129,.15);color:var(--td);border-color:var(--td);">Sem arquivo</span></td>
+      </tr>
+      <tr>
+        <td><span class="an">05</span></td>
+        <td>IDD FX Volatility Surfaces + IDD IR Forward Curves<br><span class="mu">2 FX pairs + 2 IR curves · Source 1582 + 1772</span></td>
+        <td>20/Mar/2025</td>
+        <td>Adicionar FX Vol Surfaces e IR Forward Curves para redistribuição exclusiva ao Itaú Unibanco S.A. (Market Making).</td>
+        <td class="mu">$0</td>
+        <td class="num">$1.083</td>
+        <td><strong style="color:var(--bl);">Itaú Unibanco S.A.</strong><br><span class="mu">Apenas 1 cliente · Market Making</span></td>
+        <td>Conforme MSA/OS</td>
+        <td><span class="mn" style="font-size:10px;">O-0325-378391</span></td>
+        <td>Elissandra Manzano<br>Gilson Guilhermino Jr (Dir.)<br><span class="mu">Mar/2025</span></td>
+        <td>E. Addvensky<br><span class="mu">Mar/2025</span></td>
+        <td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr>
+        <td><span class="an">06</span></td>
+        <td>Nasdaq Basic<br><span class="mu">Sources 533 (NASDAQ issues) + 534 (NYSE/AMEX issues)</span></td>
+        <td>30/Mai/2025</td>
+        <td>Adicionar Nasdaq Basic Level 1 para redistribuição geral via Broadcast products.</td>
+        <td class="num">$950</td>
+        <td class="num">$1.500</td>
+        <td><span class="mu">Conforme Schedule</span></td>
+        <td>Conforme MSA/OS</td>
+        <td><span class="mn" style="font-size:10px;">O-0425-419428</span></td>
+        <td>Elissandra Manzano<br>Gustavo B. Ioriatti (Dir.)<br><span class="mu">Jun/2025</span></td>
+        <td>E. Addvensky<br><span class="mu">Jun/2025</span></td>
+        <td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr>
+        <td><span class="an">07</span></td>
+        <td>IDD FX Volatility Surfaces — 14 currency pairs<br><span class="mu">Level1-OTC · Source 1582 · redistrib. até 3 clientes</span></td>
+        <td>30/Ago/2025</td>
+        <td>Expandir IDD FX Volatility para 14 pairs (vs 2 do Add.5). Term próprio de 3 anos + renov. 2a. Redistribuição: até 3 clientes Front Office.</td>
+        <td class="num">$950</td>
+        <td class="num">$3.408</td>
+        <td><span class="mu">Até 3 clientes<br>Front Office Trading</span></td>
+        <td>3 anos + renov. 2a<br>Notice: 90 dias</td>
+        <td><span class="mn" style="font-size:10px;">O-0825-427261</span></td>
+        <td>Rodrigo Galasini (Prod.Dir.)<br>Gustavo B. Ioriatti (Dir.)<br><span class="mu">Set/2025</span></td>
+        <td>ICE (não nomeado)<br><span class="mu">Set/2025</span></td>
+        <td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr>
+        <td><span class="an">08</span></td>
+        <td>Exchange Content<br><span class="mu">Cboe Fut · Eurex · LME LBMA · WM Reuters · 6 sources</span></td>
+        <td>06/Fev/2026</td>
+        <td>Adicionar 4 novos exchange packages. <strong style="color:var(--rd);">Upgrade Link Internacional concluído Mai/2026 · fontes habilitadas.</strong></td>
+        <td class="num">$950</td>
+        <td class="num">$5.850</td>
+        <td><span class="mu">Conforme Schedule</span></td>
+        <td>Conforme MSA/OS</td>
+        <td><span class="mn" style="font-size:10px;">O-0924-367066</span></td>
+        <td>Gustavo B. Ioriatti (Dir.)<br>Rodrigo Galasini (Prod.Dir.)<br><span class="mu">Fev/2026</span></td>
+        <td>Brian Norris (VP Sales)<br>Robert Dawley<br><span class="mu">Fev/2026</span></td>
+        <td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr style="background:rgba(240,136,62,.04);">
+        <td><span class="an" style="color:var(--or);">09</span></td>
+        <td>Level 2 Markets<br><span class="mu">Appendix B pendente de preenchimento</span></td>
+        <td>30/Mar/2026<br><span class="mu">(proposta)</span></td>
+        <td>Adicionar exchanges Level 2. Escopo exato não definido. Mesma cláusula de infra do Add.8 — fontes condicionadas a upgrade de rede.</td>
+        <td class="num">$1.050</td>
+        <td class="num">$4.400</td>
+        <td><span class="mu">A definir</span></td>
+        <td>Conforme MSA/OS</td>
+        <td><span class="mn" style="font-size:10px;">O-0925-428618</span></td>
+        <td>Não assinado</td>
+        <td>Não assinado</td>
+        <td><span class="tg o">Draft</span></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <!-- RESUMO FINANCEIRO -->
+  <div class="st">Resumo financeiro consolidado</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr>
+      <th style="text-align:left;">Documento</th>
+      <th style="text-align:left;">Tipo</th>
+      <th>Eff. Date</th>
+      <th>NRC</th>
+      <th>MRC (Ano 1)</th>
+      <th>Custo Anual (Ano 1)</th>
+    </tr></thead>
+    <tbody>
+      <tr style="opacity:.5;"><td>Schedule Nº 1</td><td style="text-align:left;"><span class="tg o">Supersedido</span></td><td>Mai/2021</td><td class="mu">N/A</td><td>$42.213</td><td>$506.556</td></tr>
+      <tr><td>Schedule Nº 2</td><td style="text-align:left;"><span class="tg g">Base ativo</span></td><td>Fev/2022</td><td class="mu">N/A</td><td class="b">$35.453</td><td>$425.436</td></tr>
+      <tr><td>Add. 1 — Infra</td><td style="text-align:left;"><span class="tg g">Ativo</span></td><td>Fev/2022</td><td class="mu">N/A</td><td>$5.725 infra</td><td class="mu">Incluso OS2</td></tr>
+      <tr><td>Add. 2 — History</td><td style="text-align:left;"><span class="tg g">Ativo</span></td><td>Jan/2025</td><td>$0</td><td>$0</td><td>$0</td></tr>
+      <tr><td>Add. 3 — Renovação</td><td style="text-align:left;"><span class="tg g">Ativo</span></td><td>Dez/2024</td><td>$0</td><td class="b">$38.813 total</td><td>$465.756</td></tr>
+      <tr><td>Add. 5 — IDD FX+IR</td><td style="text-align:left;"><span class="tg g">Ativo</span></td><td>Mar/2025</td><td>$0</td><td>$1.083</td><td>$12.996</td></tr>
+      <tr><td>Add. 6 — Nasdaq Basic</td><td style="text-align:left;"><span class="tg g">Ativo</span></td><td>Mai/2025</td><td>$950</td><td>$1.500</td><td>$18.000</td></tr>
+      <tr><td>Add. 7 — IDD FX Vol. (14)</td><td style="text-align:left;"><span class="tg g">Ativo</span></td><td>Ago/2025</td><td>$950</td><td>$3.408</td><td>$40.896</td></tr>
+      <tr><td>Add. 8 — Exchange Content</td><td style="text-align:left;"><span class="tg g">Ativo</span></td><td>Fev/2026</td><td>$950</td><td>$5.850</td><td>$70.200</td></tr>
+      <tr><td>Add. 9 — Level 2 (draft)</td><td style="text-align:left;"><span class="tg o">Draft</span></td><td>Mar/2026</td><td>$1.050</td><td>$4.400</td><td>$52.800</td></tr>
+      <tr class="hl">
+        <td colspan="3" style="font-weight:700;">TOTAL ATIVO (OS2 Add.3 + Add.5+6+7+8)</td>
+        <td class="b">$2.900</td>
+        <td class="b">$50.654</td>
+        <td class="b">$607.848</td>
+      </tr>
+      <tr style="background:rgba(240,136,62,.05);">
+        <td colspan="3" style="font-weight:600;color:var(--or);">SE Add.9 assinado</td>
+        <td style="color:var(--or);">$4.000</td>
+        <td style="color:var(--or);font-weight:700;">$55.054</td>
+        <td style="color:var(--or);font-weight:700;">$660.648</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <!-- CALENDÁRIO DE VENCIMENTOS -->
+  <div class="st">Calendário de vencimentos e alertas</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr><th style="text-align:left;">Data</th><th style="text-align:left;">Evento</th><th style="text-align:left;">Documento</th><th style="text-align:left;">Ação necessária</th><th>Criticidade</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>≈ Jun/2026<br><span class="mu">(já expirado)</span></td>
+        <td style="text-align:left;">Prazo 120d upgrade de rede</td>
+        <td style="text-align:left;">Add. 8 + Add. 9</td>
+        <td style="text-align:left;">Confirmar se upgrade foi concluído. Billing rodando mesmo sem fontes habilitadas.</td>
+        <td><span class="tg r">URGENTE</span></td>
+      </tr>
+      <tr>
+        <td>Out/2027</td>
+        <td style="text-align:left;">Notice 90 dias para não renovar OS2</td>
+        <td style="text-align:left;">Schedule Nº 2 + Add. 3</td>
+        <td style="text-align:left;">Decidir renovação do contrato base (Dez/2024–Dez/2027). Notificar até Out/2027 para não renovar.</td>
+        <td><span class="tg gd">Alto</span></td>
+      </tr>
+      <tr>
+        <td>Dez/2027</td>
+        <td style="text-align:left;">Fim do Initial Term OS2 (1ª renovação)</td>
+        <td style="text-align:left;">Schedule Nº 2</td>
+        <td style="text-align:left;">Sem notice → renovação automática por mais 36 meses (até Dez/2030).</td>
+        <td><span class="tg gd">Alto</span></td>
+      </tr>
+      <tr>
+        <td>≈ Ago/2028</td>
+        <td style="text-align:left;">Notice 90 dias — Add. 7</td>
+        <td style="text-align:left;">Add. 7 — IDD FX Vol.</td>
+        <td style="text-align:left;">Fim do term próprio de 3 anos do Add.7. Notificar até Mai/2028 para não renovar por 2 anos.</td>
+        <td><span class="tg">Médio</span></td>
+      </tr>
+      <tr>
+        <td>Mensal</td>
+        <td style="text-align:left;">RAAMS — End User Report</td>
+        <td style="text-align:left;">Add. 5, 6, 7, 8</td>
+        <td style="text-align:left;">Enviar relatório em até 7 dias após fim do mês. Atraso: 1,5%/mês ou $1.000 (maior). &gt;2 meses: suspensão.</td>
+        <td><span class="tg g">Rotina</span></td>
+      </tr>
+      <tr>
+        <td>Trimestral</td>
+        <td style="text-align:left;">Usage Report geral + Tullett Prebon</td>
+        <td style="text-align:left;">OS2 + Add. 2</td>
+        <td style="text-align:left;">Enviar em até 7 dias após fim do quarter. Tullett Prebon: accountsreceivables@tpicap.com + cópia ICE.</td>
+        <td><span class="tg g">Rotina</span></td>
+      </tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ MSA ═══ -->
+<div class="panel" id="tab-msa">
+  <div class="page-title">📜 Master Services <span>Agreement</span></div>
+  <div class="page-sub">Documento raiz — governa toda a relação entre Agência Estado e ICE Data Services</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/msa.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">IDC_11_1 — MSA signed</span></div>
+
+
+  <div class="cg">
+    <div class="cd"><div class="cl">Effective Date</div><div class="cv" style="font-size:15px;">01/Mai/2021</div><div class="cs">Data de vigência do MSA</div></div>
+    <div class="cd"><div class="cl">Licensee</div><div class="cv" style="font-size:14px;">Agência Estado S.A.</div><div class="cs">Av. Eng. Caetano Álvares, 55 · SP</div></div>
+    <div class="cd"><div class="cl">Vendor</div><div class="cv" style="font-size:13px;">ICE Data Services, Inc.</div><div class="cs">ICE Data Connectivity &amp; Feeds, Inc.</div></div>
+    <div class="cd"><div class="cl">Vigência</div><div class="cv" style="font-size:14px;">Indeterminada</div><div class="cs">Base de todos os Schedules e Addenda</div></div>
+  </div>
+
+  <div class="st">Propósito e escopo</div>
+  <table class="dt"><tbody>
+    <tr><td>Propósito</td><td>Estabelecer os termos mestres que governam todos os Feeds Schedules e Addenda. Define confidencialidade, responsabilidade, pagamento, propriedade intelectual e resolução de disputas.</td></tr>
+    <tr><td>Hierarquia</td><td>Em caso de conflito entre MSA e Schedule/Addendum, os termos do Schedule/Addendum prevalecem sobre o MSA.</td></tr>
+    <tr><td>Território base</td><td>Brasil — aplicável à Agência Estado apenas (não vincula clientes redistribuídos).</td></tr>
+    <tr><td>Expansão de território</td><td>Possível mediante notificação escrita ao Vendor, sujeito a consentimento escrito da ICE.</td></tr>
+    <tr><td>Attribution obrigatória</td><td><em>"Market data provided by ICE Data Services."</em> — exibir em todos os produtos redistribuídos.</td></tr>
+    <tr><td>Supercede</td><td>ComStock, Inc. Information Distribution Licensee Agreement (Commencement: Jul/2003) — encerrado em 01/Mai/2021.</td></tr>
+  </tbody></table>
+
+  <div class="st">Signatários</div>
+  <table class="dt"><tbody>
+    <tr><td>Agência Estado</td><td>Miresh Kirtikumar (Managing Director) · Jul/2021<br><span class="mu">Elissandra Manzano (Financial Manager) · Jul/2021</span></td></tr>
+    <tr><td>ICE</td><td>Edward M. Addvensky (VP, Global Relationship Management) · Jul/2021</td></tr>
+  </tbody></table>
+
+  <div class="st">Estrutura de documentos vinculados ao MSA</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr><th style="text-align:left;">Documento</th><th style="text-align:left;">Tipo</th><th style="text-align:left;">Data</th><th style="text-align:left;">Status</th></tr></thead>
+    <tbody>
+      <tr><td>Feeds Schedule Nº 1</td><td style="text-align:left;">Order Schedule</td><td style="text-align:left;">01/Mai/2021</td><td style="text-align:left;"><span class="tg o">Supersedido</span></td></tr>
+      <tr><td>Feeds Schedule Nº 2</td><td style="text-align:left;">Order Schedule</td><td style="text-align:left;">01/Fev/2022</td><td style="text-align:left;"><span class="tg g">Ativo</span></td></tr>
+      <tr><td>Addendum Nº 1 a Nº 9</td><td style="text-align:left;">Feeds Addendum</td><td style="text-align:left;">2022–2026</td><td style="text-align:left;"><span class="tg g">1–8 Ativos</span> · <span class="tg o">9 Draft</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ ORDER SCHEDULE Nº 2 ═══ -->
+<div class="panel" id="tab-os2">
+  <div class="page-title">📋 Order Schedule <span>Nº 2</span></div>
+  <div class="page-sub">Contrato-base ativo · substituiu OS Nº 1 retroativamente a 01/Mai/2021 · renovado até Dez/2027 via Add.3</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/os2.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">IDC_12 — Feeds Order Schedule Nº 2 (signed)</span></div>
+
+
+  <div class="cg">
+    <div class="cd"><div class="cbg">ATIVO</div><div class="cl">Effective Date</div><div class="cv" style="font-size:15px;">01/Fev/2022</div><div class="cs">Commencement retroativo: 01/Mai/2021</div></div>
+    <div class="cd"><div class="cl">MRC Base (OS2)</div><div class="cv g">$35.453,00</div><div class="cs">Infra $5.726 + Licenças $29.727</div></div>
+    <div class="cd"><div class="cl">Renewal ativo</div><div class="cv" style="font-size:14px;">Até Dez/2027</div><div class="cs">Via Add.3 · próxima janela: Out/2027</div></div>
+    <div class="cd"><div class="cl">Custo anual base</div><div class="cv g">$425.436</div><div class="cs">12 × $35.453</div></div>
+  </div>
+
+  <div class="st">Dados gerais</div>
+  <table class="dt"><tbody>
+    <tr><td>Effective Date</td><td>01 de Fevereiro de 2022</td></tr>
+    <tr><td>Commencement</td><td>01 de Maio de 2021 (retroativo — substitui OS Nº 1)</td></tr>
+    <tr><td>Initial Term</td><td>01/Mai/2021 até 31/Dez/2024</td></tr>
+    <tr><td>Renewal ativo (Add.3)</td><td>31/Dez/2024 → 31/Dez/2027 · renov. 12 meses subsequentes</td></tr>
+    <tr><td>Required Written Notice</td><td>90 dias antes do fim do Initial Term ou qualquer Renewal → <strong>Out/2027</strong></td></tr>
+    <tr><td>Serviço</td><td>Consolidated Feed (Dedicated Equipment) + Connectivity Services via IGN</td></tr>
+    <tr><td>Território</td><td>Brasil (Agência Estado apenas)</td></tr>
+    <tr><td>Access / User IDs</td><td>Até <strong>43 IDs</strong> por Delivery Address · adicional: $100/ID/mês</td></tr>
+    <tr><td>Delivery Address</td><td>111 8th Ave, NY (×2 — redundante via NY4 Secaucus)</td></tr>
+    <tr><td>Invoicing</td><td>Mensal, em arrears</td></tr>
+    <tr><td>ICE Account Numbers</td><td><span class="mn">C1KS / 4178700000</span> Licenças · <span class="mn">CG07 / 7819700000</span> Feeds Infra · <span class="mn">C45A / 7051800000</span> Connectivity</td></tr>
+    <tr><td>Tullett Prebon</td><td>Máximo <strong>4.000 clientes</strong> · uso restrito aos produtos do Appendix D</td></tr>
+  </tbody></table>
+
+  <div class="st">Fees — Appendix A-1</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr><th style="text-align:left;">Categoria</th><th style="text-align:left;">Descrição</th><th>MRC</th></tr></thead>
+    <tbody>
+      <tr><td>Connectivity Infra</td><td style="text-align:left;color:var(--tx);">IGN LL 10Gbps Port + 2× Cross Connects + Multicast &gt;500Mbps</td><td>$3.611,00</td></tr>
+      <tr><td>Feeds Infra</td><td style="text-align:left;color:var(--tx);">3× CSP + 2× CPF (Client Site Processor / Fanout)</td><td>$2.115,00</td></tr>
+      <tr><td style="font-size:11px;color:var(--td);" colspan="2">Subtotal Infraestrutura</td><td>$5.726,00</td></tr>
+      <tr><td>Data License</td><td style="text-align:left;color:var(--tx);">Feeds Data License Fees (~70 exchanges/packages)</td><td>$26.127,00</td></tr>
+      <tr><td>End Users &amp; Apps</td><td style="text-align:left;color:var(--tx);">Feeds End Users &amp; Applications</td><td>$3.600,00</td></tr>
+      <tr><td style="font-size:11px;color:var(--td);" colspan="2">Subtotal Licenças</td><td>$29.727,00</td></tr>
+      <tr class="hl"><td style="font-weight:700;" colspan="2">TOTAL MRC BASE</td><td class="b">$35.453,00</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="st">Signatários</div>
+  <table class="dt"><tbody>
+    <tr><td>Agência Estado</td><td>Elissandra Manzano (Financial Manager) · Mai/2022<br><span class="mu">Rui Pires (Product &amp; Development Manager) · Mai/2022</span></td></tr>
+    <tr><td>ICE</td><td>Edward M. Addvensky (VP, Global Relationship Management) · Mai/2022 · Robert Dawley · Mai/2022</td></tr>
+  </tbody></table>
+</div>
+
+<!-- ═══ ORDER SCHEDULE Nº 1 ═══ -->
+<div class="panel" id="tab-os1">
+  <div class="page-title">📄 Order Schedule <span>Nº 1</span></div>
+  <div class="page-sub">Referência histórica — supersedido pelo OS Nº 2 em 01/Fev/2022 com efeito retroativo a 01/Mai/2021</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/os1.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">IDC_11 — Feeds Order Schedule Nº 1 (signed)</span></div>
+
+
+  <div class="al w"><h4>⚠ Documento supersedido</h4>
+    <div class="ri">O Schedule Nº 2 substituiu este documento integralmente. Mantido apenas como referência histórica.</div>
+  </div>
+
+  <div class="cg">
+    <div class="cd"><div class="cbg" style="background:rgba(240,136,62,.15);color:var(--or);border-color:var(--or);">SUPERSEDIDO</div><div class="cl">Effective Date</div><div class="cv" style="font-size:15px;">01/Mai/2021</div><div class="cs">Supersedido em 01/Fev/2022</div></div>
+    <div class="cd"><div class="cl">MRC Total (histórico)</div><div class="cv" style="color:var(--td);">$42.213,00</div><div class="cs">Infra $6.736 + Licenças $35.477</div></div>
+    <div class="cd"><div class="cl">Initial Term</div><div class="cv" style="font-size:14px;color:var(--td);">Até 31/Dez/2024</div><div class="cs">Renewal: 36 meses</div></div>
+    <div class="cd"><div class="cl">Feeds Reference</div><div class="cv" style="font-size:12px;"><span class="mn">O-0221-280430</span></div><div class="cs"><span class="mn">O-0221-280431</span></div></div>
+  </div>
+
+  <div class="st">Fees (histórico)</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr><th style="text-align:left;">Categoria</th><th>MRC</th></tr></thead>
+    <tbody>
+      <tr><td>Connectivity Infrastructure</td><td>$4.248,00</td></tr>
+      <tr><td>Feeds Infrastructure (3× CSP + 2× CPF)</td><td>$2.488,00</td></tr>
+      <tr><td style="font-size:11px;color:var(--td);">Subtotal Infra</td><td>$6.736,00</td></tr>
+      <tr><td>Feeds Data License Fees</td><td>$31.477,00</td></tr>
+      <tr><td>Feeds End Users &amp; Applications</td><td>$4.000,00</td></tr>
+      <tr><td style="font-size:11px;color:var(--td);">Subtotal Licenças</td><td>$35.477,00</td></tr>
+      <tr class="hl"><td style="font-weight:700;">TOTAL MRC</td><td class="b" style="color:var(--td);">$42.213,00</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="st">Signatários</div>
+  <table class="dt"><tbody>
+    <tr><td>Agência Estado</td><td>Miresh Kirtikumar (Managing Director) · Jul/2021 · Elissandra Manzano (Financial Manager) · Jul/2021</td></tr>
+    <tr><td>ICE</td><td>Edward M. Addvensky (VP, Global Relationship Management) · Jul/2021</td></tr>
+  </tbody></table>
+</div>
+
+<!-- ═══ ADD 1 ═══ -->
+<div class="panel" id="tab-a1">
+  <div class="page-title">🖥 Addendum Nº 1 — <span>Migração de Infraestrutura</span></div>
+  <div class="page-sub">Substituição de Dedicated Equipment por Shared Farm NY4 Secaucus · Mai/2022</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/a1.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">IDC_12 — Addendum 1 to OS2 (signed)</span></div>
+
+  <div class="cg">
+    <div class="cd"><div class="cbg">Nº 1</div><div class="cl">Propósito</div><div class="cv" style="font-size:14px;">Migração de Infraestrutura</div><div class="cs">Dedicated Equipment → Shared Farm (NY4 Secaucus)</div></div>
+    <div class="cd"><div class="cl">MRC Nova Infra</div><div class="cv g">$5.725,00</div><div class="cs">Conectividade + Feeds Infra (novo ambiente)</div></div>
+    <div class="cd"><div class="cl">NRC</div><div class="cv">N/A</div><div class="cs">Sem setup fee neste aditivo</div></div>
+    <div class="cd"><div class="cl">Parallel Run</div><div class="cv" style="font-size:14px;">30 dias</div><div class="cs">Infraestrutura antiga e nova em paralelo</div></div>
+  </div>
+  <div class="st">Dados gerais</div>
+  <table class="dt"><tbody>
+    <tr><td>Effective Date</td><td>01/Fev/2022 (commencement: data da instalação)</td></tr>
+    <tr><td>Propósito</td><td>Substituir a infraestrutura existente (111 8th Ave) por Shared Farm em NY4 Secaucus (Equinix)</td></tr>
+    <tr><td>Vigência</td><td>Coterminoso com o Schedule (OS2)</td></tr>
+    <tr><td>Signatários (AE)</td><td>Elissandra Manzano (Financial Manager) · 02/Mai/2022<br><span class="mu">Rui Pires (Product and Development Manager) · 03/Mai/2022</span></td></tr>
+    <tr><td>Signatários (ICE)</td><td>Edward M. Addvensky (VP, Global Relationship Management) · 04/Mai/2022 · Robert Dawley · 04/Mai/2022</td></tr>
+  </tbody></table>
+
+  <div class="st">Nova infraestrutura IGN — Appendix B</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr><th style="text-align:left;">Componente</th><th style="text-align:left;">Localização</th><th>Qtd</th><th>MRC</th></tr></thead>
+    <tbody>
+      <tr><td>IGN LL 1Gbps Port (×2 — redundante)</td><td style="text-align:left;color:var(--tx);">111 8th Ave, NY (Telx) + Secaucus NJ (NY4)</td><td style="text-align:center;">2</td><td>$382</td></tr>
+      <tr><td>Cross Connect (×2)</td><td style="text-align:left;color:var(--tx);">111 8th Ave + NY4</td><td style="text-align:center;">2</td><td>$850</td></tr>
+      <tr><td>4U Cabinet Hosting (Dual CSP)</td><td style="text-align:left;color:var(--tx);">NY4 Secaucus</td><td style="text-align:center;">1</td><td>$765</td></tr>
+      <tr><td>2U Cabinet Hosting (Single CSP)</td><td style="text-align:left;color:var(--tx);">NY4 Secaucus</td><td style="text-align:center;">1</td><td>$510</td></tr>
+      <tr><td>Multicast Consolidated Feed &gt;1Gbps a 5Gbps</td><td style="text-align:left;color:var(--tx);">NY4 Secaucus</td><td style="text-align:center;">1</td><td>$638</td></tr>
+      <tr><td>Unicast Consolidated Feed &gt;500Mbps a 1Gbps</td><td style="text-align:left;color:var(--tx);">NJ Metro</td><td style="text-align:center;">1</td><td>$553</td></tr>
+      <tr><td>CSP × 3</td><td style="text-align:left;color:var(--tx);">NY4 Secaucus</td><td style="text-align:center;">3</td><td>$2.027</td></tr>
+      <tr class="hl"><td style="font-weight:700;" colspan="3">Grand Total Infra</td><td class="b">$5.725</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ ADD 2 ═══ -->
+<div class="panel" id="tab-a2">
+  <div class="page-title">📈 Addendum Nº 2 — <span>History Services / EOD</span></div>
+  <div class="page-sub">Hang Seng · Nikkei · OTC Money Market · BME · SET · SIX · Taiwan · Fee: $0 (waived)</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/a2.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">IDC — Addendum 2 to OS2 · Jan/2025 (signed)</span></div>
+
+  <div class="cg">
+    <div class="cd"><div class="cbg">Nº 2</div><div class="cl">Propósito</div><div class="cv" style="font-size:14px;">History Services</div><div class="cs">EOD Summary + Ongoing Reference Data</div></div>
+    <div class="cd"><div class="cl">MRC</div><div class="cv g">$0,00</div><div class="cs">Waived — sem fee recorrente</div></div>
+    <div class="cd"><div class="cl">NRC Setup</div><div class="cv">$0,00</div><div class="cs">Waived</div></div>
+    <div class="cd"><div class="cl">Feeds Reference</div><div class="cv" style="font-size:13px;"><span class="mn">O-1224-372818</span></div><div class="cs">Effective Date: 01/Jan/2025</div></div>
+  </div>
+  <div class="st">Dados gerais</div>
+  <table class="dt"><tbody>
+    <tr><td>Effective Date</td><td>01 de Janeiro de 2025</td></tr>
+    <tr><td>Propósito</td><td>Adicionar History Services (EOD Summary Pricing + Ongoing Reference Data) para 7 exchanges</td></tr>
+    <tr><td>MRC / NRC</td><td>$0,00 (waived em totalidade)</td></tr>
+    <tr><td>Vigência</td><td>Conforme Schedule e/ou MSA</td></tr>
+    <tr><td>Signatários (AE)</td><td>Elissandra Manzano (Financial Manager) · 02/Jan/2025<br><span class="mu">Denis Nieto Piovezan (CEO) · 03/Jan/2025</span></td></tr>
+    <tr><td>Signatários (ICE)</td><td>Edward M. Addvensky (VP, Global Client Development) · 03/Jan/2025</td></tr>
+  </tbody></table>
+
+  <div class="st">Exchanges — Appendix B (History Services EOD)</div>
+  <div class="ptw"><table class="pt">
+    <thead><tr><th>Exchange Package</th><th>Level</th><th>Source ID</th><th>Source</th><th>Market Centre</th><th>Serviço</th><th>Usage</th></tr></thead>
+    <tbody>
+      <tr><td>Hang Seng Indices</td><td><span class="tg gd">L1</span></td><td><span class="mn">275</span></td><td>Hang Seng Indices</td><td>Hang Seng Indices</td><td>History Ongoing EOD</td><td>Other</td></tr>
+      <tr><td>Nikkei Indices</td><td><span class="tg gd">L1</span></td><td><span class="mn">1090</span></td><td>Nikkei</td><td>Indices (full package)</td><td>History Ongoing EOD</td><td>Other</td></tr>
+      <tr><td>OTC Data Serv. Money Market &amp; Rates</td><td><span class="tg gd">L1-OTC</span></td><td><span class="mn">696</span></td><td>OTC Data Services</td><td>Money Markets</td><td>History Ongoing EOD</td><td>Other</td></tr>
+      <tr><td>Sociedad de Bolsas (BME)</td><td><span class="tg gd">L1</span></td><td><span class="mn">216</span></td><td>Sociedad de Bolsas</td><td>Continuous Market L1</td><td>History Ongoing EOD</td><td>Other</td></tr>
+      <tr><td>Sociedad de Bolsas (BME) — IBEX</td><td><span class="tg gd">L1</span></td><td><span class="mn">658</span></td><td>Sociedad de Bolsas</td><td>IBEX Indices</td><td>History Ongoing EOD</td><td>Other</td></tr>
+      <tr><td>Stock Exchange of Thailand</td><td><span class="tg gd">L1</span></td><td><span class="mn">556</span></td><td>Stock Exchange of Thailand</td><td>Indices</td><td>History Ongoing EOD</td><td>Other</td></tr>
+      <tr><td>Swiss Exchange (SIX)</td><td><span class="tg gd">L1</span></td><td><span class="mn">837</span></td><td>SIX Swiss Exchange</td><td>Indices</td><td>History Ongoing EOD</td><td>Other</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ ADD 3 ═══ -->
+<div class="panel" id="tab-a3">
+  <div class="page-title">🔄 Addendum Nº 3 — <span>Renovação + MRC Escalonado</span></div>
+  <div class="page-sub">Renova OS2 por 36 meses (Dez/2024→Dez/2027) · Define MRC por 3 anos · Troca OTC FX source</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/a3.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">IDC_ICE — Addendum 3 to OS2 · Apr/2024 (signed)</span></div>
+
+  <div class="al i"><h4>📋 Aditivo mais importante — Renovação e MRC escalonado</h4>
+    <div class="ri">Este aditivo renova o OS2 por 36 meses a partir de 31/Dez/2024 (até 31/Dez/2027) e define o MRC total escalonado por 3 anos para toda a relação contratual.</div>
+    <div class="ri">Também substitui a fonte OTC FX Global (687) por OTC FX Professional (1321) sem custo adicional.</div>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="cbg">Nº 3</div><div class="cl">MRC Total Ano 1</div><div class="cv g">$38.813</div><div class="cs">License + Feeds Infra + Connectivity</div></div>
+    <div class="cd"><div class="cl">MRC Total Ano 2</div><div class="cv g">$41.530</div><div class="cs">Aumento de ≈ 7%</div></div>
+    <div class="cd"><div class="cl">MRC Total Ano 3</div><div class="cv g">$44.437</div><div class="cs">Aumento de ≈ 7%</div></div>
+    <div class="cd"><div class="cl">Feeds Reference</div><div class="cv" style="font-size:13px;"><span class="mn">O-0224-352590</span></div><div class="cs">Commencement: 31/Dez/2024</div></div>
+  </div>
+  <div class="st">Dados gerais</div>
+  <table class="dt"><tbody>
+    <tr><td>Effective Date</td><td>11 de Abril de 2024</td></tr>
+    <tr><td>Commencement Date</td><td>31 de Dezembro de 2024</td></tr>
+    <tr><td>Initial Term</td><td>36 meses: 31/Dez/2024 → 31/Dez/2027</td></tr>
+    <tr><td>Renewal Terms</td><td>Períodos consecutivos de 12 meses após o Initial Term</td></tr>
+    <tr><td>Alteração de fonte</td><td>OTC FX Global (Source 687) → substituído por OTC FX Professional (Source 1321)</td></tr>
+    <tr><td>ICE Account Numbers</td><td><span class="mn">4178700000</span> License · <span class="mn">7819700000</span> Feeds Infra · <span class="mn">7051800000</span> Connectivity</td></tr>
+    <tr><td>Signatários (AE)</td><td>Elissandra Manzano (Financial Manager) · 27/Mai/2024<br><span class="mu">Paulo Pessoa (CCO) · 29/Mai/2024</span></td></tr>
+    <tr><td>Signatários (ICE)</td><td>Edward Addvensky (VP, Global Client Development) · 29/Mai/2024</td></tr>
+  </tbody></table>
+
+  <div class="st">Escalonamento MRC — Appendix A</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr><th style="text-align:left;">Conta ICE</th><th style="text-align:left;">Componente</th><th>Ano 1</th><th>Ano 2</th><th>Ano 3</th></tr></thead>
+    <tbody>
+      <tr><td><span class="mn">4178700000</span></td><td style="text-align:left;color:var(--tx);">License Fees</td><td>$32.266,65</td><td>$34.525,31</td><td>$36.942,08</td></tr>
+      <tr><td><span class="mn">7819700000</span></td><td style="text-align:left;color:var(--tx);">Feeds Infrastructure</td><td>$2.168,89</td><td>$2.320,71</td><td>$2.483,16</td></tr>
+      <tr><td><span class="mn">7051800000</span></td><td style="text-align:left;color:var(--tx);">Connectivity</td><td>$4.377,37</td><td>$4.683,78</td><td>$5.011,64</td></tr>
+      <tr class="hl"><td colspan="2" style="font-weight:700;">Total MRC</td><td class="b">$38.812,91</td><td class="b">$41.529,80</td><td class="b">$44.436,88</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="st">Troca de fonte OTC FX — Appendix B</div>
+  <div class="ptw"><table class="pt">
+    <thead><tr><th>Status</th><th>Exchange Package</th><th>Level</th><th>Source ID</th><th>Market Centre</th><th>Quality</th><th>Usage</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tg r">REMOVIDA</span></td><td>OTC Data Serv. FX Global</td><td><span class="tg gd">L1-OTC</span></td><td><span class="mn">687</span></td><td>FX Global Streaming</td><td><span class="tg g">RT</span></td><td>Redistrib.</td></tr>
+      <tr><td><span class="tg g">NOVA</span></td><td>OTC Data Serv. FX Professional</td><td><span class="tg gd">L1-OTC</span></td><td><span class="mn">1321</span></td><td>FX Professional Streaming</td><td><span class="tg g">RT</span></td><td>Redistrib.</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ ADD 5 ═══ -->
+<div class="panel" id="tab-a5">
+  <div class="page-title">📐 Addendum Nº 5 — <span>IDD FX Volatility + IR Forward Curves</span></div>
+  <div class="page-sub">2 FX pairs + 2 IR curves · Redistribuição exclusiva: Itaú Unibanco S.A. · MRC $1.083</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/a5.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">Addendum 5 — IDD FX IR · Mar/2025 (signed)</span></div>
+
+  <div class="al i"><h4>Redistribuição restrita a 1 cliente específico</h4>
+    <div class="ri">Redistribuição limitada exclusivamente a <strong>Itaú Unibanco S.A.</strong> para uso em Front Office Trading / Market Making.</div>
+    <div class="ri">Se outros clientes precisarem deste dado, fees adicionais serão aplicados e um novo modelo comercial é necessário.</div>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="cbg">Nº 5</div><div class="cl">Produto</div><div class="cv" style="font-size:14px;">IDD FX Vol. + IR Fwd Curves</div><div class="cs">2 FX pairs + 2 IR curves · Level1-OTC</div></div>
+    <div class="cd"><div class="cl">MRC</div><div class="cv g">$1.083,00</div><div class="cs">$983 licença + $100 access fee</div></div>
+    <div class="cd"><div class="cl">NRC</div><div class="cv">$0,00</div><div class="cs">Waived</div></div>
+    <div class="cd"><div class="cl">Feeds Reference</div><div class="cv" style="font-size:13px;"><span class="mn">O-0325-378391</span></div><div class="cs">Effective: 20/Mar/2025</div></div>
+  </div>
+  <div class="st">Dados gerais</div>
+  <table class="dt"><tbody>
+    <tr><td>Effective Date</td><td>20 de Março de 2025</td></tr>
+    <tr><td>Vigência / Notice</td><td>Conforme Schedule e/ou MSA</td></tr>
+    <tr><td>Cliente redistribuído</td><td><strong>Itaú Unibanco S.A.</strong> — Front Office Trading / Market Making</td></tr>
+    <tr><td>Signatários (AE)</td><td>Elissandra Manzano (Financial Manager) · 20/Mar/2025<br><span class="mu">Gilson Guilhermino Junior (Diretor) · 21/Mar/2025</span></td></tr>
+    <tr><td>Signatários (ICE)</td><td>Edward M. Addvensky (VP, Global Client Development) · 21/Mar/2025</td></tr>
+  </tbody></table>
+  <div class="st">Fees — Appendix A</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr><th style="text-align:left;">Produto</th><th>Qtd</th><th>Preço Unit.</th><th>MRC</th></tr></thead>
+    <tbody>
+      <tr><td>IDD FX Volatility Surfaces (No. Currency Pairs)</td><td style="text-align:center;">2</td><td>$245,85</td><td>$492,00</td></tr>
+      <tr><td>IDD Interest Rates Forward Curves (No. Curves)</td><td style="text-align:center;">2</td><td>$245,85</td><td>$492,00</td></tr>
+      <tr><td>Access Fee</td><td style="text-align:center;">—</td><td>—</td><td>$100,00</td></tr>
+      <tr class="hl"><td style="font-weight:700;" colspan="3">Total MRC</td><td class="b">$1.083,00</td></tr>
+    </tbody>
+  </table></div>
+  <div class="st">Exchange Packages — Appendix B</div>
+  <div class="ptw"><table class="pt">
+    <thead><tr><th>Package</th><th>Level</th><th>Source ID</th><th>Source</th><th>Market Centre</th><th>Quality</th><th>Usage</th><th>Short Code</th></tr></thead>
+    <tbody>
+      <tr><td>IDD FX Volatility Surfaces</td><td><span class="tg gd">L1-OTC</span></td><td><span class="mn">1582</span></td><td>ICE Data Services</td><td>FX Volatility Surfaces</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">1582ICEDIDDFX</span></td></tr>
+      <tr><td>IDD Interest Rates Forwards Curves</td><td><span class="tg gd">L1-OTC</span></td><td><span class="mn">1772</span></td><td>ICE Data Services</td><td>Interest Rates Forwards Curves</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">1772ICEDIDDIN</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ ADD 6 ═══ -->
+<div class="panel" id="tab-a6">
+  <div class="page-title">💹 Addendum Nº 6 — <span>Nasdaq Basic</span></div>
+  <div class="page-sub">NASD Basic Level 1 · Sources 533 + 534 · MRC $1.500 · NRC $950</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/a6.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">Addendum 6 — Nasdaq Basic (signed)</span></div>
+
+  <div class="cg">
+    <div class="cd"><div class="cbg">Nº 6</div><div class="cl">Produto</div><div class="cv" style="font-size:14px;">Nasdaq Basic</div><div class="cs">NASD Basic — Sources 533 e 534</div></div>
+    <div class="cd"><div class="cl">MRC</div><div class="cv g">$1.500,00</div><div class="cs">1 package · $1.500/mês</div></div>
+    <div class="cd"><div class="cl">NRC</div><div class="cv">$950,00</div><div class="cs">Feeds Set-Up Fee</div></div>
+    <div class="cd"><div class="cl">Feeds Reference</div><div class="cv" style="font-size:13px;"><span class="mn">O-0425-419428</span></div><div class="cs">Effective: 30/Mai/2025</div></div>
+  </div>
+  <div class="st">Dados gerais</div>
+  <table class="dt"><tbody>
+    <tr><td>Effective Date</td><td>30 de Maio de 2025</td></tr>
+    <tr><td>Vigência / Notice</td><td>Conforme Schedule e/ou MSA</td></tr>
+    <tr><td>Signatários (AE)</td><td>Elissandra Manzano (Gerente de Planejamento e Sup. a Vendas) · 06/Jun/2025<br><span class="mu">Gustavo Bernardi Ioriatti (Diretor Desenvolvimento de Novos Negócios) · 09/Jun/2025</span></td></tr>
+    <tr><td>Signatários (ICE)</td><td>Edward M. Addvensky (VP, Global Relationship Management) · 05/Jun/2025</td></tr>
+  </tbody></table>
+  <div class="st">Exchange Packages — Appendix B</div>
+  <div class="ptw"><table class="pt">
+    <thead><tr><th>Package</th><th>Level</th><th>Source ID</th><th>Source</th><th>Market Centre</th><th>Quality</th><th>Usage</th><th>Short Code</th></tr></thead>
+    <tbody>
+      <tr><td>Nasdaq Basic</td><td><span class="tg gd">L1</span></td><td><span class="mn">533</span></td><td>Nasdaq</td><td>NASD BASIC — NASDAQ issues</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">533NASDBASI C</span></td></tr>
+      <tr><td>Nasdaq Basic</td><td><span class="tg gd">L1</span></td><td><span class="mn">534</span></td><td>Nasdaq</td><td>NASD BASIC — NYSE/NYSE American issues</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">534NASDBASI C</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ ADD 7 ═══ -->
+<div class="panel" id="tab-a7">
+  <div class="page-title">📐 Addendum Nº 7 — <span>IDD FX Volatility Surfaces (14 pairs)</span></div>
+  <div class="page-sub">14 currency pairs · Level1-OTC · Redistribuição: até 3 clientes · Term: 3 anos · MRC $3.408</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/a7.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">Addendum 7 — IDD FX Volatility · Set/2025 (signed)</span></div>
+
+  <div class="cg">
+    <div class="cd"><div class="cbg">Nº 7</div><div class="cl">Produto</div><div class="cv" style="font-size:14px;">IDD FX Volatility Surfaces</div><div class="cs">14 Currency Pairs · Level1-OTC · Source 1582</div></div>
+    <div class="cd"><div class="cl">MRC — Ano 1</div><div class="cv g">$3.408,00</div><div class="cs">Até 3 clientes redistribuídos</div></div>
+    <div class="cd"><div class="cl">NRC</div><div class="cv">$950,00</div><div class="cs">Feeds Set-Up Fee</div></div>
+    <div class="cd"><div class="cl">Feeds Reference</div><div class="cv" style="font-size:13px;"><span class="mn">O-0825-427261</span></div><div class="cs">Effective: 30/Ago/2025 · Term: 3 anos</div></div>
+  </div>
+  <div class="st">Dados gerais</div>
+  <table class="dt"><tbody>
+    <tr><td>Effective Date</td><td>30 de Agosto de 2025</td></tr>
+    <tr><td>Initial Term</td><td>3 anos → até ≈ Ago/2028</td></tr>
+    <tr><td>Renewal Term</td><td>Períodos consecutivos de 2 anos · Notice: 90 dias</td></tr>
+    <tr><td>Redistribuição</td><td>Até <strong>3 clientes</strong> · Front Office Trading · fee adicional: $860,42/cliente/mês (Ano 1)</td></tr>
+    <tr><td>Signatários (AE)</td><td>Rodrigo Galasini (Products Director) · 30/Set/2025 · Gustavo Bernardi Ioriatti (Dir Novos Negócios) · 26/Set/2025</td></tr>
+  </tbody></table>
+  <div class="st">Escalonamento</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr><th style="text-align:left;">Ano</th><th>MRC base (≤3 clientes)</th><th>Por cliente adicional</th><th>Por surface adicional</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td>Ano 1 <span style="font-size:10px;color:var(--gn);font-weight:700;">← atual</span></td><td class="b">$3.408,00</td><td>$860,42</td><td>$265,50</td></tr>
+      <tr><td>Ano 2</td><td>$3.578,00</td><td>$903,44</td><td>$278,78</td></tr>
+      <tr><td>Ano 3</td><td>$3.758,00</td><td>$948,61</td><td>$292,71</td></tr>
+    </tbody>
+  </table></div>
+  <div class="st">Exchange Package — Appendix B</div>
+  <div class="ptw"><table class="pt">
+    <thead><tr><th>Package</th><th>Level</th><th>Source ID</th><th>Source</th><th>Market Centre</th><th>Quality</th><th>Usage</th><th>Short Code</th></tr></thead>
+    <tbody>
+      <tr><td>IDD FX Volatility Surfaces</td><td><span class="tg gd">L1-OTC</span></td><td><span class="mn">1582</span></td><td>ICE Data Services</td><td>FX Volatility Surfaces</td><td><span class="tg g">RT</span></td><td>Derived Data</td><td><span class="mn">1582ICEDIDDFX</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ ADD 8 ═══ -->
+<div class="panel" id="tab-a8">
+  <div class="page-title">🌍 Addendum Nº 8 — <span>Exchange Content</span></div>
+  <div class="page-sub">Cboe · Eurex · LME LBMA · WM Reuters · 6 sources · MRC $5.850 · ✓ Ativo desde Mai/2026</div>
+<div class="pdf-bar"><a class="pdf-btn" href="pdfs/a8.pdf" target="_blank"><span class="ico">📎</span>Abrir PDF</a><span class="pdf-label">Addendum 8 — Exchange Content · Fev/2026 (signed)</span></div>
+
+  <div class="al w"><h4>⚠ Cláusula de Infraestrutura — Prazo expirado</h4>
+    <div class="ri">Bandwidth em limite máximo na data de assinatura. ICE não habilitará fontes até upgrade de rede.</div>
+    <div class="ri" style="color:var(--gn);font-weight:600;">✓ Upgrade do Link Internacional concluído em Mai/2026. Fontes do Add.8 habilitadas pela ICE.</div>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="cbg">Nº 8</div><div class="cl">Produto</div><div class="cv" style="font-size:14px;">Exchange Content</div><div class="cs">Cboe · Eurex · LME LBMA · WM Reuters · 6 sources</div></div>
+    <div class="cd"><div class="cl">MRC</div><div class="cv g">$5.850,00</div><div class="cs">4 packages × $1.462,50</div></div>
+    <div class="cd"><div class="cl">NRC</div><div class="cv">$950,00</div><div class="cs">Feeds Set-Up Fee</div></div>
+    <div class="cd"><div class="cl">Feeds Reference</div><div class="cv" style="font-size:13px;"><span class="mn">O-0924-367066</span></div><div class="cs">Effective: 06/Fev/2026</div></div>
+  </div>
+  <div class="st">Dados gerais</div>
+  <table class="dt"><tbody>
+    <tr><td>Effective Date</td><td>06 de Fevereiro de 2026</td></tr>
+    <tr><td>Vigência / Notice</td><td>Conforme Schedule e/ou MSA</td></tr>
+    <tr><td>Signatários (AE)</td><td>Gustavo Bernardi Ioriatti (Director) · 06/Fev/2026 · Rodrigo Galasini (Product Director) · 06/Fev/2026</td></tr>
+    <tr><td>Signatários (ICE)</td><td>Brian Norris (VP Sales) · 06/Fev/2026 · Robert Dawley · 06/Fev/2026</td></tr>
+  </tbody></table>
+  <div class="st">Exchange Packages — Appendix B</div>
+  <div class="ptw"><table class="pt">
+    <thead><tr><th>Package</th><th>Level</th><th>Source ID</th><th>Source</th><th>Market Centre</th><th>Quality</th><th>Usage</th><th>Short Code</th></tr></thead>
+    <tbody>
+      <tr><td>Cboe</td><td><span class="tg gd">L1</span></td><td><span class="mn">666</span></td><td>Cboe</td><td>Futures Exchange Level 1</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">666CBOEFUTUR</span></td></tr>
+      <tr><td>Eurex</td><td><span class="tg gd">L1</span></td><td><span class="mn">748</span></td><td>Eurex</td><td>European Market Data Level 1</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">748EUREEUROP</span></td></tr>
+      <tr><td>LME LBMA Pt/Pd Benchmark</td><td><span class="tg gd">L1</span></td><td><span class="mn">930</span></td><td>London Metal Exchange</td><td>LBMA Platinum &amp; Palladium Benchmark Fixing</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">930LONDLBMAP</span></td></tr>
+      <tr><td>WM Reuters</td><td><span class="tg gd">L1</span></td><td><span class="mn">1060</span></td><td>WM Reuters</td><td>Forward Rates</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">1060WMREFORWA</span></td></tr>
+      <tr><td>WM Reuters</td><td><span class="tg gd">L1</span></td><td><span class="mn">1082</span></td><td>WM Reuters</td><td>Non-Deliverable Forward Rates</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">1082WMRENON-D</span></td></tr>
+      <tr><td>WM Reuters</td><td><span class="tg gd">L1</span></td><td><span class="mn">1059</span></td><td>WM Reuters</td><td>Spot Rates</td><td><span class="tg g">RT</span></td><td>Redistrib.</td><td><span class="mn">1059WMRESPOTR</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ ADD 9 ═══ -->
+<div class="panel" id="tab-a9">
+  <div class="page-title">📉 Addendum Nº 9 — <span>Level 2 Markets</span></div>
+  <div class="page-sub">Draft não assinado · MRC $4.400 · NRC $1.050 · Appendix B em branco · infraestrutura pronta ✓</div>
+<div class="pdf-bar"><a class="pdf-docx" href="pdfs/a9.docx" target="_blank"><span class="ico">📝</span>Abrir DOCX</a><span class="pdf-label">Addendum 9 — Level 2 Markets (draft .docx)</span></div>
+
+  <div class="al w"><h4>⚠ Draft não assinado · Mesma cláusula de infraestrutura do Add.8</h4>
+    <div class="ri">O Appendix B (lista de exchanges Level 2) não está preenchido no draft — escopo exato ainda em negociação.</div>
+    <div class="ri">Upgrade do Link Internacional concluído em Mai/2026. Quando assinado, Add.9 poderá ser habilitado.</div>
+    <div class="ri">NRC $1.050 (acima dos $950 dos aditivos anteriores).</div>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="cbg" style="background:rgba(240,136,62,.15);color:var(--or);border-color:var(--or);">DRAFT</div><div class="cl">Propósito</div><div class="cv" style="font-size:14px;">Level 2 Markets</div><div class="cs">Escopo de exchanges a definir no Appendix B</div></div>
+    <div class="cd"><div class="cl">MRC estimado</div><div class="cv g">$4.400,00</div><div class="cs">Pendente de ativação de rede</div></div>
+    <div class="cd"><div class="cl">NRC</div><div class="cv">$1.050,00</div><div class="cs">Feeds Set-Up Fee</div></div>
+    <div class="cd"><div class="cl">Feeds Reference</div><div class="cv" style="font-size:13px;"><span class="mn">O-0925-428618</span></div><div class="cs">Effective Date proposta: 30/Mar/2026</div></div>
+  </div>
+  <div class="st">Dados do draft</div>
+  <table class="dt"><tbody>
+    <tr><td>Effective Date proposta</td><td>30 de Março de 2026</td></tr>
+    <tr><td>Vigência / Notice</td><td>Conforme Schedule e/ou MSA</td></tr>
+    <tr><td>Cláusula infra</td><td>Idêntica ao Aditivo 8: ICE não habilitará fontes até upgrade de rede · billing inicia em 120 dias mesmo sem ativação</td></tr>
+    <tr><td>Appendix B</td><td>Em branco no draft — "Level 2 Markets" sugere exchanges com profundidade L2 (ex: CME, CBoT, COMEX, NYMEX expansão)</td></tr>
+    <tr><td>Status</td><td><span class="tg o">Draft — não assinado</span></td></tr>
+  </tbody></table>
+</div>
+
+<!-- ═══ ALERTAS ═══ -->
+<div class="panel" id="tab-alertas">
+  <div class="page-title">🚨 Vencimentos &amp; <span>Alertas</span></div>
+  <div class="page-sub">Datas críticas, obrigações de reporting e ações necessárias</div>
+
+  <div class="al w">
+    <h4>🔴 Urgente — Verificar imediatamente</h4>
+    <div class="ri"><strong>Add.8 e Add.9:</strong> Prazo de 120 dias para upgrade de rede expirou ≈ 07/Jun/2026. Billing está rodando em ambos os contratos mesmo sem as fontes habilitadas. Confirmar status do upgrade com equipe técnica.</div>
+  </div>
+
+  <div class="st">Calendário de vencimentos</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr>
+      <th style="text-align:left;">Data</th>
+      <th style="text-align:left;">Evento</th>
+      <th style="text-align:left;">Documento</th>
+      <th style="text-align:left;">Ação necessária</th>
+      <th>Criticidade</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="color:var(--gn);font-weight:600;">Mai/2026<br><span style="font-size:10px;">✓ concluído</span></td>
+        <td style="text-align:left;">Upgrade Link Internacional</td>
+        <td style="text-align:left;">Add. 8 + Add. 9</td>
+        <td style="text-align:left;">Concluído em Mai/2026. Add.8 habilitado pela ICE. Add.9 aguarda assinatura para habilitação.</td>
+        <td><span class="tg g">Resolvido</span></td>
+      </tr>
+      <tr>
+        <td>Out/2027</td>
+        <td style="text-align:left;">Notice 90 dias — OS2</td>
+        <td style="text-align:left;">Schedule Nº 2 + Add. 3</td>
+        <td style="text-align:left;">Notificar ICE para não renovar automaticamente o OS2 em Dez/2027.</td>
+        <td><span class="tg gd">Alto</span></td>
+      </tr>
+      <tr>
+        <td>Dez/2027</td>
+        <td style="text-align:left;">Fim do Renewal Term OS2</td>
+        <td style="text-align:left;">Schedule Nº 2</td>
+        <td style="text-align:left;">Sem notice → renovação automática por mais 36 meses (Dez/2030).</td>
+        <td><span class="tg gd">Alto</span></td>
+      </tr>
+      <tr>
+        <td>Mai/2028</td>
+        <td style="text-align:left;">Notice 90 dias — Add. 7</td>
+        <td style="text-align:left;">Add. 7 — IDD FX Vol.</td>
+        <td style="text-align:left;">Notificar para não renovar Add.7 (term próprio 3 anos expira Ago/2028).</td>
+        <td><span class="tg">Médio</span></td>
+      </tr>
+      <tr>
+        <td>Ago/2028</td>
+        <td style="text-align:left;">Fim term próprio Add.7</td>
+        <td style="text-align:left;">Add. 7 — IDD FX Vol.</td>
+        <td style="text-align:left;">Sem notice → renovação automática por 2 anos.</td>
+        <td><span class="tg">Médio</span></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="st">Obrigações de reporting recorrentes</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr>
+      <th style="text-align:left;">Periodicidade</th>
+      <th style="text-align:left;">Relatório</th>
+      <th style="text-align:left;">Destinatário</th>
+      <th style="text-align:left;">Documentos</th>
+      <th style="text-align:left;">Penalidade atraso</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="tg g">Mensal</span><br><span class="mu">7 dias após fim do mês</span></td>
+        <td style="text-align:left;">End User Report (RAAMS)<br><span class="mu">Trading · Non-Trading · Non-Prof. · Redistrib. Products</span></td>
+        <td style="text-align:left;"><span class="mn" style="font-size:10px;">RAAMS dashboard</span></td>
+        <td style="text-align:left;">Add. 5, 6, 7, 8 (e 9 quando ativo)</td>
+        <td style="text-align:left;">1,5%/mês ou $1.000 (maior)<br><span style="color:var(--rd);font-size:11px;">&gt;2 meses: suspensão sem aviso</span></td>
+      </tr>
+      <tr>
+        <td><span class="tg">Trimestral</span><br><span class="mu">7 dias após fim do quarter</span></td>
+        <td style="text-align:left;">Usage Report geral<br><span class="mu">Prof. Trading · Prof. Non-Trading · Non-Prof. · Apps · Redistrib.</span></td>
+        <td style="text-align:left;"><span class="mn" style="font-size:10px;">RTS-UsageReports@theice.com</span></td>
+        <td style="text-align:left;">OS2 + todos os Addenda</td>
+        <td style="text-align:left;">1,5%/mês ou $1.000 (maior)</td>
+      </tr>
+      <tr>
+        <td><span class="tg">Trimestral</span><br><span class="mu">7 dias após fim do quarter</span></td>
+        <td style="text-align:left;">Tullett Prebon Fixed Income<br><span class="mu">Nº de usuários únicos por mês calendário</span></td>
+        <td style="text-align:left;"><span class="mn" style="font-size:10px;">accountsreceivables@tpicap.com</span><br><span class="mu">+ cópia ICE</span></td>
+        <td style="text-align:left;">OS2 (Appendix B)</td>
+        <td style="text-align:left;">Idem acima</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="st">Restrições globais — válidas em todos os contratos</div>
+  <div class="al w">
+    <h4>Armazenamento em Nuvem</h4>
+    <div class="ri">Expressamente <strong>proibido</strong> armazenar dados em third-party hosted storage (cloud) sem autorização escrita da ICE — válido em todos os schedules e addenda.</div>
+  </div>
+  <div class="al w">
+    <h4>Inteligência Artificial</h4>
+    <div class="ri">Uso com AI/LLM/GenAI permitido apenas <strong>internamente</strong> pela Agência Estado (RAG, grounding).</div>
+    <div class="ri">Proibido usar os dados para <strong>treinar, fine-tunar ou melhorar</strong> qualquer modelo de IA.</div>
+    <div class="ri">Output de IA <strong>não pode ser redistribuído</strong> externamente.</div>
+  </div>
+  <div class="al i">
+    <h4>Attribution obrigatória</h4>
+    <div class="ri">Em todos os produtos redistribuídos exibir: <em>"Market data provided by ICE Data Services."</em></div>
+    <div class="ri">Aplicável sempre que o Approved Datafeed Usage Type for Display Professional ou External Redistribution.</div>
+  </div>
+</div>
+
+
+
+<!-- ═══ INVENTÁRIO ═══ -->
+<div class="panel" id="tab-inv">
+  <div class="page-title">🗂 Inventário <span>Contratado</span></div>
+  <div class="page-sub">Tudo que está ativo — exchanges, fontes, produtos, infraestrutura e fees consolidados</div>
+
+  <!-- FILTER BAR -->
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+    <input id="inv-search" type="text" placeholder="Buscar exchange, produto, fonte..." oninput="filterInv()"
+      style="flex:1;min-width:200px;background:var(--sf);border:1px solid var(--bd);border-radius:6px;
+             padding:8px 14px;color:var(--tx);font-size:13px;outline:none;"
+      onfocus="this.style.borderColor='var(--gd)'" onblur="this.style.borderColor='var(--bd)'"/>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;" id="inv-cats">
+      <span class="gcat active" onclick="filterInvCat(this,'all')">Todos</span>
+      <span class="gcat" onclick="filterInvCat(this,'americas')">Américas</span>
+      <span class="gcat" onclick="filterInvCat(this,'europa')">Europa</span>
+      <span class="gcat" onclick="filterInvCat(this,'asia')">Ásia / Pacífico</span>
+      <span class="gcat" onclick="filterInvCat(this,'otc')">OTC / FX / Rates</span>
+      <span class="gcat" onclick="filterInvCat(this,'idd')">IDD Derivatives</span>
+      <span class="gcat" onclick="filterInvCat(this,'history')">History Services</span>
+    </div>
+  </div>
+  <div id="inv-count" style="font-size:11px;color:var(--td);margin-bottom:16px;"></div>
+
+  <!-- SUMMARY CARDS -->
+  <div class="cg" style="margin-bottom:28px;">
+    <div class="cd"><div class="cl">Exchange Packages ativos</div><div class="cv g">75+</div><div class="cs">OS Nº 2 base + Addenda</div></div>
+    <div class="cd"><div class="cl">Sources únicas</div><div class="cv g">80+</div><div class="cs">Source IDs distintos habilitados</div></div>
+    <div class="cd"><div class="cl">Produtos redistribuídos</div><div class="cv g">7</div><div class="cs">Broadcast Family + 2 projetos Itaú</div></div>
+    <div class="cd"><div class="cl">MRC total ativo</div><div class="cv g">~$50.654</div><div class="cs">OS2 + Add.3 (Ano 1) + Add.5,6,7,8</div></div>
+  </div>
+
+  <!-- EXCHANGE TABLE -->
+  <div class="st">Exchanges &amp; Packages contratados — Appendix B (todos os documentos)</div>
+  <div class="ptw">
+  <table class="pt" id="inv-table">
+    <thead>
+      <tr>
+        <th>Exchange Package</th>
+        <th>Origem</th>
+        <th>Source ID(s)</th>
+        <th>Market Centre / Produto</th>
+        <th>Level</th>
+        <th>Tipo</th>
+        <th>Quality</th>
+        <th>Uso</th>
+        <th>Short Code</th>
+        <th>Documento</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- ══ AMÉRICAS ══ -->
+      <tr data-cat="americas" data-text="asx equities australia indices">
+        <td>ASX Equities</td><td>🇦🇺</td><td><span class="mn">887</span></td><td>Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="byma bolsas mercados argentinos argentina cash options">
+        <td>Bolsas y Mercados Argentinos (BYMA)</td><td>🇦🇷</td><td><span class="mn">964</span></td><td>Cash &amp; Options Level 1</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg o">DL</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="cboe streaming market indices">
+        <td>Cboe (Market Indices)</td><td>🇺🇸</td><td><span class="mn">653</span></td><td>Streaming Market Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="cboe futures exchange level 1">
+        <td>Cboe (Futures Exchange)</td><td>🇺🇸</td><td><span class="mn">666</span></td><td>Futures Exchange Level 1</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">666CBOEFUTUR</span></td>
+        <td><span class="gdoc">Add. 8</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="cbot chicago board of trade emini ecbot rth futures">
+        <td>CBoT — E-Mini Contracts L1</td><td>🇺🇸</td><td><span class="mn">688</span></td><td>E-Mini Contracts Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cbot chicago board of trade emini ecbot rth futures">
+        <td>CBoT — E-Mini Contracts L2</td><td>🇺🇸</td><td><span class="mn">945</span></td><td>E-Mini Contracts Level 2</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cbot chicago board of trade ecbot futures">
+        <td>CBoT — Futures ECBOT L1</td><td>🇺🇸</td><td><span class="mn">693</span></td><td>Futures - ECBOT Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cbot chicago board of trade ecbot futures">
+        <td>CBoT — Futures ECBOT L2</td><td>🇺🇸</td><td><span class="mn">367</span></td><td>Futures - ECBOT Level 2</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cbot chicago board of trade rth futures">
+        <td>CBoT — Futures RTH L1</td><td>🇺🇸</td><td><span class="mn">674</span></td><td>Futures - RTH Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="cme chicago mercantile exchange bloomberg ubs commodity indices">
+        <td>CME — Bloomberg UBS Cmdty Indices</td><td>🇺🇸</td><td><span class="mn">634</span></td><td>Bloomberg UBS Commodity Indices</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cme chicago mercantile exchange emini equity">
+        <td>CME — eMini Equity L1</td><td>🇺🇸</td><td><span class="mn">684</span></td><td>eMini Equity Package Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cme chicago mercantile exchange emini equity">
+        <td>CME — eMini Equity L2</td><td>🇺🇸</td><td><span class="mn">673</span></td><td>eMini Equity Package Level 2</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cme chicago mercantile exchange globex">
+        <td>CME — Globex L1</td><td>🇺🇸</td><td><span class="mn">680</span></td><td>Globex Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cme chicago mercantile exchange globex">
+        <td>CME — Globex L2</td><td>🇺🇸</td><td><span class="mn">676</span></td><td>Globex Level 2</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cme chicago mercantile exchange indices sp standard poors">
+        <td>CME — Indices</td><td>🇺🇸</td><td><span class="mn">694</span></td><td>Indices</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cme chicago mercantile exchange rth pit regular trading hours">
+        <td>CME — Regular Trading Hours PIT L1</td><td>🇺🇸</td><td><span class="mn">685</span></td><td>Regular Trading Hours (PIT) Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="cme chicago mercantile exchange sp standard poors indices">
+        <td>CME — S&amp;P Indices (CME Sourced)</td><td>🇺🇸</td><td><span class="mn">698</span></td><td>Standard and Poor's Indices</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="comex new york commodities exchange">
+        <td>COMEX — NY Commodities L1</td><td>🇺🇸</td><td><span class="mn">677</span></td><td>New York Commodities Exchange Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="comex new york commodities exchange">
+        <td>COMEX — NY Commodities L2</td><td>🇺🇸</td><td><span class="mn">597</span></td><td>New York Commodities Exchange Level 2</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="ice futures us commodities financials derivatives">
+        <td>ICE Futures US — Commodities L1</td><td>🇺🇸</td><td><span class="mn">675</span></td><td>Commodities Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="ice futures us commodities futures derivatives">
+        <td>ICE Futures US — Commodity Futures L2</td><td>🇺🇸</td><td><span class="mn">786</span></td><td>Commodity Futures Level 2</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="ice futures us financials derivatives">
+        <td>ICE Futures US — Financials L1</td><td>🇺🇸</td><td><span class="mn">362</span></td><td>Financials Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="ice data indices global index feed">
+        <td>ICE Data Indices — Global Index Feed</td><td>🌐</td><td><span class="mn">624</span></td><td>Global Index Feed</td>
+        <td><span class="tg gd">L1-IDS</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="mexico stock exchange equities indices bmv">
+        <td>Mexico Equities — Market L1</td><td>🇲🇽</td><td><span class="mn">984</span></td><td>Equities Market Level 1</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg o">DL</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="mexico stock exchange indices">
+        <td>Mexico Equities — Indices</td><td>🇲🇽</td><td><span class="mn">1620</span></td><td>Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg o">DL</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="nasdaq global indices gids otc non bb">
+        <td>Nasdaq — Global Indices (GIDS)</td><td>🇺🇸</td><td><span class="mn">345</span></td><td>Global Indices (GIDS)</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="nasdaq otc non bb issues">
+        <td>Nasdaq — OTC Non BB Issues</td><td>🇺🇸</td><td><span class="mn">361</span></td><td>OTC Non BB Issues</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="nasdaq tape c level 1 regional adf cboe byx bzx chicago direct edge iex ltse memx miax pearl bx composite">
+        <td>Nasdaq Tape C — Level 1 (22 sources)</td><td>🇺🇸</td><td><span class="mn">554,1579,327,792,549,323,324,590,1835,1867,1870,546,564,15,552,550,548,551,557,553 +2</span></td>
+        <td>ADF · Cboe · BYX · BZX · Chicago · Direct Edge · IEX · LTSE · MEMX · MIAX · Nasdaq L1 · Regional · NYSE · ARCA…</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="nasdaq basic nasd basic nyse american issues">
+        <td>Nasdaq Basic — NASDAQ Issues</td><td>🇺🇸</td><td><span class="mn">533</span></td><td>NASD BASIC - NASDAQ issues</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">533NASDBASI C</span></td>
+        <td><span class="gdoc">Add. 6</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="nasdaq basic nasd basic nyse american issues">
+        <td>Nasdaq Basic — NYSE/AMEX Issues</td><td>🇺🇸</td><td><span class="mn">534</span></td><td>NASD BASIC - NYSE/NYSE American issues</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">534NASDBASI C</span></td>
+        <td><span class="gdoc">Add. 6</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="nymex new york mercantile exchange energy futures">
+        <td>NYMEX — Energy Futures L1</td><td>🇺🇸</td><td><span class="mn">686</span></td><td>Energy Futures Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="nymex new york mercantile exchange energy futures">
+        <td>NYMEX — Energy Futures L2</td><td>🇺🇸</td><td><span class="mn">596</span></td><td>Energy Futures Level 2</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="nyse american etf iopvs tape b">
+        <td>NYSE American — ETF IOPVs</td><td>🇺🇸</td><td><span class="mn">340</span></td><td>ETF IOPVs</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="nyse american tape b regional cboe byx bzx chicago direct edge iex ltse memx miax nasd finra">
+        <td>NYSE American Tape B (21 sources)</td><td>🇺🇸</td><td><span class="mn">1834,520,793,378,237,545,521,522,589,14,1866,1869,560,235,239,561,1551,240,238,242,234</span></td>
+        <td>Cboe · BYX · BZX · Chicago · Direct Edge · IEX · LTSE · MEMX · MIAX · NASD ATS · FINRA · NYSE…</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="nyse tape a regional cboe byx bzx chicago direct edge iex ltse memx miax nasd finra nasdaq">
+        <td>NYSE Tape A (19 sources)</td><td>🇺🇸</td><td><span class="mn">517,791,354,228,558,518,519,198,1833,13,1865,1868,562,226,231,229,1550,225,230,563,233</span></td>
+        <td>NYSE L1 · Cboe · BYX · BZX · Chicago · Direct Edge · IEX · LTSE · MEMX · MIAX · NASD ATS · FINRA…</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="s&p dow jones indices wsi us dollar index">
+        <td>S&amp;P Dow Jones — Dow Jones Indices</td><td>🇺🇸</td><td><span class="mn">343</span></td><td>Dow Jones Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="americas" data-text="wsj us dollar index wall street journal">
+        <td>S&amp;P Dow Jones — WSJ US Dollar Index</td><td>🇺🇸</td><td><span class="mn">1254</span></td><td>WSJ US Dollar Index</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="americas" data-text="santiago stock exchange chile equities">
+        <td>Santiago Exchange — Equities L1</td><td>🇨🇱</td><td><span class="mn">982</span></td><td>Equities Market Level 1</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <!-- ══ EUROPA ══ -->
+      <tr data-cat="europa" data-text="deutsche boerse indices xetra etfs germany">
+        <td>Deutsche Boerse — Indices &amp; Xetra ETFs L1</td><td>🇩🇪</td><td><span class="mn">976</span></td><td>Indices and Xetra ETFs Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="europa" data-text="deutsche boerse xetra etfs germany">
+        <td>Deutsche Boerse — Xetra ETFs L2</td><td>🇩🇪</td><td><span class="mn">532</span></td><td>Xetra ETFs Level 2</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="europa" data-text="euronext equities primary indices france">
+        <td>Euronext Equities — Primary Indices</td><td>🇪🇺</td><td><span class="mn">980</span></td><td>Primary Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="europa" data-text="eurex european market data germany derivatives">
+        <td>Eurex — European Market Data L1</td><td>🇩🇪</td><td><span class="mn">748</span></td><td>European Market Data Level 1</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">748EUREEUROP</span></td>
+        <td><span class="gdoc">Add. 8</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="europa" data-text="ftse indices uk values">
+        <td>FTSE Indices — FTSE Index Values</td><td>🇬🇧</td><td><span class="mn">745</span></td><td>FTSE Index Values</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="europa" data-text="ice futures europe commodities futures">
+        <td>ICE Futures Europe — Commodities L1</td><td>🇬🇧</td><td><span class="mn">756</span></td><td>Commodities Level 1</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="europa" data-text="ice futures europe commodities futures">
+        <td>ICE Futures Europe — Commodity Futures L2</td><td>🇬🇧</td><td><span class="mn">267</span></td><td>Commodity Futures Level 2</td>
+        <td><span class="tg gd">L2</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="europa" data-text="lme london metal exchange market data">
+        <td>LME — Market Data L1</td><td>🇬🇧</td><td><span class="mn">579</span></td><td>Market Data Level 1</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="europa" data-text="lme lbma platinum palladium benchmark fixing precious metals">
+        <td>LME — LBMA Platinum &amp; Palladium Fixing</td><td>🇬🇧</td><td><span class="mn">930</span></td><td>LBMA Platinum &amp; Palladium Benchmark Fixing</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">930LONDLBMAP</span></td>
+        <td><span class="gdoc">Add. 8</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="europa" data-text="sociedad de bolsas bme spain ibex continuous market">
+        <td>Sociedad de Bolsas (BME) — Continuous Mkt L1</td><td>🇪🇸</td><td><span class="mn">216</span></td><td>Continuous Market Level 1</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="europa" data-text="sociedad de bolsas bme spain ibex indices">
+        <td>Sociedad de Bolsas (BME) — IBEX Indices</td><td>🇪🇸</td><td><span class="mn">658</span></td><td>IBEX Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="europa" data-text="six swiss exchange indices switzerland">
+        <td>Swiss Exchange (SIX) — Indices</td><td>🇨🇭</td><td><span class="mn">837</span></td><td>Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg">EOD</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="europa" data-text="tullett prebon fixed income latam emerging majors idb">
+        <td>Tullett Prebon — LatAm Emerging Fixed Income</td><td>🌎</td><td><span class="mn">882</span></td><td>LatAm Emerging Fixed Income</td>
+        <td><span class="tg gd">L1-IDB</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="europa" data-text="tullett prebon fixed income majors idb">
+        <td>Tullett Prebon — Majors Fixed Income</td><td>🌎</td><td><span class="mn">877</span></td><td>Majors Fixed Income</td>
+        <td><span class="tg gd">L1-IDB</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <!-- ══ ÁSIA / PACÍFICO ══ -->
+      <tr data-cat="asia" data-text="asx australia equities indices">
+        <td>ASX Equities — Indices</td><td>🇦🇺</td><td><span class="mn">887</span></td><td>Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="asia" data-text="hang seng indices hong kong history eod">
+        <td>Hang Seng Indices</td><td>🇭🇰</td><td><span class="mn">275</span></td><td>Hang Seng Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg">EOD</span></td>
+        <td>Redistrib. + History</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2 · Add. 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="asia" data-text="korea exchange krx representative indices">
+        <td>Korea Equities — KRX Indices</td><td>🇰🇷</td><td><span class="mn">946</span></td><td>General Market Representative Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="asia" data-text="nikkei indices japan full package history eod">
+        <td>Nikkei Indices — Full Package</td><td>🇯🇵</td><td><span class="mn">1090</span></td><td>Indices (full package)</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib. + History</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2 · Add. 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="asia" data-text="shanghai stock exchange china indices">
+        <td>Shanghai Stock Exchange — Indices</td><td>🇨🇳</td><td><span class="mn">523</span></td><td>Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg o">DL</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="asia" data-text="stock exchange thailand set market data eod">
+        <td>Stock Exchange of Thailand (SET)</td><td>🇹🇭</td><td><span class="mn">920</span></td><td>Market Data Level 1</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg">EOD</span></td>
+        <td>Redistrib. + History</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2 · Add. 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="asia" data-text="taiwan stock exchange indices twse">
+        <td>Taiwan Stock Exchange — Indices</td><td>🇹🇼</td><td><span class="mn">364</span></td><td>Indices</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg o">DL</span></td>
+        <td>Redistrib. + History</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2 · Add. 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <!-- ══ OTC / FX / RATES ══ -->
+      <tr data-cat="otc" data-text="otc data services fx professional streaming">
+        <td>OTC Data Serv. — FX Professional</td><td>🌐</td><td><span class="mn">1321</span></td><td>FX Professional Streaming</td>
+        <td><span class="tg gd">L1-OTC</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">Add. 3</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="otc" data-text="otc data services energy streaming">
+        <td>OTC Data Serv. — Energy</td><td>🌐</td><td><span class="mn">970</span></td><td>Energy Streaming</td>
+        <td><span class="tg gd">L1-OTC</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="otc" data-text="otc data services precious metals streaming">
+        <td>OTC Data Serv. — Precious Metals</td><td>🌐</td><td><span class="mn">691</span></td><td>Precious Metals Streaming</td>
+        <td><span class="tg gd">L1-OTC</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="otc" data-text="otc data services money market rates eod history">
+        <td>OTC Data Serv. — Money Market &amp; Rates</td><td>🌐</td><td><span class="mn">696</span></td><td>Money Markets</td>
+        <td><span class="tg gd">L1-OTC</span></td><td><span class="tg">Streaming</span></td><td><span class="tg">EOD</span></td>
+        <td>Redistrib. + History</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2 · Add. 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="otc" data-text="ice rates lbma gold fixing libor">
+        <td>ICE Rates — LBMA Gold Fixing</td><td>🌐</td><td><span class="mn">1363</span></td><td>LBMA Gold Fixing</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg o">DL</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="otc" data-text="ice rates libor interest rate benchmark">
+        <td>ICE Rates — LIBOR</td><td>🌐</td><td><span class="mn">690</span></td><td>LIBOR</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg o">DL</span></td>
+        <td>Redistrib.</td><td><span class="mn">—</span></td>
+        <td><span class="gdoc">OS Nº 2</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <tr data-cat="otc" data-text="wm reuters forward rates fx">
+        <td>WM Reuters — Forward Rates</td><td>🌐</td><td><span class="mn">1060</span></td><td>Forward Rates</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">1060WMREFORWA</span></td>
+        <td><span class="gdoc">Add. 8</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="otc" data-text="wm reuters non deliverable forward ndf rates fx">
+        <td>WM Reuters — Non-Deliverable Forward Rates</td><td>🌐</td><td><span class="mn">1082</span></td><td>Non-Deliverable Forward Rates</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">1082WMRENON-D</span></td>
+        <td><span class="gdoc">Add. 8</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="otc" data-text="wm reuters spot rates fx">
+        <td>WM Reuters — Spot Rates</td><td>🌐</td><td><span class="mn">1059</span></td><td>Spot Rates</td>
+        <td><span class="tg gd">L1</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib.</td><td><span class="mn">1059WMRESPOTR</span></td>
+        <td><span class="gdoc">Add. 8</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+      <!-- ══ IDD DERIVATIVES ══ -->
+      <tr data-cat="idd" data-text="idd fx volatility surfaces currency pairs ice derivatives">
+        <td>IDD FX Volatility Surfaces — 2 pairs (Itaú)</td><td>🌐</td><td><span class="mn">1582</span></td><td>FX Volatility Surfaces</td>
+        <td><span class="tg gd">L1-OTC</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib. (1 cliente)</td><td><span class="mn">1582ICEDIDDFX</span></td>
+        <td><span class="gdoc">Add. 5</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="idd" data-text="idd interest rates forward curves ice derivatives">
+        <td>IDD Interest Rates Forward Curves — 2 curves (Itaú)</td><td>🌐</td><td><span class="mn">1772</span></td><td>Interest Rates Forwards Curves</td>
+        <td><span class="tg gd">L1-OTC</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Redistrib. (1 cliente)</td><td><span class="mn">1772ICEDIDDIN</span></td>
+        <td><span class="gdoc">Add. 5</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+      <tr data-cat="idd" data-text="idd fx volatility surfaces 14 currency pairs ice derivatives broadcast">
+        <td>IDD FX Volatility Surfaces — 14 pairs (Broadcast)</td><td>🌐</td><td><span class="mn">1582</span></td><td>FX Volatility Surfaces</td>
+        <td><span class="tg gd">L1-OTC</span></td><td><span class="tg">Streaming</span></td><td><span class="tg g">RT</span></td>
+        <td>Derived Data (até 3 clientes)</td><td><span class="mn">1582ICEDIDDFX</span></td>
+        <td><span class="gdoc">Add. 7</span></td><td><span class="tg g">Ativo</span></td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+  <!-- PRODUTOS APROVADOS -->
+  <div class="st" style="margin-top:8px;">Produtos aprovados para redistribuição — Appendix D</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr>
+      <th style="text-align:left;">Nº</th>
+      <th style="text-align:left;">Produto</th>
+      <th style="text-align:left;">Descrição</th>
+      <th style="text-align:left;">Canais</th>
+      <th>Status</th>
+    </tr></thead>
+    <tbody>
+      <tr><td style="text-align:left;width:36px;">1</td><td style="text-align:left;color:var(--gd);font-weight:600;">Broadcast Products Family</td><td style="text-align:left;color:var(--tm);font-size:12px;">Terminal completo com news, quotes RT/delay e ferramentas</td><td style="text-align:left;color:var(--tm);font-size:11px;">Windows Desktop · Web · Mobile</td><td><span class="tg g">Ativo</span></td></tr>
+      <tr><td style="text-align:left;">2</td><td style="text-align:left;color:var(--gd);font-weight:600;">Broadcast Datafeed</td><td style="text-align:left;color:var(--tm);font-size:12px;">Entrega de news e dados para sistemas customizados</td><td style="text-align:left;color:var(--tm);font-size:11px;">API · File Delivery</td><td><span class="tg g">Ativo</span></td></tr>
+      <tr><td style="text-align:left;">3</td><td style="text-align:left;color:var(--gd);font-weight:600;">Broadcast Ticker</td><td style="text-align:left;color:var(--tm);font-size:12px;">News e dados para LED Ticker Displays</td><td style="text-align:left;color:var(--tm);font-size:11px;">LED Displays</td><td><span class="tg g">Ativo</span></td></tr>
+      <tr><td style="text-align:left;">4</td><td style="text-align:left;color:var(--gd);font-weight:600;">Broadcast Wallboard</td><td style="text-align:left;color:var(--tm);font-size:12px;">News e dados para TVs e Video Walls</td><td style="text-align:left;color:var(--tm);font-size:11px;">TV · Video Wall</td><td><span class="tg g">Ativo</span></td></tr>
+      <tr><td style="text-align:left;">5</td><td style="text-align:left;color:var(--gd);font-weight:600;">Broadcast Widgets</td><td style="text-align:left;color:var(--tm);font-size:12px;">Widgets para integração em websites e sistemas de clientes</td><td style="text-align:left;color:var(--tm);font-size:11px;">Web embed</td><td><span class="tg g">Ativo</span></td></tr>
+      <tr style="background:rgba(88,166,255,.04)"><td style="text-align:left;">P1</td><td style="text-align:left;color:var(--bl);font-weight:600;">Itaú Câmbio</td><td style="text-align:left;color:var(--tm);font-size:12px;">Plataforma web integrada ao back-office do Itaú para trading de câmbio</td><td style="text-align:left;color:var(--tm);font-size:11px;">Web (cliente Itaú)</td><td><span class="tg g">Ativo</span></td></tr>
+      <tr style="background:rgba(88,166,255,.04)"><td style="text-align:left;">P2</td><td style="text-align:left;color:var(--bl);font-weight:600;">Itaú Trader Agro</td><td style="text-align:left;color:var(--tm);font-size:12px;">App com news, quotes e ferramentas para o segmento Agro</td><td style="text-align:left;color:var(--tm);font-size:11px;">Android · iOS</td><td><span class="tg g">Ativo</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <!-- INFRAESTRUTURA -->
+  <div class="st">Infraestrutura contratada — IGN (Addendum 1)</div>
+  <div class="ftw"><table class="ft">
+    <thead><tr>
+      <th style="text-align:left;">Componente</th>
+      <th style="text-align:left;">Localização</th>
+      <th>Qtd</th>
+      <th>MRC</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>IGN LL 1Gbps Port (×2)</td><td style="text-align:left;color:var(--tx);">111 8th Ave NY (Telx) + NY4 Secaucus (Equinix)</td><td style="text-align:center;">2</td><td>$382</td></tr>
+      <tr><td>Cross Connect (×2)</td><td style="text-align:left;color:var(--tx);">111 8th Ave + NY4 Secaucus</td><td style="text-align:center;">2</td><td>$850</td></tr>
+      <tr><td>Cabinet Hosting 4U (Dual CSP)</td><td style="text-align:left;color:var(--tx);">NY4 Secaucus (Equinix)</td><td style="text-align:center;">1</td><td>$765</td></tr>
+      <tr><td>Cabinet Hosting 2U (Single CSP)</td><td style="text-align:left;color:var(--tx);">NY4 Secaucus (Equinix)</td><td style="text-align:center;">1</td><td>$510</td></tr>
+      <tr><td>Multicast Feed &gt;1Gbps a 5Gbps</td><td style="text-align:left;color:var(--tx);">NY4 Secaucus (Equinix)</td><td style="text-align:center;">1</td><td>$638</td></tr>
+      <tr><td>Unicast Feed &gt;500Mbps a 1Gbps</td><td style="text-align:left;color:var(--tx);">NJ Metro</td><td style="text-align:center;">1</td><td>$553</td></tr>
+      <tr><td>CSP — Client Site Processor</td><td style="text-align:left;color:var(--tx);">NY4 Secaucus (Equinix)</td><td style="text-align:center;">3</td><td>$2.027</td></tr>
+      <tr class="hl"><td style="font-weight:700;" colspan="3">Total Infraestrutura / mês</td><td class="b">$5.725</td></tr>
+    </tbody>
+  </table></div>
+
+</div><!-- /tab-inv -->
+
+<!-- ═══ GLOSSÁRIO ═══ -->
+<div class="panel" id="tab-gloss">
+  <div class="page-title">📖 <span>Glossário</span></div>
+  <div class="page-sub">Termos contratuais, técnicos e de mercado presentes nos documentos ICE Data Services</div>
+
+  <!-- FILTER BAR -->
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+    <input id="gloss-search" type="text" placeholder="Buscar termo..." oninput="filterGloss()"
+      style="flex:1;min-width:200px;background:var(--sf);border:1px solid var(--bd);border-radius:6px;
+             padding:8px 14px;color:var(--tx);font-size:13px;outline:none;"
+      onfocus="this.style.borderColor='var(--gd)'" onblur="this.style.borderColor='var(--bd)'"/>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;" id="gloss-cats">
+      <span class="gcat active" onclick="filterCat(this,'all')">Todos</span>
+      <span class="gcat" onclick="filterCat(this,'contrato')">Contratual</span>
+      <span class="gcat" onclick="filterCat(this,'fees')">Fees</span>
+      <span class="gcat" onclick="filterCat(this,'infra')">Infraestrutura</span>
+      <span class="gcat" onclick="filterCat(this,'dados')">Dados de Mercado</span>
+      <span class="gcat" onclick="filterCat(this,'compliance')">Compliance</span>
+    </div>
+  </div>
+
+  <div id="gloss-count" style="font-size:11px;color:var(--td);margin-bottom:16px;"></div>
+
+  <div id="gloss-grid" class="gloss-grid">
+
+    <!-- ══ CONTRATUAL ══ -->
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Master Services Agreement <span class="gabbr">MSA</span></div>
+      <div class="gdef">Documento raiz que governa toda a relação entre Agência Estado e ICE. Define termos gerais de confidencialidade, responsabilidade, pagamento e propriedade intelectual. Em caso de conflito, os termos do Schedule/Addendum prevalecem sobre o MSA.</div>
+      <div class="gdocs"><span class="gdoc">MSA · Mai/2021</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Order Schedule / Feeds Schedule</div>
+      <div class="gdef">Contrato de serviços específico vinculado ao MSA. Define os serviços contratados, fees, exchanges, produtos aprovados para redistribuição, vigência e renovação. O Schedule Nº 2 (Fev/2022) é o contrato-base ativo e supersedeu o Schedule Nº 1.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 1 · OS Nº 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Addendum / Feeds Addendum</div>
+      <div class="gdef">Aditivo ao Order Schedule que adiciona dados, aplicações ou usuários sem alterar as demais condições. Em caso de conflito com o Schedule ou MSA, os termos do Addendum prevalecem. A Agência Estado possui 9 addenda numerados ao OS Nº 2.</div>
+      <div class="gdocs"><span class="gdoc">Add. 1–9</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Effective Date</div>
+      <div class="gdef">Data em que o contrato ou aditivo entra em vigor legalmente. Pode ser diferente da data de assinatura (Execution Date) e do Commencement Date (início da cobrança e entrega dos serviços).</div>
+      <div class="gdocs"><span class="gdoc">Todos os documentos</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Commencement Date</div>
+      <div class="gdef">Data de início efetivo da prestação de serviços e da cobrança das fees recorrentes. Pode diferir da Effective Date — no OS Nº 2, o Commencement Date foi retroativo a 01/Mai/2021 mesmo sendo assinado em Fev/2022.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 3</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Initial Term</div>
+      <div class="gdef">Período inicial e fixo do contrato, durante o qual nenhuma das partes pode rescindir sem penalidade (salvo cláusulas específicas). Após o Initial Term, o contrato entra em Renewal Terms automáticos, salvo aviso prévio dentro do prazo exigido.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 3 · Add. 7</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Renewal Term</div>
+      <div class="gdef">Período de renovação automática após o vencimento do Initial Term ou de um Renewal Term anterior. O OS Nº 2 renova por 36 meses consecutivos; o Add.7 por 2 anos. Para evitar a renovação, é necessário enviar o Required Written Notice dentro do prazo.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 3 · Add. 7</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Required Written Notice</div>
+      <div class="gdef">Notificação escrita obrigatória para não renovar ou rescindir o contrato ao final do Initial Term ou de qualquer Renewal Term. No OS Nº 2 e no Add.7, o prazo é de <strong>90 dias</strong> antes do vencimento. O não envio dentro do prazo resulta em renovação automática.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 7</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Supercession / Supersedido</div>
+      <div class="gdef">Quando um documento contratual substitui integralmente outro anterior. O OS Nº 2 supersedeu o OS Nº 1 retroativamente a 01/Mai/2021, e o OS Nº 1 havia supersedido o contrato ComStock de 2003.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 1 · OS Nº 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Coterminous</div>
+      <div class="gdef">Termo contratual que indica que o aditivo tem a mesma data de vencimento que o contrato principal ao qual está vinculado. O Addendum Nº 1 (infraestrutura) é coterminous com o OS Nº 2.</div>
+      <div class="gdocs"><span class="gdoc">Add. 1</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Licensee</div>
+      <div class="gdef">Entidade que recebe a licença de uso dos dados — neste caso, a <strong>Agência Estado S.A.</strong> A licença é intransferível e os dados só podem ser redistribuídos dentro dos limites dos Approved Redistribution Products listados no Appendix D.</div>
+      <div class="gdocs"><span class="gdoc">Todos os documentos</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Vendor</div>
+      <div class="gdef">ICE Data Connectivity &amp; Feeds, Inc. — a entidade da ICE que fornece os serviços de datafeed. Assina em nome próprio e de suas afiliadas. Endereço: 1345 Avenue of the Americas, 6th Fl, New York, NY 10105.</div>
+      <div class="gdocs"><span class="gdoc">Todos os documentos</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Territory</div>
+      <div class="gdef">Área geográfica onde a Agência Estado está autorizada a operar os serviços contratados. Definido como <strong>Brasil</strong> — aplicável exclusivamente à Agência Estado, não limitando os clientes redistribuídos. Expansão requer consentimento escrito da ICE.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="contrato">
+      <div class="gterm">Parallel Run Period</div>
+      <div class="gdef">Período (máximo 30 dias) em que a Agência Estado pode operar simultaneamente a infraestrutura antiga e a nova durante uma migração, sem pagar pelos dois ambientes ao mesmo tempo. Ao fim do período, a infra antiga deve ser devolvida ao Vendor.</div>
+      <div class="gdocs"><span class="gdoc">Add. 1</span></div>
+    </div>
+
+    <!-- ══ FEES ══ -->
+    <div class="gcard" data-cat="fees">
+      <div class="gterm">MRC — Monthly Recurring Charge</div>
+      <div class="gdef">Fee recorrente mensal cobrado pelos serviços de licença de dados, infraestrutura e conectividade. O MRC total ativo (OS2 base + Add.3 escalonamento Ano 1 + Add.5,6,7,8) é de aproximadamente <strong>$50.654/mês</strong>.</div>
+      <div class="gdocs"><span class="gdoc">Todos os documentos</span></div>
+    </div>
+
+    <div class="gcard" data-cat="fees">
+      <div class="gterm">NRC — Non-Recurring Charge</div>
+      <div class="gdef">Fee único cobrado uma única vez na ativação do serviço, cobrindo design, instalação e configuração (Set-Up Fee). Tipicamente $950 por aditivo nos contratos da Agência Estado. Pode ser waived (zerado) em negociações específicas.</div>
+      <div class="gdocs"><span class="gdoc">Add. 2 · Add. 5 (waived) · Add. 6–9 ($950–$1.050)</span></div>
+    </div>
+
+    <div class="gcard" data-cat="fees">
+      <div class="gterm">Service Change Charge</div>
+      <div class="gdef">Fee de <strong>$950</strong> cobrado pela ICE por qualquer modificação nos serviços (incluindo desconexões e cancelamentos) que não resulte em um MRC adicional. Equivale a uma taxa administrativa por mudança de escopo.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="fees">
+      <div class="gterm">Standard Time &amp; Materials Rate</div>
+      <div class="gdef">Taxa horária de <strong>US$200/hora</strong> cobrada pela ICE por trabalhos fora do escopo contratado, como Smart Hands no datacenter, mudanças de credenciais de usuário, e ajustes de especificação do Consolidated Feed.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="fees">
+      <div class="gterm">Access Fee / User ID Fee</div>
+      <div class="gdef">Fee de <strong>US$100 por acesso/mês</strong> cobrado por cada User ID adicional além do limite contratado (43 IDs no OS base). No Add.7, há também um Access Fee fixo de $310/mês incluído no MRC base.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 5 · Add. 7</span></div>
+    </div>
+
+    <div class="gcard" data-cat="fees">
+      <div class="gterm">Liquidated Damages</div>
+      <div class="gdef">Penalidade predefinida contratualmente por atraso no envio de relatórios ou no pagamento de fees. Calculada como o maior valor entre: (i) juros de <strong>1,5% ao mês</strong> sobre os fees devidos ou (ii) <strong>US$1.000</strong>. Não limita o direito da ICE a cobrar danos adicionais.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 6 · 7 · 8</span></div>
+    </div>
+
+    <div class="gcard" data-cat="fees">
+      <div class="gterm">Waived</div>
+      <div class="gdef">Fee formalmente zerado por negociação — consta no contrato como $0,00 mas a estrutura de cobrança permanece definida. Diferente de "não aplicável" (N/A). Pode ser reativado em aditivos futuros.</div>
+      <div class="gdocs"><span class="gdoc">Add. 2 · Add. 5</span></div>
+    </div>
+
+    <!-- ══ INFRAESTRUTURA ══ -->
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">IGN — ICE Global Network</div>
+      <div class="gdef">Rede privada global da ICE Data Services usada para entrega dos Feeds. Disponível em 1Gbps ou 10Gbps via SMF (Single Mode Fiber). A Agência Estado conecta-se via IGN LL (Leased Line) nos datacenters de 111 8th Ave, NY e NY4 Secaucus.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 1 · OS Nº 2 · Add. 1</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">IGN LL — Leased Line</div>
+      <div class="gdef">Conexão dedicada e ponto-a-ponto na ICE Global Network. Vendida em pares redundantes ou portas individuais. Suporta apenas SMF. Cada porta requer um Cross Connect separado (LOA obrigatória). A Agência Estado usa conexões de 1Gbps e 10Gbps.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 1</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">CSP — Client Site Processor</div>
+      <div class="gdef">Equipamento de processamento instalado no datacenter do cliente (ou hospedado pela ICE no Shared Farm) para receber e distribuir o Consolidated Feed. A Agência Estado opera com <strong>3 CSPs</strong>. Cada CSP tem um fee mensal de infraestrutura.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 1 · OS Nº 2 · Add. 1</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">CPF — Client Site Fanout</div>
+      <div class="gdef">Equipamento de distribuição (fanout) que replica o sinal do CSP para múltiplos destinos dentro da rede do cliente. A Agência Estado opera com <strong>2 CPFs</strong> no ambiente dedicado original do OS Nº 1/2.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 1 · OS Nº 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">Consolidated Feed</div>
+      <div class="gdef">Produto principal de dados da ICE — feed multicast que agrega dados de dezenas de exchanges globais numa única conexão. Entregue via CSPs na infraestrutura dedicada ou Shared Farm. Suporta volumes acima de 500Mbps a 1Gbps+ na configuração da Agência Estado.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 1 · OS Nº 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">Shared Farm</div>
+      <div class="gdef">Ambiente de hosting compartilhado oferecido pela ICE onde os CSPs do cliente são hospedados fisicamente pela ICE (em vez de equipamentos dedicados no datacenter do cliente). A Agência Estado migrou para o Shared Farm em NY4 Secaucus via Add.1. Reduz custo de infra própria.</div>
+      <div class="gdocs"><span class="gdoc">Add. 1</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">Cross Connect</div>
+      <div class="gdef">Cabo de fibra que conecta fisicamente o equipamento do cliente ao ponto de presença da ICE dentro do mesmo datacenter. Deve ser solicitado tanto pela ICE quanto pelo cliente (LOA — Letter of Authorization). Cada porta IGN requer um Cross Connect dedicado.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 1</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">LOA — Letter of Authorization</div>
+      <div class="gdef">Documento formal que autoriza o datacenter a realizar o Cross Connect entre o equipamento do cliente e o ponto de presença da ICE. Obrigatório para qualquer nova conexão física na ICE Global Network.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 1</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">Smart Hands</div>
+      <div class="gdef">Serviço de suporte técnico presencial no datacenter para instalação, manutenção básica e intervenções físicas nos equipamentos. Cobrado a <strong>$250/hora</strong> na nova infra (Add.1) e <strong>$200/hora</strong> (rate padrão OS Nº 2). Inclui trocas de cabos, substituição de equipamentos, etc.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 1</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">Multicast vs. Unicast</div>
+      <div class="gdef"><strong>Multicast:</strong> transmissão de dados para múltiplos destinatários simultaneamente em um único stream — mais eficiente para distribuição em larga escala (usado no Consolidated Feed &gt;500Mbps). <strong>Unicast:</strong> transmissão ponto-a-ponto para um único destinatário — usado em acessos via Shared Farm fora da localização principal.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 1</span></div>
+    </div>
+
+    <div class="gcard" data-cat="infra">
+      <div class="gterm">Bandwidth Cap / Upgrade Obrigatório</div>
+      <div class="gdef">Cláusula presente no Add.8 e Add.9 que reconhece que a capacidade de banda da Agência Estado estava no limite máximo na data de assinatura. A ICE não habilitará as novas fontes até a conclusão do upgrade de rede. O prazo é de <strong>120 dias</strong> — mesmo sem upgrade, o billing inicia após esse prazo.</div>
+      <div class="gdocs"><span class="gdoc">Add. 8 · Add. 9</span></div>
+    </div>
+
+    <!-- ══ DADOS DE MERCADO ══ -->
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">Exchange Package</div>
+      <div class="gdef">Conjunto de dados de uma bolsa ou provedor específico contratado como uma unidade. Cada package tem um Exchange Package Pricing Level (L1, L2, L1-OTC, L1-IDB etc.), Source IDs e Short Codes únicos para entitlement. A Agência Estado possui mais de 70 packages ativos no OS Nº 2.</div>
+      <div class="gdocs"><span class="gdoc">Appendix B de todos os documentos</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">Level 1 vs. Level 2</div>
+      <div class="gdef"><strong>Level 1:</strong> dados de melhor oferta e demanda (BBO — Best Bid and Offer) + último preço negociado. Suficiente para cotações e exibição. <strong>Level 2:</strong> book de ordens completo com profundidade de mercado — essencial para análise de liquidez, market making e estratégias algorítmicas. Fee significativamente maior que L1.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 9 (Level 2 Markets)</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">RT — Real-Time</div>
+      <div class="gdef">Dados transmitidos em tempo real, sem delay intencional, conforme chegam da bolsa de origem. Exige licença específica de redistribuição RT de cada exchange. Contrasta com dados Delayed (geralmente 15–20 min) e EOD (End of Day).</div>
+      <div class="gdocs"><span class="gdoc">Appendix B — coluna Data Quality</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">DL — Delayed / EOD — End of Day</div>
+      <div class="gdef"><strong>DL (Delayed):</strong> dados com atraso de 15–20 minutos em relação ao mercado em tempo real — fee de licença menor. <strong>EOD:</strong> resumo diário disponível somente após o fechamento do mercado. Exchanges como Hang Seng Indices e SIX Swiss Exchange são entregues em EOD no contrato da Agência Estado.</div>
+      <div class="gdocs"><span class="gdoc">Appendix B — OS Nº 2 · Add. 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">OTC — Over The Counter</div>
+      <div class="gdef">Dados de instrumentos negociados diretamente entre as partes (fora de bolsas organizadas). No contexto ICE, inclui FX Spot/Forward/NDF, FX Volatility Surfaces, Energy OTC, Precious Metals e Money Markets. Exchange Package Pricing Level: <strong>Level1-OTC</strong>.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 3 · Add. 5 · Add. 7</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">IDD — ICE Data Derivatives</div>
+      <div class="gdef">Linha de produtos de dados derivativos da ICE, incluindo <strong>IDD FX Volatility Surfaces</strong> (superfícies de volatilidade implícita para pares de moedas) e <strong>IDD Interest Rates Forward Curves</strong> (curvas de juros a termo). Dados proprietários da ICE, não de exchanges terceiros.</div>
+      <div class="gdocs"><span class="gdoc">Add. 5 · Add. 7</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">IDD FX Volatility Surfaces</div>
+      <div class="gdef">Produto ICE que fornece superfícies de volatilidade implícita para pares de moedas — essencial para precificação de opções de FX e gestão de risco. O Add.5 cobre <strong>2 pairs</strong> (uso exclusivo Itaú); o Add.7 expande para <strong>14 pairs</strong> (até 3 clientes). Source ID: 1582.</div>
+      <div class="gdocs"><span class="gdoc">Add. 5 · Add. 7</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">WM Reuters Rates</div>
+      <div class="gdef">Benchmark de taxas de câmbio amplamente utilizado globalmente, calculado pela WM Company e distribuído pela Reuters/Refinitiv. Inclui <strong>Spot Rates</strong> (1059), <strong>Forward Rates</strong> (1060) e <strong>NDF — Non-Deliverable Forward Rates</strong> (1082). Todos contratados no Add.8.</div>
+      <div class="gdocs"><span class="gdoc">Add. 8</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">NDF — Non-Deliverable Forward</div>
+      <div class="gdef">Contrato a termo de câmbio liquidado financeiramente (sem entrega física da moeda) — comum em moedas com restrições de conversibilidade como BRL, CLP, COP, CNY. Os WM Reuters NDF Rates (Source 1082) fornecem benchmarks de taxa para esses contratos.</div>
+      <div class="gdocs"><span class="gdoc">Add. 8</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">LBMA Gold / LBMA Platinum &amp; Palladium</div>
+      <div class="gdef">Benchmarks oficiais de preço de metais preciosos estabelecidos pela London Bullion Market Association. O <strong>LBMA Gold Fixing</strong> (Source 1363, OS Nº 2) e o <strong>LBMA Platinum &amp; Palladium Benchmark Fixing</strong> (Source 930, Add.8) são referências globais usadas em contratos físicos, derivativos e ETFs.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 8</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">Tullett Prebon Fixed Income</div>
+      <div class="gdef">Dados de renda fixa fornecidos pela Tullett Prebon Information (grupo TP ICAP), distribuídos via ICE. Cobre <strong>LatAm Emerging Fixed Income</strong> (Source 882) e <strong>Majors Fixed Income</strong> (Source 877). Exige reporting trimestral direto à Tullett Prebon em <em>accountsreceivables@tpicap.com</em>. Limite: 4.000 clientes simultâneos.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">History Services</div>
+      <div class="gdef">Serviço de dados históricos da ICE, disponível em modalidades EOD Summary Pricing (resumo diário) e Ongoing Reference Data (dados de referência contínuos). Contratado no Add.2 com fee zerado para 7 exchanges (Hang Seng, Nikkei, OTC MM&amp;Rates, BME, SET, SIX, Taiwan).</div>
+      <div class="gdocs"><span class="gdoc">Add. 2</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">Nasdaq Basic / NASD Basic</div>
+      <div class="gdef">Pacote de dados de melhor oferta e demanda consolidados do mercado americano, distribuído via Nasdaq. Cobre ações listadas na <strong>NASDAQ</strong> (Source 533) e na <strong>NYSE / NYSE American</strong> (Source 534). Produto de baixo custo comparado ao Nasdaq Level 1 completo.</div>
+      <div class="gdocs"><span class="gdoc">Add. 6</span></div>
+    </div>
+
+    <div class="gcard" data-cat="dados">
+      <div class="gterm">Source ID / Entitlement Short Code</div>
+      <div class="gdef">Identificadores únicos usados pela ICE para controle de entitlement (habilitação de acesso) em cada exchange package. O <strong>Source ID</strong> é o código numérico interno ICE; o <strong>Short Code</strong> é um identificador alfanumérico usado nos sistemas de distribuição (ex: <code>666CBOEFUTUR</code>, <code>1582ICEDIDDFX</code>).</div>
+      <div class="gdocs"><span class="gdoc">Appendix B de todos os documentos</span></div>
+    </div>
+
+    <!-- ══ COMPLIANCE ══ -->
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">External Redistribution</div>
+      <div class="gdef">Modalidade de uso em que a Agência Estado revende ou fornece dados a terceiros (clientes) fora de sua organização. Também chamada de Re-vendor ou Sub-vendor. Requer aprovação dos Redistribution Products no Appendix D e, em alguns addenda, limita o número máximo de clientes redistribuídos.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 5 · Add. 7</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">Approved Redistribution Products</div>
+      <div class="gdef">Lista dos produtos da Agência Estado autorizados a redistribuir os dados ICE, definida no Appendix D do OS Nº 2: (1) Broadcast Products Family, (2) Broadcast Datafeed, (3) Broadcast Ticker, (4) Broadcast Wallboard, (5) Broadcast Widgets, e os projetos Itaú Câmbio e Itaú Trader Agro.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 — Appendix D</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">Front Office Trading</div>
+      <div class="gdef">Departamento de uma instituição financeira responsável pela execução de operações de compra e venda de ativos. Nos contratos ICE, é o uso-case específico autorizado para redistribuição em alguns addenda (Add.5: Market Making para Itaú; Add.7: até 3 clientes FO Trading).</div>
+      <div class="gdocs"><span class="gdoc">Add. 5 · Add. 7</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">Market Making</div>
+      <div class="gdef">Atividade de prover liquidez ao mercado cotando simultaneamente preços de compra e venda de um ativo. No Add.5, é o use-case exclusivo autorizado para redistribuição ao Itaú Unibanco S.A. dos dados IDD FX Volatility Surfaces e IR Forward Curves.</div>
+      <div class="gdocs"><span class="gdoc">Add. 5</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">RAAMS Dashboard</div>
+      <div class="gdef">Portal online da ICE para envio de End User Reports. Os relatórios mensais de uso dos addenda (Add.5–9) devem ser submetidos via RAAMS em até <strong>7 dias</strong> após o fim de cada mês. Em caso de falha no sistema, reportar a RTS-UsageReports@theice.com.</div>
+      <div class="gdocs"><span class="gdoc">Add. 5 · 6 · 7 · 8</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">End User Report</div>
+      <div class="gdef">Relatório mensal que detalha o uso dos dados por categoria de usuário: Professional End-Users (Trading), Professional End-Users (Non-Trading), Non-professional End-Users, e os produtos de redistribuição ativos. Obrigatório para todos os addenda com MRC &gt; $0.</div>
+      <div class="gdocs"><span class="gdoc">Add. 2 · 3 · 5 · 6 · 7 · 8</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">Attribution</div>
+      <div class="gdef">Obrigação de exibir a identificação da fonte dos dados nos produtos redistribuídos. Texto exato obrigatório: <em>"Market data provided by ICE Data Services."</em> Deve aparecer de forma clara e visível em todos os Approved Redistribution Products e Approved Internal Applications onde os dados são exibidos.</div>
+      <div class="gdocs"><span class="gdoc">Todos os documentos</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">Artificial Intelligence — Restrições</div>
+      <div class="gdef">Uso de dados ICE com AI/LLM/GenAI é permitido <strong>apenas internamente</strong> pela Agência Estado (ex: RAG, grounding). É <strong>expressamente proibido</strong>: treinar, fine-tunar ou melhorar modelos de IA com os dados; redistribuir outputs de IA gerados a partir dos dados. Presente em todos os addenda a partir do Add.2.</div>
+      <div class="gdocs"><span class="gdoc">Add. 2 · 3 · 5 · 6 · 7 · 8 · 9</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">Third Party Hosted Storage / Cloud Storage</div>
+      <div class="gdef">Armazenamento dos dados ICE em infraestrutura de terceiros (AWS, Azure, GCP etc.) é <strong>expressamente proibido</strong> sem autorização escrita prévia do Vendor. Qualquer aprovação incluirá termos adicionais específicos para o ambiente de cloud. Restrição válida em todos os contratos.</div>
+      <div class="gdocs"><span class="gdoc">Todos os documentos</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">Derived Data</div>
+      <div class="gdef">Dados derivados ou calculados a partir dos dados brutos licenciados. No Add.7, o Usage Type A do IDD FX Volatility Surfaces é classificado como "Derived Data" (não Redistribution direta), o que implica restrições específicas de uso e redistribuição dos outputs calculados.</div>
+      <div class="gdocs"><span class="gdoc">Add. 7 — Appendix B</span></div>
+    </div>
+
+    <div class="gcard" data-cat="compliance">
+      <div class="gterm">ICE Account Numbers</div>
+      <div class="gdef">Códigos internos da ICE para faturamento separado por tipo de serviço: <strong>C1KS / 4178700000</strong> (License Fees — dados), <strong>CG07 / 7819700000</strong> (Feeds Infrastructure — equipamentos/CSP), <strong>C45A / 7051800000</strong> (Connectivity Infrastructure — SLU/portas). Usados para reconciliação de invoices.</div>
+      <div class="gdocs"><span class="gdoc">OS Nº 2 · Add. 3</span></div>
+    </div>
+
+  </div><!-- /gloss-grid -->
+</div><!-- /tab-gloss -->
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function T(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  // Activate matching sidebar item
+  document.querySelectorAll('.sb-item').forEach(b=>{
+    if(b.getAttribute('onclick')==="T('"+id+"')") b.classList.add('active');
+  });
+  document.getElementById('content').scrollTop = 0;
+}
+
+// ── Glossário filter ──
+var _glossCat = 'all';
+function filterGloss(){
+  var q = document.getElementById('gloss-search').value.toLowerCase();
+  var cards = document.querySelectorAll('.gcard');
+  var shown = 0;
+  cards.forEach(function(c){
+    var catOk = _glossCat==='all' || c.dataset.cat===_glossCat;
+    var textOk = !q || c.textContent.toLowerCase().includes(q);
+    var vis = catOk && textOk;
+    c.classList.toggle('hidden', !vis);
+    if(vis) shown++;
+  });
+  var total = document.querySelectorAll('.gcard').length;
+  document.getElementById('gloss-count').textContent = shown===total
+    ? total + ' termos' : shown + ' de ' + total + ' termos';
+}
+function filterCat(el,cat){
+  _glossCat = cat;
+  document.querySelectorAll('.gcat').forEach(function(e){e.classList.remove('active');});
+  el.classList.add('active');
+  filterGloss();
+}
+document.addEventListener('DOMContentLoaded', function(){
+  filterGloss();
+});
+
+
+var _invCat = 'all';
+function filterInv(){
+  var q = document.getElementById('inv-search').value.toLowerCase();
+  var rows = document.querySelectorAll('#inv-table tbody tr');
+  var shown = 0;
+  rows.forEach(function(r){
+    var catOk = _invCat==='all' || r.dataset.cat===_invCat;
+    var txt = (r.dataset.text||'') + r.textContent.toLowerCase();
+    var textOk = !q || txt.includes(q);
+    var vis = catOk && textOk;
+    r.style.display = vis ? '' : 'none';
+    if(vis) shown++;
+  });
+  var total = document.querySelectorAll('#inv-table tbody tr').length;
+  document.getElementById('inv-count').textContent = shown===total
+    ? total + ' packages / sources' : shown + ' de ' + total + ' packages / sources';
+}
+function filterInvCat(el,cat){
+  _invCat = cat;
+  document.querySelectorAll('#inv-cats .gcat').forEach(function(e){e.classList.remove('active');});
+  el.classList.add('active');
+  filterInv();
+}
+document.addEventListener('DOMContentLoaded', function(){ filterInv(); });
+
+</script>
+
+<!-- FIXED FOOTER -->
+<div class="app-footer" id="appFooter">
+  <div class="footer-left">
+    <span class="footer-author">✍️ Antonio Melo</span>
+    <div class="footer-sep"></div>
+    <span class="footer-update">🕐 Última atualização: <strong style="color:var(--tm);">Jun/2026</strong></span>
+    <div class="footer-sep"></div>
+    <span>ICE Data Services · Agência Estado S.A.</span>
+    <div class="footer-sep"></div>
+    <span class="footer-conf">Confidencial</span>
+  </div>
+  <div class="footer-right">
+    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/escuro">
+      <div class="theme-toggle-track"><div class="theme-toggle-thumb"></div></div>
+      <span class="theme-toggle-label" id="themeLabel">Dark</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Theme toggle ──
+function toggleTheme() {
+  var body = document.body;
+  var label = document.getElementById('themeLabel');
+  if (body.classList.contains('light')) {
+    body.classList.remove('light');
+    label.textContent = 'Dark';
+    localStorage.setItem('ice-theme', 'dark');
+  } else {
+    body.classList.add('light');
+    label.textContent = 'Light';
+    localStorage.setItem('ice-theme', 'light');
+  }
+}
+// restore saved preference
+(function(){
+  if (localStorage.getItem('ice-theme') === 'light') {
+    document.body.classList.add('light');
+    var l = document.getElementById('themeLabel');
+    if (l) l.textContent = 'Light';
+  }
+})();
+</script>
+</body>
+</html>
