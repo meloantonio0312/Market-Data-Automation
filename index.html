@@ -232,6 +232,37 @@
 
   .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
 
+  /* ── EMBEDDED DASHBOARD ── */
+  .doc-frame-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    height: calc(100vh - 230px);
+    min-height: 480px;
+    display: flex; flex-direction: column;
+  }
+  .doc-frame-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px; border-bottom: 1px solid var(--border);
+    background: var(--navy-mid);
+    font-size: 11px; color: var(--text-3);
+    flex-shrink: 0;
+  }
+  .doc-frame-file { font-family: monospace; color: var(--text-2); }
+  .doc-frame-open {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: var(--gold); text-decoration: none;
+    font-size: 11px; padding: 3px 10px;
+    border: 1px solid rgba(201,168,76,.3); border-radius: 6px;
+    transition: background .15s;
+  }
+  .doc-frame-open:hover { background: var(--gold-dim2); }
+  .doc-frame-wrap iframe {
+    width: 100%; height: 100%; border: none; flex: 1;
+    background: #fff;
+  }
+
   @media (max-width: 680px) {
     .sidebar { position: fixed; top: var(--topbar-h); left: 0; bottom: 0; z-index: 50; }
     .domain-grid { grid-template-columns: 1fr; }
@@ -455,13 +486,13 @@
           <div class="page-title">Projetos 2026 — Accomplished vs Pending</div>
           <div class="page-desc">Dashboard consolidado de status de todos os projetos da área.</div>
         </div>
-        <a href="dashboard_2026_projects.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon">🗓</div>
-          <div class="tag">Dashboard</div>
-          <div class="card-title">Abrir Dashboard de Projetos 2026</div>
-          <div class="card-desc">Visualização completa de entregas realizadas e pendentes.</div>
-          <div class="card-foot"><span>dashboard_2026_projects.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">dashboard_2026_projects.html</span>
+            <a href="dashboard_2026_projects.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="dashboard_2026_projects.html" title="Abrir Dashboard de Projetos 2026"></iframe>
+        </div>
       </div>
     </div>
 
@@ -472,13 +503,13 @@
           <div class="page-title">CoE Automação — Sprint Planning 2026</div>
           <div class="page-desc">Planejamento de sprints do Centro de Excelência em Automação.</div>
         </div>
-        <a href="dashboard_automacao_2026.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-t">⚡</div>
-          <div class="tag t">Dashboard</div>
-          <div class="card-title">Abrir Sprint Planning CoE</div>
-          <div class="card-desc">Backlog, sprints e capacidade do time de automação.</div>
-          <div class="card-foot"><span>dashboard_automacao_2026.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">dashboard_automacao_2026.html</span>
+            <a href="dashboard_automacao_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="dashboard_automacao_2026.html" title="Abrir Sprint Planning CoE"></iframe>
+        </div>
       </div>
     </div>
 
@@ -489,13 +520,13 @@
           <div class="page-title">HUB Datafeeds — Dashboard 2026</div>
           <div class="page-desc">Visão consolidada dos datafeeds operados pela área.</div>
         </div>
-        <a href="HUB_Datafeeds_Dashboard.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon">📡</div>
-          <div class="tag">Dashboard</div>
-          <div class="card-title">Abrir HUB Datafeeds</div>
-          <div class="card-desc">Status e cobertura de todos os datafeeds ativos.</div>
-          <div class="card-foot"><span>HUB_Datafeeds_Dashboard.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">HUB_Datafeeds_Dashboard.html</span>
+            <a href="HUB_Datafeeds_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="HUB_Datafeeds_Dashboard.html" title="Abrir HUB Datafeeds"></iframe>
+        </div>
       </div>
     </div>
 
@@ -548,13 +579,13 @@
           <div class="page-title">Breakeven por Produto — Maio 2026</div>
           <div class="page-desc">Análise de ponto de equilíbrio por linha de produto.</div>
         </div>
-        <a href="dashboard_breakeven_maio_2026.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-g">📈</div>
-          <div class="tag g">Dashboard</div>
-          <div class="card-title">Abrir Breakeven Maio 2026</div>
-          <div class="card-desc">Receita, custo e ponto de equilíbrio por produto.</div>
-          <div class="card-foot"><span>dashboard_breakeven_maio_2026.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">dashboard_breakeven_maio_2026.html</span>
+            <a href="dashboard_breakeven_maio_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="dashboard_breakeven_maio_2026.html" title="Abrir Breakeven Maio 2026"></iframe>
+        </div>
       </div>
     </div>
 
@@ -565,13 +596,13 @@
           <div class="page-title">Dashboard Faturamento — Maio 2026</div>
           <div class="page-desc">Receita consolidada do mês por produto e cliente.</div>
         </div>
-        <a href="dashboard_faturamento_maio_2026.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-g">💳</div>
-          <div class="tag g">Dashboard</div>
-          <div class="card-title">Abrir Faturamento Maio 2026</div>
-          <div class="card-desc">Detalhamento completo de receitas do mês.</div>
-          <div class="card-foot"><span>dashboard_faturamento_maio_2026.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">dashboard_faturamento_maio_2026.html</span>
+            <a href="dashboard_faturamento_maio_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="dashboard_faturamento_maio_2026.html" title="Abrir Faturamento Maio 2026"></iframe>
+        </div>
       </div>
     </div>
 
@@ -582,13 +613,13 @@
           <div class="page-title">Despesas com Dados de Mercado — 2026</div>
           <div class="page-desc">Relatório consolidado de despesas com provedores de dados.</div>
         </div>
-        <a href="report_despesas_dados_2026.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-g">📋</div>
-          <div class="tag g">Relatório</div>
-          <div class="card-title">Abrir Despesas 2026</div>
-          <div class="card-desc">Custos fixos e variáveis por fornecedor de dados.</div>
-          <div class="card-foot"><span>report_despesas_dados_2026.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">report_despesas_dados_2026.html</span>
+            <a href="report_despesas_dados_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="report_despesas_dados_2026.html" title="Abrir Despesas 2026"></iframe>
+        </div>
       </div>
     </div>
 
@@ -599,13 +630,13 @@
           <div class="page-title">ICE Data Services — Contratos Consolidados</div>
           <div class="page-desc">Hierarquia completa dos 9 addenda do contrato ICE.</div>
         </div>
-        <a href="ICE_Addenda_Consolidado.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-g">📑</div>
-          <div class="tag g">Contratos</div>
-          <div class="card-title">Abrir ICE — Addenda Consolidado</div>
-          <div class="card-desc">Todos os addenda do contrato ICE em um só documento.</div>
-          <div class="card-foot"><span>ICE_Addenda_Consolidado.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">ICE_Addenda_Consolidado.html</span>
+            <a href="ICE_Addenda_Consolidado.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="ICE_Addenda_Consolidado.html" title="Abrir ICE — Addenda Consolidado"></iframe>
+        </div>
       </div>
     </div>
 
@@ -616,13 +647,13 @@
           <div class="page-title">Terminal Latam — Market Data Dashboard</div>
           <div class="page-desc">P&L e cenários de break-even para Chile, Colômbia e Peru (NUAM).</div>
         </div>
-        <a href="Term_Latam_NUAM.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-g">🌎</div>
-          <div class="tag g">Dashboard</div>
-          <div class="card-title">Abrir Terminal Latam / NUAM</div>
-          <div class="card-desc">Modelagem de 24 meses para break-even na região.</div>
-          <div class="card-foot"><span>Term_Latam_NUAM.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Term_Latam_NUAM.html</span>
+            <a href="Term_Latam_NUAM.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Term_Latam_NUAM.html" title="Abrir Terminal Latam / NUAM"></iframe>
+        </div>
       </div>
     </div>
 
@@ -633,13 +664,13 @@
           <div class="page-title">Contratos de Bolsa — Mapa Consolidado</div>
           <div class="page-desc">Dashboard com os 32 contratos de bolsa ativos, organizados por região e status.</div>
         </div>
-        <a href="Exchange_Map_Contracts_Dashboard.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-g">🗺️</div>
-          <div class="tag g">Dashboard</div>
-          <div class="card-title">Abrir Mapa de Contratos</div>
-          <div class="card-desc">Visão geográfica e por fornecedor de todos os contratos ativos.</div>
-          <div class="card-foot"><span>Exchange_Map_Contracts_Dashboard.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Exchange_Map_Contracts_Dashboard.html</span>
+            <a href="Exchange_Map_Contracts_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Exchange_Map_Contracts_Dashboard.html" title="Abrir Mapa de Contratos"></iframe>
+        </div>
       </div>
     </div>
 
@@ -651,13 +682,13 @@
           <div class="page-title">Processo de Licenciamento & Aquisição de Conteúdo</div>
           <div class="page-desc">Guia de referência: como funciona o processo de licenciamento de novos dados, da negociação à ativação.</div>
         </div>
-        <a href="market_data_licensing_process.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-a">📘</div>
-          <div class="tag a">Processo</div>
-          <div class="card-title">Abrir Processo de Licenciamento</div>
-          <div class="card-desc">Etapas, responsáveis e prazos do processo de aquisição de conteúdo.</div>
-          <div class="card-foot"><span>market_data_licensing_process.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">market_data_licensing_process.html</span>
+            <a href="market_data_licensing_process.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="market_data_licensing_process.html" title="Abrir Processo de Licenciamento"></iframe>
+        </div>
       </div>
     </div>
 
@@ -668,13 +699,13 @@
           <div class="page-title">Cheatsheet de Fees — Bolsas e Fornecedores</div>
           <div class="page-desc">Consulta rápida de taxas por bolsa. Self-service para o time de vendas — reduz a necessidade de acionar o time de Market Data.</div>
         </div>
-        <a href="cheatsheet_fees_bolsas.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-a">💵</div>
-          <div class="tag a">Referência</div>
-          <div class="card-title">Abrir Cheatsheet de Fees</div>
-          <div class="card-desc">Tabela de taxas validada contra os schedules oficiais 2026.</div>
-          <div class="card-foot"><span>cheatsheet_fees_bolsas.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">cheatsheet_fees_bolsas.html</span>
+            <a href="cheatsheet_fees_bolsas.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="cheatsheet_fees_bolsas.html" title="Abrir Cheatsheet de Fees"></iframe>
+        </div>
       </div>
     </div>
 
@@ -685,13 +716,13 @@
           <div class="page-title">Políticas Comerciais — Bolsas Agrícolas Internacionais</div>
           <div class="page-desc">Regras de display, non-display e redistribuição para CME/CBOT, ICE, Euronext/MATIF, B3, DCE e JSE/SAFEX.</div>
         </div>
-        <a href="broadcast_agro_market_data_policies.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-a">🌾</div>
-          <div class="tag a">Políticas</div>
-          <div class="card-title">Abrir Políticas — Bolsas Agro</div>
-          <div class="card-desc">O que pode e o que não pode redistribuir, por bolsa.</div>
-          <div class="card-foot"><span>broadcast_agro_market_data_policies.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">broadcast_agro_market_data_policies.html</span>
+            <a href="broadcast_agro_market_data_policies.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="broadcast_agro_market_data_policies.html" title="Abrir Políticas — Bolsas Agro"></iframe>
+        </div>
       </div>
     </div>
 
@@ -703,13 +734,13 @@
           <div class="page-title">Inteligência de Mercado — Broadcast+ vs Competidores</div>
           <div class="page-desc">Posicionamento competitivo frente a Bloomberg, LSEG, Trillia, CMA e outros players do mercado.</div>
         </div>
-        <a href="broadcast_inteligencia_mercado.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-p">🌐</div>
-          <div class="tag p">Benchmark</div>
-          <div class="card-title">Abrir Inteligência de Mercado</div>
-          <div class="card-desc">Comparativo de cobertura, preço e funcionalidades.</div>
-          <div class="card-foot"><span>broadcast_inteligencia_mercado.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">broadcast_inteligencia_mercado.html</span>
+            <a href="broadcast_inteligencia_mercado.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="broadcast_inteligencia_mercado.html" title="Abrir Inteligência de Mercado"></iframe>
+        </div>
       </div>
     </div>
 
@@ -720,13 +751,13 @@
           <div class="page-title">Bloomberg B-PIPE × Broadcast — Matriz Competitiva</div>
           <div class="page-desc">Comparação direta de funcionalidades, cobertura e precificação entre as plataformas.</div>
         </div>
-        <a href="BPIPE_x_Broadcast_apresentacao.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-p">⚔️</div>
-          <div class="tag p">Matriz Comparativa</div>
-          <div class="card-title">Abrir B-PIPE vs Broadcast</div>
-          <div class="card-desc">Apresentação pronta para uso em conversas comerciais.</div>
-          <div class="card-foot"><span>BPIPE_x_Broadcast_apresentacao.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">BPIPE_x_Broadcast_apresentacao.html</span>
+            <a href="BPIPE_x_Broadcast_apresentacao.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="BPIPE_x_Broadcast_apresentacao.html" title="Abrir B-PIPE vs Broadcast"></iframe>
+        </div>
       </div>
     </div>
 
@@ -738,13 +769,13 @@
           <div class="page-title">Derived Data — Commodities</div>
           <div class="page-desc">Brainstorm de produtos derivados para a classe de ativos de commodities.</div>
         </div>
-        <a href="brainstorm_commodities_derived_data.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-p">🧪</div>
-          <div class="tag p">Brainstorm</div>
-          <div class="card-title">Abrir Derived Data — Commodities</div>
-          <div class="card-desc">Ideias de produto a validar com Elissandra (sublicenciamento).</div>
-          <div class="card-foot"><span>brainstorm_commodities_derived_data.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">brainstorm_commodities_derived_data.html</span>
+            <a href="brainstorm_commodities_derived_data.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="brainstorm_commodities_derived_data.html" title="Abrir Derived Data — Commodities"></iframe>
+        </div>
       </div>
     </div>
 
@@ -755,13 +786,13 @@
           <div class="page-title">Derived Data — Macro</div>
           <div class="page-desc">Brainstorm de produtos derivados para a classe de ativos macro.</div>
         </div>
-        <a href="brainstorm_macro_derived_data.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-p">🧪</div>
-          <div class="tag p">Brainstorm</div>
-          <div class="card-title">Abrir Derived Data — Macro</div>
-          <div class="card-desc">Ideias de produto a validar com Elissandra (sublicenciamento).</div>
-          <div class="card-foot"><span>brainstorm_macro_derived_data.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">brainstorm_macro_derived_data.html</span>
+            <a href="brainstorm_macro_derived_data.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="brainstorm_macro_derived_data.html" title="Abrir Derived Data — Macro"></iframe>
+        </div>
       </div>
     </div>
 
@@ -773,13 +804,13 @@
           <div class="page-title">ICE Exchanges — Análise de Beneficiários</div>
           <div class="page-desc">Pipeline comercial de clientes beneficiários do pacote ICE Data — 15 bolsas internacionais.</div>
         </div>
-        <a href="ICE_Beneficiarios_Pipeline_HUB.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-a">📋</div>
-          <div class="tag a">Pipeline</div>
-          <div class="card-title">Abrir ICE — Pipeline Beneficiários</div>
-          <div class="card-desc">Demanda evidenciada por 18 tickets, 13 clientes beneficiários.</div>
-          <div class="card-foot"><span>ICE_Beneficiarios_Pipeline_HUB.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">ICE_Beneficiarios_Pipeline_HUB.html</span>
+            <a href="ICE_Beneficiarios_Pipeline_HUB.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="ICE_Beneficiarios_Pipeline_HUB.html" title="Abrir ICE — Pipeline Beneficiários"></iframe>
+        </div>
       </div>
     </div>
 
@@ -790,13 +821,13 @@
           <div class="page-title">Broadcast — Oferta de Dados</div>
           <div class="page-desc">One-pager de vendas com análise de crescimento da cobertura de instrumentos.</div>
         </div>
-        <a href="broadcast_oferta_dados_onepager.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-a">📄</div>
-          <div class="tag a">One-Pager</div>
-          <div class="card-title">Abrir Oferta de Dados</div>
-          <div class="card-desc">440K → 662K instrumentos. Material pronto para envio a clientes.</div>
-          <div class="card-foot"><span>broadcast_oferta_dados_onepager.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">broadcast_oferta_dados_onepager.html</span>
+            <a href="broadcast_oferta_dados_onepager.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="broadcast_oferta_dados_onepager.html" title="Abrir Oferta de Dados"></iframe>
+        </div>
       </div>
     </div>
 
@@ -807,13 +838,13 @@
           <div class="page-title">Broadcast Datafeed — Visão Geral de Produto</div>
           <div class="page-desc">Material institucional sobre o produto Datafeed para apresentação a clientes.</div>
         </div>
-        <a href="Broadcast_Datafeed_Visao_Geral.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-a">📡</div>
-          <div class="tag a">Produto</div>
-          <div class="card-title">Abrir Visão Geral — Datafeed</div>
-          <div class="card-desc">Apresentação institucional do produto Datafeed.</div>
-          <div class="card-foot"><span>Broadcast_Datafeed_Visao_Geral.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Broadcast_Datafeed_Visao_Geral.html</span>
+            <a href="Broadcast_Datafeed_Visao_Geral.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Broadcast_Datafeed_Visao_Geral.html" title="Abrir Visão Geral — Datafeed"></iframe>
+        </div>
       </div>
     </div>
 
@@ -824,13 +855,13 @@
           <div class="page-title">Levantamento de Mercado — Dados ESG</div>
           <div class="page-desc">Pesquisa de mercado e oportunidades de produto no segmento de dados ESG.</div>
         </div>
-        <a href="levantamento_mercado_esg_broadcast.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-p">🌿</div>
-          <div class="tag p">Pesquisa</div>
-          <div class="card-title">Abrir Levantamento ESG</div>
-          <div class="card-desc">Análise regulatória e de mercado de créditos de carbono.</div>
-          <div class="card-foot"><span>levantamento_mercado_esg_broadcast.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">levantamento_mercado_esg_broadcast.html</span>
+            <a href="levantamento_mercado_esg_broadcast.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="levantamento_mercado_esg_broadcast.html" title="Abrir Levantamento ESG"></iframe>
+        </div>
       </div>
     </div>
 
@@ -841,13 +872,13 @@
           <div class="page-title">Dashboard de Sugestões de Clientes</div>
           <div class="page-desc">Consolidação de pedidos e feedback de clientes via tickets de suporte.</div>
         </div>
-        <a href="dashboard_sugestoes_v2.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon ci-a">💡</div>
-          <div class="tag a">Customer Intel</div>
-          <div class="card-title">Abrir Sugestões de Clientes</div>
-          <div class="card-desc">661 tickets JIRA consolidados por tema e prioridade.</div>
-          <div class="card-foot"><span>dashboard_sugestoes_v2.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">dashboard_sugestoes_v2.html</span>
+            <a href="dashboard_sugestoes_v2.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="dashboard_sugestoes_v2.html" title="Abrir Sugestões de Clientes"></iframe>
+        </div>
       </div>
     </div>
 
@@ -859,13 +890,13 @@
           <div class="page-title">Broadcast Market Data — Destaques Nov/Dez 2025</div>
           <div class="page-desc">Newsletter com os principais destaques e conquistas do período.</div>
         </div>
-        <a href="newsletter_market_data_novdez2025.html" target="_blank" class="card" style="max-width:340px">
-          <div class="card-icon">📰</div>
-          <div class="tag">Newsletter</div>
-          <div class="card-title">Abrir Newsletter Nov/Dez 2025</div>
-          <div class="card-desc">Resumo executivo das principais entregas do bimestre.</div>
-          <div class="card-foot"><span>newsletter_market_data_novdez2025.html</span><span class="arrow">↗</span></div>
-        </a>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">newsletter_market_data_novdez2025.html</span>
+            <a href="newsletter_market_data_novdez2025.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="newsletter_market_data_novdez2025.html" title="Abrir Newsletter Nov/Dez 2025"></iframe>
+        </div>
       </div>
     </div>
 
