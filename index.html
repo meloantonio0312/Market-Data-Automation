@@ -143,6 +143,45 @@
   .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
   .sidebar-inner { padding: 1rem 0 2rem; min-width: var(--sidebar-w); }
 
+  /* ── SEARCH ── */
+  .sidebar-search { padding: 0 14px 12px; }
+  .search-input-wrap {
+    position: relative; display: flex; align-items: center;
+  }
+  .search-input-wrap svg {
+    position: absolute; left: 9px; width: 13px; height: 13px;
+    color: var(--text-3); pointer-events: none;
+  }
+  .sidebar-search input {
+    width: 100%; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 7px;
+    padding: 7px 10px 7px 28px;
+    font-family: 'Inter', sans-serif; font-size: 12px;
+    color: var(--text-1); outline: none;
+    transition: border-color .15s;
+  }
+  .sidebar-search input:focus { border-color: var(--gold); }
+  .sidebar-search input::placeholder { color: var(--text-3); }
+  .search-clear {
+    position: absolute; right: 7px; background: none; border: none;
+    color: var(--text-3); cursor: pointer; font-size: 13px;
+    display: none; padding: 2px;
+  }
+  .search-clear.show { display: block; }
+  .search-clear:hover { color: var(--text-1); }
+
+  .nav-item.search-hidden, .nav-group.search-hidden { display: none !important; }
+  .nav-divider.search-hidden { display: none !important; }
+  .no-results {
+    display: none; padding: 16px; text-align: center;
+    font-size: 12px; color: var(--text-3);
+  }
+  .no-results.show { display: block; }
+  mark {
+    background: var(--gold-dim); color: var(--gold);
+    border-radius: 2px; padding: 0 1px;
+  }
+
   .nav-group { margin-bottom: 4px; }
   .nav-group-btn {
     width: 100%; background: none; border: none; cursor: pointer;
@@ -349,6 +388,15 @@
 
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-inner">
+
+      <div class="sidebar-search">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="nav-search" placeholder="Buscar (ex: ICE, fees...)" oninput="filterNav(this.value)">
+          <button class="search-clear" id="search-clear-btn" onclick="clearSearch()">✕</button>
+        </div>
+        <div class="no-results" id="no-results">Nenhum resultado encontrado</div>
+      </div>
 
       <a class="nav-item active" style="padding-left:16px; font-weight:500;" onclick="show('overview')" href="#">
         <span style="font-size:13px">📊</span> Overview
@@ -1054,6 +1102,93 @@
     const formatted = `${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
     document.getElementById('last-update').textContent = formatted;
   })();
+
+  /* ── SIDEBAR SEARCH ── */
+  function filterNav(query) {
+    const q = query.trim().toLowerCase();
+    const clearBtn = document.getElementById('search-clear-btn');
+    const noResults = document.getElementById('no-results');
+    clearBtn.classList.toggle('show', q.length > 0);
+
+    const groups = document.querySelectorAll('.nav-group');
+    let anyVisible = false;
+
+    if (q === '') {
+      // reset everything
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('search-hidden');
+        const original = item.getAttribute('data-original-text');
+        if (original) item.innerHTML = original;
+      });
+      groups.forEach(g => g.classList.remove('search-hidden'));
+      document.querySelectorAll('.nav-divider').forEach(d => d.classList.remove('search-hidden'));
+      noResults.classList.remove('show');
+      return;
+    }
+
+    groups.forEach(group => {
+      const items = group.querySelectorAll('.nav-item');
+      let groupHasMatch = false;
+
+      items.forEach(item => {
+        // store original text once
+        if (!item.getAttribute('data-original-text')) {
+          item.setAttribute('data-original-text', item.innerHTML);
+        }
+        const original = item.getAttribute('data-original-text');
+        const textOnly = item.textContent.toLowerCase();
+
+        if (textOnly.includes(q)) {
+          item.classList.remove('search-hidden');
+          groupHasMatch = true;
+          anyVisible = true;
+          // highlight match
+          const regex = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+          // only highlight inside the text node after item-dot span
+          const dotSpan = item.querySelector('.item-dot, span');
+          const fullHTML = original;
+          const highlighted = fullHTML.replace(regex, '<mark>$1</mark>');
+          item.innerHTML = highlighted;
+        } else {
+          item.classList.add('search-hidden');
+          item.innerHTML = original;
+        }
+      });
+
+      // also check group label itself
+      const label = group.querySelector('.g-label');
+      const labelMatches = label && label.textContent.toLowerCase().includes(q);
+
+      if (groupHasMatch || labelMatches) {
+        group.classList.remove('search-hidden');
+        if (labelMatches && !groupHasMatch) {
+          items.forEach(item => item.classList.remove('search-hidden'));
+          anyVisible = true;
+        }
+        // auto-open group while searching
+        const btn = group.querySelector('.nav-group-btn');
+        if (!btn.classList.contains('open')) {
+          btn.classList.add('open');
+          const nav = group.querySelector('.nav-items');
+          nav.style.maxHeight = 'none';
+        }
+      } else {
+        group.classList.add('search-hidden');
+      }
+    });
+
+    // hide dividers when searching for cleaner look (optional: keep visible dividers between visible groups)
+    document.querySelectorAll('.nav-divider').forEach(d => d.classList.remove('search-hidden'));
+
+    noResults.classList.toggle('show', !anyVisible);
+  }
+
+  function clearSearch() {
+    const input = document.getElementById('nav-search');
+    input.value = '';
+    filterNav('');
+    input.focus();
+  }
 </script>
 </body>
 </html>
