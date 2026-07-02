@@ -520,62 +520,174 @@
       <div class="inner">
         <p style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:8px;">
           <span style="width:16px;height:1px;background:var(--gold);display:inline-block"></span>
-          Head: Antonio Melo
+          Market Data & Automation · Jun 2026
         </p>
-        <h1 style="font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:400;line-height:1.15;margin-bottom:.9rem;">
-          Knowledge Hub — <em style="font-style:italic;color:var(--gold-light)">Market Data & Automation</em>
+        <h1 style="font-family:'DM Serif Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:400;line-height:1.15;margin-bottom:.7rem;">
+          Executive Overview
         </h1>
-        <p style="font-size:14px;color:var(--text-2);max-width:560px;line-height:1.8;margin-bottom:2rem;">
-          15 documentos organizados por audiência. Management, Financeiro, Vendas & Marketing e Comunicação — tudo num só lugar.
+        <p style="font-size:13px;color:var(--text-2);max-width:560px;line-height:1.75;margin-bottom:1.75rem;">
+          Visão executiva da área — KPIs, projetos com impacto e alertas que requerem atenção. Para o detalhe completo, use o menu lateral ou os atalhos de deep dive abaixo.
         </p>
 
-        <div class="stats-row">
-          <div><div class="stat-num">24</div><div class="stat-lbl">Documentos</div></div>
-          <div><div class="stat-num">5</div><div class="stat-lbl">Categorias</div></div>
-          <div><div class="stat-num">662<b>K</b></div><div class="stat-lbl">Instrumentos</div></div>
-          <div><div class="stat-num">15</div><div class="stat-lbl">Bolsas ICE</div></div>
+        <!-- ── KPI ROW ── -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:2rem;">
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Faturamento Mensal</div>
+            <!-- ✏️ EDITAR: troque o valor abaixo pelo faturamento real -->
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;">R$&nbsp;<span style="color:var(--gold)">X.XM</span></div>
+            <!-- ✏️ EDITAR: troque pelo delta vs mês anterior, ex: +12% vs mai -->
+            <div style="font-size:11px;color:var(--green);margin-top:5px;">▲ +X% vs mês anterior</div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Clientes Ativos</div>
+            <!-- ✏️ EDITAR: número real de clientes ativos -->
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;"><span style="color:var(--gold)">XXX</span></div>
+            <!-- ✏️ EDITAR: delta, ex: +5 novos no trimestre -->
+            <div style="font-size:11px;color:var(--green);margin-top:5px;">▲ +X novos no trimestre</div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Instrumentos Cobertos</div>
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;"><span style="color:var(--gold)">662K</span></div>
+            <div style="font-size:11px;color:var(--green);margin-top:5px;">▲ +50,5% vs 2024 (440K)</div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Projetos no Prazo</div>
+            <!-- ✏️ EDITAR: X de Y projetos no prazo -->
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;"><span style="color:var(--gold)">X</span><span style="font-size:1rem;color:var(--text-3)">/8</span></div>
+            <!-- ✏️ EDITAR: % on track -->
+            <div style="font-size:11px;color:var(--amber);margin-top:5px;">● X% on track</div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Custo Fornecedores</div>
+            <!-- ✏️ EDITAR: custo mensal total de fornecedores de dados -->
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;">R$&nbsp;<span style="color:var(--gold)">X.XM</span></div>
+            <!-- ✏️ EDITAR: delta vs ano anterior -->
+            <div style="font-size:11px;color:var(--text-3);margin-top:5px;">▼ X% vs 2025</div>
+          </div>
+
         </div>
 
+        <!-- ── REQUER ATENÇÃO ── -->
+        <div style="margin-bottom:2rem;">
+          <p style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block;box-shadow:0 0 5px var(--red)"></span>
+            Requer Atenção
+          </p>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <!-- ✏️ EDITAR: liste aqui os 2-3 itens que requerem decisão do CEO -->
+            <div style="background:var(--card);border:1px solid rgba(224,92,92,.25);border-left:3px solid var(--red);border-radius:0 8px 8px 0;padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:var(--text-1);">ICE Data Services — Aprovação pendente</div>
+                <div style="font-size:12px;color:var(--text-2);margin-top:2px;">15 bolsas internacionais aguardando go/no-go. Receita potencial: <strong style="color:var(--text-1);">R$ X,XM/ano</strong>. <!-- ✏️ EDITAR valor --></div>
+              </div>
+              <button onclick="show('ice-pipeline')" style="background:none;border:1px solid rgba(224,92,92,.4);color:var(--red);border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap;margin-left:1rem;">Ver detalhe →</button>
+            </div>
+            <div style="background:var(--card);border:1px solid rgba(232,169,74,.25);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:var(--text-1);">A5X — Aguardando aprovação regulatória</div>
+                <div style="font-size:12px;color:var(--text-2);margin-top:2px;">Injetor de derivativos bloqueado por aprovação do Banco Central. Previsão: Q1 2027.</div>
+              </div>
+              <button onclick="show('datafeed-roadmap')" style="background:none;border:1px solid rgba(232,169,74,.4);color:var(--amber);border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap;margin-left:1rem;">Ver detalhe →</button>
+            </div>
+            <!-- ✏️ EDITAR: adicione ou remova alertas conforme necessário -->
+            <div style="background:var(--card);border:1px solid rgba(232,169,74,.25);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:var(--text-1);"><!-- ✏️ EDITAR: título do alerta --></div>
+                <div style="font-size:12px;color:var(--text-2);margin-top:2px;"><!-- ✏️ EDITAR: descrição e impacto --></div>
+              </div>
+              <button style="background:none;border:1px solid rgba(232,169,74,.4);color:var(--amber);border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap;margin-left:1rem;">Ver detalhe →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── PROJETOS COM IMPACTO ── -->
+        <div style="margin-bottom:2rem;">
+          <p style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);margin-bottom:10px;">Projetos Estratégicos — Impacto Estimado</p>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <th style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:500;padding:8px 14px;text-align:left;">Projeto</th>
+                  <th style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:500;padding:8px 14px;text-align:left;">Impacto para o cliente</th>
+                  <th style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:500;padding:8px 14px;text-align:left;">Receita potencial</th>
+                  <th style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:500;padding:8px 14px;text-align:left;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">ICE — 15 Bolsas Internacionais</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Acesso a derivativos, energia e commodities globais. <!-- ✏️ EDITAR: X clientes prospectados --><strong style="color:var(--text-1)">X clientes</strong> identificados.</td>
+                  <!-- ✏️ EDITAR valores de receita -->
+                  <td style="padding:11px 14px;font-size:13px;color:var(--gold);font-weight:500;">R$ X,XM/ano</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(232,169,74,.12);color:var(--amber);font-weight:500;">Aguardando aprovação</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">Fenics Market Data (FX / UST)</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Cobertura de FX e US Treasuries para clientes institucionais. <!-- ✏️ EDITAR --><strong style="color:var(--text-1)">X clientes</strong> habilitados.</td>
+                  <td style="padding:11px 14px;font-size:13px;color:var(--green);font-weight:500;">R$ X,XM/ano</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(76,175,135,.15);color:var(--green);font-weight:500;">Em produção</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">Nasdaq Global Index Data</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Índices Nasdaq para ETFs e fundos. <!-- ✏️ EDITAR --><strong style="color:var(--text-1)">X clientes</strong> em pipeline.</td>
+                  <td style="padding:11px 14px;font-size:13px;color:var(--teal);font-weight:500;">R$ X,XK/ano</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(46,196,182,.12);color:var(--teal);font-weight:500;">Em desenvolvimento</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">NUAM — Chile / Peru / Colombia</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Expansão Latam. Habilita clientes com exposição regional. <!-- ✏️ EDITAR -->Mercado potencial: <strong style="color:var(--text-1)">X clientes</strong>.</td>
+                  <td style="padding:11px 14px;font-size:13px;color:var(--teal);font-weight:500;">R$ X,XK/ano</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(201,168,76,.12);color:var(--gold);font-weight:500;">Planejado Q4 2026</span></td>
+                </tr>
+                <tr>
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">ESG Data</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Novo segmento. Créditos de carbono e dados ESG para fundos e corporates regulados pela CVM.</td>
+                  <td style="padding:11px 14px;font-size:13px;color:var(--text-3);font-weight:500;">A definir</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.07);color:var(--text-3);font-weight:500;">Pesquisa em andamento</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="text-align:right;margin-top:8px;">
+            <button onclick="show('datafeed-roadmap')" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:inherit;">Ver roadmap completo →</button>
+          </div>
+        </div>
+
+        <!-- ── DEEP DIVE ── -->
         <hr class="divider">
-
-        <p style="font-size:12px;color:var(--text-3);margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:.08em;">Acesso rápido</p>
-        <div class="card-grid">
-          <div class="card" onclick="show('roadmap')">
-            <div class="card-icon">🗓</div>
-            <div class="tag">Management</div>
-            <div class="card-title">Projetos 2026</div>
-            <div class="card-desc">Status consolidado de entregas realizadas vs. pendentes.</div>
-            <div class="card-foot"><span>Management</span><span class="arrow">→</span></div>
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);margin-bottom:10px;">Deep Dive — Acesso direto por área</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+          <div class="card" onclick="show('breakeven')" style="padding:.9rem;">
+            <div style="font-size:11px;color:var(--green);">💰 Financeiro</div>
+            <div style="font-size:13px;font-weight:500;margin-top:4px;">Breakeven & Cenários</div>
           </div>
-          <div class="card" onclick="show('ice-pipeline')">
-            <div class="card-icon ci-a">📋</div>
-            <div class="tag a">Vendas</div>
-            <div class="card-title">ICE — Pipeline Beneficiários</div>
-            <div class="card-desc">Análise de clientes beneficiários do pacote ICE Data.</div>
-            <div class="card-foot"><span>Vendas</span><span class="arrow">→</span></div>
+          <div class="card" onclick="show('ice-pipeline')" style="padding:.9rem;">
+            <div style="font-size:11px;color:var(--amber);">💼 Vendas</div>
+            <div style="font-size:13px;font-weight:500;margin-top:4px;">Pipeline ICE</div>
           </div>
-          <div class="card" onclick="show('breakeven')">
-            <div class="card-icon ci-g">📈</div>
-            <div class="tag g">Financeiro</div>
-            <div class="card-title">Breakeven por Produto</div>
-            <div class="card-desc">Análise de breakeven — Maio 2026.</div>
-            <div class="card-foot"><span>Financeiro</span><span class="arrow">→</span></div>
+          <div class="card" onclick="show('roadmap')" style="padding:.9rem;">
+            <div style="font-size:11px;color:var(--text-3);">👔 Management</div>
+            <div style="font-size:13px;font-weight:500;margin-top:4px;">Projetos 2026</div>
           </div>
-          <div class="card" onclick="show('automacao')">
-            <div class="card-icon ci-t">⚡</div>
-            <div class="tag t">Tech</div>
-            <div class="card-title">Sprint CoE Automação</div>
-            <div class="card-desc">Planning 2026 do time de automação.</div>
-            <div class="card-foot"><span>Operações</span><span class="arrow">→</span></div>
+          <div class="card" onclick="show('fees-cheatsheet')" style="padding:.9rem;">
+            <div style="font-size:11px;color:var(--amber);">📋 Bolsas</div>
+            <div style="font-size:13px;font-weight:500;margin-top:4px;">Cheatsheet de Fees</div>
           </div>
-          <div class="card" onclick="show('fees-cheatsheet')">
-            <div class="card-icon ci-a">💵</div>
-            <div class="tag a">Vendas</div>
-            <div class="card-title">Cheatsheet de Fees</div>
-            <div class="card-desc">Consulta rápida de taxas por bolsa, sem precisar acionar o time.</div>
-            <div class="card-foot"><span>Bolsas — Fees & Regras</span><span class="arrow">→</span></div>
+          <div class="card" onclick="show('bpipe')" style="padding:.9rem;">
+            <div style="font-size:11px;color:var(--purple);">⚔️ Competitive</div>
+            <div style="font-size:13px;font-weight:500;margin-top:4px;">B-PIPE vs Broadcast</div>
+          </div>
+          <div class="card" onclick="show('despesas')" style="padding:.9rem;">
+            <div style="font-size:11px;color:var(--green);">💰 Financeiro</div>
+            <div style="font-size:13px;font-weight:500;margin-top:4px;">Despesas com Dados</div>
           </div>
         </div>
+
       </div>
     </div>
 
