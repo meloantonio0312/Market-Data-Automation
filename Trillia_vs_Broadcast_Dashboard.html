@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trillia × Broadcast — Análise Competitiva</title>
+<style>
+  :root[data-theme="dark"]{
+    --bg:#0A1220; --bg2:#0F1B30; --card:#122240; --card2:#16294C;
+    --border:#1F3A66; --text:#E8EDF6; --muted:#8FA3C4; --gold:#D4AF37; --gold2:#F0CC5A;
+    --navy-accent:#3D6FB4; --green:#3DBE7B; --red:#E05C5C; --amber:#E8A33D;
+    --neutral:#5A6E90; --shadow:rgba(0,0,0,.45);
+    --trillia:#FF6B00; --bcast:#D4AF37;
+  }
+  :root[data-theme="light"]{
+    --bg:#F3F5F9; --bg2:#FFFFFF; --card:#FFFFFF; --card2:#F6F8FC;
+    --border:#D8DFEA; --text:#14213A; --muted:#5A6E90; --gold:#A8841B; --gold2:#8A6C12;
+    --navy-accent:#2B5697; --green:#1E8F57; --red:#C13B3B; --amber:#B57614;
+    --neutral:#8A99B5; --shadow:rgba(20,33,58,.12);
+    --trillia:#CC5200; --bcast:#A8841B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.5;transition:background .3s,color .3s}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+  header{background:linear-gradient(135deg,var(--bg2) 0%,var(--card) 100%);border-bottom:2px solid var(--gold);padding:28px 0 22px}
+  .head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}
+  h1{font-size:26px;font-weight:700}
+  h1 .vs{color:var(--muted);font-weight:300;margin:0 8px;font-style:italic}
+  .subtitle{color:var(--muted);font-size:13.5px;margin-top:6px;max-width:720px}
+  .theme-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:20px;cursor:pointer;font-size:13px;transition:all .2s}
+  .theme-btn:hover{border-color:var(--gold)}
+  .tabs{display:flex;gap:4px;margin-top:20px;flex-wrap:wrap}
+  .tab{background:transparent;border:1px solid var(--border);border-bottom:none;color:var(--muted);padding:10px 18px;border-radius:8px 8px 0 0;cursor:pointer;font-size:13.5px;font-weight:600;transition:all .2s}
+  .tab:hover{color:var(--text)}
+  .tab.active{background:var(--gold);color:#0A1220;border-color:var(--gold)}
+  .panel{display:none;padding:28px 0 10px}
+  .panel.active{display:block}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 2px 12px var(--shadow)}
+  .card h3{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .kpi{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:16px 18px}
+  .kpi .v{font-size:24px;font-weight:700;color:var(--gold)}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .kpi.trillia{border-left-color:var(--trillia)} .kpi.trillia .v{color:var(--trillia)}
+  .muted{color:var(--muted);font-size:13px}
+  .section-title{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin:26px 0 14px;display:flex;align-items:center;gap:12px}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+  .co-banner{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .co-badge{font-size:11px;font-weight:700;letter-spacing:1px;padding:4px 12px;border-radius:14px;text-transform:uppercase}
+  .badge-trillia{background:var(--trillia);color:#fff}
+  .badge-bcast{background:var(--gold);color:#0A1220}
+  ul.clean{list-style:none}
+  ul.clean li{padding:7px 0 7px 22px;position:relative;font-size:13.5px;border-bottom:1px dashed var(--border)}
+  ul.clean li:last-child{border-bottom:none}
+  ul.clean li::before{content:'◆';position:absolute;left:2px;color:var(--gold);font-size:9px;top:11px}
+  .trillia-list li::before{color:var(--trillia)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:var(--card2);color:var(--text);text-align:left;padding:11px 14px;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--gold);position:sticky;top:0}
+  th.center,td.center{text-align:center}
+  td{padding:10px 14px;border-bottom:1px solid var(--border)}
+  tr:hover td{background:var(--card2)}
+  .cat-row td{background:var(--bg2);font-weight:700;color:var(--gold);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 14px}
+  .yes{color:var(--green);font-weight:700}
+  .no{color:var(--red);font-weight:700}
+  .partial{color:var(--amber);font-weight:700}
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin:12px 0;font-size:12px;color:var(--muted)}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:.5px}
+  .pill.g{background:rgba(61,190,123,.15);color:var(--green)}
+  .pill.r{background:rgba(224,92,92,.15);color:var(--red)}
+  .pill.a{background:rgba(232,163,61,.15);color:var(--amber)}
+  .pill.n{background:rgba(90,110,144,.2);color:var(--muted)}
+  .battle{border-left:3px solid var(--gold);background:var(--card);border-radius:0 10px 10px 0;padding:16px 18px;margin-bottom:12px}
+  .battle.win{border-left-color:var(--green)}
+  .battle.lose{border-left-color:var(--red)}
+  .battle.neutral{border-left-color:var(--amber)}
+  .battle h4{font-size:14px;font-weight:700;margin-bottom:6px}
+  .objection{background:var(--card2);border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px}
+  .objection b{color:var(--gold)}
+  .alert{background:linear-gradient(135deg,rgba(212,175,55,.08),transparent);border:1px solid var(--gold);border-radius:10px;padding:14px 18px;font-size:13px;margin-top:20px}
+  .alert b{color:var(--gold)}
+  .alert.danger{background:linear-gradient(135deg,rgba(224,92,92,.08),transparent);border-color:var(--red)}
+  .alert.danger b{color:var(--red)}
+  .pos-box{border-radius:10px;padding:16px;border:1px solid var(--border);background:var(--card)}
+  .pos-box h4{font-size:13px;margin-bottom:8px;font-weight:700}
+  footer{margin-top:44px;padding:20px 0 30px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted)}
+  footer .author{color:var(--gold);font-weight:600}
+  @media(max-width:720px){h1{font-size:20px}.tab{padding:8px 12px;font-size:12px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <div class="eyebrow">Análise Competitiva · Market Data & Analytics</div>
+        <h1>Trillia (B3) <span class="vs">×</span> Broadcast</h1>
+        <div class="subtitle">Comparativo estratégico entre a plataforma de dados e analytics da B3 (ex-Neoway/Neurotech) e o ecossistema profissional de dados e notícias do Broadcast (Agência Estado). O adversário mais relevante de médio prazo.</div>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Modo Claro</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab(event,'executive')">Visão Executiva</button>
+      <button class="tab" onclick="showTab(event,'overview')">Visão Geral</button>
+      <button class="tab" onclick="showTab(event,'matrix')">Matriz de Funcionalidades</button>
+      <button class="tab" onclick="showTab(event,'positioning')">Posicionamento</button>
+      <button class="tab" onclick="showTab(event,'battle')">Battle Card</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ============ TAB 1: VISÃO EXECUTIVA ============ -->
+<div class="panel active" id="executive">
+
+  <div class="grid g4" style="margin-bottom:20px">
+    <div class="kpi trillia"><div class="v">R$ 1,1B</div><div class="l">Receita Trillia em 2025 (ex-Neoway/Neurotech) · +10,3% a/a</div></div>
+    <div class="kpi trillia"><div class="v">R$ 327M</div><div class="l">B3 Dados para Mercados de Capitais em 2025 · +15,3% a/a</div></div>
+    <div class="kpi"><div class="v">R$ 16,8M</div><div class="l">Faturamento Broadcast mensal (Mai/2026)</div></div>
+    <div class="kpi"><div class="v">662K</div><div class="l">Instrumentos cobertos pelo Broadcast · +50,5% vs Dez/2025</div></div>
+  </div>
+
+  <div class="alert danger">
+    <b>⚠ Ameaça estratégica:</b> A Trillia é o competidor mais relevante de médio prazo. Diferente da Nelogica (foco em execução de varejo), a Trillia compete diretamente no fornecimento de dados financeiros e analytics B2B — o mesmo core do Broadcast. Com a infraestrutura da B3 por trás e R$1,1B de receita, possui capacidade de subsidiar produtos e expandir agressivamente.
+  </div>
+
+  <div class="section-title">Leitura rápida — onde cada um ganha</div>
+  <div class="grid g2">
+    <div class="pos-box">
+      <h4 style="color:var(--trillia)">🟠 Trillia vence em</h4>
+      <ul class="clean trillia-list" style="margin-top:8px">
+        <li><b>Analytics e dados alternativos:</b> herdou o melhor da Neoway em big data, dados de consumo, crédito e empresas — profundidade que o Broadcast não tem.</li>
+        <li><b>Dados estruturados de empresas:</b> fundamentos, ownership, M&A, private equity — cobertura superior.</li>
+        <li><b>Integração com B3:</b> acesso nativo a dados de custódia, liquidação e registro — vantagem regulatória única.</li>
+        <li><b>Capacidade de investimento:</b> R$1,1B de receita permite subsidiar produtos e queimar caixa para ganhar mercado.</li>
+      </ul>
+    </div>
+    <div class="pos-box">
+      <h4 style="color:var(--gold)">🟡 Broadcast vence em</h4>
+      <ul class="clean" style="margin-top:8px">
+        <li><b>Notícias e editorial em tempo real:</b> Agência Estado com 50+ anos — cobertura política, econômica e de mercado que a Trillia não produz e não consegue replicar.</li>
+        <li><b>Cobertura internacional de bolsas:</b> 32 contratos ativos, ICE Data Services (15 bolsas), Fenics (FX/UST), NUAM (Latam) — a Trillia é essencialmente doméstica.</li>
+        <li><b>Renda Fixa e Derivativos locais:</b> profundidade em curvas, debêntures, CRIs, CRAs e derivativos que a Trillia não cobre com a mesma granularidade.</li>
+        <li><b>Dados em tempo real de qualidade:</b> latência e precisão para mesas de operação — foco que a Trillia ainda não prioriza.</li>
+        <li><b>Agro:</b> 393 clientes, cobertura de bolsas físicas e futuros internacionais — mercado que a Trillia não atende.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ TAB 2: VISÃO GERAL ============ -->
+<div class="panel" id="overview">
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="co-banner"><span class="co-badge badge-trillia">Trillia</span><span class="muted">São Paulo · B3 / ex-Neoway · fundada 2024</span></div>
+      <ul class="clean trillia-list">
+        <li><b>Origem:</b> fusão da Neoway (analytics e big data) com a Neurotech (modelos de risco e crédito), integrada à B3 em 2024 como plataforma unificada de dados.</li>
+        <li><b>DNA de analytics:</b> dados alternativos, comportamento de consumo, scores de crédito, dados de empresas — inteligência de negócio para financeiro e varejo.</li>
+        <li><b>Vantagem estrutural:</b> acesso privilegiado a dados de custódia B3, liquidação DvP e registro de ativos — informação que nenhum concorrente tem.</li>
+        <li><b>Receita:</b> R$1,1B em 2025, crescimento de +10,3% a/a. Capacidade de subsidiar produtos para ganhar mercado.</li>
+        <li><b>Expansão em curso:</b> avançando para dados de mercado de capitais em tempo real — entrando diretamente no território do Broadcast.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="co-banner"><span class="co-badge badge-bcast">Broadcast</span><span class="muted">São Paulo · Agência Estado / Grupo Estado</span></div>
+      <ul class="clean">
+        <li><b>DNA de informação:</b> notícias em tempo real com credibilidade jornalística, dados de mercado multi-bolsa, análises macro e políticas — referência em mesas de operação, tesourarias e assets.</li>
+        <li><b>Modelo B2B profissional:</b> terminal Broadcast+, Broadcast Datafeed (injeção para sistemas), módulos setoriais (Agro, Energia, Político).</li>
+        <li><b>Cobertura internacional crescente:</b> ICE Data Services (15+ bolsas), NUAM (Chile/Colômbia/Peru), Fenics (Treasuries, FX, FXO).</li>
+        <li><b>Diferencial editorial:</b> jornalismo próprio, exclusivas de política econômica, cobertura Banco Central / Fazenda / Congresso — insumo que a Trillia não produz.</li>
+        <li><b>Faturamento:</b> R$16,8M/mês (Mai/2026), 1.741 clientes, margem bruta de 83,9%.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Segmentos-alvo</div>
+  <div class="grid g3">
+    <div class="card">
+      <h3>🏦 Financeiro institucional</h3>
+      <p class="muted" style="font-size:13px">Ambos competem diretamente aqui. Trillia com analytics e dados de empresas; Broadcast com RT, notícias e cobertura internacional. <span class="pill a">Disputa acirrada</span></p>
+    </div>
+    <div class="card">
+      <h3>🌾 Agro & Commodities</h3>
+      <p class="muted" style="font-size:13px">Broadcast domina com 393 clientes e cobertura de bolsas físicas e futuros internacionais. Trillia não tem presença relevante neste segmento. <span class="pill g">Vantagem Broadcast</span></p>
+    </div>
+    <div class="card">
+      <h3>📊 Analytics & BI</h3>
+      <p class="muted" style="font-size:13px">Trillia domina com herança Neoway: dados alternativos, scores, comportamento de consumo, dados de empresas. Broadcast não compete neste espaço. <span class="pill r">Vantagem Trillia</span></p>
+    </div>
+    <div class="card">
+      <h3>🌍 Internacional</h3>
+      <p class="muted" style="font-size:13px">Broadcast com ICE, NUAM e Fenics — cobertura de 32 bolsas. Trillia é essencialmente doméstica, sem contratos internacionais relevantes. <span class="pill g">Vantagem Broadcast</span></p>
+    </div>
+    <div class="card">
+      <h3>🏛️ Governo & Reguladores</h3>
+      <p class="muted" style="font-size:13px">Broadcast tem ticket médio mais alto (R$31,6K) e cobertura de Banco Central / Fazenda / Congresso. Trillia pode usar integração B3 como diferencial regulatório. <span class="pill a">Disputa</span></p>
+    </div>
+    <div class="card">
+      <h3>🏢 Corporativo</h3>
+      <p class="muted" style="font-size:13px">Trillia avança com dados de crédito, risco e due diligence. Broadcast atende com dados de mercado e commodities para corporates. <span class="pill a">Disputa</span></p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ TAB 3: MATRIZ ============ -->
+<div class="panel" id="matrix">
+
+  <div class="legend">
+    <span><b class="yes">✔</b> Sim / Completo</span>
+    <span><b class="partial">◑</b> Parcial / Com restrições</span>
+    <span><b class="no">✘</b> Não possui</span>
+    <span><b style="color:var(--muted)">—</b> Não aplicável</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:35%">Funcionalidade / Dimensão</th>
+        <th class="center" style="color:var(--trillia)">Trillia (B3)</th>
+        <th class="center" style="color:var(--gold)">Broadcast</th>
+        <th>Observação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="cat-row"><td colspan="4">📰 INFORMAÇÃO & NOTÍCIAS</td></tr>
+      <tr><td>Notícias em tempo real</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">Broadcast Agência Estado — diferencial jornalístico único</td></tr>
+      <tr><td>Cobertura política / macroeconomia</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">BC, Fazenda, Congresso — exclusivas em tempo real</td></tr>
+      <tr><td>Estimativas e projeções macro</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">Focus/BACEN, Top5, projeções setoriais</td></tr>
+      <tr><td>Análises setoriais</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Trillia foca em dados estruturados; Broadcast tem análise editorial</td></tr>
+
+      <tr class="cat-row"><td colspan="4">📈 DADOS DE MERCADO RT</td></tr>
+      <tr><td>Cotações nacionais RT (B3)</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Trillia em expansão neste segmento via B3</td></tr>
+      <tr><td>Cotações internacionais RT</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">Broadcast: 32 bolsas via ICE, NUAM, Fenics</td></tr>
+      <tr><td>Renda Fixa e Mercado Balcão</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">Debêntures, CRIs, CRAs, LCIs, LCAs — profundidade Broadcast</td></tr>
+      <tr><td>Curvas de Juros e Câmbio</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">Up2Data / curvas B3 via Broadcast</td></tr>
+      <tr><td>Derivativos</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">Futuros, opções, swaps — cobertura nacional e internacional</td></tr>
+      <tr><td>Commodities bolsas (físico e futuro)</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">CME, ICE, Euronext, B3 — diferencial Agro</td></tr>
+
+      <tr class="cat-row"><td colspan="4">🏢 DADOS DE EMPRESAS</td></tr>
+      <tr><td>Fundamentos e DRE</td><td class="center yes">✔</td><td class="center partial">◑</td><td class="muted">Trillia com maior profundidade histórica</td></tr>
+      <tr><td>Ownership e estrutura societária</td><td class="center yes">✔</td><td class="center partial">◑</td><td class="muted">Herança Neoway — ponto forte da Trillia</td></tr>
+      <tr><td>Deals de M&A e Private Equity</td><td class="center yes">✔</td><td class="center no">✘</td><td class="muted">Trillia tem banco de dados robusto de transações</td></tr>
+      <tr><td>Análises quantitativas / Quant</td><td class="center yes">✔</td><td class="center partial">◑</td><td class="muted">Trillia com modelos de scoring e risco herdados da Neurotech</td></tr>
+
+      <tr class="cat-row"><td colspan="4">📊 ANALYTICS & DADOS ALTERNATIVOS</td></tr>
+      <tr><td>Dados comportamentais / consumo</td><td class="center yes">✔</td><td class="center no">✘</td><td class="muted">Core da Neoway — vantagem exclusiva da Trillia</td></tr>
+      <tr><td>Scores de crédito e risco</td><td class="center yes">✔</td><td class="center no">✘</td><td class="muted">Herança Neurotech — modelos proprietários</td></tr>
+      <tr><td>Dados estruturados multi-segmento</td><td class="center yes">✔</td><td class="center partial">◑</td><td class="muted">Trillia superior em volume e variedade</td></tr>
+      <tr><td>Integração com custódia B3</td><td class="center yes">✔</td><td class="center no">✘</td><td class="muted">Vantagem regulatória exclusiva da Trillia</td></tr>
+
+      <tr class="cat-row"><td colspan="4">🌍 COBERTURA GEOGRÁFICA</td></tr>
+      <tr><td>Brasil</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">Ambos com cobertura nacional robusta</td></tr>
+      <tr><td>América Latina</td><td class="center no">✘</td><td class="center partial">◑</td><td class="muted">Broadcast: NUAM (Chile, Peru, Colômbia) em implantação</td></tr>
+      <tr><td>Internacional (bolsas)</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">Broadcast: 32 contratos, ICE 15 bolsas, Fenics FX/UST</td></tr>
+
+      <tr class="cat-row"><td colspan="4">⚙️ DISTRIBUIÇÃO & INTEGRAÇÃO</td></tr>
+      <tr><td>Terminal profissional</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Broadcast+ consolidado; Trillia ainda em desenvolvimento de UI</td></tr>
+      <tr><td>Datafeed / API</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">Ambos com APIs robustas</td></tr>
+      <tr><td>Add-in MS Office</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">Broadcast com integração Excel/Word</td></tr>
+      <tr><td>Presença local BR / Suporte</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">Ambos com times locais</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ============ TAB 4: POSICIONAMENTO ============ -->
+<div class="panel" id="positioning">
+
+  <div class="section-title">Onde cada um está hoje</div>
+  <div class="grid g2">
+    <div class="pos-box">
+      <h4 style="color:var(--trillia)">Trillia — Analytics & Dados Estruturados</h4>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px">Posicionada como plataforma de inteligência de negócio — dados alternativos, scoring, analytics preditivo. Avança agora para dados de mercado de capitais em tempo real. Com R$1,1B de receita e suporte da B3, tem capacidade para subsidiar preço e ganhar mercado rapidamente.</p>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <span class="pill g">Analytics B2B</span>
+        <span class="pill g">Dados de empresas</span>
+        <span class="pill g">Scoring / Risco</span>
+        <span class="pill a">RT em expansão</span>
+        <span class="pill r">Latam ausente</span>
+        <span class="pill r">Sem editorial</span>
+      </div>
+    </div>
+    <div class="pos-box">
+      <h4 style="color:var(--gold)">Broadcast — Dados RT & Informação Profissional</h4>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px">Referência em dados de mercado em tempo real, notícias e análises para o mercado institucional. Expande internacionalmente via ICE, NUAM e Fenics. Diferencial editorial inimitável. Ticket médio corporativo elevado (R$18K em Financeiro, R$31,6K em Governo).</p>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <span class="pill g">RT multi-bolsa</span>
+        <span class="pill g">Editorial único</span>
+        <span class="pill g">Agro líder</span>
+        <span class="pill g">Latam em expansão</span>
+        <span class="pill a">Analytics limitado</span>
+        <span class="pill r">Dados alternativos</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Cenários de convergência — onde o risco aumenta</div>
+  <div class="grid g3">
+    <div class="card">
+      <h3>📡 Trillia avança em RT</h3>
+      <p class="muted" style="font-size:13px;margin-top:6px">Se a Trillia lançar um datafeed RT competitivo usando infraestrutura B3, pode oferecer bundle dados + analytics + custódia em preço subsidiado. Risco médio-alto para 2026–2027.</p>
+    </div>
+    <div class="card">
+      <h3>📰 Trillia compra editorial</h3>
+      <p class="muted" style="font-size:13px;margin-top:6px">Aquisição de um veículo jornalístico financeiro eliminaria o principal diferencial do Broadcast. Baixa probabilidade no curto prazo, mas não descartável com capital da B3.</p>
+    </div>
+    <div class="card">
+      <h3>🤝 B3 expande o bundle</h3>
+      <p class="muted" style="font-size:13px;margin-top:6px">B3 já fatura R$327M em dados. Um bundle B3 Exchange + Trillia Analytics + dados RT poderia ser oferecido diretamente às corretoras e assets — comprimindo o mercado endereçável do Broadcast.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ TAB 5: BATTLE CARD ============ -->
+<div class="panel" id="battle">
+
+  <div class="section-title">Como responder quando o cliente menciona a Trillia</div>
+
+  <div class="battle win">
+    <h4>✅ "A Trillia tem dados de empresas mais completos"</h4>
+    <div class="objection"><b>Resposta:</b> "A Trillia é excelente para analytics e dados estruturados de empresas — é a herança da Neoway. O Broadcast não compete nisso. Mas se você precisa de cotações em tempo real, notícias do Banco Central em segundos, cobertura de 32 bolsas internacionais e dados de Renda Fixa e Derivativos, a Trillia não entrega isso ainda. São ferramentas complementares, não substitutas."</div>
+  </div>
+
+  <div class="battle win">
+    <h4>✅ "A B3 vai integrar tudo na Trillia e eu não vou precisar de vocês"</h4>
+    <div class="objection"><b>Resposta:</b> "A B3 faz isso com dados domésticos. Mas câmbio, US Treasuries via Fenics, bolsas europeias via ICE, commodities globais via CME/CBOT — isso não passa pela B3 e nunca vai passar. E a Agência Estado com cobertura política e econômica em tempo real não é algo que a B3 vai construir. Você teria dois produtos mesmo que a Trillia avance."</div>
+  </div>
+
+  <div class="battle neutral">
+    <h4>◑ "A Trillia é mais barata"</h4>
+    <div class="objection"><b>Resposta:</b> "Depende do que você está comprando. A Trillia oferece analytics e dados alternativos — se isso é o que você precisa, ela pode ser mais eficiente. Mas se você precisa de RT multi-bolsa, notícias em tempo real e cobertura Latam, o custo-benefício muda. Vale entender quais dados você usa no dia a dia e calcular o real."</div>
+  </div>
+
+  <div class="battle lose">
+    <h4>⚠️ Onde a Trillia tem vantagem real — não tente negar</h4>
+    <div class="objection"><b>Situação:</b> Cliente focado em analytics, scoring de crédito, dados de consumo ou fundamentos históricos de empresas.<br><br><b>Abordagem honesta:</b> "Para esse caso específico, a Trillia é mais adequada. Mas se você também precisa de dados de mercado em tempo real para o seu sistema ou mesa, posso mostrar como o Broadcast Datafeed complementa o que vocês já têm — sem substituir a Trillia."</div>
+  </div>
+
+  <div class="alert">
+    <b>Mensagem central:</b> Trillia e Broadcast não são substitutos — são complementares para clientes sofisticados. A ameaça real é a Trillia convencer o board do cliente de que "B3 resolve tudo". O antídoto é mostrar o que B3 + Trillia genuinamente não entrega: editorial em tempo real, cobertura internacional de bolsas e dados Agro.
+  </div>
+
+</div>
+
+</div><!-- /wrap -->
+
+<div class="wrap">
+  <footer>
+    <span>Broadcast · Agência Estado · Grupo Estado · Market Data & Automation</span>
+    <span class="author">Antonio Melo · <span id="footer-date"></span></span>
+  </footer>
+</div>
+
+<script>
+  function showTab(e, id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    e.target.classList.add('active');
+    document.getElementById(id).classList.add('active');
+  }
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeBtn').textContent = isDark ? '🌙 Modo Escuro' : '☀️ Modo Claro';
+  }
+  const d = new Date();
+  const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  document.getElementById('footer-date').textContent = `${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
+</script>
+</body>
+</html>
