@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMA × Broadcast — Análise Competitiva & Oportunidade</title>
+<style>
+  :root[data-theme="dark"]{
+    --bg:#0A1220;--bg2:#0F1B30;--card:#122240;--card2:#16294C;
+    --border:#1F3A66;--text:#E8EDF6;--muted:#8FA3C4;--gold:#D4AF37;--gold2:#F0CC5A;
+    --green:#3DBE7B;--red:#E05C5C;--amber:#E8A33D;--teal:#2EC4B6;
+    --neutral:#5A6E90;--shadow:rgba(0,0,0,.45);
+    --cma:#00B4D8;--bcast:#D4AF37;
+  }
+  :root[data-theme="light"]{
+    --bg:#F3F5F9;--bg2:#FFFFFF;--card:#FFFFFF;--card2:#F6F8FC;
+    --border:#D8DFEA;--text:#14213A;--muted:#5A6E90;--gold:#A8841B;--gold2:#8A6C12;
+    --green:#1E8F57;--red:#C13B3B;--amber:#B57614;--teal:#1A9E92;
+    --neutral:#8A99B5;--shadow:rgba(20,33,58,.12);
+    --cma:#0077A8;--bcast:#A8841B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.5;transition:background .3s,color .3s}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+  header{background:linear-gradient(135deg,var(--bg2) 0%,var(--card) 100%);border-bottom:2px solid var(--gold);padding:28px 0 22px}
+  .head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}
+  h1{font-size:26px;font-weight:700}
+  h1 .vs{color:var(--muted);font-weight:300;margin:0 8px;font-style:italic}
+  .subtitle{color:var(--muted);font-size:13.5px;margin-top:6px;max-width:720px}
+  .theme-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:20px;cursor:pointer;font-size:13px;transition:all .2s}
+  .theme-btn:hover{border-color:var(--gold)}
+  .tabs{display:flex;gap:4px;margin-top:20px;flex-wrap:wrap}
+  .tab{background:transparent;border:1px solid var(--border);border-bottom:none;color:var(--muted);padding:10px 18px;border-radius:8px 8px 0 0;cursor:pointer;font-size:13.5px;font-weight:600;transition:all .2s}
+  .tab:hover{color:var(--text)}
+  .tab.active{background:var(--gold);color:#0A1220;border-color:var(--gold)}
+  .panel{display:none;padding:28px 0 10px}
+  .panel.active{display:block}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 2px 12px var(--shadow)}
+  .card h3{font-size:15px;margin-bottom:12px}
+  .kpi{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:16px 18px}
+  .kpi .v{font-size:22px;font-weight:700;color:var(--gold)}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .kpi.cma{border-left-color:var(--cma)}.kpi.cma .v{color:var(--cma)}
+  .kpi.warn{border-left-color:var(--amber)}.kpi.warn .v{color:var(--amber)}
+  .muted{color:var(--muted);font-size:13px}
+  .section-title{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin:26px 0 14px;display:flex;align-items:center;gap:12px}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+  .co-banner{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .co-badge{font-size:11px;font-weight:700;letter-spacing:1px;padding:4px 12px;border-radius:14px;text-transform:uppercase}
+  .badge-cma{background:var(--cma);color:#fff}
+  .badge-bcast{background:var(--gold);color:#0A1220}
+  ul.clean{list-style:none}
+  ul.clean li{padding:7px 0 7px 22px;position:relative;font-size:13.5px;border-bottom:1px dashed var(--border)}
+  ul.clean li:last-child{border-bottom:none}
+  ul.clean li::before{content:'◆';position:absolute;left:2px;color:var(--gold);font-size:9px;top:11px}
+  .cma-list li::before{color:var(--cma)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:var(--card2);color:var(--text);text-align:left;padding:11px 14px;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--gold);position:sticky;top:0}
+  th.center,td.center{text-align:center}
+  td{padding:10px 14px;border-bottom:1px solid var(--border)}
+  tr:hover td{background:var(--card2)}
+  .cat-row td{background:var(--bg2);font-weight:700;color:var(--gold);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 14px}
+  .yes{color:var(--green);font-weight:700}
+  .no{color:var(--red);font-weight:700}
+  .partial{color:var(--amber);font-weight:700}
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin:12px 0;font-size:12px;color:var(--muted)}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:.5px}
+  .pill.g{background:rgba(61,190,123,.15);color:var(--green)}
+  .pill.r{background:rgba(224,92,92,.15);color:var(--red)}
+  .pill.a{background:rgba(232,163,61,.15);color:var(--amber)}
+  .pill.b{background:rgba(0,180,216,.12);color:var(--cma)}
+  .pill.n{background:rgba(90,110,144,.2);color:var(--muted)}
+  .battle{border-left:3px solid var(--gold);background:var(--card);border-radius:0 10px 10px 0;padding:16px 18px;margin-bottom:12px}
+  .battle.win{border-left-color:var(--green)}
+  .battle.lose{border-left-color:var(--red)}
+  .battle.opp{border-left-color:var(--teal)}
+  .battle h4{font-size:14px;font-weight:700;margin-bottom:6px}
+  .objection{background:var(--card2);border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px}
+  .objection b{color:var(--gold)}
+  .alert{background:linear-gradient(135deg,rgba(212,175,55,.08),transparent);border:1px solid var(--gold);border-radius:10px;padding:14px 18px;font-size:13px;margin-top:20px}
+  .alert b{color:var(--gold)}
+  .alert.opp{background:linear-gradient(135deg,rgba(46,196,182,.08),transparent);border-color:var(--teal)}
+  .alert.opp b{color:var(--teal)}
+  .alert.warn{background:linear-gradient(135deg,rgba(232,163,61,.08),transparent);border-color:var(--amber)}
+  .alert.warn b{color:var(--amber)}
+  .prospect-tag{display:inline-flex;font-size:11px;background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text);margin:3px}
+  .prospect-tag.hot{border-color:rgba(61,190,123,.4);color:var(--green);background:rgba(61,190,123,.08)}
+  .prospect-tag.warm{border-color:rgba(232,163,61,.4);color:var(--amber);background:rgba(232,163,61,.08)}
+  .pos-box{border-radius:10px;padding:16px;border:1px solid var(--border);background:var(--card)}
+  .pos-box h4{font-size:13px;margin-bottom:8px;font-weight:700}
+  footer{margin-top:44px;padding:20px 0 30px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted)}
+  footer .author{color:var(--gold);font-weight:600}
+  @media(max-width:720px){h1{font-size:20px}.tab{padding:8px 12px;font-size:12px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <div class="eyebrow">Análise Competitiva & Oportunidade · Market Data Brasil</div>
+        <h1>CMA Mercados <span class="vs">×</span> Broadcast</h1>
+        <div class="subtitle">Comparativo estratégico entre a CMA (Consultoria, Métodos, Assessoria e Mercantil) e o Broadcast — com foco especial na oportunidade de captura de clientes diante do momento de fragilidade financeira da CMA.</div>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Modo Claro</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab(event,'executive')">Visão Executiva</button>
+      <button class="tab" onclick="showTab(event,'overview')">Quem é a CMA</button>
+      <button class="tab" onclick="showTab(event,'matrix')">Matriz de Funcionalidades</button>
+      <button class="tab" onclick="showTab(event,'opportunity')">Oportunidade de Captura</button>
+      <button class="tab" onclick="showTab(event,'battle')">Battle Card</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ══════ TAB 1: VISÃO EXECUTIVA ══════ -->
+<div class="panel active" id="executive">
+
+  <div class="grid g4" style="margin-bottom:20px">
+    <div class="kpi cma"><div class="v">1973</div><div class="l">Fundação — 50+ anos de mercado</div></div>
+    <div class="kpi cma"><div class="v">R$ 30–80M</div><div class="l">Receita anual estimada CMA (mercado + telecom + DC)</div></div>
+    <div class="kpi warn"><div class="v">R$ 12–18M</div><div class="l">Receita potencial anual capturável pelo Broadcast</div></div>
+    <div class="kpi"><div class="v">R$ 16,8M</div><div class="l">Faturamento Broadcast mensal — Mai/2026</div></div>
+  </div>
+
+  <div class="alert opp">
+    <b>🎯 Oportunidade estratégica:</b> A fragilidade financeira da CMA cria uma janela de captura rara. Clientes que dependem da CMA para dados críticos de negócio estão preocupados com continuidade de serviço, qualidade de suporte e investimento em produto. Esse é o momento exato em que estão mais receptivos a uma conversa de migração — especialmente se a abordagem for de <b>solução de continuidade</b>, não de ataque ao concorrente.
+  </div>
+
+  <div class="section-title">Onde o Broadcast vence claramente</div>
+  <div class="grid g2">
+    <div class="pos-box">
+      <h4 style="color:var(--green)">🟢 Vantagens estruturais do Broadcast</h4>
+      <ul class="clean" style="margin-top:8px">
+        <li><b>Editorial em tempo real:</b> Agência Estado com 50+ anos — cobertura política, econômica e de mercado que a CMA não produz.</li>
+        <li><b>Cobertura internacional de bolsas:</b> 32 contratos, ICE Data (15 bolsas), Fenics (FX/UST), NUAM (Latam) — CMA depende de terceiros.</li>
+        <li><b>Renda Fixa e Derivativos:</b> profundidade em curvas, debêntures, CRIs, CRAs — diferencial para tesourarias e assets.</li>
+        <li><b>Solidez financeira:</b> Grupo Estado com estrutura robusta — garantia de continuidade para clientes preocupados com a CMA.</li>
+        <li><b>Datafeed profissional:</b> Broadcast Datafeed com maior capilaridade e contratos institucionais consolidados.</li>
+      </ul>
+    </div>
+    <div class="pos-box">
+      <h4 style="color:var(--cma)">🔵 Onde a CMA tem presença</h4>
+      <ul class="clean cma-list" style="margin-top:8px">
+        <li><b>Agro com SAFRAS & Mercado:</b> parceria histórica com dados de commodities físicas e análises setoriais — base de clientes agro relevante.</li>
+        <li><b>Preços Físicos Brasil:</b> fretes, insumos e cotações físicas — nicho onde CMA tem tradição.</li>
+        <li><b>Custo-benefício:</b> percepção de produto mais acessível para clientes menores.</li>
+        <li><b>Terminal financeiro próprio:</b> interface consolidada com base de usuários fidelizados.</li>
+        <li><b>Certificações ISO:</b> ISO 27001 e ISO 9001 ativas — credencial relevante para clientes corporativos.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════ TAB 2: QUEM É A CMA ══════ -->
+<div class="panel" id="overview">
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="co-banner"><span class="co-badge badge-cma">CMA</span><span class="muted">São Paulo · fundada 1973 · multinacional brasileira</span></div>
+    <ul class="clean cma-list">
+      <li><b>Origem e DNA:</b> empresa de tecnologia focada em informação financeira e agro desde 1973 — uma das mais antigas do mercado brasileiro de dados.</li>
+      <li><b>Portfólio:</b> terminal financeiro CMA, API Datafeed, soluções Agro (via SAFRAS & Mercado), plataforma de negociação eletrônica, ERP/BI feeds, Data Center e telecomunicações.</li>
+      <li><b>Presença:</b> matriz em SP, 9 filiais no Brasil, filiais nos EUA, Argentina, Colômbia e Espanha. Clientes em 35 países. ISO 27001 e ISO 9001 ativas.</li>
+      <li><b>Agro:</b> parceria com SAFRAS & Mercado e Agência Dow Jones para commodities. Principal diferencial histórico frente ao Broadcast neste segmento.</li>
+      <li><b>Momento atual:</b> dificuldades financeiras relatadas internamente — impacto em investimento em produto, suporte e retenção de talentos técnicos.</li>
+    </ul>
+  </div>
+
+  <div class="section-title">Segmentos de atuação da CMA</div>
+  <div class="grid g3">
+    <div class="card">
+      <h3 style="color:var(--cma)">🏦 Tesouraria & Financeiro</h3>
+      <p class="muted" style="font-size:13px;margin-top:6px">Terminal CMA com Renda Fixa, câmbio, juros e ações. Atende bancos médios, corretoras e departamentos financeiros de corporates. Compete diretamente com Broadcast+ neste segmento. <span class="pill g">Alvo prioritário</span></p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--cma)">🌾 Agronegócio</h3>
+      <p class="muted" style="font-size:13px;margin-top:6px">Maior diferencial histórico da CMA. Dados físicos, fretes, SAFRAS & Mercado, Dow Jones Agro. Base de clientes agro consolidada — o segmento mais difícil de migrar, mas também o mais valioso. <span class="pill a">Migração gradual</span></p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--cma)">🏢 Corporativo & ERP</h3>
+      <p class="muted" style="font-size:13px;margin-top:6px">API Datafeed para sistemas internos, BI, CRM, chatbots e compliance. Clientes que integram dados em sistemas próprios. Migração mais técnica mas viável com Broadcast Datafeed. <span class="pill g">Alvo secundário</span></p>
+    </div>
+  </div>
+
+  <div class="alert warn" style="margin-top:20px">
+    <b>⚠ Contexto financeiro:</b> As dificuldades financeiras da CMA impactam diretamente a capacidade de investir em produto, contratar e reter tecnologia, renovar contratos com provedores de dados e manter SLA de suporte. Clientes percebem isso na degradação gradual do serviço — e esse é o gatilho natural para a conversa de migração.
+  </div>
+
+</div>
+
+<!-- ══════ TAB 3: MATRIZ ══════ -->
+<div class="panel" id="matrix">
+
+  <div class="legend">
+    <span><b class="yes">✔</b> Sim / Completo</span>
+    <span><b class="partial">◑</b> Parcial / Limitado</span>
+    <span><b class="no">✘</b> Não possui</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:38%">Funcionalidade / Dimensão</th>
+        <th class="center" style="color:var(--cma)">CMA</th>
+        <th class="center" style="color:var(--gold)">Broadcast</th>
+        <th>Observação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="cat-row"><td colspan="4">📰 INFORMAÇÃO & NOTÍCIAS</td></tr>
+      <tr><td>Notícias em tempo real</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Broadcast Agência Estado — diferencial jornalístico único</td></tr>
+      <tr><td>Cobertura política / macroeconomia BR</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">BC, Fazenda, Congresso — exclusivas da Agência Estado</td></tr>
+      <tr><td>Estimativas e projeções macro</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">CMA com análises semanais de câmbio e juros; Broadcast mais abrangente</td></tr>
+      <tr><td>Insights de mercado RT</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Broadcast com maior profundidade editorial</td></tr>
+
+      <tr class="cat-row"><td colspan="4">📈 DADOS DE MERCADO</td></tr>
+      <tr><td>Cotações nacionais RT (B3)</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">Ambos com cobertura completa B3</td></tr>
+      <tr><td>Cotações internacionais RT</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Broadcast: 32 bolsas via ICE, NUAM, Fenics. CMA depende de provedores terceiros</td></tr>
+      <tr><td>Renda Fixa e Mercado Balcão</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Broadcast superior em debêntures, CRIs, CRAs e curvas</td></tr>
+      <tr><td>Curvas de Juros e Câmbio</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Broadcast com Up2Data / curvas B3 integradas</td></tr>
+      <tr><td>Derivativos</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Broadcast com cobertura nacional e internacional (ICE)</td></tr>
+      <tr><td>Dados históricos</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">CMA com banco histórico robusto; Broadcast em expansão</td></tr>
+
+      <tr class="cat-row"><td colspan="4">🌾 AGRONEGÓCIO</td></tr>
+      <tr><td>Commodities bolsas internacionais</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">Ambos cobrem CME, ICE, Euronext. CMA via SAFRAS & Dow Jones</td></tr>
+      <tr><td>Preços Futuros Brasil (B3)</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">Cobertura equivalente</td></tr>
+      <tr><td>Preços Físicos Brasil</td><td class="center yes">✔</td><td class="center partial">◑</td><td class="muted">CMA com vantagem histórica em físicos via SAFRAS & Mercado</td></tr>
+      <tr><td>Fretes</td><td class="center yes">✔</td><td class="center partial">◑</td><td class="muted">CMA com cobertura mais ampla de fretes agrícolas</td></tr>
+      <tr><td>Análises e relatórios agro</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">CMA via SAFRAS; Broadcast via Agência Estado / módulo Agro</td></tr>
+
+      <tr class="cat-row"><td colspan="4">⚙️ PLATAFORMA & DISTRIBUIÇÃO</td></tr>
+      <tr><td>Terminal profissional</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">Ambos com terminais consolidados; Broadcast com Broadcast+</td></tr>
+      <tr><td>API / Datafeed</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">CMA API DataFeed; Broadcast Datafeed — ambos robustos</td></tr>
+      <tr><td>Add-in MS Office</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">Broadcast com integração Excel/Word</td></tr>
+      <tr><td>Suporte local BR</td><td class="center yes">✔</td><td class="center yes">✔</td><td class="muted">Ambos com times locais — qualidade CMA sob pressão financeira</td></tr>
+      <tr><td>Estabilidade e continuidade</td><td class="center partial">◑</td><td class="center yes">✔</td><td class="muted">Risco CMA elevado; Broadcast com Grupo Estado por trás</td></tr>
+      <tr><td>Investimento em produto</td><td class="center no">✘</td><td class="center yes">✔</td><td class="muted">CMA com dificuldades para investir; Broadcast com roadmap ativo</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ══════ TAB 4: OPORTUNIDADE DE CAPTURA ══════ -->
+<div class="panel" id="opportunity">
+
+  <div class="alert opp">
+    <b>🎯 A tese de captura:</b> Clientes CMA não estão insatisfeitos com o produto histórico — estão inseguros com o futuro. A abordagem correta não é "a CMA é ruim", mas sim "o Broadcast garante continuidade, evolução de produto e cobertura superior". A fragilidade financeira da CMA é o gatilho; o Broadcast tem que ser a solução.
+  </div>
+
+  <div class="section-title">Estimativa de receita capturável</div>
+  <div class="grid g4" style="margin-bottom:24px">
+    <div class="kpi cma">
+      <div class="v">R$ 30–80M</div>
+      <div class="l">Receita anual estimada da CMA (market data + telecom + DC)</div>
+    </div>
+    <div class="kpi cma">
+      <div class="v">~800–2.000</div>
+      <div class="l">Estimativa de clientes ativos na base CMA</div>
+    </div>
+    <div class="kpi warn">
+      <div class="v">~140</div>
+      <div class="l">Clientes capturáveis — 20% financeiro + 12% agro (cenário base)</div>
+    </div>
+    <div class="kpi">
+      <div class="v">R$ 12–18M</div>
+      <div class="l">Receita incremental anual para o Broadcast — cenário conservador</div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:var(--muted);margin-bottom:24px">⚠ Estimativas baseadas em market sizing público e métricas internas do Broadcast. CMA não divulga receita. Taxa de captura considera migração gradual em 18–24 meses, não imediata.</p>
+
+  <div class="section-title">Perfil dos clientes CMA — onde atacar primeiro</div>
+  <div class="grid g3">
+    <div class="card">
+      <h3 style="color:var(--green)">🔥 Prioridade Alta</h3>
+      <p class="muted" style="font-size:12px;margin:8px 0">Clientes que usam CMA para dados críticos de tesouraria e financeiro — onde a continuidade é inegociável.</p>
+      <div style="margin-top:10px">
+        <span class="prospect-tag hot">Bancos médios (Safra, ABC, Daycoval)</span>
+        <span class="prospect-tag hot">Departamentos financeiros corporates</span>
+        <span class="prospect-tag hot">Corretoras regionais</span>
+        <span class="prospect-tag hot">Assets de médio porte</span>
+        <span class="prospect-tag hot">Tesourarias industriais</span>
+      </div>
+      <p class="muted" style="font-size:11px;margin-top:10px">Argumento: "Você não pode ter risco de continuidade nos dados da sua tesouraria. O Broadcast tem o Grupo Estado por trás."</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--amber)">🌡 Prioridade Média</h3>
+      <p class="muted" style="font-size:12px;margin:8px 0">Clientes agro que usam CMA para físicos e SAFRAS. Migração mais complexa mas possível com proposta de valor clara.</p>
+      <div style="margin-top:10px">
+        <span class="prospect-tag warm">Trading companies agro (Cargill, Bunge)</span>
+        <span class="prospect-tag warm">Corretoras de grãos</span>
+        <span class="prospect-tag warm">Cooperativas (Coamo, Comigo)</span>
+        <span class="prospect-tag warm">Empresas de insumos agro</span>
+        <span class="prospect-tag warm">Consultoras agro</span>
+      </div>
+      <p class="muted" style="font-size:11px;margin-top:10px">Argumento: "O Broadcast tem cobertura Agro com Agência Estado + bolsas internacionais. Você ganha mais do que perde na migração."</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--muted)">📋 Prioridade Baixa</h3>
+      <p class="muted" style="font-size:12px;margin:8px 0">Clientes que usam CMA puramente para API/Datafeed em sistemas. Migração técnica — mais longa mas viável.</p>
+      <div style="margin-top:10px">
+        <span class="prospect-tag">Fintechs com feed próprio</span>
+        <span class="prospect-tag">Sistemas ERP corporativos</span>
+        <span class="prospect-tag">Plataformas de BI</span>
+        <span class="prospect-tag">Startups financeiras</span>
+      </div>
+      <p class="muted" style="font-size:11px;margin-top:10px">Argumento técnico: "O Broadcast Datafeed tem a mesma estrutura de API com cobertura superior."</p>
+    </div>
+  </div>
+
+  <div class="section-title">Sinais de que um cliente CMA está pronto para migrar</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:.9rem 1.1rem;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:center">
+      <div style="font-size:18px">📞</div>
+      <div style="font-size:13px;color:var(--text)">Cliente abre reclamação sobre <b>tempo de resposta do suporte CMA</b> — sinal claro de degradação de serviço.</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:.9rem 1.1rem;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:center">
+      <div style="font-size:18px">🔄</div>
+      <div style="font-size:13px;color:var(--text)">Cliente menciona que a CMA <b>não está atualizando ou evoluindo</b> o produto — sinal de corte de investimento.</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:.9rem 1.1rem;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:center">
+      <div style="font-size:18px">💸</div>
+      <div style="font-size:13px;color:var(--text)">CMA começa a <b>aumentar preços abruptamente</b> para cobrir dificuldades de caixa — janela de renegociação.</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:.9rem 1.1rem;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:center">
+      <div style="font-size:18px">👥</div>
+      <div style="font-size:13px;color:var(--text)">Cliente menciona <b>rotatividade alta na equipe CMA</b> que atende a conta — perda de relacionamento e qualidade.</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:.9rem 1.1rem;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:center">
+      <div style="font-size:18px">📰</div>
+      <div style="font-size:13px;color:var(--text)">Cliente começa a pedir <b>dados que a CMA não entrega mais</b> — cobertura internacional, notícias RT, derivativos.</div>
+    </div>
+  </div>
+
+  <div class="alert" style="margin-top:20px">
+    <b>Como abordar:</b> Nunca ataque a CMA diretamente — isso gera defensividade. A abordagem ideal é: <i>"Sei que vocês usam a CMA há anos. Queria entender se estão satisfeitos com a evolução do produto e do suporte — e mostrar o que o Broadcast faz diferente hoje."</i> Deixe o cliente falar primeiro.
+  </div>
+
+</div>
+
+<!-- ══════ TAB 5: BATTLE CARD ══════ -->
+<div class="panel" id="battle">
+
+  <div class="section-title">Como responder em cada cenário</div>
+
+  <div class="battle win">
+    <h4>✅ "Usamos a CMA há 20 anos, é difícil mudar"</h4>
+    <div class="objection"><b>Resposta:</b> "Entendemos — 20 anos de relacionamento é muito. Nossa proposta não é substituir da noite para o dia. Podemos fazer um piloto paralelo por 90 dias, sem cancelar o que vocês têm. Você compara lado a lado e decide com calma. O risco zero é nosso."</div>
+  </div>
+
+  <div class="battle win">
+    <h4>✅ "A CMA é mais barata"</h4>
+    <div class="objection"><b>Resposta:</b> "Pode ser — dependendo do pacote. Mas o custo verdadeiro inclui o risco de continuidade. Se a CMA parar de investir no produto ou tiver problemas operacionais, o custo de uma migração emergencial é muito maior do que a diferença de mensalidade hoje. O Broadcast tem o Grupo Estado por trás — estrutura de longo prazo."</div>
+  </div>
+
+  <div class="battle opp">
+    <h4>🎯 "Estamos avaliando fornecedores — a CMA está nos dando trabalho"</h4>
+    <div class="objection"><b>Resposta:</b> "Esse é exatamente o momento certo para nos conhecer. Posso mostrar o Broadcast+ esta semana? Temos cobertura superior em Renda Fixa, notícias em tempo real da Agência Estado e cobertura de bolsas internacionais que a CMA não entrega. E um time de suporte que não está sob pressão financeira."</div>
+  </div>
+
+  <div class="battle win">
+    <h4>✅ "A CMA tem dados agro que vocês não têm (físicos, fretes)"</h4>
+    <div class="objection"><b>Resposta:</b> "A CMA tem uma tradição forte em físicos via SAFRAS & Mercado — reconhecemos isso. O que o Broadcast adiciona é: bolsas internacionais de commodities (CME, ICE, Euronext) em tempo real, notícias da Agência Estado sobre política agrícola, e integração com dados financeiros da mesma plataforma. Para quem precisa dos dois mundos — preço físico e mercado financeiro — o Broadcast entrega o pacote completo."</div>
+  </div>
+
+  <div class="battle lose">
+    <h4>⚠️ Onde não vale forçar — seja honesto</h4>
+    <div class="objection"><b>Situação:</b> Cliente puramente agro que usa CMA exclusivamente para preços físicos locais e fretes — sem interesse em dados financeiros ou internacionais.<br><br><b>Abordagem honesta:</b> "Para preços físicos locais e fretes, a CMA ainda tem vantagem histórica via SAFRAS. Se isso é o seu único uso, posso mostrar o que temos — mas seria honesto em dizer que a migração só faz sentido se você também precisar de dados financeiros integrados."</div>
+  </div>
+
+  <div class="alert opp" style="margin-top:24px">
+    <b>Mensagem central:</b> O Broadcast não é "melhor que a CMA" em tudo — mas é <b>mais completo, mais estável e com futuro garantido</b>. Para clientes que precisam de mais do que física e agro — notícias RT, derivativos, cobertura internacional, renda fixa — a migração é uma evolução natural. A fragilidade da CMA é o catalisador; o Broadcast tem que ser a escolha óbvia de destino.
+  </div>
+
+</div>
+
+</div>
+
+<div class="wrap">
+  <footer>
+    <span>Broadcast · Agência Estado · Grupo Estado · Market Data & Automation</span>
+    <span class="author">Antonio Melo · <span id="footer-date"></span></span>
+  </footer>
+</div>
+
+<script>
+  function showTab(e, id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    e.target.classList.add('active');
+    document.getElementById(id).classList.add('active');
+  }
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeBtn').textContent = isDark ? '🌙 Modo Escuro' : '☀️ Modo Claro';
+  }
+  const d = new Date();
+  const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  document.getElementById('footer-date').textContent = `${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
+</script>
+</body>
+</html>
