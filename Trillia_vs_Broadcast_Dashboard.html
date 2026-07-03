@@ -118,6 +118,7 @@
       <button class="tab" onclick="showTab(event,'frentes')">As 4 Frentes da Trillia</button>
       <button class="tab" onclick="showTab(event,'capitais')">Frente 1 — Mercado de Capitais</button>
       <button class="tab" onclick="showTab(event,'outros')">Frentes 2, 3 e 4</button>
+      <button class="tab" onclick="showTab(event,'matriz')">Matriz de Funcionalidades</button>
       <button class="tab" onclick="showTab(event,'risco')">Risco Estratégico</button>
       <button class="tab" onclick="showTab(event,'battle')">Battle Card</button>
     </div>
@@ -388,7 +389,94 @@
 
 </div>
 
-<!-- ══ TAB 5: RISCO ESTRATÉGICO ══ -->
+<!-- ══ TAB: MATRIZ DE FUNCIONALIDADES ══ -->
+<div class="panel" id="matriz">
+
+  <div class="alert gold" style="margin-bottom:20px">
+    <b>Como ler esta matriz:</b> cobre todas as 4 frentes da Trillia em um único lugar. As linhas em <span style="color:var(--amber)">amarelo</span> marcam onde há sobreposição com o Broadcast. As demais são territórios exclusivos de cada player.
+  </div>
+
+  <div class="legend" style="margin-bottom:16px">
+    <span><b class="yes">✔</b> Sim / Completo</span>
+    <span><b class="par">◑</b> Parcial / Em expansão</span>
+    <span><b class="no">✘</b> Não possui</span>
+    <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:rgba(232,163,61,.15);border-radius:3px;display:inline-block"></span> Sobreposição com Broadcast</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:36%">Funcionalidade / Dimensão</th>
+        <th class="c" style="color:var(--trillia);width:13%">Trillia</th>
+        <th class="c" style="color:var(--gold);width:13%">Broadcast</th>
+        <th>Observação</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- FRENTE 1 -->
+      <tr class="cat"><td colspan="4">📈 FRENTE 1 — INTELIGÊNCIA DE MERCADO & CAPITAIS</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Notícias financeiras em tempo real</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">Diferencial inimitável da Agência Estado — BC, Fazenda, Congresso</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Cobertura política e macroeconomia BR</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">A Trillia não produz conteúdo editorial</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Estimativas e projeções macro</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">Focus/BACEN, Top5, análises setoriais</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Cotações B3 em tempo real</td><td class="c par">◑</td><td class="c yes">✔</td><td class="muted">Trillia expandindo em RT com infraestrutura B3; Broadcast consolidado</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Bolsas internacionais RT</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">Broadcast: 32 bolsas via ICE, NUAM, Fenics. Trillia sem contratos internacionais</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Renda Fixa e Mercado Balcão</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">Debêntures, CRIs, CRAs, LCIs — profundidade Broadcast</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Curvas de juros e câmbio</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">Up2Data / curvas B3 integradas no Broadcast</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Derivativos e futuros</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">Nacional + internacional via ICE Data Services</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Commodities internacionais</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">CME, ICE, Euronext — diferencial Agro Broadcast</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Dados proprietários B3 (custódia, liquidação)</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Vantagem exclusiva Trillia — inimitável</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Fundamentos e demonstrações financeiras</td><td class="c yes">✔</td><td class="c par">◑</td><td class="muted">Trillia com maior profundidade histórica via Neoway</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Ownership e estrutura societária</td><td class="c yes">✔</td><td class="c par">◑</td><td class="muted">Herança Neoway — ponto forte da Trillia</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Deals de M&amp;A e Private Equity</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Banco de dados transacionais robusto na Trillia</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Analytics quantitativo / modelos</td><td class="c yes">✔</td><td class="c par">◑</td><td class="muted">Neurotech com modelos de scoring e risco</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Terminal profissional</td><td class="c par">◑</td><td class="c yes">✔</td><td class="muted">Broadcast+ consolidado; Trillia UI em desenvolvimento</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>API / Datafeed</td><td class="c yes">✔</td><td class="c yes">✔</td><td class="muted">Ambos com APIs robustas</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Cobertura Latam</td><td class="c no">✘</td><td class="c par">◑</td><td class="muted">Broadcast com NUAM em implantação (Chile, Peru, Colômbia)</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Add-in MS Office</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">Broadcast com integração Excel/Word</td></tr>
+
+      <!-- FRENTE 2 -->
+      <tr class="cat"><td colspan="4">🔒 FRENTE 2 — COMPLIANCE & PREVENÇÃO A FRAUDES</td></tr>
+      <tr><td>Anti-fraude em financiamento de veículos</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">14 bancos parceiros; evita R$ 500K/dia em perdas</td></tr>
+      <tr><td>Detecção de fraudes no setor de saúde</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">R$ 8M economizados por seguradora em 6 meses</td></tr>
+      <tr><td>Prevenção à lavagem de dinheiro (PLD/AML)</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Mapeamento de conexões CPF/CNPJ suspeitos</td></tr>
+      <tr><td>Compliance de stakeholders (PEP, KYC)</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Análise de sócios e beneficiários finais</td></tr>
+      <tr><td>SNG — Sistema Nacional de Gravames</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Operado pela Trillia — restrições financeiras sobre veículos</td></tr>
+      <tr><td>Certificados de desmontagem veicular</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Plataforma para Lei 14.902 e Programa MOVER</td></tr>
+
+      <!-- FRENTE 3 -->
+      <tr class="cat"><td colspan="4">🛡️ FRENTE 3 — MERCADO SEGURADOR</td></tr>
+      <tr><td>Precificação de seguros (auto, vida, saúde)</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Modelos atuariais com ML — herança Neurotech</td></tr>
+      <tr><td>Subscrição automática de apólices</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Análise de risco em tempo real na aceitação</td></tr>
+      <tr><td>Motor de decisão de sinistros</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Avaliação automatizada com IA</td></tr>
+      <tr><td>Score de risco atuarial</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Décadas de expertise em modelos Neurotech</td></tr>
+
+      <!-- FRENTE 4 -->
+      <tr class="cat"><td colspan="4">💳 FRENTE 4 — CRÉDITO & RECUPERAÇÃO</td></tr>
+      <tr><td>Score de crédito (Cadastro Positivo)</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Dados comportamentais + Cadastro Positivo</td></tr>
+      <tr><td>Infraestrutura de financiamentos imobiliários</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">PDTec — plataforma de financiamentos imobiliários</td></tr>
+      <tr><td>Infraestrutura de financiamentos automotivos</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">DataStock — dados e plataforma automotiva</td></tr>
+      <tr><td>Recuperação de crédito com IA</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">R$ 20M recuperados/mês para um banco com agente de IA</td></tr>
+      <tr><td>Renegociação de dívidas (Desenrola)</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">R$ 53B em renegociações, 15M de brasileiros</td></tr>
+      <tr><td>Propensão de consumo para marketing</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Indicadores de capacidade financeira para campanhas</td></tr>
+
+      <!-- GERAL -->
+      <tr class="cat"><td colspan="4">⚙️ DIMENSÕES GERAIS</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Presença local BR / suporte</td><td class="c yes">✔</td><td class="c yes">✔</td><td class="muted">Ambos com times locais robustos</td></tr>
+      <tr><td>Modelo de negócio</td><td class="c yes">✔</td><td class="c yes">✔</td><td class="muted">Trillia: cocriação customizada. Broadcast: produto + contrato</td></tr>
+      <tr><td>Capacidade de investimento</td><td class="c yes">✔</td><td class="c par">◑</td><td class="muted">Trillia: R$ 3B investidos, meta 30% receita B3. Broadcast: Grupo Estado</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Cobertura setorial (financeiro)</td><td class="c yes">✔</td><td class="c yes">✔</td><td class="muted">Ambos atendem os maiores bancos — com produtos diferentes</td></tr>
+      <tr><td>Cobertura setorial (saúde, seguros, varejo)</td><td class="c yes">✔</td><td class="c no">✘</td><td class="muted">Territórios exclusivos da Trillia</td></tr>
+      <tr style="background:rgba(232,163,61,.04)"><td>Cobertura setorial (Agro)</td><td class="c no">✘</td><td class="c yes">✔</td><td class="muted">Broadcast: 393 clientes agro — território exclusivo</td></tr>
+
+    </tbody>
+  </table>
+
+  <p style="font-size:11px;color:var(--muted);margin-top:12px">Linhas com fundo amarelo indicam dimensões onde há sobreposição entre Trillia e Broadcast. Das 42 dimensões mapeadas, apenas 18 têm sobreposição — e mesmo nessas, os produtos são frequentemente complementares.</p>
+
+</div>
+
+<!-- ══ TAB: RISCO ESTRATÉGICO ══ -->
 <div class="panel" id="risco">
 
   <div class="st">Cenários de risco real para o Broadcast</div>
