@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nelogica × Broadcast — Análise Competitiva</title>
+<style>
+  :root[data-theme="dark"]{
+    --bg:#0A1220; --bg2:#0F1B30; --card:#122240; --card2:#16294C;
+    --border:#1F3A66; --text:#E8EDF6; --muted:#8FA3C4; --gold:#D4AF37; --gold2:#F0CC5A;
+    --navy-accent:#3D6FB4; --green:#3DBE7B; --red:#E05C5C; --amber:#E8A33D;
+    --neutral:#5A6E90; --shadow:rgba(0,0,0,.45);
+    --nelo:#7C4DFF; --bcast:#D4AF37;
+  }
+  :root[data-theme="light"]{
+    --bg:#F3F5F9; --bg2:#FFFFFF; --card:#FFFFFF; --card2:#F6F8FC;
+    --border:#D8DFEA; --text:#14213A; --muted:#5A6E90; --gold:#A8841B; --gold2:#8A6C12;
+    --navy-accent:#2B5697; --green:#1E8F57; --red:#C13B3B; --amber:#B57614;
+    --neutral:#8A99B5; --shadow:rgba(20,33,58,.12);
+    --nelo:#5E35B1; --bcast:#A8841B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.5;transition:background .3s,color .3s}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+
+  /* Header */
+  header{background:linear-gradient(135deg,var(--bg2) 0%,var(--card) 100%);border-bottom:2px solid var(--gold);padding:28px 0 22px}
+  .head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}
+  h1{font-size:26px;font-weight:700}
+  h1 .vs{color:var(--muted);font-weight:300;margin:0 8px;font-style:italic}
+  .subtitle{color:var(--muted);font-size:13.5px;margin-top:6px;max-width:720px}
+  .theme-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:20px;cursor:pointer;font-size:13px;transition:all .2s}
+  .theme-btn:hover{border-color:var(--gold)}
+
+  /* Tabs */
+  .tabs{display:flex;gap:4px;margin-top:20px;flex-wrap:wrap}
+  .tab{background:transparent;border:1px solid var(--border);border-bottom:none;color:var(--muted);padding:10px 18px;border-radius:8px 8px 0 0;cursor:pointer;font-size:13.5px;font-weight:600;transition:all .2s}
+  .tab:hover{color:var(--text)}
+  .tab.active{background:var(--gold);color:#0A1220;border-color:var(--gold)}
+  .panel{display:none;padding:28px 0 10px}
+  .panel.active{display:block}
+
+  /* Cards & grids */
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 2px 12px var(--shadow)}
+  .card h3{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .card h3 .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .kpi{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:16px 18px}
+  .kpi .v{font-size:24px;font-weight:700;color:var(--gold)}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .kpi.nelo{border-left-color:var(--nelo)} .kpi.nelo .v{color:var(--nelo)}
+  .muted{color:var(--muted);font-size:13px}
+  .section-title{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin:26px 0 14px;display:flex;align-items:center;gap:12px}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+  /* Company banner */
+  .co-banner{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .co-badge{font-size:11px;font-weight:700;letter-spacing:1px;padding:4px 12px;border-radius:14px;text-transform:uppercase}
+  .badge-nelo{background:var(--nelo);color:#fff}
+  .badge-bcast{background:var(--gold);color:#0A1220}
+
+  ul.clean{list-style:none}
+  ul.clean li{padding:7px 0 7px 22px;position:relative;font-size:13.5px;border-bottom:1px dashed var(--border)}
+  ul.clean li:last-child{border-bottom:none}
+  ul.clean li::before{content:'◆';position:absolute;left:2px;color:var(--gold);font-size:9px;top:11px}
+  .nelo-list li::before{color:var(--nelo)}
+
+  /* Product cards */
+  .prod{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden}
+  .prod::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .prod.nelo::before{background:var(--nelo)}
+  .prod.bcast::before{background:var(--gold)}
+  .prod .tier{font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .prod .name{font-size:17px;font-weight:700;margin:4px 0 2px}
+  .prod .price{font-size:20px;font-weight:700;color:var(--gold);margin:8px 0 2px}
+  .prod.nelo .price{color:var(--nelo)}
+  .prod .price small{font-size:11px;color:var(--muted);font-weight:400}
+  .prod p{font-size:12.5px;color:var(--muted);margin-top:8px}
+
+  /* Matrix table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:var(--card2);color:var(--text);text-align:left;padding:11px 14px;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--gold);position:sticky;top:0}
+  th.center,td.center{text-align:center}
+  td{padding:10px 14px;border-bottom:1px solid var(--border)}
+  tr:hover td{background:var(--card2)}
+  .cat-row td{background:var(--bg2);font-weight:700;color:var(--gold);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 14px}
+  .yes{color:var(--green);font-weight:700}
+  .no{color:var(--red);font-weight:700}
+  .partial{color:var(--amber);font-weight:700}
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin:12px 0;font-size:12px;color:var(--muted)}
+  .legend span b{font-size:14px}
+
+  /* Positioning quadrant */
+  .quad-note{font-size:12.5px;color:var(--muted);margin-top:10px}
+  .pos-box{border-radius:10px;padding:16px;border:1px solid var(--border)}
+  .pos-box h4{font-size:13px;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:.5px}
+  .pill.g{background:rgba(61,190,123,.15);color:var(--green)}
+  .pill.r{background:rgba(224,92,92,.15);color:var(--red)}
+  .pill.a{background:rgba(232,163,61,.15);color:var(--amber)}
+  .pill.n{background:rgba(90,110,144,.2);color:var(--muted)}
+
+  /* Battle card */
+  .battle{border-left:3px solid var(--gold)}
+  .battle.lose{border-left-color:var(--red)}
+  .battle.win{border-left-color:var(--green)}
+  .objection{background:var(--card2);border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px}
+  .objection b{color:var(--gold)}
+
+  .alert{background:linear-gradient(135deg,rgba(212,175,55,.08),transparent);border:1px solid var(--gold);border-radius:10px;padding:14px 18px;font-size:13px;margin-top:20px}
+  .alert b{color:var(--gold)}
+
+  footer{margin-top:44px;padding:20px 0 30px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted)}
+  footer .author{color:var(--gold);font-weight:600}
+  @media(max-width:720px){h1{font-size:20px}.tab{padding:8px 12px;font-size:12px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <div class="eyebrow">Análise Competitiva · Market Data & Plataformas</div>
+        <h1>Nelogica Profit <span class="vs">×</span> Broadcast</h1>
+        <div class="subtitle">Comparativo de portfólio, funcionalidades e posicionamento estratégico entre a plataforma de trading líder do varejo brasileiro e o ecossistema profissional de dados e notícias do Broadcast (Agência Estado).</div>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Modo Claro</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab(event,'conversion')">Visão Executiva</button>
+      <button class="tab" onclick="showTab(event,'overview')">Visão Geral</button>
+      <button class="tab" onclick="showTab(event,'products')">Portfólio & Preços</button>
+      <button class="tab" onclick="showTab(event,'matrix')">Matriz de Funcionalidades</button>
+      <button class="tab" onclick="showTab(event,'positioning')">Posicionamento</button>
+      <button class="tab" onclick="showTab(event,'battle')">Battle Card</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ============ TAB 1: OVERVIEW ============ -->
+<div class="panel" id="overview">
+
+  <div class="grid g4">
+    <div class="kpi nelo"><div class="v">~R$ 385/mês</div><div class="l">Profit Pro direto na Nelogica (plano mensal)</div></div>
+    <div class="kpi nelo"><div class="v">5 versões</div><div class="l">Training · One · Plus · Pro · Ultra</div></div>
+    <div class="kpi"><div class="v">50+ anos</div><div class="l">Legado editorial Agência Estado / Grupo Estado</div></div>
+    <div class="kpi"><div class="v">32</div><div class="l">Contratos de bolsas nacionais e internacionais no Broadcast</div></div>
+  </div>
+
+  <div class="section-title">Quem é quem</div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="co-banner"><span class="co-badge badge-nelo">Nelogica</span><span class="muted">Porto Alegre · fundada em 2003</span></div>
+      <ul class="clean nelo-list">
+        <li><b>DNA de execução:</b> plataforma de trading (roteamento de ordens, DMA, RLP) — se autodeclara a maior plataforma de trading da América Latina.</li>
+        <li><b>Modelo B2B2C dominante:</b> distribuída via corretoras (XP, Rico, CM Capital, BTG etc.), frequentemente com gratuidade condicionada a volume de minicontratos + RLP ativo.</li>
+        <li><b>Ecossistema em expansão:</b> Vector (cripto), Comdinheiro (dados e consolidação de carteiras), Akeloo (IR), Invest Academy (educação) e soluções institucionais para corretoras.</li>
+        <li><b>Inovação recente:</b> ProfitAI Code Builder (IA para gerar estratégias em código), plugins de Tape Reading, backtest tick a tick.</li>
+        <li><b>Receita ancorada</b> em assinatura de varejo trader + white label institucional.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="co-banner"><span class="co-badge badge-bcast">Broadcast</span><span class="muted">São Paulo · Agência Estado / Grupo Estado</span></div>
+      <ul class="clean">
+        <li><b>DNA de informação:</b> notícias em tempo real com credibilidade jornalística, dados de mercado multi-bolsa, análises macro e políticas — referência em mesas de operação, tesourarias e assets.</li>
+        <li><b>Modelo B2B profissional:</b> terminal Broadcast+, Broadcast Datafeed (injeção para sistemas), módulos setoriais (Agro, Energia, Político).</li>
+        <li><b>Cobertura internacional crescente:</b> ICE Data Services (15+ bolsas internacionais em expansão), NUAM (Chile/Colômbia/Peru), Fenics (Treasuries, FX, FXO).</li>
+        <li><b>Diferencial editorial:</b> jornalismo próprio, exclusivas de política econômica, cobertura Banco Central / Fazenda / Congresso — insumo que a Nelogica não produz.</li>
+        <li><b>Receita ancorada</b> em contratos corporativos recorrentes e redistribuição de dados.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert"><b>Leitura executiva:</b> Nelogica e Broadcast <b>não competem no mesmo core</b> — a Nelogica vende <i>execução</i> para o trader de varejo; o Broadcast vende <i>informação profissional</i> para o mercado institucional e corporativo. O ponto de atrito real está nas bordas: (1) Comdinheiro avançando em dados e analytics B2B; (2) traders profissionais que usam o Profit como front de execução e questionam a necessidade de um terminal de informação adicional; (3) o combo B3 + Trillia + plataformas de varejo comprimindo o espaço de dados domésticos.</div>
+</div>
+
+<!-- ============ TAB 2: PRODUCTS ============ -->
+<div class="panel" id="products">
+
+  <div class="section-title">Linha Profit (Nelogica) — venda direta multicorretoras</div>
+  <div class="grid g4">
+    <div class="prod nelo">
+      <div class="tier">Entrada</div>
+      <div class="name">Profit One</div>
+      <div class="price">R$ ~90/mês <small>ou grátis via corretora*</small></div>
+      <p>Tempo real com ferramentas clássicas: gráficos, boletas ágeis de compra e venda. Porta de entrada do ecossistema.</p>
+    </div>
+    <div class="prod nelo">
+      <div class="tier">Intermediário</div>
+      <div class="name">Profit Plus</div>
+      <div class="price">R$ ~180/mês <small>ou grátis via corretora*</small></div>
+      <p>Análise gráfica + análise de fluxo. Versátil, atende a maioria dos estilos operacionais do varejo ativo.</p>
+    </div>
+    <div class="prod nelo">
+      <div class="tier">Avançado</div>
+      <div class="name">Profit Pro</div>
+      <div class="price">R$ 385/mês <small>(até R$ 330 no bianual)</small></div>
+      <p>Ferramentas gráficas e Tape Reading aprimorados, automação de estratégias, simulador, replay de mercado, relatórios de performance.</p>
+    </div>
+    <div class="prod nelo">
+      <div class="tier">Top de linha</div>
+      <div class="name">Profit Ultra</div>
+      <div class="price">R$ 600+/mês <small>(estimado, plano direto)</small></div>
+      <p>Tudo das demais versões + Inside Track, Copilot, Motion Tracker, backtest tick a tick, otimização de parâmetros, replay múltiplo, login simultâneo, IV Ranking, cripto, ProfitAI Code Builder e suporte telefônico.</p>
+    </div>
+  </div>
+  <p class="muted" style="margin-top:10px">*Gratuidade típica via corretoras: operar 1+ minicontrato (WIN/WDO) a cada 30 dias com RLP ativo; sem a condição, corretoras cobram valores como R$ 120–190/mês pelo Pro. Preços diretos da Nelogica variam por plano de fidelidade (mensal → bianual). Também existe o <b>Profit Training</b> (sem tempo real, foco em replay/simulação) e o <b>Vector</b> para cripto. Valores de One/Plus/Ultra devem ser validados na NeloStore antes de uso externo.</p>
+
+  <div class="section-title">Linha Broadcast (Agência Estado)</div>
+  <div class="grid g3">
+    <div class="prod bcast">
+      <div class="tier">Terminal profissional</div>
+      <div class="name">Broadcast+</div>
+      <div class="price">Tabela comercial <small>(contrato corporativo)</small></div>
+      <p>Terminal completo: cotações multi-bolsa em tempo real, notícias exclusivas Agência Estado, análises, curvas de juros, câmbio, renda fixa, ferramentas de estudo e chat de mercado.</p>
+    </div>
+    <div class="prod bcast">
+      <div class="tier">Dados para sistemas</div>
+      <div class="name">Broadcast Datafeed</div>
+      <div class="price">Tabela comercial <small>(por escopo de dados)</small></div>
+      <p>Feed de dados em tempo real para integração em sistemas proprietários, risk, pricing e aplicações internas — concorrente direto de B-PIPE em contas domésticas.</p>
+    </div>
+    <div class="prod bcast">
+      <div class="tier">Módulos & verticais</div>
+      <div class="name">Módulos Setoriais</div>
+      <div class="price">Add-ons <small>(Agro, Energia, Político…)</small></div>
+      <p>Conteúdo especializado por vertical, apoiado na redação própria — camada editorial sem equivalente no portfólio Nelogica.</p>
+    </div>
+  </div>
+
+  <div class="alert"><b>Nota de precificação:</b> a assimetria dos modelos dificulta comparação direta de preço. A Nelogica publica preço de varejo (assinatura individual, subsídio via corretora/RLP); o Broadcast opera preço corporativo por contrato/usuário com dados licenciados de bolsas. Em pitch comercial, evitar comparação R$/mês crua — comparar <b>custo total de informação por mesa</b> (terminal + dados + notícias + compliance de licenciamento).</p></div>
+</div>
+
+<!-- ============ TAB 3: MATRIX ============ -->
+<div class="panel" id="matrix">
+  <div class="legend">
+    <span><b class="yes">●</b> Nativo / forte</span>
+    <span><b class="partial">●</b> Parcial / limitado / via add-on</span>
+    <span><b class="no">●</b> Não oferece</span>
+  </div>
+  <div class="card" style="padding:0;overflow-x:auto">
+    <table>
+      <thead>
+        <tr><th style="width:44%">Funcionalidade</th><th class="center" style="width:28%">Profit (Nelogica)</th><th class="center" style="width:28%">Broadcast</th></tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="3">Dados de Mercado</td></tr>
+        <tr><td>Cotações B3 em tempo real (ações, derivativos)</td><td class="center yes">●</td><td class="center yes">●</td></tr>
+        <tr><td>Cobertura internacional multi-bolsa (EUA, Europa, LATAM)</td><td class="center partial">● limitada</td><td class="center yes">● ICE 15+ bolsas / NUAM</td></tr>
+        <tr><td>Book de ofertas / profundidade (DOM)</td><td class="center yes">●</td><td class="center yes">●</td></tr>
+        <tr><td>Curvas de juros, DI, renda fixa e títulos públicos</td><td class="center partial">●</td><td class="center yes">●</td></tr>
+        <tr><td>Câmbio interbancário e balcão (Fenics FX/FXO)</td><td class="center no">●</td><td class="center yes">●</td></tr>
+        <tr><td>Criptoativos</td><td class="center yes">● Vector / plugin</td><td class="center partial">● cotações</td></tr>
+        <tr><td>Dados fundamentalistas / consolidação (via ecossistema)</td><td class="center partial">● Comdinheiro</td><td class="center yes">●</td></tr>
+
+        <tr class="cat-row"><td colspan="3">Notícias & Conteúdo</td></tr>
+        <tr><td>Redação jornalística própria em tempo real</td><td class="center no">●</td><td class="center yes">● Agência Estado</td></tr>
+        <tr><td>Cobertura exclusiva de política econômica (BC, Fazenda, Congresso)</td><td class="center no">●</td><td class="center yes">●</td></tr>
+        <tr><td>Análises e comentários de mercado intraday</td><td class="center partial">● parceiros</td><td class="center yes">●</td></tr>
+        <tr><td>Conteúdo setorial (Agro, Energia)</td><td class="center no">●</td><td class="center yes">● módulos</td></tr>
+
+        <tr class="cat-row"><td colspan="3">Execução & Trading</td></tr>
+        <tr><td>Roteamento de ordens / DMA multicorretora</td><td class="center yes">●</td><td class="center no">●</td></tr>
+        <tr><td>Automação de estratégias / robôs</td><td class="center yes">●</td><td class="center no">●</td></tr>
+        <tr><td>Tape Reading avançado (footprint, agressão, players)</td><td class="center yes">●</td><td class="center partial">● times & trades</td></tr>
+        <tr><td>Simulador e replay de mercado</td><td class="center yes">●</td><td class="center no">●</td></tr>
+        <tr><td>Backtest (tick a tick no Ultra) e otimização de parâmetros</td><td class="center yes">●</td><td class="center no">●</td></tr>
+        <tr><td>Gestão de risco operacional (stop, trailing, breakeven)</td><td class="center yes">●</td><td class="center no">●</td></tr>
+
+        <tr class="cat-row"><td colspan="3">Tecnologia & Distribuição</td></tr>
+        <tr><td>Datafeed para sistemas / API corporativa</td><td class="center partial">● institucional</td><td class="center yes">● Datafeed</td></tr>
+        <tr><td>IA aplicada (geração de estratégias / copiloto)</td><td class="center yes">● ProfitAI</td><td class="center partial">● em evolução</td></tr>
+        <tr><td>Mobile + Web + Desktop</td><td class="center yes">●</td><td class="center yes">●</td></tr>
+        <tr><td>White label para corretoras</td><td class="center yes">●</td><td class="center no">●</td></tr>
+        <tr><td>Licenciamento/redistribuição formal de dados de bolsas</td><td class="center partial">●</td><td class="center yes">● core do negócio</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted" style="margin-top:12px">Matriz baseada em informações públicas (site Nelogica, corretoras parceiras) e conhecimento interno do portfólio Broadcast. Células "parcial" merecem validação antes de uso em material externo.</p>
+</div>
+
+<!-- ============ TAB 4: POSITIONING ============ -->
+<div class="panel" id="positioning">
+
+  <div class="section-title">Eixos de posicionamento</div>
+  <div class="grid g2">
+    <div class="card pos-box">
+      <h4><span class="pill n">EIXO 1</span> Execução × Informação</h4>
+      <p class="muted">A Nelogica domina o eixo de <b style="color:var(--text)">execução</b> — ordem, latência, automação. O Broadcast domina o eixo de <b style="color:var(--text)">informação</b> — notícia, dado multi-fonte, análise. Na mesa institucional os dois convivem: Profit como front de ordem, Broadcast como fonte de decisão.</p>
+    </div>
+    <div class="card pos-box">
+      <h4><span class="pill n">EIXO 2</span> Varejo × Institucional</h4>
+      <p class="muted">Nelogica escala pelo varejo trader (centenas de milhares de licenças subsidiadas por corretoras via RLP). Broadcast concentra valor no institucional e corporativo, com ticket médio maior e churn menor, mas base numérica muito menor.</p>
+    </div>
+  </div>
+
+  <div class="section-title">Onde a Nelogica ameaça o Broadcast</div>
+  <div class="grid g3">
+    <div class="card battle lose">
+      <h3><span class="dot" style="background:var(--red)"></span>Comdinheiro</h3>
+      <p class="muted">A aquisição do Comdinheiro deu à Nelogica um braço de dados, analytics e consolidação B2B que mira exatamente clientes corporativos — família de produtos mais próxima do território Broadcast.</p>
+    </div>
+    <div class="card battle lose">
+      <h3><span class="dot" style="background:var(--red)"></span>Erosão pela base</h3>
+      <p class="muted">Profissionais que "cresceram" no Profit no varejo tendem a levá-lo para o buy-side. Se a Nelogica anexar camada de notícias/dados via parcerias, ataca o argumento do terminal de informação.</p>
+    </div>
+    <div class="card battle lose">
+      <h3><span class="dot" style="background:var(--red)"></span>Velocidade de produto</h3>
+      <p class="muted">Cadência alta de features (ProfitAI, plugins, backtest tick a tick) cria percepção de inovação contínua — régua de comparação de UX e IA que também será aplicada ao Broadcast+.</p>
+    </div>
+  </div>
+
+  <div class="section-title">Onde o Broadcast tem vantagem estrutural</div>
+  <div class="grid g3">
+    <div class="card battle win">
+      <h3><span class="dot" style="background:var(--green)"></span>Jornalismo proprietário</h3>
+      <p class="muted">Redação própria com furos de política econômica é ativo não replicável por software. Nelogica depende de terceiros para notícia — não há equivalente no portfólio.</p>
+    </div>
+    <div class="card battle win">
+      <h3><span class="dot" style="background:var(--green)"></span>Licenciamento internacional</h3>
+      <p class="muted">Malha de contratos com bolsas (ICE 15+, NUAM, Fenics, LME…) e capacidade de redistribuição formal — barreira regulatória/contratual de anos que o modelo de varejo da Nelogica não cobre.</p>
+    </div>
+    <div class="card battle win">
+      <h3><span class="dot" style="background:var(--green)"></span>Confiabilidade institucional</h3>
+      <p class="muted">Compliance de licenciamento, SLA corporativo e neutralidade (não é corretora nem depende de RLP) — argumentos decisivos em tesourarias, assets e áreas de risco.</p>
+    </div>
+  </div>
+
+  <div class="alert"><b>Tese estratégica:</b> a resposta ao avanço Nelogica/Comdinheiro não é competir em execução, e sim <b>aprofundar o fosso onde eles não conseguem entrar</b>: dados internacionais licenciados, jornalismo exclusivo, datafeed corporativo e derived data. Em paralelo, monitorar movimentos da Nelogica em (1) parcerias de conteúdo/notícia, (2) ofertas B2B do Comdinheiro em contas Broadcast, (3) integração de dados internacionais.</div>
+</div>
+
+<!-- ============ TAB 5: BATTLE CARD ============ -->
+<div class="panel" id="battle">
+
+  <div class="section-title">Battle Card — time comercial</div>
+  <div class="grid g2">
+    <div class="card battle win">
+      <h3><span class="dot" style="background:var(--green)"></span>Quando ganhamos</h3>
+      <ul class="clean">
+        <li>Cliente precisa de <b>notícia em tempo real com credibilidade</b> para decisão (mesas, tesourarias, RI, assessorias).</li>
+        <li>Necessidade de <b>dados internacionais licenciados</b> (EUA, Europa, LATAM) com compliance de redistribuição.</li>
+        <li>Integração de dados em <b>sistemas proprietários</b> via Datafeed (pricing, risco, backoffice).</li>
+        <li>Cobertura de <b>juros, câmbio interbancário e renda fixa</b> — território fraco do Profit.</li>
+        <li>Cliente corporativo que exige <b>neutralidade</b> (sem vínculo com corretora ou RLP).</li>
+      </ul>
+    </div>
+    <div class="card battle lose">
+      <h3><span class="dot" style="background:var(--red)"></span>Quando perdemos (ou não é nossa briga)</h3>
+      <ul class="clean nelo-list">
+        <li>Trader pessoa física de day trade — o Profit subsidiado via corretora é imbatível em custo.</li>
+        <li>Cliente busca <b>execução, automação e robôs</b> — não competimos nesse eixo; posicionar como complemento.</li>
+        <li>Tape reading avançado (footprint, agressão) como critério nº 1 da compra.</li>
+        <li>Orçamento individual de varejo comparando R$/mês de assinatura pessoal.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Tratamento de objeções</div>
+  <div class="card">
+    <div class="objection"><b>"O Profit já me dá cotação em tempo real de graça."</b><br>A gratuidade é condicionada a volume operado + RLP ativo na corretora — é subsídio de execução, não fornecimento de informação. O Broadcast entrega notícia exclusiva, multi-bolsa internacional, juros e câmbio que o Profit não cobre, com licenciamento formal para uso corporativo.</div>
+    <div class="objection"><b>"O Comdinheiro resolve minha parte de dados."</b><br>O Comdinheiro é forte em consolidação e dados históricos/fundamentalistas, mas não substitui tempo real multi-bolsa internacional, redação jornalística própria nem feed corporativo com SLA. São camadas diferentes da stack de informação.</div>
+    <div class="objection"><b>"Vocês são mais caros."</b><br>Comparar custo total por mesa: Broadcast+ substitui a soma de terminal + serviço de notícias + fontes internacionais avulsas + risco de uso não licenciado de dados. Em contas com compliance ativo, o custo do não-licenciamento supera a diferença de preço.</div>
+  </div>
+
+  <div class="alert"><b>Ações sugeridas:</b> (1) validar preços atuais de One/Plus/Ultra na NeloStore para versão externa deste material; (2) mapear contas Broadcast onde o Comdinheiro já está presente; (3) incluir a Nelogica no monitoramento trimestral de inteligência competitiva junto com Bloomberg, LSEG, Valor PRO e Trillia.</div>
+</div>
+
+<!-- ============ TAB 1: VISÃO EXECUTIVA ============ -->
+<div class="panel active" id="conversion">
+
+  <div class="alert" style="margin-top:0"><b>Premissa para a diretoria:</b> o day trader varejo com Profit subsidiado <b>não é alvo de conversão</b> — o custo de aquisição não fecha e o produto dele é execução, não informação. A oportunidade real está em <b>quatro segmentos adjacentes</b> onde a Nelogica não tem produto ou está estruturalmente vulnerável.</div>
+
+  <div class="section-title">Segmentos-alvo de conversão</div>
+  <div class="grid g2">
+    <div class="card battle win">
+      <h3><span class="dot" style="background:var(--green)"></span>1 · O trader que se profissionaliza <span class="pill g">ALTA PRIORIDADE</span></h3>
+      <ul class="clean">
+        <li><b>Quem é:</b> trader PF de alto volume que vira PJ, monta prop desk, mesa proprietária ou gestora nascente.</li>
+        <li><b>O que muda:</b> a licença de varejo do Profit (via corretora) não cobre uso profissional — dados da B3 exigem licenciamento de usuário profissional. Uso corporativo com licença retail é passivo de auditoria.</li>
+        <li><b>Nova necessidade:</b> juros/DI, títulos públicos, câmbio interbancário, mercados internacionais e notícia em tempo real — tudo fora do alcance do Profit.</li>
+        <li><b>Papel do Broadcast:</b> destino natural da transição. A Nelogica não tem produto-ponte para esse momento.</li>
+      </ul>
+    </div>
+    <div class="card battle win">
+      <h3><span class="dot" style="background:var(--green)"></span>2 · Empresas usando Profit como "terminal barato" <span class="pill g">ALTA PRIORIDADE</span></h3>
+      <ul class="clean">
+        <li><b>Quem é:</b> tesourarias de médias empresas, assessorias de investimento, family offices e escritórios que rodam licenças de varejo em contexto corporativo.</li>
+        <li><b>A vulnerabilidade:</b> descompasso de compliance — uso profissional de dados licenciados como não-profissional. Risco regulatório e contratual junto à B3.</li>
+        <li><b>Abordagem:</b> venda consultiva de regularização + upgrade de informação, não guerra de preço. O argumento é "custo do não-licenciamento", não R$/mês.</li>
+      </ul>
+    </div>
+    <div class="card battle win">
+      <h3><span class="dot" style="background:var(--green)"></span>3 · Contas Comdinheiro com dor de tempo real</h3>
+      <ul class="clean">
+        <li><b>Quem é:</b> clientes B2B do Comdinheiro (consolidação, histórico, fundamentalista) que precisam de tempo real multi-bolsa, notícia e feed corporativo.</li>
+        <li><b>A brecha:</b> o Comdinheiro é forte em dado histórico e analytics, fraco em tempo real internacional e sem redação própria — camadas que o Broadcast entrega em um contrato só.</li>
+        <li><b>Ação:</b> mapear a carteira Comdinheiro sobreposta a prospects Broadcast e atacar pela camada que falta, sem pedir a substituição total.</li>
+      </ul>
+    </div>
+    <div class="card battle win">
+      <h3><span class="dot" style="background:var(--green)"></span>4 · O trader macro/juros dentro do varejo</h3>
+      <ul class="clean">
+        <li><b>Quem é:</b> nicho do varejo sofisticado que opera DI, dólar e eventos macro — onde a notícia É o sinal operacional.</li>
+        <li><b>A dor:</b> no Profit ele recebe o preço se mexendo, mas descobre o motivo minutos depois em fontes abertas. Furos de BC/Fazenda/Congresso chegam primeiro no Broadcast.</li>
+        <li><b>Papel do Broadcast:</b> venda como <b>complemento</b> ao Profit (informação + execução), não substituição — reduz a fricção da troca a zero.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Gatilhos de migração — o que efetivamente faz o cliente trocar</div>
+  <div class="grid g3">
+    <div class="card">
+      <h3><span class="dot" style="background:var(--gold)"></span>Gatilho regulatório</h3>
+      <p class="muted">Auditoria ou enquadramento de licenciamento da B3/bolsas (usuário profissional × não-profissional). É o gatilho mais forte porque é <b style="color:var(--text)">compulsório</b> — o cliente não escolhe o momento.</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--gold)"></span>Gatilho do RLP</h3>
+      <p class="muted">A gratuidade do Profit exige RLP ativo — a corretora internaliza o fluxo na ponta oposta do cliente. Quando o trader amadurece e entende o conflito, o "grátis" perde valor. Broadcast = neutralidade: não é corretora e não monetiza o fluxo do cliente.</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--gold)"></span>Gatilho de escopo</h3>
+      <p class="muted">Primeira operação fora do universo B3 (Treasuries, câmbio interbancário, LATAM, commodities internacionais). O Profit não acompanha; a malha ICE/NUAM/Fenics do Broadcast sim.</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--gold)"></span>Gatilho do custo oculto</h3>
+      <p class="muted">Quando o volume operado cai, o Profit vira cobrança (R$ 120–190+/mês nas corretoras, R$ 385+ direto). O TCO real de "plataforma grátis + fontes de notícia avulsas + dado internacional avulso" frequentemente supera um contrato Broadcast consolidado.</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--gold)"></span>Gatilho de integração</h3>
+      <p class="muted">Cliente que precisa alimentar sistema próprio (pricing, risco, backoffice, algos fora do ambiente Profit). O robô do Profit roda dentro da plataforma; o Datafeed Broadcast alimenta qualquer stack.</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--gold)"></span>Gatilho do evento</h3>
+      <p class="muted">Um evento de mercado em que a informação chegou atrasada e custou dinheiro (decisão do Copom, intervenção cambial, fato político). É o momento de maior receptividade à venda do terminal — timing de campanha importa.</p>
+    </div>
+  </div>
+
+  <div class="section-title">Funil trader → institucional (tese de produto)</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Estágio</th><th>Perfil</th><th>Plataforma típica</th><th>Oportunidade Broadcast</th></tr></thead>
+      <tbody>
+        <tr><td><b>1. Varejo ativo</b></td><td>Day trader PF, minicontratos</td><td>Profit grátis via corretora (RLP)</td><td class="muted">Nenhuma — não perseguir</td></tr>
+        <tr><td><b>2. Varejo sofisticado</b></td><td>Swing/macro, opera juros e dólar</td><td>Profit Pro/Ultra pago</td><td>Broadcast como <b>complemento</b> de informação (plano de entrada)</td></tr>
+        <tr><td><b>3. Profissionalização</b></td><td>PJ, prop desk, gestora nascente</td><td>Profit + fontes improvisadas <span class="pill r">compliance</span></td><td><b>Conversão plena:</b> Broadcast+ com licenciamento profissional</td></tr>
+        <tr><td><b>4. Institucional</b></td><td>Asset, tesouraria, corporate</td><td>Bloomberg / LSEG / Broadcast</td><td>Defesa e expansão — Datafeed, módulos, derived data</td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="margin-top:12px">A tese: a Nelogica domina os estágios 1–2 e não tem produto para o 3. O Broadcast domina o 4. <b style="color:var(--text)">O estágio 3 é a terra de ninguém — e é onde nasce o cliente institucional dos próximos 10 anos.</b> Quem capturar a transição fica com o LTV inteiro.</p>
+  </div>
+
+  <div class="section-title">Movimentos de produto sugeridos (para debate da diretoria)</div>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="dot" style="background:var(--navy-accent)"></span>Curto prazo (execução comercial)</h3>
+      <ul class="clean">
+        <li><b>Plano de entrada "trader profissional":</b> tier do Broadcast+ com preço-ponte para o estágio 3 do funil, focado em juros, câmbio e notícia — sem canibalizar a tabela corporativa.</li>
+        <li><b>Campanha de regularização de licenciamento:</b> abordagem consultiva a assessorias e tesourarias usando dados retail em contexto profissional.</li>
+        <li><b>Playbook de evento:</b> campanhas de aquisição sincronizadas com Copom/eventos fiscais, quando a dor de informação está fresca.</li>
+        <li><b>Mapeamento da carteira Comdinheiro</b> sobreposta a prospects Broadcast.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--navy-accent)"></span>Médio prazo (produto & parcerias)</h3>
+      <ul class="clean">
+        <li><b>Feed de notícias Broadcast dentro de plataformas de execução</b> (licenciamento do conteúdo como produto): monetiza a base Nelogica/concorrentes sem competir em execução — avaliar com Elissandra o modelo de sublicenciamento.</li>
+        <li><b>API/derived data para o trader quant</b> em profissionalização — captura o estágio 3 pela via técnica.</li>
+        <li><b>Onboarding "do Profit ao Broadcast":</b> materiais e trial dirigidos a quem chega do Profit (paridade de linguagem, mapeamento de telas equivalentes).</li>
+        <li><b>KPI de acompanhamento:</b> nº de contas convertidas por segmento, pipeline originado por gatilho regulatório, receita de complemento (estágio 2) × conversão plena (estágio 3).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert"><b>Mensagem-síntese para a diretoria:</b> a pergunta certa não é "como tirar cliente da Nelogica", e sim <b>"como capturar o cliente que a Nelogica cria e depois abandona"</b>. Cada trader que o ecossistema Profit forma e profissionaliza é um lead qualificado do Broadcast — desde que exista produto-ponte, gatilho monitorado e abordagem de compliance no momento certo.</div>
+</div>
+
+<footer>
+  <div><span class="author">Antonio Melo</span> · Market Data & Automation — Broadcast (Agência Estado)</div>
+  <div>Análise competitiva interna · Última atualização: 03/07/2026</div>
+</footer>
+
+</div>
+
+<script>
+function showTab(e,id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  e.currentTarget.classList.add('active');
+}
+function toggleTheme(){
+  const html=document.documentElement;
+  const next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+  html.setAttribute('data-theme',next);
+  localStorage.setItem('nelo-bcast-theme',next);
+  document.getElementById('themeBtn').textContent=next==='dark'?'☀️ Modo Claro':'🌙 Modo Escuro';
+}
+(function(){
+  const saved=localStorage.getItem('nelo-bcast-theme');
+  if(saved){
+    document.documentElement.setAttribute('data-theme',saved);
+    document.getElementById('themeBtn').textContent=saved==='dark'?'☀️ Modo Claro':'🌙 Modo Escuro';
+  }
+})();
+</script>
+</body>
+</html>
