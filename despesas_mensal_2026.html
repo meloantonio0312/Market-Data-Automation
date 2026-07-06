@@ -103,7 +103,7 @@
 <div class="panel active" id="overview">
 
   <div class="kpi-row" style="margin-top:20px">
-    <div class="kpi"><div class="v">R$ 16,5M</div><div class="l">Total YTD Jan–Jun 2026</div><div class="s neu">Var R$12,6M · Fix R$3,9M</div></div>
+    <div class="kpi"><div class="v">R$ 16,5M</div><div class="l">Total YTD Jan–Jun 2026</div><div class="s neu">Fix R$3,9M · Var R$12,6M</div></div>
     <div class="kpi pos"><div class="v">−6,3%</div><div class="l">vs. Orçado YTD</div><div class="s pos">R$ 1,1M abaixo do budget</div></div>
     <div class="kpi tl"><div class="v">R$ 2,76M</div><div class="l">Média mensal 2026</div><div class="s neu">vs R$ 2,74M méd. 2025</div></div>
     <div class="kpi"><div class="v">R$ 2,67M</div><div class="l">Jun/2026 — mês atual</div><div class="s pos">−9,0% vs orçado</div></div>
@@ -332,6 +332,15 @@ function buildMensalTable() {
     tr.innerHTML = `<td>${type}</td><td>${s.n}</td>${s.d.map(v => `<td>${fmtK(v)}</td>`).join('')}<td><b>${fmtK(ytd)}</b></td><td style="color:var(--muted)">${fmtK(ytdO)}</td><td>${pctH(dev)}</td>`;
     tb.appendChild(tr);
   };
+  addSection('FIXA — Contratos com parceiros de dados');
+  suppFix.forEach(s => addRow('Fix', s));
+  const ftotals = months.map((_,i) => sum(suppFix.map(s => s.d[i])));
+  const forc = months.map((_,i) => sum(suppFix.map(s => s.o[i])));
+  const ftot = sum(ftotals), fotot = sum(forc);
+  const tr2 = document.createElement('tr'); tr2.className = 'tr-tot';
+  tr2.innerHTML = `<td colspan="2">Subtotal Fixa</td>${ftotals.map(v=>`<td>${fmtK(v)}</td>`).join('')}<td>${fmtK(ftot)}</td><td style="color:var(--muted)">${fmtK(fotot)}</td><td>${pctH((ftot-fotot)/fotot*100)}</td>`;
+  tb.appendChild(tr2);
+
   addSection('VARIÁVEL — Repasse de bolsas');
   suppVar.forEach(s => addRow('Var', s));
   // Var total
@@ -341,15 +350,6 @@ function buildMensalTable() {
   const tr1 = document.createElement('tr'); tr1.className = 'tr-tot';
   tr1.innerHTML = `<td colspan="2">Subtotal Variável</td>${vtotals.map(v=>`<td>${fmtK(v)}</td>`).join('')}<td>${fmtK(vtot)}</td><td style="color:var(--muted)">${fmtK(votot)}</td><td>${pctH((vtot-votot)/votot*100)}</td>`;
   tb.appendChild(tr1);
-
-  addSection('FIXA — Contratos com parceiros de dados');
-  suppFix.forEach(s => addRow('Fix', s));
-  const ftotals = months.map((_,i) => sum(suppFix.map(s => s.d[i])));
-  const forc = months.map((_,i) => sum(suppFix.map(s => s.o[i])));
-  const ftot = sum(ftotals), fotot = sum(forc);
-  const tr2 = document.createElement('tr'); tr2.className = 'tr-tot';
-  tr2.innerHTML = `<td colspan="2">Subtotal Fixa</td>${ftotals.map(v=>`<td>${fmtK(v)}</td>`).join('')}<td>${fmtK(ftot)}</td><td style="color:var(--muted)">${fmtK(fotot)}</td><td>${pctH((ftot-fotot)/fotot*100)}</td>`;
-  tb.appendChild(tr2);
 
   const gtotals = totals26;
   const gotals = orcTotals;
@@ -406,8 +406,8 @@ function buildCharts() {
     data: {
       labels: months,
       datasets: [
-        { label: 'Variável', data: varTotals, backgroundColor: 'rgba(59,130,246,.7)', stack: 'a' },
         { label: 'Fixa', data: fixTotals, backgroundColor: 'rgba(46,196,182,.7)', stack: 'a' },
+        { label: 'Variável', data: varTotals, backgroundColor: 'rgba(59,130,246,.7)', stack: 'a' },
       ]
     },
     options: { responsive: true, plugins: { legend: { labels: { color: tc, boxWidth: 12 } }, tooltip: { callbacks: { label: ctx => ' ' + fmtR(ctx.raw) } } },
