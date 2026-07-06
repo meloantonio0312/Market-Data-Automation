@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Despesas Market Data 2026 — Visão Mensal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root[data-theme="dark"]{
+    --bg:#0A1220;--bg2:#0F1B30;--card:#122240;--card2:#16294C;
+    --border:#1F3A66;--text:#E8EDF6;--muted:#8FA3C4;--gold:#D4AF37;
+    --green:#3DBE7B;--red:#E05C5C;--amber:#E8A33D;--teal:#2EC4B6;
+    --var-color:#3B82F6;--fix-color:#2EC4B6;--orc-color:#E8A33D;--r25-color:#566B80;
+    --shadow:rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"]{
+    --bg:#F3F5F9;--bg2:#FFFFFF;--card:#FFFFFF;--card2:#F6F8FC;
+    --border:#D8DFEA;--text:#14213A;--muted:#5A6E90;--gold:#A8841B;
+    --green:#1E8F57;--red:#C13B3B;--amber:#B57614;--teal:#1A9E92;
+    --var-color:#2563EB;--fix-color:#0E9F8A;--orc-color:#B57614;--r25-color:#8A99B5;
+    --shadow:rgba(20,33,58,.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.5}
+  .wrap{max-width:1300px;margin:0 auto;padding:0 24px}
+  header{background:linear-gradient(135deg,var(--bg2),var(--card));border-bottom:2px solid var(--gold);padding:22px 0}
+  .head-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  h1{font-size:22px;font-weight:700}
+  .subtitle{color:var(--muted);font-size:13px;margin-top:4px}
+  .theme-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:20px;cursor:pointer;font-size:12px}
+  .tabs{display:flex;gap:3px;margin-top:16px;flex-wrap:wrap}
+  .tab{background:transparent;border:1px solid var(--border);border-bottom:none;color:var(--muted);padding:9px 16px;border-radius:7px 7px 0 0;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+  .tab:hover{color:var(--text)}
+  .tab.active{background:var(--gold);color:#0A1220;border-color:var(--gold)}
+  .panel{display:none;padding:24px 0 40px}
+  .panel.active{display:block}
+  /* KPIs */
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+  .kpi{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:14px 16px}
+  .kpi .v{font-size:20px;font-weight:700;color:var(--gold)}
+  .kpi .l{font-size:11px;color:var(--muted);margin-top:3px}
+  .kpi .s{font-size:11px;margin-top:3px}
+  .kpi.pos{border-left-color:var(--green)}.kpi.pos .v{color:var(--green)}
+  .kpi.neg{border-left-color:var(--red)}.kpi.neg .v{color:var(--red)}
+  .kpi.tl{border-left-color:var(--teal)}.kpi.tl .v{color:var(--teal)}
+  /* Section title */
+  .st{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:10px}
+  .st::after{content:'';flex:1;height:1px;background:var(--border)}
+  /* Chart containers */
+  .chart-grid{display:grid;gap:16px;margin-bottom:20px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(440px,1fr))}
+  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+  .chart-title{font-size:13px;font-weight:600;margin-bottom:16px;color:var(--text)}
+  .chart-sub{font-size:11px;color:var(--muted);margin-top:4px}
+  canvas{max-height:280px}
+  /* Table */
+  .tbl-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{background:var(--card2);color:var(--text);text-align:right;padding:9px 12px;font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid var(--gold);white-space:nowrap;position:sticky;top:0}
+  th:first-child,th:nth-child(2){text-align:left}
+  td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  td:first-child,td:nth-child(2){text-align:left}
+  tr:hover td{background:var(--card2)}
+  .tr-tot td{font-weight:700;background:var(--card2);border-top:2px solid var(--border)}
+  .tr-sec td{background:var(--bg2);font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);padding:6px 12px;font-weight:700}
+  .pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--muted)}
+  .badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600}
+  .badge.g{background:rgba(61,190,123,.15);color:var(--green)}
+  .badge.r{background:rgba(224,92,92,.15);color:var(--red)}
+  /* Legend */
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+  footer{margin-top:40px;padding:18px 0 28px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted)}
+  footer b{color:var(--gold)}
+  @media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <div class="eyebrow">Market Data & Automation · Broadcast · Grupo Estado</div>
+        <h1>Despesas com Dados de Mercado — Visão Mensal 2026</h1>
+        <div class="subtitle">Evolução mês a mês · Real vs Orçado · Jan–Jun 2026 · Comparativo 2025</div>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Claro</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab(event,'overview')">Visão Geral</button>
+      <button class="tab" onclick="showTab(event,'mensal')">Mês a Mês</button>
+      <button class="tab" onclick="showTab(event,'fornecedores')">Por Fornecedor</button>
+      <button class="tab" onclick="showTab(event,'ytd')">YTD Acumulado</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ══ VISÃO GERAL ══ -->
+<div class="panel active" id="overview">
+
+  <div class="kpi-row" style="margin-top:20px">
+    <div class="kpi"><div class="v">R$ 16,5M</div><div class="l">Total YTD Jan–Jun 2026</div><div class="s neu">Var R$12,6M · Fix R$3,9M</div></div>
+    <div class="kpi pos"><div class="v">−6,3%</div><div class="l">vs. Orçado YTD</div><div class="s pos">R$ 1,1M abaixo do budget</div></div>
+    <div class="kpi tl"><div class="v">R$ 2,76M</div><div class="l">Média mensal 2026</div><div class="s neu">vs R$ 2,74M méd. 2025</div></div>
+    <div class="kpi"><div class="v">R$ 2,67M</div><div class="l">Jun/2026 — mês atual</div><div class="s pos">−9,0% vs orçado</div></div>
+    <div class="kpi pos"><div class="v">R$ 32,9M</div><div class="l">Total real 2025</div><div class="s neu">Referência anual</div></div>
+    <div class="kpi tl"><div class="v">R$ 33,1M</div><div class="l">Projeção anual 2026</div><div class="s neu">Baseado na tendência YTD</div></div>
+  </div>
+
+  <div class="st">Evolução mensal — Real vs Orçado vs 2025</div>
+  <div class="chart-card">
+    <div class="chart-title">Despesa total por mês (R$)</div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--gold)"></span>Real 2026</span>
+      <span><span class="dot" style="background:var(--orc-color);opacity:.5"></span>Orçado 2026</span>
+      <span><span class="dot" style="background:var(--r25-color)"></span>Real 2025</span>
+    </div>
+    <canvas id="cOverview"></canvas>
+  </div>
+
+  <div class="chart-grid g2" style="margin-top:16px">
+    <div class="chart-card">
+      <div class="chart-title">Composição mensal — Variável vs Fixa</div>
+      <canvas id="cComposicao"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Desvio vs Orçado por mês (%)</div>
+      <div class="chart-sub">Valores negativos = favorável (abaixo do orçado)</div>
+      <canvas id="cDesvio"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ MÊS A MÊS ══ -->
+<div class="panel" id="mensal">
+
+  <div class="st" style="margin-top:8px">Tabela completa — Jan a Jun 2026</div>
+  <div class="tbl-wrap">
+    <table id="tMensal">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Fornecedor</th>
+          <th>Jan/26</th><th>Fev/26</th><th>Mar/26</th>
+          <th>Abr/26</th><th>Mai/26</th><th>Jun/26</th>
+          <th>YTD</th><th>Orç. YTD</th><th>Desvio</th>
+        </tr>
+      </thead>
+      <tbody id="tbMensal"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ══ POR FORNECEDOR ══ -->
+<div class="panel" id="fornecedores">
+
+  <div class="kpi-row" style="margin-top:8px">
+    <div class="kpi"><div class="v">33</div><div class="l">Fornecedores ativos</div></div>
+    <div class="kpi"><div class="v">BM&FBOVESPA</div><div class="l">Maior custo — R$ 7,8M YTD (47%)</div></div>
+    <div class="kpi pos"><div class="v">FENICS</div><div class="l">Maior desvio positivo vs orçado (+47%)</div></div>
+    <div class="kpi tl"><div class="v">UP2Data B3</div><div class="l">Maior crescimento vs 2025 (+392%)</div></div>
+  </div>
+
+  <div class="chart-grid g2">
+    <div class="chart-card">
+      <div class="chart-title">Top 10 fornecedores — Jun/2026 (R$)</div>
+      <canvas id="cTopJun"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Top 10 fornecedores — YTD Jan–Jun 2026 (R$)</div>
+      <canvas id="cTopYtd"></canvas>
+    </div>
+  </div>
+
+  <div class="st">Evolução mensal — Top 6 fornecedores variáveis</div>
+  <div class="chart-card">
+    <canvas id="cTopVar"></canvas>
+  </div>
+
+  <div class="st">Evolução mensal — Top 6 fornecedores fixos</div>
+  <div class="chart-card">
+    <canvas id="cTopFix"></canvas>
+  </div>
+
+</div>
+
+<!-- ══ YTD ACUMULADO ══ -->
+<div class="panel" id="ytd">
+
+  <div class="chart-card" style="margin-top:8px">
+    <div class="chart-title">YTD acumulado progressivo — Real vs Orçado (R$ M)</div>
+    <div class="chart-sub">Linha sólida = Real 2026 · Tracejado = Orçado 2026 · Pontilhado = Projeção anual</div>
+    <canvas id="cYtd"></canvas>
+  </div>
+
+  <div class="chart-grid g2" style="margin-top:16px">
+    <div class="chart-card">
+      <div class="chart-title">YTD Variável — Real vs Orçado (R$)</div>
+      <canvas id="cYtdVar"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">YTD Fixa — Real vs Orçado (R$)</div>
+      <canvas id="cYtdFix"></canvas>
+    </div>
+  </div>
+
+  <div class="st">Desvio acumulado vs Orçado por mês</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Mês</th>
+          <th>Real (R$)</th><th>Orçado (R$)</th><th>Desvio (R$)</th>
+          <th>Desvio (%)</th><th>YTD Real</th><th>YTD Orç.</th><th>Desvio YTD</th>
+        </tr>
+      </thead>
+      <tbody id="tbYtd"></tbody>
+    </table>
+  </div>
+
+</div>
+
+</div><!-- /wrap -->
+
+<div class="wrap">
+  <footer>
+    <span>Broadcast · Agência Estado · Grupo Estado · Market Data & Automation</span>
+    <span><b>Antonio Melo</b> · <span id="fd"></span> · Fonte: SAP Evolutivo 2026</span>
+  </footer>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────
+const months = ['Jan/26','Fev/26','Mar/26','Abr/26','Mai/26','Jun/26'];
+const months12 = ['Jan/25','Fev/25','Mar/25','Abr/25','Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25'];
+
+const varTotals   = [2089129, 2184378, 2179689, 2004455, 2060480, 2107054];
+const fixTotals   = [658447,  608573,  640886,  645692,  654235,  651763];
+const totals26    = varTotals.map((v,i) => v + fixTotals[i]);
+const orcTotals   = [2932666, 2933073, 2933073, 2933080, 2933080, 2933117];
+const orcVar      = [2294310, 2294310, 2294310, 2294310, 2294310, 2294310];
+const orcFix      = [638356,  638763,  638763,  638770,  638770,  638807];
+const totals25    = [2779416, 3009223, 2577024, 2890971, 2859056, 2810002, 2878216, 2788669, 2780428, 2775195, 2761574, 1979030];
+
+// Per-supplier monthly data
+const suppVar = [
+  {n:'BM&FBOVESPA',  d:[1349530,1356887,1302161,1339626,1257047,1191932], o:[1376990,1376990,1376990,1376990,1376990,1376990]},
+  {n:'CME Group',    d:[378759, 402168, 494103, 299766, 402501, 432017],  o:[469949, 469949, 469949, 469949, 469949, 469949]},
+  {n:'ICE',          d:[242250, 254646, 270454, 225323, 253140, 270736],  o:[310547, 310547, 310547, 310547, 310547, 310547]},
+  {n:'Nasdaq',       d:[47948,  50160,  19258,  42574,  51731,  110828],  o:[55326,  55326,  55326,  55326,  55326,  55326]},
+  {n:'NYSE',         d:[31785,  32906,  34401,  37249,  34518,  37395],   o:[40628,  40628,  40628,  40628,  40628,  40628]},
+  {n:'FTSE',         d:[4346,   52485,  24119,  25593,  27209,  28363],   o:[5271,   5271,   5271,   5271,   5271,   5271]},
+  {n:'Euronext',     d:[19729,  20577,  20689,  19416,  20454,  20560],   o:[23074,  23074,  23074,  23074,  23074,  23074]},
+  {n:'Deutsche Börse',d:[9028,  8682,   8278,   9255,   7922,   8779],    o:[9896,   9896,   9896,   9896,   9896,   9896]},
+  {n:'CBOE',         d:[5165,   5233,   5422,   4949,   5187,   5647],    o:[5856,   5856,   5856,   5856,   5856,   5856]},
+  {n:'LME',          d:[589,    634,    803,    706,    771,    798],      o:[688,    688,    688,    688,    688,    688]},
+];
+
+const suppFix = [
+  {n:'IDC',          d:[210446, 207130, 212231, 193139, 199550, 212267],  o:[219351, 219351, 219351, 219351, 219351, 219351]},
+  {n:'CME Group',    d:[71956,  70334,  77357,  67711,  70755,  71407],   o:[76436,  76436,  76436,  76436,  76436,  76436]},
+  {n:'CEPEA-FEALQ', d:[54748,  54748,  60222,  57485,  57485,  57485],   o:[57759,  57759,  57759,  57759,  57759,  57759]},
+  {n:'NYSE',         d:[57652,  37558,  63772,  51381,  45443,  62709],   o:[65321,  65321,  65321,  65321,  65321,  65321]},
+  {n:'ICE',          d:[40508,  39259,  26156,  34371,  40954,  36250],   o:[42598,  42598,  42598,  42598,  42598,  42598]},
+  {n:'ANBIMA',       d:[34701,  34701,  31756,  31756,  33229,  33229],   o:[34701,  34701,  34701,  34701,  34701,  34701]},
+  {n:'FENICS',       d:[23172,  29637,  15935,  55702,  34672,  12232],   o:[19412,  19412,  19412,  19412,  19412,  19412]},
+  {n:'Trading Econ.',d:[45859,  24416,  21247,  23476,  24113,  24866],   o:[32023,  32023,  32023,  32023,  32023,  32023]},
+  {n:'Nasdaq',       d:[29252,  30624,  32124,  24392,  30901,  35765],   o:[32347,  32347,  32347,  32347,  32347,  32347]},
+  {n:'UP2Data B3',   d:[7985,   8187,   14131,  27312,  35499,  21227],   o:[8128,   8128,   8128,   8128,   8128,   8128]},
+  {n:'CBOE',         d:[11921,  12080,  12535,  11194,  12040,  12492],   o:[12941,  12941,  12941,  12941,  12941,  12941]},
+  {n:'BM&FBOVESPA',  d:[8455,   8455,   19090,  12000,  12000,  12000],   o:[8409,   8409,   8409,   8409,   8409,   8409]},
+  {n:'LME',          d:[11041,  11043,  11042,  11042,  11042,  11042],   o:[11458,  11458,  11458,  11458,  11458,  11458]},
+  {n:'IIFE',         d:[10406,  10406,  10406,  10406,  10406,  10406],   o:[10406,  10406,  10406,  10406,  10406,  10406]},
+  {n:'Euronext',     d:[6970,   7263,   7292,   6918,   7286,   7322],    o:[7456,   7456,   7456,   7456,   7456,   7456]},
+  {n:'Six Financial',d:[9914,   9817,   4213,   7234,   7025,   8863],    o:[8432,   8432,   8432,   8432,   8432,   8432]},
+  {n:'FTSE',         d:[6847,   6836,   6841,   6841,   6841,   6841],    o:[6924,   6924,   6924,   6924,   6924,   6924]},
+  {n:'Deutsche Börse',d:[5639,  5552,   5899,   4518,   6208,   5419],    o:[5675,   5675,   5675,   5675,   5675,   5675]},
+  {n:'Bolsa Mexico',  d:[4492,  4337,   3720,   4183,   4183,   4183],    o:[4461,   4461,   4461,   4461,   4461,   4461]},
+  {n:'Bolsa Malasia', d:[3307,  -5506,  2874,   2650,   2618,   3761],    o:[3917,   3917,   3917,   3917,   3936,   3936]},
+  {n:'Shanghai SE',   d:[1911,  441,    1176,   1176,   1176,   1176],    o:[1222,   1222,   1222,   1222,   1222,   1222]},
+  {n:'Thailand SE',   d:[772,   765,    785,    727,    733,    747],      o:[780,    780,    780,    782,    782,    782]},
+  {n:'Taiwan SE',     d:[493,   490,    80,     75,     75,     75],       o:[590,    590,    590,    590,    590,    590]},
+];
+
+// ─── HELPERS ────────────────────────────────────────────────────────
+const fmtM = v => 'R$ ' + (v/1e6).toFixed(2) + 'M';
+const fmtK = v => v >= 1e6 ? 'R$ ' + (v/1e6).toFixed(2)+'M' : v >= 1e3 ? 'R$ ' + (v/1e3).toFixed(0)+'K' : 'R$ '+v.toFixed(0);
+const fmtR = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(v);
+const pctH = v => {
+  const cls = v < 0 ? 'pos' : v > 0 ? 'neg' : 'neu';
+  const sign = v < 0 ? '−' : '+';
+  return `<span class="${cls}">${sign}${Math.abs(v).toFixed(1)}%</span>`;
+};
+const sum = arr => arr.reduce((a,b) => a+b, 0);
+
+// Chart defaults
+function chartDefaults() {
+  const theme = document.documentElement.getAttribute('data-theme');
+  const gridColor = theme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const textColor = theme === 'dark' ? '#8FA3C4' : '#5A6E90';
+  return { gridColor, textColor };
+}
+const charts = {};
+function makeChart(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  const { gridColor, textColor } = chartDefaults();
+  Chart.defaults.color = textColor;
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, cfg(gridColor, textColor));
+}
+
+// ─── BUILD TABLES ────────────────────────────────────────────────────
+function buildMensalTable() {
+  const tb = document.getElementById('tbMensal');
+  tb.innerHTML = '';
+  const addSection = (label) => {
+    const tr = document.createElement('tr'); tr.className = 'tr-sec';
+    tr.innerHTML = `<td colspan="11">${label}</td>`;
+    tb.appendChild(tr);
+  };
+  const addRow = (type, s) => {
+    const ytd = sum(s.d);
+    const ytdO = sum(s.o);
+    const dev = ytdO ? (ytd - ytdO) / ytdO * 100 : 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${type}</td><td>${s.n}</td>${s.d.map(v => `<td>${fmtK(v)}</td>`).join('')}<td><b>${fmtK(ytd)}</b></td><td style="color:var(--muted)">${fmtK(ytdO)}</td><td>${pctH(dev)}</td>`;
+    tb.appendChild(tr);
+  };
+  addSection('VARIÁVEL — Repasse de bolsas');
+  suppVar.forEach(s => addRow('Var', s));
+  // Var total
+  const vtotals = months.map((_,i) => sum(suppVar.map(s => s.d[i])));
+  const vorc = months.map((_,i) => sum(suppVar.map(s => s.o[i])));
+  const vtot = sum(vtotals), votot = sum(vorc);
+  const tr1 = document.createElement('tr'); tr1.className = 'tr-tot';
+  tr1.innerHTML = `<td colspan="2">Subtotal Variável</td>${vtotals.map(v=>`<td>${fmtK(v)}</td>`).join('')}<td>${fmtK(vtot)}</td><td style="color:var(--muted)">${fmtK(votot)}</td><td>${pctH((vtot-votot)/votot*100)}</td>`;
+  tb.appendChild(tr1);
+
+  addSection('FIXA — Contratos com parceiros de dados');
+  suppFix.forEach(s => addRow('Fix', s));
+  const ftotals = months.map((_,i) => sum(suppFix.map(s => s.d[i])));
+  const forc = months.map((_,i) => sum(suppFix.map(s => s.o[i])));
+  const ftot = sum(ftotals), fotot = sum(forc);
+  const tr2 = document.createElement('tr'); tr2.className = 'tr-tot';
+  tr2.innerHTML = `<td colspan="2">Subtotal Fixa</td>${ftotals.map(v=>`<td>${fmtK(v)}</td>`).join('')}<td>${fmtK(ftot)}</td><td style="color:var(--muted)">${fmtK(fotot)}</td><td>${pctH((ftot-fotot)/fotot*100)}</td>`;
+  tb.appendChild(tr2);
+
+  const gtotals = totals26;
+  const gotals = orcTotals;
+  const gtot = sum(gtotals), gotot = sum(gotals);
+  const tr3 = document.createElement('tr'); tr3.className = 'tr-tot';
+  tr3.style.borderTop = '2px solid var(--gold)';
+  tr3.innerHTML = `<td colspan="2"><b>TOTAL GERAL</b></td>${gtotals.map(v=>`<td><b>${fmtK(v)}</b></td>`).join('')}<td><b>${fmtK(gtot)}</b></td><td style="color:var(--muted)"><b>${fmtK(gotot)}</b></td><td>${pctH((gtot-gotot)/gotot*100)}</td>`;
+  tb.appendChild(tr3);
+}
+
+function buildYtdTable() {
+  const tb = document.getElementById('tbYtd');
+  tb.innerHTML = '';
+  let ytdReal = 0, ytdOrc = 0;
+  totals26.forEach((t, i) => {
+    ytdReal += t;
+    ytdOrc += orcTotals[i];
+    const dev = (t - orcTotals[i]) / orcTotals[i] * 100;
+    const devYtd = (ytdReal - ytdOrc) / ytdOrc * 100;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${months[i]}</td>
+      <td>${fmtR(t)}</td>
+      <td style="color:var(--muted)">${fmtR(orcTotals[i])}</td>
+      <td class="${t < orcTotals[i] ? 'pos' : 'neg'}">${fmtR(t - orcTotals[i])}</td>
+      <td>${pctH(dev)}</td>
+      <td><b>${fmtR(ytdReal)}</b></td>
+      <td style="color:var(--muted)">${fmtR(ytdOrc)}</td>
+      <td>${pctH(devYtd)}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+// ─── CHARTS ─────────────────────────────────────────────────────────
+function buildCharts() {
+  // 1. Overview line chart
+  makeChart('cOverview', (gc, tc) => ({
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'Real 2026', data: totals26, backgroundColor: 'rgba(212,175,55,.75)', borderColor: '#D4AF37', borderWidth: 1.5, order: 1 },
+        { label: 'Orçado 2026', data: orcTotals, type: 'line', borderColor: '#E8A33D', borderDash: [6,3], borderWidth: 2, fill: false, pointRadius: 3, order: 0, tension: 0.3 },
+        { label: 'Real 2025', data: totals25.slice(0,6), type: 'line', borderColor: '#566B80', borderWidth: 1.5, fill: false, pointRadius: 2, order: 0, tension: 0.3 },
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { labels: { color: tc, boxWidth: 12 } }, tooltip: { callbacks: { label: ctx => ' ' + fmtR(ctx.raw) } } },
+      scales: { x: { grid: { color: gc }, ticks: { color: tc } }, y: { grid: { color: gc }, ticks: { color: tc, callback: v => 'R$ ' + (v/1e6).toFixed(1)+'M' } } } }
+  }));
+
+  // 2. Composição stacked
+  makeChart('cComposicao', (gc, tc) => ({
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'Variável', data: varTotals, backgroundColor: 'rgba(59,130,246,.7)', stack: 'a' },
+        { label: 'Fixa', data: fixTotals, backgroundColor: 'rgba(46,196,182,.7)', stack: 'a' },
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { labels: { color: tc, boxWidth: 12 } }, tooltip: { callbacks: { label: ctx => ' ' + fmtR(ctx.raw) } } },
+      scales: { x: { stacked: true, grid: { color: gc }, ticks: { color: tc } }, y: { stacked: true, grid: { color: gc }, ticks: { color: tc, callback: v => 'R$ ' + (v/1e6).toFixed(1)+'M' } } } }
+  }));
+
+  // 3. Desvio bar
+  const desvios = totals26.map((t, i) => +((t - orcTotals[i]) / orcTotals[i] * 100).toFixed(1));
+  makeChart('cDesvio', (gc, tc) => ({
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [{ label: 'Desvio vs Orçado (%)', data: desvios,
+        backgroundColor: desvios.map(v => v < 0 ? 'rgba(61,190,123,.7)' : 'rgba(224,92,92,.7)'),
+        borderColor: desvios.map(v => v < 0 ? '#3DBE7B' : '#E05C5C'), borderWidth: 1.5 }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.raw + '%' } } },
+      scales: { x: { grid: { color: gc }, ticks: { color: tc } }, y: { grid: { color: gc }, ticks: { color: tc, callback: v => v + '%' } } } }
+  }));
+
+  // 4. Top 10 Jun
+  const allJun = [
+    ...suppVar.map(s => ({ n: s.n + ' (V)', v: s.d[5] })),
+    ...suppFix.map(s => ({ n: s.n + ' (F)', v: s.d[5] })),
+  ].sort((a,b) => b.v - a.v).slice(0, 10);
+  makeChart('cTopJun', (gc, tc) => ({
+    type: 'bar', indexAxis: 'y',
+    data: { labels: allJun.map(x => x.n), datasets: [{ data: allJun.map(x => x.v), backgroundColor: 'rgba(212,175,55,.7)', borderColor: '#D4AF37', borderWidth: 1 }] },
+    options: { responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmtR(ctx.raw) } } },
+      scales: { x: { grid: { color: gc }, ticks: { color: tc, callback: v => fmtK(v) } }, y: { grid: { color: gc }, ticks: { color: tc, font: { size: 11 } } } } }
+  }));
+
+  // 5. Top 10 YTD
+  const allYtd = [
+    ...suppVar.map(s => ({ n: s.n + ' (V)', v: sum(s.d) })),
+    ...suppFix.map(s => ({ n: s.n + ' (F)', v: sum(s.d) })),
+  ].sort((a,b) => b.v - a.v).slice(0, 10);
+  makeChart('cTopYtd', (gc, tc) => ({
+    type: 'bar', indexAxis: 'y',
+    data: { labels: allYtd.map(x => x.n), datasets: [{ data: allYtd.map(x => x.v), backgroundColor: 'rgba(46,196,182,.7)', borderColor: '#2EC4B6', borderWidth: 1 }] },
+    options: { responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmtR(ctx.raw) } } },
+      scales: { x: { grid: { color: gc }, ticks: { color: tc, callback: v => fmtK(v) } }, y: { grid: { color: gc }, ticks: { color: tc, font: { size: 11 } } } } }
+  }));
+
+  // 6. Top 6 var evolution
+  const colors6 = ['#D4AF37','#3B82F6','#2EC4B6','#E05C5C','#E8A33D','#9B8CF2'];
+  const top6var = suppVar.slice(0,6);
+  makeChart('cTopVar', (gc, tc) => ({
+    type: 'line',
+    data: { labels: months, datasets: top6var.map((s,i) => ({ label: s.n, data: s.d, borderColor: colors6[i], backgroundColor: colors6[i]+'22', fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2 })) },
+    options: { responsive: true, plugins: { legend: { labels: { color: tc, boxWidth: 12 } }, tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmtR(ctx.raw) } } },
+      scales: { x: { grid: { color: gc }, ticks: { color: tc } }, y: { grid: { color: gc }, ticks: { color: tc, callback: v => fmtK(v) } } } }
+  }));
+
+  // 7. Top 6 fix evolution
+  const top6fix = suppFix.slice(0,6);
+  makeChart('cTopFix', (gc, tc) => ({
+    type: 'line',
+    data: { labels: months, datasets: top6fix.map((s,i) => ({ label: s.n, data: s.d, borderColor: colors6[i], backgroundColor: colors6[i]+'22', fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2 })) },
+    options: { responsive: true, plugins: { legend: { labels: { color: tc, boxWidth: 12 } }, tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmtR(ctx.raw) } } },
+      scales: { x: { grid: { color: gc }, ticks: { color: tc } }, y: { grid: { color: gc }, ticks: { color: tc, callback: v => fmtK(v) } } } }
+  }));
+
+  // 8. YTD progressive
+  let ytdR = 0, ytdO = 0;
+  const ytdReals = totals26.map(t => (ytdR += t, ytdR));
+  ytdR = 0;
+  const ytdOrcs = orcTotals.map(t => (ytdO += t, ytdO));
+  // Projection: extend to 12 months based on avg
+  const avg26 = ytdReals[5] / 6;
+  const proj = months.map((_,i) => ytdReals[5] + avg26 * (i === 5 ? 0 : 0)); // just the last point extended
+  const projFull = [...ytdReals];
+  const extLabels = [...months, 'Jul*','Ago*','Set*','Out*','Nov*','Dez*'];
+  const extReal = [...ytdReals, null, null, null, null, null, null];
+  const extOrc = [...ytdOrcs];
+  let running = ytdReals[5];
+  for (let i = 0; i < 6; i++) { running += avg26; extOrc.push(ytdOrcs[5] + orcTotals[0] * (i+1)); extReal.push(null); }
+  const extProj = [null,null,null,null,null, ytdReals[5], ...Array.from({length:6}, (_,i) => ytdReals[5] + avg26*(i+1))];
+
+  makeChart('cYtd', (gc, tc) => ({
+    type: 'line',
+    data: { labels: extLabels, datasets: [
+      { label: 'Real 2026', data: [...ytdReals,...Array(6).fill(null)], borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,.1)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2.5 },
+      { label: 'Orçado 2026', data: [...ytdOrcs, ...Array.from({length:6},(_,i)=>ytdOrcs[5]+orcTotals[0]*(i+1))], borderColor: '#E8A33D', borderDash: [6,4], fill: false, tension: 0.3, pointRadius: 2, borderWidth: 1.5 },
+      { label: 'Projeção tendência', data: extProj, borderColor: '#3DBE7B', borderDash: [3,3], fill: false, tension: 0.3, pointRadius: 2, borderWidth: 1.5 },
+    ]},
+    options: { responsive: true, plugins: { legend: { labels: { color: tc, boxWidth: 12 } }, tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmtR(ctx.raw) } } },
+      scales: { x: { grid: { color: gc }, ticks: { color: tc } }, y: { grid: { color: gc }, ticks: { color: tc, callback: v => 'R$ '+(v/1e6).toFixed(0)+'M' } } } }
+  }));
+
+  // 9. YTD Var/Fix
+  let ytdV = 0, ytdF = 0;
+  const ytdVars = varTotals.map(v => (ytdV += v, ytdV));
+  const ytdFixes = fixTotals.map(v => (ytdF += v, ytdF));
+  let ytdOV = 0, ytdOF = 0;
+  const ytdOVars = orcVar.map(v => (ytdOV += v, ytdOV));
+  const ytdOFixes = orcFix.map(v => (ytdOF += v, ytdOF));
+
+  makeChart('cYtdVar', (gc, tc) => ({
+    type: 'line',
+    data: { labels: months, datasets: [
+      { label: 'Real Var', data: ytdVars, borderColor: '#3B82F6', fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2 },
+      { label: 'Orç. Var', data: ytdOVars, borderColor: '#3B82F6', borderDash: [5,3], fill: false, tension: 0.3, pointRadius: 2, borderWidth: 1.5 },
+    ]},
+    options: { responsive: true, plugins: { legend: { labels: { color: tc, boxWidth: 12 } } }, scales: { x: { grid: { color: gc }, ticks: { color: tc } }, y: { grid: { color: gc }, ticks: { color: tc, callback: v => 'R$'+(v/1e6).toFixed(1)+'M' } } } }
+  }));
+  makeChart('cYtdFix', (gc, tc) => ({
+    type: 'line',
+    data: { labels: months, datasets: [
+      { label: 'Real Fix', data: ytdFixes, borderColor: '#2EC4B6', fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2 },
+      { label: 'Orç. Fix', data: ytdOFixes, borderColor: '#2EC4B6', borderDash: [5,3], fill: false, tension: 0.3, pointRadius: 2, borderWidth: 1.5 },
+    ]},
+    options: { responsive: true, plugins: { legend: { labels: { color: tc, boxWidth: 12 } } }, scales: { x: { grid: { color: gc }, ticks: { color: tc } }, y: { grid: { color: gc }, ticks: { color: tc, callback: v => 'R$'+(v/1e6).toFixed(1)+'M' } } } }
+  }));
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────
+function showTab(e, id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function toggleTheme() {
+  const h = document.documentElement;
+  const d = h.getAttribute('data-theme') === 'dark';
+  h.setAttribute('data-theme', d ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = d ? '🌙 Escuro' : '☀️ Claro';
+  setTimeout(buildCharts, 50);
+}
+
+// Footer date
+const dt = new Date();
+const mm = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+document.getElementById('fd').textContent = `${dt.getDate()} ${mm[dt.getMonth()]} ${dt.getFullYear()}`;
+
+// Build everything
+buildMensalTable();
+buildYtdTable();
+buildCharts();
+</script>
+</body>
+</html>
