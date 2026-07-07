@@ -517,6 +517,9 @@
         <span class="card-title">Custo repassado pelo uso de dados</span>
       </div>
       <div class="tbl-wrap"><table id="tMaiVar"></table></div>
+      <div style="margin-top:12px;background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.25);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 14px;font-size:12.5px;color:var(--text-muted)">
+        <b style="color:var(--gold)">📌 Nasdaq (Var) — Jun/26 +114% vs Mai/26:</b> variação decorrente de aumento no consumo de dados Nasdaq pela Broadcast. Crescimento orgânico de uso pelos produtos <strong>Nasdaq Total View</strong>, <strong>Nasdaq Smart Options NBBO</strong> e <strong>Nasdaq Data Link - Rest API</strong> — não representa anomalia contratual.
+      </div>
     </div>
 
   </div>
@@ -561,12 +564,12 @@
         <div class="method-item c-purple">
           <div class="method-kpi">Repasse Variável</div>
           <div class="method-val">R$ 10,5M &nbsp;<span style="font-size:12px;font-weight:400;color:var(--text-3)">(76% do YTD)</span></div>
-          <div class="method-desc">Acumulado Jan–Mai das linhas <strong>F/V = Variável</strong>. Representa o custo de distribuição e uso de dados de mercado repassado diretamente pelas bolsas nacionais e internacionais. Principal driver: BM&FBOVESPA (R$ 7,8M, 62% do bloco variável).</div>
+          <div class="method-desc">Acumulado Jan–Jun das linhas <strong>F/V = Variável</strong>. Representa o custo de distribuição e uso de dados de mercado repassado diretamente pelas bolsas nacionais e internacionais. Principal driver: BM&FBOVESPA (R$ 7,8M, 62% do bloco variável).</div>
         </div>
         <div class="method-item c-purple">
           <div class="method-kpi">Custos Fixos</div>
           <div class="method-val">R$ 3,2M &nbsp;<span style="font-size:12px;font-weight:400;color:var(--text-3)">(24% do YTD)</span></div>
-          <div class="method-desc">Acumulado Jan–Mai das linhas <strong>F/V = Fixa</strong>. Contratos com parceiros de dados cuja mensalidade é pré-fixada — IDC (R$ 1,0M), CME Group Fixa (R$ 358K), CEPEA-FEALQ (R$ 285K) e demais licenças.</div>
+          <div class="method-desc">Acumulado Jan–Jun das linhas <strong>F/V = Fixa</strong>. Contratos com parceiros de dados cuja mensalidade é pré-fixada — IDC (R$ 1,2M), CME Group Fixa (R$ 430K), CEPEA-FEALQ (R$ 342K) e demais licenças.</div>
         </div>
         <div class="method-item c-green">
           <div class="method-kpi">vs. Orçado YTD</div>
@@ -681,10 +684,10 @@ function buildMaiTable(id, data) {
   const th = document.createElement('thead');
   th.innerHTML = `<tr>
     <th>Fornecedor / Bolsa</th>
+    <th>Jun/26 Real</th>
     <th>Mai/26 Real</th>
-    <th>Abr/26 Real</th>
     <th>vs. Abr</th>
-    <th>Mai/26 Orç.</th>
+    <th>Jun/26 Orç.</th>
     <th>vs. Orçado</th>
     <th>Mai/25 Real</th>
     <th>vs. 2025</th>
