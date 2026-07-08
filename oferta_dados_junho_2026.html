@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oferta de Dados — Análise de Crescimento · jun 2025</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:      #0D1B3E;
+    --navy2:     #112244;
+    --navy3:     #162040;
+    --navy4:     #1A2850;
+    --navy5:     #1E3060;
+    --gold:      #C9A84C;
+    --gold-lt:   #E8C36A;
+    --white:     #FFFFFF;
+    --muted:     #8899BB;
+    --lb:        #4A90D9;
+    --green:     #3DBE7A;
+    --amber:     #F0A500;
+    --purple:    #9B59B6;
+    --salmon:    #E8865A;
+    --teal:      #4ECDC4;
+    --pink:      #E84393;
+  }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy2);
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--navy5);
+  }
+  .header-left .eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.2;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .header-right strong {
+    color: var(--gold);
+    font-size: 12px;
+    display: block;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    padding: 24px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .kpi-card {
+    background: var(--navy3);
+    border: 1px solid var(--navy5);
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .kpi-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--navy5);
+  }
+
+  /* ── SOURCE CARDS ── */
+  .source-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .source-card {
+    background: var(--navy4);
+    border: 1px solid #2A3E70;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .source-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    align-self: flex-start;
+  }
+  .source-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--white);
+    line-height: 1.2;
+  }
+  .source-highlight {
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .source-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── BREAKDOWN PANEL ── */
+  .breakdown-panel {
+    background: var(--navy3);
+    border: 1px solid var(--navy5);
+    border-radius: 10px;
+    padding: 20px 24px 16px;
+  }
+  .breakdown-panel .panel-title {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+    align-items: end;
+    height: 160px;
+    margin-bottom: 12px;
+  }
+  .bar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    gap: 4px;
+  }
+  .bar-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 4px;
+  }
+  .bar-count {
+    font-size: 10px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .bar-pct {
+    font-size: 9px;
+    font-weight: 500;
+    opacity: 0.85;
+  }
+  .bar-fill {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+    transition: height 1s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .bar-label {
+    font-size: 10px;
+    color: var(--white);
+    text-align: center;
+    margin-top: 6px;
+    white-space: nowrap;
+  }
+  .breakdown-total {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 10px;
+    border-top: 1px solid var(--navy5);
+  }
+  .breakdown-total strong {
+    color: var(--white);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 12px 32px;
+    border-top: 1px solid var(--navy5);
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #4A5A7A;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .kpi-value { animation: countUp 0.6s ease both; }
+  .kpi-card:nth-child(1) .kpi-value { animation-delay: 0.1s; }
+  .kpi-card:nth-child(2) .kpi-value { animation-delay: 0.2s; }
+  .kpi-card:nth-child(3) .kpi-value { animation-delay: 0.3s; }
+  .kpi-card:nth-child(4) .kpi-value { animation-delay: 0.4s; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .source-card { animation: fadeSlide 0.5s ease both; }
+  .source-card:nth-child(1) { animation-delay: 0.15s; }
+  .source-card:nth-child(2) { animation-delay: 0.25s; }
+  .source-card:nth-child(3) { animation-delay: 0.35s; }
+  .source-card:nth-child(4) { animation-delay: 0.45s; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="eyebrow">Broadcast · Agência Estado</div>
+    <h1>Oferta de Dados — Análise de Crescimento</h1>
+  </div>
+  <div class="header-right">
+    <strong>Base de referência: jun 2026</strong>
+    59 bolsas &amp; fontes · 8 asset classes · 7 regiões<br>
+    Elaborado por Antonio Melo · Head Market Data &amp; Automation
+  </div>
+</header>
+
+<main>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Base Anterior</div>
+      <div class="kpi-value" style="color:var(--muted)">440.000</div>
+      <div class="kpi-sub">dez 2024</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Base Atual</div>
+      <div class="kpi-value" style="color:var(--white)">712.391</div>
+      <div class="kpi-sub">jun 2025</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Incremento</div>
+      <div class="kpi-value" style="color:var(--gold)">+272.391</div>
+      <div class="kpi-sub">novos instrumentos</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Crescimento</div>
+      <div class="kpi-value" style="color:var(--green)">+61,9%</div>
+      <div class="kpi-sub">variação no período</div>
+    </div>
+  </div>
+
+  <!-- SECTION TITLE -->
+  <div class="section-title">O que gerou o incremento de +272.391 instrumentos</div>
+
+  <!-- SOURCE CARDS -->
+  <div class="source-row">
+    <div class="source-card">
+      <span class="badge" style="background:rgba(74,144,217,0.2);color:var(--lb);border:1px solid var(--lb)">Renda Fixa</span>
+      <div class="source-name">Precia</div>
+      <div class="source-highlight" style="color:var(--lb)">115.048 novos instrumentos</div>
+      <div class="source-desc">Provedor oficial de preços de referência da Colômbia. Maior contribuidor do mês com cobertura de títulos públicos, crédito privado e derivativos do mercado colombiano com marcação a mercado regulatória.</div>
+    </div>
+    <div class="source-card">
+      <span class="badge" style="background:rgba(240,165,0,0.2);color:var(--amber);border:1px solid var(--amber)">Câmbio</span>
+      <div class="source-name">FenicsMD FX</div>
+      <div class="source-highlight" style="color:var(--amber)">Cobertura global de FX</div>
+      <div class="source-desc">Cotações spot e forward de moedas via Fenics Market Data. Cobertura de pares de FX com dados intraday e end-of-day para mercados globais.</div>
+    </div>
+    <div class="source-card">
+      <span class="badge" style="background:rgba(155,89,182,0.2);color:var(--purple);border:1px solid var(--purple)">Derivativos</span>
+      <div class="source-name">FenicsMD FX Options</div>
+      <div class="source-highlight" style="color:var(--purple)">Superfícies de volatilidade</div>
+      <div class="source-desc">Superfícies de volatilidade e preços de opções de FX. Dados essenciais para hedge e precificação de derivativos de moeda no mercado OTC.</div>
+    </div>
+    <div class="source-card">
+      <span class="badge" style="background:rgba(61,190,122,0.2);color:var(--green);border:1px solid var(--green)">Renda Fixa</span>
+      <div class="source-name">ICE Data Curvas</div>
+      <div class="source-highlight" style="color:var(--green)">15 bolsas internacionais</div>
+      <div class="source-desc">Curvas de juros e spreads de crédito de referência internacional via ICE Data Services, cobrindo 15 bolsas e mercados globais de renda fixa.</div>
+    </div>
+  </div>
+
+  <!-- BREAKDOWN PANEL -->
+  <div class="breakdown-panel">
+    <div class="panel-title">Breakdown dos 177.819 novos instrumentos — Junho 2026</div>
+    <div class="breakdown-grid" id="breakdownGrid">
+      <!-- Rendered by JS -->
+    </div>
+    <div class="breakdown-total">
+      Total de novos instrumentos em junho 2026: <strong>177.819</strong>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>Broadcast · Agência Estado — Dados Financeiros de Referência</span>
+  <span>jun 2026</span>
+</footer>
+
+<script>
+  const sources = [
+    { label: "Precia",        value: 115048, pct: "64,7%", color: "var(--amber)"  },
+    { label: "Bovespa",       value: 41518,  pct: "23,3%", color: "var(--lb)"     },
+    { label: "CME",           value: 6025,   pct: "3,4%",  color: "var(--green)"  },
+    { label: "CBOT",          value: 5684,   pct: "3,2%",  color: "var(--purple)" },
+    { label: "Comex",         value: 3984,   pct: "2,2%",  color: "var(--salmon)" },
+    { label: "ICE US",        value: 1898,   pct: "1,1%",  color: "var(--teal)"   },
+    { label: "Nymex",         value: 629,    pct: "0,4%",  color: "var(--pink)"   },
+    { label: "Outros",        value: 1033,   pct: "0,6%",  color: "var(--muted)"  },
+  ];
+
+  const maxVal = Math.max(...sources.map(s => s.value));
+  const grid = document.getElementById('breakdownGrid');
+
+  sources.forEach(s => {
+    const pct = (s.value / maxVal) * 100;
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    col.innerHTML = `
+      <div class="bar-meta">
+        <span class="bar-count" style="color:${s.color}">${s.value.toLocaleString('pt-BR')}</span>
+        <span class="bar-pct" style="color:${s.color}">${s.pct}</span>
+      </div>
+      <div class="bar-fill" style="height:0%;background:${s.color}" data-height="${pct}"></div>
+    `;
+    grid.appendChild(col);
+
+    const labelEl = document.createElement('div');
+    labelEl.className = 'bar-label';
+    labelEl.textContent = s.label;
+    col.appendChild(labelEl);
+  });
+
+  // Animate bars on load
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.bar-fill').forEach((bar, i) => {
+        setTimeout(() => {
+          bar.style.transition = 'height 0.9s cubic-bezier(0.23, 1, 0.32, 1)';
+          bar.style.height = bar.dataset.height + '%';
+        }, i * 80);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
