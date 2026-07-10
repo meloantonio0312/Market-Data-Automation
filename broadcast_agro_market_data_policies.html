@@ -282,6 +282,14 @@ hr{border:none;border-top:0.5px solid var(--border);margin:24px 0}
   </div>
 
   <div class="sidebar-section">
+    <div class="sidebar-section-label">Monitoramento</div>
+    <button class="sidebar-link" onclick="showPanel('policy-scan',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"/></svg>
+      Varredura de políticas
+    </button>
+  </div>
+
+  <div class="sidebar-section">
     <div class="sidebar-section-label">Referência</div>
     <button class="sidebar-link" onclick="showPanel('glossary',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
@@ -3595,6 +3603,222 @@ hr{border:none;border-top:0.5px solid var(--border);margin:24px 0}
           </tr>
         </tbody>
       </table>
+    </div>
+
+  </div>
+
+  <div id="panel-policy-scan" class="panel">
+
+    <div class="page-header">
+      <div class="page-eyebrow">Monitoramento · Julho 2026</div>
+      <div class="page-title">Varredura de políticas — o que mudou</div>
+      <div class="page-sub">Varredura realizada em julho/2026 em todos os sites oficiais usados para construção deste relatório. Comparação com as versões vigentes quando o documento foi criado (junho/2026).</div>
+    </div>
+
+    <!-- ALERTA GERAL -->
+    <div class="alert alert-red" style="margin-bottom:20px">
+      <div class="alert-title">⚠ Mudanças críticas identificadas — ação necessária</div>
+      <div class="alert-body">Foram identificadas mudanças relevantes em <strong>CME Group</strong> e <strong>Euronext</strong> desde a construção inicial do relatório. Os valores de fees permanecem os mesmos, mas há novos documentos contratuais vigentes que precisam ser revisados — especialmente o novo modelo comercial Euronext (RCB) com vigência out/2026 que impacta diretamente clientes que criam dados derivados ou redistribuem via EDSA.</div>
+    </div>
+
+    <!-- STATUS POR BOLSA -->
+    <div class="section-title">Status por exchange — resultado da varredura</div>
+
+    <!-- CME -->
+    <div style="background:var(--navy-card);border:0.5px solid rgba(239,159,39,0.4);border-radius:12px;overflow:hidden;margin-bottom:12px">
+      <div style="background:rgba(239,159,39,0.06);padding:14px 20px;border-bottom:0.5px solid rgba(239,159,39,0.15);display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">🇺🇸</span>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary)">CME Group / CBOT</div>
+          <div style="font-size:11px;color:var(--text-muted)">Verificado em: cmegroup.com/market-data/license-data/market-data-policy-education-center.html</div>
+        </div>
+        <span class="pill pill-amber" style="margin-left:auto">Novos documentos</span>
+      </div>
+      <div style="padding:14px 20px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px">
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:8px">O que usamos (jan/2026)</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--ok-text)">✓</span> Schedule 5 — janeiro 2026</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--ok-text)">✓</span> ILA — setembro 2024</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap=6px"><span style="color:var(--ok-text)">✓</span> Information Policies — vigentes</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--warn-text);margin-bottom:8px">Novidades encontradas (jun/2026)</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--warn-text)">⚡</span> <strong>Schedule 5 — junho 2026</strong> (novo)</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--warn-text)">⚡</span> <strong>ILA — junho 2026</strong> (atualizado)</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--warn-text)">⚡</span> <strong>ILA Subscriber Addendum — junho 2026</strong> (atualizado)</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--warn-text)">⚡</span> <strong>Information Policies v5-06/2026</strong> (novo)</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--warn-text)">⚡</span> <strong>Market Data License Agreement Updates — junho 2026</strong> (novo)</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--warn-text)">⚡</span> <strong>Schedule 7 — abril 2026</strong> (novo)</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:rgba(29,158,117,0.08);border:0.5px solid rgba(29,158,117,0.25);border-radius:8px;padding:10px 14px;margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--ok-text);margin-bottom:3px">✓ Fees inalterados</div>
+          <div style="font-size:12px;color:var(--text-secondary)">Comparação entre Schedule 5 jan/2026 e jun/2026: todos os valores de Distribution (RT USD 29.280, Delayed USD 21.840, Historical USD 35.220), Display Device (RT USD 134,50), Data Feed (RT USD 610, Delayed USD 304) e Non-Display (Cat A1/A2/A3/B/C) permanecem idênticos. Nenhum aumento de fee no Schedule 5 de junho.</div>
+        </div>
+        <div style="background:rgba(239,159,39,0.08);border:0.5px solid rgba(239,159,39,0.25);border-radius:8px;padding:10px 14px">
+          <div style="font-size:11px;font-weight:700;color:var(--warn-text);margin-bottom:3px">⚡ Ação necessária — revisar novos documentos ILA e Information Policies</div>
+          <div style="font-size:12px;color:var(--text-secondary)">O ILA de junho/2026 e as novas Information Policies v5 podem conter alterações em cláusulas de compliance, reporting e uso de dados em IA. Recomenda-se revisão com a Elissandra para verificar se há mudanças nas obrigações do distribuidor. Referência: <strong>Market Data License Agreement Updates — junho/2026</strong> contém lista de todas as mudanças.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ICE -->
+    <div style="background:var(--navy-card);border:0.5px solid rgba(29,158,117,0.35);border-radius:12px;overflow:hidden;margin-bottom:12px">
+      <div style="background:rgba(29,158,117,0.06);padding:14px 20px;border-bottom:0.5px solid rgba(29,158,117,0.15);display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">🇺🇸🇬🇧</span>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary)">ICE Futures US / Europe</div>
+          <div style="font-size:11px;color:var(--text-muted)">Verificado em: theice.com/market-data/proprietary-data · theice.com/market-data/agreements</div>
+        </div>
+        <span class="pill pill-green" style="margin-left:auto">Sem mudanças</span>
+      </div>
+      <div style="padding:14px 20px">
+        <div style="background:rgba(29,158,117,0.08);border:0.5px solid rgba(29,158,117,0.25);border-radius:8px;padding:10px 14px">
+          <div style="font-size:11px;font-weight:700;color:var(--ok-text);margin-bottom:3px">✓ Política estável</div>
+          <div style="font-size:12px;color:var(--text-secondary)">Nenhuma mudança material identificada nas políticas de redistribuição, non-display e derived objects da ICE. O modelo de precificação caso a caso para non-display permanece inalterado. Política de "derived objects considerados individualmente" mantida. Nenhum novo documento de política publicado desde a construção do relatório.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EURONEXT -->
+    <div style="background:var(--navy-card);border:0.5px solid rgba(226,75,74,0.4);border-radius:12px;overflow:hidden;margin-bottom:12px">
+      <div style="background:rgba(226,75,74,0.08);padding:14px 20px;border-bottom:0.5px solid rgba(226,75,74,0.2);display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">🇫🇷</span>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary)">Euronext / MATIF</div>
+          <div style="font-size:11px;color:var(--text-muted)">Verificado em: euronext.com/en/data/pricing-specs-agreements · euronext.com/en/data/real-time/reasonable-commercial-basis</div>
+        </div>
+        <span class="pill pill-red" style="margin-left:auto">Mudança crítica</span>
+      </div>
+      <div style="padding:14px 20px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px">
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:8px">O que usamos (jan/2026)</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--ok-text)">✓</span> EMDA General T&C — jan/2026</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--ok-text)">✓</span> EMDA Order Form — jan/2026</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--ok-text)">✓</span> Categorias 1–6 (Non-Display)</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--danger-text);margin-bottom:8px">Novidades encontradas (out/2026)</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--danger-text)">🔴</span> <strong>Novo modelo comercial RCB</strong> — vigência 1 out/2026</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--danger-text)">🔴</span> <strong>EMDA novo T&C — out/2026</strong> publicado</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap=6px"><span style="color:var(--danger-text)">🔴</span> <strong>EDSA novo T&C — out/2026</strong> publicado</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--danger-text)">🔴</span> <strong>Nova Information Product Fee Schedule — out/2026</strong></div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--warn-text)">⚡</span> EDSA Application of Non-Display Use Fees — fev/2026 (novo)</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:rgba(226,75,74,0.08);border:0.5px solid rgba(226,75,74,0.25);border-radius:8px;padding:12px 14px;margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--danger-text);margin-bottom:6px">🔴 Mudança crítica — novo modelo RCB (Reasonable Commercial Basis)</div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.6">A Euronext está mudando seu modelo comercial para conformidade com o framework <strong>RCB</strong> da ESMA/MiFIR Review, vigente a partir de <strong>1 de outubro de 2026</strong>. Este é o prazo mais importante a monitorar.<br><br>
+          <strong style="color:var(--text-primary)">O que muda para a Broadcast:</strong><br>
+          · Clientes que atualmente criam dados derivados ou redistribuem índices sob o EDSA precisarão migrar para o EMDA — impacto direto em clientes que usam Cat 5 (índices redistribuídos)<br>
+          · Nova Information Product Fee Schedule com possível rebalanceamento de preços por categoria<br>
+          · Clientes serão informados pela Euronext via MyMarketData portal sobre qual licença precisam<br>
+          · A Euronext recomenda engajamento imediato — não esperar outubro</div>
+        </div>
+        <div style="background:rgba(239,159,39,0.08);border:0.5px solid rgba(239,159,39,0.25);border-radius:8px;padding:10px 14px">
+          <div style="font-size:11px;font-weight:700;color:var(--warn-text);margin-bottom:3px">⚡ Ação urgente — contatar Euronext antes de outubro/2026</div>
+          <div style="font-size:12px;color:var(--text-secondary)">Verificar no MyMarketData portal se a Broadcast (e seus clientes com EDSA) recebeu notificação de migração. Contato: databyeuronext@euronext.com. Documentos de transição disponíveis em: euronext.com/en/data/real-time/reasonable-commercial-basis</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B3 -->
+    <div style="background:var(--navy-card);border:0.5px solid rgba(239,159,39,0.35);border-radius:12px;overflow:hidden;margin-bottom:20px">
+      <div style="background:rgba(239,159,39,0.06);padding:14px 20px;border-bottom:0.5px solid rgba(239,159,39,0.15);display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">🇧🇷</span>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary)">B3</div>
+          <div style="font-size:11px;color:var(--text-muted)">Verificado em: b3.com.br/market-data/distribuidores/politica-comercial-e-contratos</div>
+        </div>
+        <span class="pill pill-amber" style="margin-left:auto">Política 2027 publicada</span>
+      </div>
+      <div style="padding:14px 20px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px">
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:8px">O que usamos</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--ok-text)">✓</span> Política Comercial 2026 — vigente 01/01 a 31/12/2026</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--ok-text)">✓</span> CL 104/2025-PRE — Circular Letter de referência</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--warn-text);margin-bottom:8px">Novidades encontradas</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--warn-text)">⚡</span> <strong>Política Comercial 2027 já publicada</strong> no site B3</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--ok-text)">✓</span> Reajuste anual por CPI (tarifas USD) e IPCA (tarifas BRL) — confirmado</div>
+              <div style="font-size:12px;color:var(--text-secondary);display:flex;gap:6px"><span style="color:var(--ok-text)">✓</span> Novo sistema digital de self-report em produção — jan/2026</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:rgba(29,158,117,0.08);border:0.5px solid rgba(29,158,117,0.25);border-radius:8px;padding:10px 14px;margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--ok-text);margin-bottom:3px">✓ Política 2026 correta e vigente</div>
+          <div style="font-size:12px;color:var(--text-secondary)">Todos os dados do relatório sobre B3 estão corretos. A Política Comercial 2026 (Versão Intermediária 1.0, vigência 01/01 a 31/12/2026) é a vigente. Reajuste por CPI (USD) e IPCA (BRL) confirmados. Novo sistema digital de self-report já em produção — verificar se a Broadcast migrou para o novo fluxo.</div>
+        </div>
+        <div style="background:rgba(239,159,39,0.08);border:0.5px solid rgba(239,159,39,0.25);border-radius:8px;padding:10px 14px">
+          <div style="font-size:11px;font-weight:700;color:var(--warn-text);margin-bottom:3px">⚡ Monitorar — Política 2027 já disponível para consulta</div>
+          <div style="font-size:12px;color:var(--text-secondary)">A B3 publicou a Política Comercial válida a partir de 01/01/2027 no portal de distribuidores. Recomenda-se revisar para antecipar eventuais mudanças de categoria ou reajuste de fees antes do planejamento financeiro para 2027.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESUMO EXECUTIVO DA VARREDURA -->
+    <div class="section-title">Resumo executivo — ações por prazo</div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Exchange</th>
+            <th>Status</th>
+            <th>O que mudou</th>
+            <th>Prazo</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>🇫🇷 Euronext</strong></td>
+            <td><span class="pill pill-red">Crítico</span></td>
+            <td style="font-size:11px;color:var(--text-secondary)">Novo modelo comercial RCB — clientes EDSA que criam derivados precisam migrar para EMDA</td>
+            <td><strong style="color:var(--danger-text)">1 out/2026</strong></td>
+            <td style="font-size:11px;color:var(--text-secondary)">Verificar MyMarketData portal e contatar Euronext imediatamente</td>
+          </tr>
+          <tr>
+            <td><strong>🇺🇸 CME</strong></td>
+            <td><span class="pill pill-amber">Atenção</span></td>
+            <td style="font-size:11px;color:var(--text-secondary)">Novos ILA, Subscriber Addendum e Information Policies (jun/2026). Fees inalterados.</td>
+            <td><strong style="color:var(--warn-text)">Já vigente</strong></td>
+            <td style="font-size:11px;color:var(--text-secondary)">Revisar Market Data License Agreement Updates jun/2026 com Elissandra</td>
+          </tr>
+          <tr>
+            <td><strong>🇧🇷 B3</strong></td>
+            <td><span class="pill pill-amber">Monitorar</span></td>
+            <td style="font-size:11px;color:var(--text-secondary)">Política 2027 já publicada. Política 2026 correta e vigente.</td>
+            <td><strong style="color:var(--warn-text)">01/01/2027</strong></td>
+            <td style="font-size:11px;color:var(--text-secondary)">Revisar Política 2027 para planejamento financeiro. Migrar para novo sistema de self-report se ainda não feito.</td>
+          </tr>
+          <tr>
+            <td><strong>🇺🇸🇬🇧 ICE</strong></td>
+            <td><span class="pill pill-green">OK</span></td>
+            <td style="font-size:11px;color:var(--text-secondary)">Sem mudanças materiais identificadas</td>
+            <td>—</td>
+            <td style="font-size:11px;color:var(--text-secondary)">Manter monitoramento trimestral</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:14px;padding:12px 16px;background:var(--navy-card);border:0.5px solid var(--border);border-radius:10px;font-size:11px;color:var(--text-muted)">
+      Varredura realizada em <strong style="color:var(--text-secondary)">10 de julho de 2026</strong> · Fontes verificadas: cmegroup.com · theice.com · euronext.com · connect2.euronext.com · b3.com.br · Próxima varredura recomendada: <strong style="color:var(--text-secondary)">outubro de 2026</strong> (após vigência das mudanças Euronext)
     </div>
 
   </div>
