@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICE Data Services × Morningstar — Análise Comparativa | Broadcast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root, [data-theme="dark"]{
+  --bg:#0a1220; --bg2:#0e1a2e; --card:#111f36; --card2:#152540; --border:#1e3252;
+  --txt:#e8edf5; --txt2:#9fb0c8; --txt3:#64789a;
+  --gold:#d4a843; --gold2:#e8c369; --gold-dim:rgba(212,168,67,.12);
+  --green:#3dd68c; --green-dim:rgba(61,214,140,.12);
+  --red:#f0647a; --red-dim:rgba(240,100,122,.12);
+  --blue:#5aa2e8; --blue-dim:rgba(90,162,232,.12);
+  --ice:#5aa2e8; --ms:#f0647a;
+  --shadow:0 8px 32px rgba(0,0,0,.4);
+}
+[data-theme="light"]{
+  --bg:#f4f6fa; --bg2:#eaeef5; --card:#ffffff; --card2:#f7f9fc; --border:#d8e0ec;
+  --txt:#16233a; --txt2:#4a5b76; --txt3:#7c8ba3;
+  --gold:#b0872a; --gold2:#8f6d1e; --gold-dim:rgba(176,135,42,.10);
+  --green:#0f9d63; --green-dim:rgba(15,157,99,.10);
+  --red:#d4405a; --red-dim:rgba(212,64,90,.10);
+  --blue:#2b6fbe; --blue-dim:rgba(43,111,190,.10);
+  --ice:#2b6fbe; --ms:#d4405a;
+  --shadow:0 8px 24px rgba(22,35,58,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,sans-serif;font-size:14.5px;line-height:1.55;transition:background .3s,color .3s}
+.wrap{max-width:1240px;margin:0 auto;padding:26px 28px 60px}
+.brand{padding:4px 6px 12px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.brand .b1{font-family:'Sora',sans-serif;font-weight:800;font-size:14px;letter-spacing:-.01em}
+.brand .b1 em{color:var(--gold);font-style:normal}
+.brand .b2{font-size:10.5px;color:var(--txt3);margin-top:2px;letter-spacing:.06em;text-transform:uppercase}
+.num{font-family:'JetBrains Mono',monospace}
+h1,h2,h3{font-family:'Sora',sans-serif}
+
+/* Header */
+header{padding:4px 0 6px;margin-bottom:22px}
+.hd-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.eyebrow{color:var(--gold);font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+h1{font-size:27px;font-weight:800;letter-spacing:-.01em}
+h1 .vs{color:var(--gold);font-weight:400;font-style:italic;padding:0 4px}
+.sub{color:var(--txt2);margin-top:8px;font-size:13.5px;max-width:760px}
+.meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:var(--txt3)}
+.meta span{display:flex;align-items:center;gap:6px}
+.meta b{color:var(--txt2);font-weight:600}
+.toggle{background:var(--card);border:1px solid var(--border);color:var(--txt);border-radius:20px;padding:7px 15px;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;transition:.2s}
+.toggle:hover{border-color:var(--gold)}
+.conf{font-size:11px;color:var(--txt3);border:1px solid var(--border);border-radius:4px;padding:3px 9px;letter-spacing:.06em;text-transform:uppercase}
+
+/* Verdict banner — signature element */
+.verdict{display:grid;grid-template-columns:1fr auto 1fr;gap:0;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:26px;box-shadow:var(--shadow)}
+.v-side{padding:26px 28px;background:var(--card)}
+.v-side.win{background:linear-gradient(135deg,var(--card),var(--blue-dim));border-right:none;position:relative}
+.v-side.win::before{content:"RECOMENDADO";position:absolute;top:14px;right:16px;font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);border-radius:4px;padding:2px 8px}
+.v-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 22px;background:var(--bg2);border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.v-mid .delta{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;color:var(--gold)}
+.v-mid .dl{font-size:10.5px;color:var(--txt3);text-transform:uppercase;letter-spacing:.1em;text-align:center;margin-top:4px}
+.v-name{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:3px}
+.v-name.ice{color:var(--ice)} .v-name.ms{color:var(--ms)}
+.v-tag{font-size:12px;color:var(--txt3);margin-bottom:16px}
+.v-big{font-family:'JetBrains Mono',monospace;font-size:31px;font-weight:700;letter-spacing:-.02em}
+.v-big small{font-size:13px;color:var(--txt3);font-weight:400;font-family:'Inter',sans-serif}
+.v-row{display:flex;gap:22px;margin-top:16px;flex-wrap:wrap}
+.v-kpi .k{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600}
+.v-kpi .l{font-size:11px;color:var(--txt3)}
+.ok{color:var(--green)} .bad{color:var(--red)} .warn{color:var(--gold)}
+
+/* Layout with sidebar */
+.layout{display:grid;grid-template-columns:225px minmax(0,1fr);gap:26px;align-items:start}
+.side{position:sticky;top:20px}
+nav{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 12px}
+.ngroup{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt3);font-weight:700;margin:10px 6px 4px}
+.ngroup:first-child{margin-top:0}
+nav button{background:transparent;border:1px solid transparent;color:var(--txt2);border-radius:8px;padding:9px 12px;cursor:pointer;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;transition:.18s;text-align:left;width:100%}
+nav button:hover{border-color:var(--gold);color:var(--txt)}
+nav button.on{background:var(--gold-dim);border-color:var(--gold);color:var(--gold2)}
+@media(max-width:980px){
+  .layout{grid-template-columns:1fr}
+  .side{position:static}
+  nav{flex-direction:row;flex-wrap:wrap}
+  nav button{width:auto}
+  .ngroup{display:none}
+}
+section{display:none}
+section.on{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){section.on{animation:none}}
+
+/* Cards & grids */
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+.card h3{font-size:14.5px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.kpi .val{font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:700;letter-spacing:-.02em}
+.kpi .lbl{font-size:12px;color:var(--txt2);margin-top:5px}
+.kpi .foot{font-size:11px;color:var(--txt3);margin-top:3px}
+h2{font-size:19px;font-weight:700;margin:30px 0 6px}
+.h2sub{color:var(--txt2);font-size:13px;margin-bottom:16px}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;border-radius:4px;padding:2px 8px;letter-spacing:.05em;text-transform:uppercase}
+.pill.ice{background:var(--blue-dim);color:var(--ice)}
+.pill.ms{background:var(--red-dim);color:var(--ms)}
+.pill.g{background:var(--green-dim);color:var(--green)}
+.pill.r{background:var(--red-dim);color:var(--red)}
+.pill.y{background:var(--gold-dim);color:var(--gold)}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:var(--txt3);font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--card2)}
+td.num,th.num{text-align:right;font-family:'JetBrains Mono',monospace}
+.tbl-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--border);border-radius:12px}
+tfoot td{font-weight:700;background:var(--card2);border-top:2px solid var(--border)}
+
+/* Compare rows */
+.cmp{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.cmp-row{display:grid;grid-template-columns:200px 1fr 1fr;border-bottom:1px solid var(--border)}
+.cmp-row:last-child{border-bottom:none}
+.cmp-row>div{padding:14px 18px}
+.cmp-row .crit{background:var(--card2);font-weight:600;font-size:12.5px;color:var(--txt2);display:flex;align-items:center}
+.cmp-row .a{border-right:1px solid var(--border);border-left:1px solid var(--border)}
+.cmp-head{background:var(--bg2)!important;font-family:'Sora',sans-serif;font-weight:700;font-size:14px}
+.cmp-head.a{color:var(--ice)} .cmp-head.b{color:var(--ms)}
+
+/* Bars */
+.bar-row{display:grid;grid-template-columns:230px 1fr 90px;gap:12px;align-items:center;padding:7px 0;font-size:12.5px}
+.bar-track{background:var(--bg2);border-radius:4px;height:16px;position:relative;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.bar-ice{background:linear-gradient(90deg,var(--ice),#7fbcf2)}
+.bar-ms{background:linear-gradient(90deg,var(--ms),#f78ba0)}
+.bar-lbl{color:var(--txt2)} .bar-val{text-align:right;font-family:'JetBrains Mono',monospace;font-weight:600}
+
+/* Timeline */
+.tl{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px}
+.tl-row{display:grid;grid-template-columns:210px 1fr;gap:14px;align-items:center;margin-bottom:10px}
+.tl-lbl{font-size:12.5px;color:var(--txt2);text-align:right}
+.tl-track{position:relative;height:26px;background:var(--bg2);border-radius:5px}
+.tl-seg{position:absolute;top:3px;bottom:3px;border-radius:4px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#0a1220;white-space:nowrap;overflow:hidden;padding:0 6px}
+.tl-axis{display:grid;grid-template-columns:210px 1fr;gap:14px;margin-top:6px}
+.tl-axis .ticks{display:flex;justify-content:space-between;font-size:10.5px;color:var(--txt3);font-family:'JetBrains Mono',monospace}
+.note{background:var(--gold-dim);border:1px solid var(--gold);border-radius:10px;padding:14px 18px;font-size:13px;margin:16px 0}
+.note b{color:var(--gold2)}
+.alert{background:var(--red-dim);border:1px solid var(--red);border-radius:10px;padding:14px 18px;font-size:13px;margin:16px 0}
+.alert b{color:var(--red)}
+.okbox{background:var(--green-dim);border:1px solid var(--green);border-radius:10px;padding:14px 18px;font-size:13px;margin:16px 0}
+.okbox b{color:var(--green)}
+ul.clean{list-style:none;display:flex;flex-direction:column;gap:9px;font-size:13px}
+ul.clean li{padding-left:20px;position:relative;color:var(--txt2)}
+ul.clean li::before{content:"·";position:absolute;left:6px;color:var(--gold);font-weight:700}
+ul.clean li b{color:var(--txt)}
+footer{margin-top:44px;border-top:1px solid var(--border);padding-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--txt3)}
+@media(max-width:860px){
+  .verdict{grid-template-columns:1fr}
+  .v-mid{flex-direction:row;gap:12px;padding:14px;border-left:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .cmp-row{grid-template-columns:1fr}
+  .cmp-row .crit{border-bottom:1px dashed var(--border)}
+  .cmp-row .a{border-left:none;border-right:none;border-bottom:1px dashed var(--border)}
+  .bar-row{grid-template-columns:1fr;gap:4px}
+  .bar-val{text-align:left}
+  .tl-row,.tl-axis{grid-template-columns:1fr}
+  .tl-lbl{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<div class="layout">
+<aside class="side">
+  <nav>
+    <div class="brand">
+      <div class="b1">ICE <em>×</em> Morningstar</div>
+      <div class="b2">Análise de Fornecedores</div>
+    </div>
+    <div class="ngroup">Decisão</div>
+    <button class="on" onclick="tab(event,'t0')">🎯 Overview Executivo</button>
+    <div class="ngroup">Análise</div>
+    <button onclick="tab(event,'t1')">📊 Análise Geral</button>
+    <button onclick="tab(event,'t2')">⚖️ Side-by-Side</button>
+    <button onclick="tab(event,'t3')">💰 Custo por Bolsa</button>
+    <button onclick="tab(event,'t8')">🏛 Fees de Bolsas</button>
+    <div class="ngroup">Execução</div>
+    <button onclick="tab(event,'t4')">🛠 Implementação</button>
+    <button onclick="tab(event,'t7')">💵 Fluxo de Caixa</button>
+    <div class="ngroup">Governança</div>
+    <button onclick="tab(event,'t5')">📜 Riscos Contratuais</button>
+    <button onclick="tab(event,'t6')">✅ Recomendação</button>
+  </nav>
+</aside>
+<main class="main">
+
+<header>
+  <div class="hd-top">
+    <div>
+      <div class="eyebrow">Broadcast · Market Data &amp; Automação · Análise de Fornecedores</div>
+      <h1>ICE Data Services <span class="vs">×</span> Morningstar Real-Time Data</h1>
+      <div class="sub">Comparativo side-by-side para consumo de dados de bolsas de valores internacionais — custo, cobertura, condições contratuais e tempo de implementação. Base: 15 mercados do pacote ICE Exchanges vs. proposta equivalente Morningstar.</div>
+      <div class="meta">
+        <span><b>Data:</b> Julho/2026</span>
+        <span><b>Responsável:</b> Antonio Melo</span>
+        <span><b>Destinatário:</b> Denis Piovezan — CEO</span>
+        <span class="conf">Confidencial — uso interno</span>
+      </div>
+    </div>
+    <button class="toggle" onclick="tg()">☀ / ☾ Tema</button>
+  </div>
+</header>
+
+<!-- VERDICT -->
+<div class="verdict">
+  <div class="v-side win">
+    <div class="v-name ice">ICE Data Services</div>
+    <div class="v-tag">Vendor atual · MSA desde Mai/2021 · OS2 ativo até Dez/2027</div>
+    <div class="v-big num">USD 14.925<small> /mês · 15 bolsas</small></div>
+    <div class="v-row">
+      <div class="v-kpi"><div class="k num ok">USD 179K</div><div class="l">Custo Ano 1</div></div>
+      <div class="v-kpi"><div class="k ok">Pronto ✓</div><div class="l">Injetor em produção</div></div>
+      <div class="v-kpi"><div class="k num ok">~4 semanas</div><div class="l">Go-live</div></div>
+    </div>
+  </div>
+  <div class="v-mid">
+    <div class="delta">2,9×</div>
+    <div class="dl">diferença de custo<br>conhecido / mês</div>
+  </div>
+  <div class="v-side">
+    <div class="v-name ms">Morningstar</div>
+    <div class="v-tag">Novo vendor · PLA a negociar · onboarding obrigatório</div>
+    <div class="v-big num">USD 43.565+<small> /mês · fees conhecidos*</small></div>
+    <div class="v-row">
+      <div class="v-kpi"><div class="k num bad">USD 523K+</div><div class="l">Custo Ano 1 (parcial)</div></div>
+      <div class="v-kpi"><div class="k bad">A construir</div><div class="l">Injetor novo</div></div>
+      <div class="v-kpi"><div class="k num bad">~5–6 meses</div><div class="l">Go-live estimado</div></div>
+    </div>
+  </div>
+</div>
+<div class="note" style="margin-top:-8px">
+  <b>*Nota sobre camadas de custo (atualizado Jul/2026):</b> os relatórios Morningstar listam taxas <b>"Billed By: Exchange"</b> — fees de licenciamento pagos diretamente às bolsas, uma camada que existe em qualquer cenário de carrier (ver aba <b>Fees de Bolsas</b>, com o caso Cboe). O que diferencia os vendors é a camada de <b>carrier</b>: ICE tem preço contratado (USD 14.925/mês) e injetor pronto; a Morningstar ainda não apresentou o próprio License Fee, Implementation Fee e Infrastructure Charge (POA), além de fees non-display "Speak to Subs" em LSE e Swiss. O custo real Morningstar será superior aos USD 43,6K/mês visíveis.
+</div>
+<div class="card" style="margin-bottom:26px;padding:13px 22px">
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px">
+    <span style="font-family:'Sora',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3)">Sondagem de mercado — 3 carriers consultados:</span>
+    <span class="pill g">ICE · 15/15 bolsas · recomendado</span>
+    <span class="pill y">Morningstar · ~14/15 · custo 2,9×+ · injetor novo</span>
+    <span class="pill r">Nasdaq · 0/15 · não atende (apenas equities US)</span>
+    <span style="color:var(--txt3);font-size:11.5px">Nasdaq confirmou por escrito que as bolsas cotadas exigem licenciamento direto com cada uma e operam de forma independente da Nasdaq (T. Anderson, Senior Managing Director, Jul/2026)</span>
+  </div>
+</div>
+
+<!-- T0 OVERVIEW EXECUTIVO -->
+<section id="t0" class="on">
+  <h2 style="margin-top:6px">A decisão em uma tela</h2>
+  <div class="h2sub">Qual fornecedor contratar para suprir as 15 bolsas de valores internacionais demandadas pelo pipeline HUB 2026</div>
+
+  <div class="okbox" style="font-size:14.5px;padding:18px 22px">
+    <b>Recomendação: aprovar o pacote ICE Data Services — USD 14.925/mês, 15 bolsas.</b><br>
+    A Morningstar custa no mínimo 2,9× mais, exige a construção de um injetor novo (5–6 meses) e só devolve o caixa investido no M18. A ICE usa o injetor já em produção, entra em operação em ~4 semanas e faz payback no M4.
+  </div>
+
+  <h2>Os 4 números da decisão</h2>
+  <div class="grid g4">
+    <div class="card kpi"><div class="val num warn">2,9×</div><div class="lbl">Diferença de custo mensal</div><div class="foot">USD 14,9K (ICE) vs USD 43,6K+ (MS, sem vendor fee POA)</div></div>
+    <div class="card kpi"><div class="val num warn">M4 vs M18</div><div class="lbl">Payback</div><div class="foot">14 meses de vantagem da ICE, em premissas generosas p/ MS</div></div>
+    <div class="card kpi"><div class="val num warn">4 sem vs 6 meses</div><div class="lbl">Time-to-market</div><div class="foot">Injetor ICE pronto · injetor MS a construir do zero</div></div>
+    <div class="card kpi"><div class="val num warn">R$ 4,6M</div><div class="lbl">Diferença de caixa em 18 meses</div><div class="foot">+R$ 4,81M (ICE) vs +R$ 0,20M (MS)</div></div>
+  </div>
+
+  <h2>Por que, em 30 segundos</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="pill g">A FAVOR DA ICE</span></h3>
+      <ul class="clean">
+        <li><b>Infraestrutura pronta:</b> mesmo feed handler que já ingere Nasdaq, NYSE, CME, B3 — as 15 bolsas são só ativação + cadastro.</li>
+        <li><b>Contrato maduro:</b> MSA desde 2021, preço travado com escalonamento definido até Dez/2027, reporting rodando.</li>
+        <li><b>Receita imediata:</b> 13 clientes mapeados no HUB; 5 podem receber proposta na semana seguinte ao go-live. Breakeven na 7ª bolsa vendida.</li>
+        <li><b>Exposição mínima de caixa:</b> pior momento = −R$ 102K (M2), recuperado em 2 meses.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="pill r">CONTRA A MORNINGSTAR</span></h3>
+      <ul class="clean">
+        <li><b>Custo em camadas e incompleto:</b> USD 43,6K/mês visíveis são só as taxas de bolsa — vendor fee, implementation e infrastructure (POA) vêm por cima, além de fee por usuário profissional em 5 bolsas.</li>
+        <li><b>Caixa comprometido:</b> vale de −R$ 970K no M9; caixa mensal só fica positivo com ~10 clientes convertidos.</li>
+        <li><b>Contrato desfavorável:</b> reajuste sem trava, modificação unilateral, faturamento trimestral antecipado e vedação a uso com IA/ML — conflita com a agenda de derived data.</li>
+        <li><b>Consome a squad:</b> 2 devs por um trimestre fora do roadmap 2026 (Nasdaq, A5X, NUAM, CSD-BR).</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Sondagem de mercado — por que não há terceira via</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="pill r">NASDAQ</span> Consultada e eliminada</h3>
+      <ul class="clean">
+        <li><b>Não atende o escopo:</b> em resposta formal (Trey G. Anderson, Senior Managing Director, Jul/2026), a Nasdaq informou que fornece apenas <b>equity data de títulos US</b> — nenhuma das 15 bolsas internacionais cotadas.</li>
+        <li><b>Confirmou o modelo de licenciamento:</b> cada bolsa da lista exige licenciamento direto e opera de forma independente da Nasdaq — terceira validação do modelo em 3 camadas (após Morningstar "Billed by Exchange" e Cboe).</li>
+        <li><b>Leitura estratégica:</b> a própria Nasdaq reconheceu que esses data sets colocariam a AE em condições de competir com FactSet e outros vendors de market data — validação externa da tese do pacote.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🎯 O que a sondagem estabelece</h3>
+      <ul class="clean">
+        <li><b>Diligência cumprida:</b> 3 carriers consultados formalmente (ICE, Morningstar, Nasdaq) — a recomendação não é de conveniência, é resultado de sondagem de mercado documentada.</li>
+        <li><b>Só a ICE cobre 15/15</b> com preço contratado e injetor em produção; a Morningstar cobre ~14/15 a custo 2,9×+ e com 5–6 meses de implementação; a Nasdaq cobre 0/15.</li>
+        <li><b>A camada de bolsas é consenso entre os 3 vendors:</b> licenciamento direto com cada bolsa, independente do carrier — o que isola a decisão na camada de tráfego, onde a ICE é imbatível hoje.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>O que precisamos da sua aprovação</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Decisão / Ação</th><th>Impacto</th><th>Quando</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td><b>Aprovar o investimento ICE de USD 14.925/mês</b> (pacote 15 bolsas) e a assinatura do Add.9 (Level 2)</td><td>Destrava 13 clientes do pipeline e R$ 3,9M de receita ICE no Ano 1 (cenário conservador)</td><td>Esta semana</td></tr>
+        <tr><td class="num">2</td><td>Autorizar emissão de propostas comerciais para CSD BR, Somma, Itaú BBA, B3 e Itaú Custódia</td><td>Primeiras receitas no M2 pós-ativação</td><td>Semana 4</td></tr>
+        <tr><td class="num">3</td><td>Manter Morningstar como segunda fonte qualificada (benchmark anual + contingência), sem contratação agora</td><td>Mitiga risco de concentração de vendor sem custo</td><td>Contínuo</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px"><b>Detalhamento completo nas demais abas:</b> análise de custos por bolsa, comparativo critério a critério, cronograma de implementação, fluxo de caixa mês a mês e leitura dos riscos contratuais do PLA Morningstar.</div>
+</section>
+
+<!-- T1 RESUMO -->
+<section id="t1">
+  <div class="grid g4">
+    <div class="card kpi"><div class="val num" style="color:var(--ice)">USD 14.925</div><div class="lbl">ICE — custo mensal total</div><div class="foot">15 bolsas · USD 995/bolsa · Add.8 ativo + Add.9</div></div>
+    <div class="card kpi"><div class="val num" style="color:var(--ms)">USD 43.565+</div><div class="lbl">Morningstar — fees conhecidos/mês</div><div class="foot">USD 37.956 redistribuição + USD 5.609 non-display (parcial)</div></div>
+    <div class="card kpi"><div class="val num warn">USD 343K+</div><div class="lbl">Economia estimada Ano 1 com ICE</div><div class="foot">Antes de fee vendor MS, per-user fees e custo de dev</div></div>
+    <div class="card kpi"><div class="val num warn">~5 meses</div><div class="lbl">Vantagem de time-to-market ICE</div><div class="foot">Injetor pronto vs. construção de injetor novo</div></div>
+  </div>
+
+  <h2>Contexto da análise</h2>
+  <div class="h2sub">Qual fornecedor deve suprir as bolsas de valores internacionais do pipeline HUB 2026</div>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="pill ice">ICE</span> O que já temos</h3>
+      <ul class="clean">
+        <li><b>Relação contratual madura:</b> MSA desde Mai/2021, Order Schedule Nº 2 ativo até Dez/2027, 9 addenda — trilha de negociação e reporting já estabelecida (RAAMS, usage reports).</li>
+        <li><b>Injetor desenvolvido e em produção:</b> pipeline ICE já ingere Nasdaq, NYSE, CME, CBOT, B3, LME, NYMEX, FenicsMD. As 15 novas sources entram na mesma infraestrutura (NY4 Secaucus, Add.1).</li>
+        <li><b>Business case aprovável:</b> 13 clientes do pipeline HUB beneficiados, breakeven na 7ª bolsa vendida, revenda a USD 2.133/bolsa (markup 114% confirmado pelo Financeiro).</li>
+        <li><b>Level 2 opcional:</b> Add.9 (draft, USD 4.400 MRC) adiciona livro de ofertas quando houver demanda — modular.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="pill ms">MS</span> O que a Morningstar exigiria</h3>
+      <ul class="clean">
+        <li><b>Novo PLA + onboarding obrigatório:</b> Morningstar só entrega após confirmar produto e use case por cliente, com evidência de licenças conforme política de cada bolsa.</li>
+        <li><b>Licenças diretas com Third Party Licensors:</b> o PLA transfere ao Licensee a responsabilidade (e a indenização) por licenças, autorizações e fees de cada bolsa.</li>
+        <li><b>Injetor novo:</b> entrega via Web Services / Streaming Web Services / Snapshot Files / Data Extractor / EOD Downloader — nenhum conector existente na nossa stack.</li>
+        <li><b>Fees em camadas:</b> exchange fees (USD 37,9K/mês) + non-display interno (USD 5,6K/mês parcial) + <b>end-user fees por usuário profissional</b> em 5 bolsas + License/Implementation/Infrastructure fee do vendor (POA).</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Custo mensal conhecido — composição</h2>
+  <div class="h2sub">Somente itens documentados. Barras em escala proporcional (máx. USD 43,6K)</div>
+  <div class="card">
+    <div class="bar-row"><div class="bar-lbl"><span class="pill ice">ICE</span> Pacote 15 bolsas (Add.8 + Add.9 + rateio)</div><div class="bar-track"><div class="bar-fill bar-ice" style="width:34%"></div></div><div class="bar-val">14.925</div></div>
+    <div class="bar-row"><div class="bar-lbl"><span class="pill ms">MS</span> External Redistribution / Datafeed</div><div class="bar-track"><div class="bar-fill bar-ms" style="width:87%"></div></div><div class="bar-val">37.956</div></div>
+    <div class="bar-row"><div class="bar-lbl"><span class="pill ms">MS</span> Internal Non-Display (parcial — 5 bolsas POA)</div><div class="bar-track"><div class="bar-fill bar-ms" style="width:13%"></div></div><div class="bar-val">5.609</div></div>
+    <div class="bar-row"><div class="bar-lbl"><span class="pill ms">MS</span> Vendor fee + Infra + Implementation</div><div class="bar-track"><div class="bar-fill bar-ms" style="width:5%;opacity:.4"></div></div><div class="bar-val">POA</div></div>
+    <div class="bar-row"><div class="bar-lbl"><span class="pill ms">MS</span> End-user fees (por usuário prof., 5 bolsas)</div><div class="bar-track"><div class="bar-fill bar-ms" style="width:5%;opacity:.4"></div></div><div class="bar-val">variável</div></div>
+  </div>
+</section>
+
+<!-- T2 SIDE BY SIDE -->
+<section id="t2">
+  <h2>Comparativo Side-by-Side</h2>
+  <div class="h2sub">Critérios comerciais, técnicos e contratuais</div>
+  <div class="cmp">
+    <div class="cmp-row"><div class="crit">Critério</div><div class="a cmp-head">ICE Data Services</div><div class="cmp-head b">Morningstar Real-Time Data</div></div>
+    <div class="cmp-row"><div class="crit">Custo mensal conhecido</div><div class="a"><span class="num ok">USD 14.925</span> — pacote fechado, 15 bolsas, escalonamento previsível (+6,99% a.a. no OS2 base)</div><div><span class="num bad">USD 43.565+</span> — soma de exchange fees + non-display parcial; vendor fee POA por fora</div></div>
+    <div class="cmp-row"><div class="crit">Custo Ano 1</div><div class="a"><span class="num ok">USD 179.100</span></div><div><span class="num bad">USD 522.781+</span> (somente fees documentados)</div></div>
+    <div class="cmp-row"><div class="crit">Modelo de preço</div><div class="a">Média <span class="num">USD 995</span>/bolsa/mês — habilita revenda padronizada a <span class="num">USD 2.133</span>/bolsa (markup 114%)</div><div>Altamente variável por bolsa: de <span class="num">USD 83</span> (Lima EOD) a <span class="num">USD 7.125</span> (KOSPI) — dificulta precificação uniforme de revenda</div></div>
+    <div class="cmp-row"><div class="crit">End-user fees</div><div class="a"><span class="pill g">Sem fee por usuário</span> no modelo do pacote — reporting mensal via RAAMS</div><div><span class="pill r">Fee por usuário profissional</span> em 5 bolsas: Luxemburgo 49,50 · Cboe 36,00 · KOSPI 33,00 · Shanghai 24,00 · Dublin 9,80 — custo cresce com a base de clientes</div></div>
+    <div class="cmp-row"><div class="crit">Injetor / integração</div><div class="a"><span class="pill g">Pronto</span> — mesmo feed handler das sources atuais; novas bolsas = ativação + cadastro no Thor</div><div><span class="pill r">Construir do zero</span> — Streaming Web Services / Snapshot / EOD Downloader; symbology, de-para e homologação novos</div></div>
+    <div class="cmp-row"><div class="crit">Time-to-market</div><div class="a"><span class="num ok">~4 semanas</span> (ativação, cadastro, homologação)</div><div><span class="num bad">~20–26 semanas</span> (contrato + onboarding + dev + homologação)</div></div>
+    <div class="cmp-row"><div class="crit">Cobertura das 15 bolsas-alvo</div><div class="a">15/15 — LSE, Euronext, Xetra, SIX (Cash + Funds), BX Swiss, Cboe Europe, Luxemburgo, Vienna, Dublin, CNSX, México, Lima, Shanghai, KOSPI</div><div>~14/15 equivalentes — inclui Swiss Structured Products; Lima apenas <b>EOD</b> (ICE entrega L1 real-time). <b>Referência:</b> a Nasdaq, 3º carrier consultado, cobre 0/15 (apenas equities US — eliminada)</div></div>
+    <div class="cmp-row"><div class="crit">Level 2</div><div class="a">Opcional via Add.9 (<span class="num">USD 4.400</span>/mês, draft pronto p/ assinatura)</div><div>Incluído em algumas linhas (Luxemburgo L2, Swiss L1/L2, Xetra L1/L2) — mas embutido no custo mais alto</div></div>
+    <div class="cmp-row"><div class="crit">Relação contratual</div><div class="a">MSA 2021 · OS2 até Dez/2027 · 9 addenda · reporting e faturamento rodando</div><div>PLA novo · onboarding por cliente/use case · licenças diretas com cada bolsa a formalizar</div></div>
+    <div class="cmp-row"><div class="crit">Faturamento</div><div class="a">Mensal, fluxo já estabelecido com Financeiro/Elissandra</div><div>Trimestral <b>antecipado</b> (Quarter Days) — impacto de caixa maior</div></div>
+    <div class="cmp-row"><div class="crit">Risco de renovação</div><div class="a">Renovação OS2: notice de 90d antes de Dez/2027 (alerta já monitorado)</div><div>Auto-renew anual a <b>"then-current rates"</b> + direito de modificação unilateral com saída em 10 dias — menor previsibilidade de preço</div></div>
+    <div class="cmp-row"><div class="crit">Papel estratégico</div><div class="a">Vendor primário — consolida stack e volume de negociação</div><div>Potencial <b>backup / segunda fonte</b> ou nicho (ex.: Swiss Structured Products), se o custo justificar no futuro</div></div>
+  </div>
+</section>
+
+<!-- T3 CUSTO POR BOLSA -->
+<section id="t3">
+  <h2>Custo por Bolsa — Morningstar (documentado) vs. ICE (média do pacote)</h2>
+  <div class="h2sub">Morningstar: relatório "Broadcast exchange fees" (External Redistribution/Datafeed, real-time, 06/Jul/2026). ICE: custo médio USD 995/bolsa/mês do pacote de 15 sources.</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr>
+      <th>Bolsa</th><th>Serviço MS</th><th class="num">MS External USD/mês</th><th class="num">MS Non-Display USD/mês</th><th class="num">End-User Fee (P)</th><th class="num">ICE médio USD/mês</th><th class="num">Δ MS vs ICE</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Korea Exchange (KOSPI) A</td><td>Datafeed L1 RT</td><td class="num">7.125,00</td><td class="num">see notes</td><td class="num">33,00/usr</td><td class="num">995</td><td class="num bad">+6,2×</td></tr>
+      <tr><td>Swiss Exchange (SIX) L1/L2</td><td>Redistribution RT</td><td class="num">4.807,33</td><td class="num">Speak to Subs</td><td class="num">—</td><td class="num">995</td><td class="num bad">+4,8×</td></tr>
+      <tr><td>México SE (Equities, Global &amp; Debt)</td><td>Datafeed RT</td><td class="num">4.250,00</td><td class="num">2.840,00</td><td class="num">—</td><td class="num">995</td><td class="num bad">+4,3×</td></tr>
+      <tr><td>Deutsche Börse Xetra Core L1/L2</td><td>Datafeed RT</td><td class="num">3.916,38</td><td class="num">1.410,84</td><td class="num">—</td><td class="num">995</td><td class="num bad">+3,9×</td></tr>
+      <tr><td>Shanghai Securities L1</td><td>Datafeed RT</td><td class="num">3.333,33</td><td class="num">300,00</td><td class="num">24,00/usr</td><td class="num">995</td><td class="num bad">+3,4×</td></tr>
+      <tr><td>London Stock Exchange UK L1</td><td>Redistribution RT</td><td class="num">3.200,51</td><td class="num">Speak to Subs</td><td class="num">—</td><td class="num">995</td><td class="num bad">+3,2×</td></tr>
+      <tr><td>Cboe Europe L1</td><td>Datafeed RT</td><td class="num">2.729,46</td><td class="num">£390/segmento (cap £3.900)</td><td class="num">36,00/usr</td><td class="num">995</td><td class="num bad">+2,7×</td></tr>
+      <tr><td>Wiener Börse (Vienna) Cash &amp; Struct. L1</td><td>Datafeed RT</td><td class="num">2.462,49</td><td class="num">POA</td><td class="num">—</td><td class="num">995</td><td class="num bad">+2,5×</td></tr>
+      <tr><td>Luxembourg SE L2</td><td>Redistribution RT</td><td class="num">2.240,28</td><td class="num">1.058,35</td><td class="num">49,50/usr</td><td class="num">995</td><td class="num bad">+2,3×</td></tr>
+      <tr><td>Euronext Continental Cash (pack)</td><td>Datafeed RT</td><td class="num">1.414,77</td><td class="num">POA</td><td class="num">—</td><td class="num">995</td><td class="num bad">+1,4×</td></tr>
+      <tr><td>Swiss Structured Products</td><td>Datafeed RT</td><td class="num">1.103,59</td><td class="num">—</td><td class="num">—</td><td class="num">995*</td><td class="num warn">+1,1×</td></tr>
+      <tr><td>Euronext Dublin Equities</td><td>Datafeed RT</td><td class="num">789,46</td><td class="num">POA</td><td class="num">9,80/usr</td><td class="num">995</td><td class="num ok">−0,8×</td></tr>
+      <tr><td>Canadian Securities Exchange (CNSX)</td><td>Datafeed RT</td><td class="num">500,00</td><td class="num">50–100</td><td class="num">—</td><td class="num">995</td><td class="num ok">−0,5×</td></tr>
+      <tr><td>Bolsa de Valores de Lima</td><td>Datafeed <b>EOD</b></td><td class="num">83,33</td><td class="num">0,00</td><td class="num">0,00</td><td class="num">995 (L1 RT)</td><td class="num warn">n/c — serviços distintos</td></tr>
+    </tbody>
+    <tfoot><tr><td colspan="2">Total documentado</td><td class="num">37.955,93</td><td class="num">5.609,19 (parcial)</td><td class="num">variável</td><td class="num">14.925 (15 bolsas)</td><td class="num bad">+2,9×</td></tr></tfoot>
+  </table>
+  </div>
+  <div class="note"><b>Notas de comparabilidade:</b> (1) Na Morningstar, Luxemburgo, Swiss e Xetra incluem Level 2 — na ICE o L2 é o Add.9 (USD 4.400/mês para o conjunto), já incluído no total de USD 14.925. (2) Lima na Morningstar é apenas End-of-Day; na ICE é Level 1 real-time — relevante para a tese Itaú Asset/NUAM. (3) O pacote ICE inclui ainda SIX Investment Funds e BX Swiss, sem linha equivalente direta na tabela Morningstar. (4) "Δ" usa a média ICE por bolsa; o contrato ICE é vendido como pacote, não por linha.</div>
+  <div class="alert"><b>Camadas ocultas Morningstar:</b> o total de USD 43,6K/mês ainda exclui — (a) o License Fee da própria Morningstar (POA); (b) Implementation Fee e Infrastructure Charge previstos no PLA; (c) non-display de LSE e Swiss ("Speak to Subs") e de Euronext, Vienna e Dublin (POA); (d) end-user fees que escalam com cada usuário profissional dos nossos clientes redistribuídos. Em um cenário de redistribuição Broadcast (nosso caso de uso), os itens (a) e (d) são inevitáveis.</div>
+  <div class="note"><b>Atualização Jul/2026 — licenciamento direto com as bolsas:</b> os fees desta tabela representam majoritariamente a camada de licenciamento das bolsas, contratada e faturada <b>diretamente com cada bolsa</b> independentemente do carrier. Caso concreto já cotado: <b>Cboe</b> — Recipient USD 250 + Redistribution USD 500 + acesso (Cloud USD 250 ou Direct Connect USD 2.000) + USD 9/usuário pro + non-display USD 500 quando aplicável. Detalhamento completo e impacto no comparativo na aba <b>🏛 Fees de Bolsas</b>.</div>
+</section>
+
+<!-- T4 IMPLEMENTAÇÃO -->
+<section id="t4">
+  <h2>Implementação &amp; Time-to-Market</h2>
+  <div class="h2sub">Estimativas em semanas a partir da aprovação da diretoria · Semana 0 = decisão</div>
+
+  <div class="tl">
+    <div style="font-family:'Sora',sans-serif;font-weight:700;margin-bottom:14px;color:var(--ice)">ICE Data Services — injetor existente · go-live ≈ semana 4</div>
+    <div class="tl-row"><div class="tl-lbl">Ativação das 15 sources (ICE + João Carlos/Dados)</div><div class="tl-track"><div class="tl-seg bar-ice" style="left:0;width:7.7%">S1–2</div></div></div>
+    <div class="tl-row"><div class="tl-lbl">Cadastro no Thor + de-para (Cadastro de Dados)</div><div class="tl-track"><div class="tl-seg bar-ice" style="left:3.8%;width:7.7%">S2–3</div></div></div>
+    <div class="tl-row"><div class="tl-lbl">Homologação + liberação Datafeed/Terminal</div><div class="tl-track"><div class="tl-seg bar-ice" style="left:7.7%;width:7.7%">S3–4</div></div></div>
+    <div class="tl-row"><div class="tl-lbl">Proposta comercial (Elissandra) — 5 clientes prontos</div><div class="tl-track"><div class="tl-seg" style="left:11.5%;width:7.7%;background:var(--green);color:#06281a">S4–5 · receita</div></div></div>
+
+    <div style="font-family:'Sora',sans-serif;font-weight:700;margin:24px 0 14px;color:var(--ms)">Morningstar — injetor novo · go-live ≈ semana 22–26</div>
+    <div class="tl-row"><div class="tl-lbl">Negociação PLA + Schedule 1 / Exhibit A</div><div class="tl-track"><div class="tl-seg bar-ms" style="left:0;width:15.4%">S1–4</div></div></div>
+    <div class="tl-row"><div class="tl-lbl">Onboarding MS + licenças diretas c/ bolsas (paralelo)</div><div class="tl-track"><div class="tl-seg bar-ms" style="left:7.7%;width:30.8%;opacity:.75">S3–12 · crítico</div></div></div>
+    <div class="tl-row"><div class="tl-lbl">Spec técnica API (Streaming WS / Snapshot / EOD)</div><div class="tl-track"><div class="tl-seg bar-ms" style="left:15.4%;width:11.5%">S5–7</div></div></div>
+    <div class="tl-row"><div class="tl-lbl">Desenvolvimento do injetor (Squad Market Data)</div><div class="tl-track"><div class="tl-seg bar-ms" style="left:26.9%;width:38.5%">S8–17 · 8–10 sem</div></div></div>
+    <div class="tl-row"><div class="tl-lbl">Symbology / de-para / cadastro Thor</div><div class="tl-track"><div class="tl-seg bar-ms" style="left:61.5%;width:15.4%">S17–20</div></div></div>
+    <div class="tl-row"><div class="tl-lbl">Homologação + parallel run + go-live</div><div class="tl-track"><div class="tl-seg bar-ms" style="left:76.9%;width:23.1%">S21–26</div></div></div>
+    <div class="tl-axis"><div></div><div class="ticks"><span>S0</span><span>S4</span><span>S8</span><span>S12</span><span>S16</span><span>S20</span><span>S26</span></div></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3><span class="pill ice">ICE</span> Premissas</h3>
+      <ul class="clean">
+        <li>Infra NY4 Secaucus (Add.1) suporta as novas sources; upgrade de link internacional concluído em Mai/2026.</li>
+        <li>Feed handler ICE em produção — esforço restrito a ativação, cadastro e QA; sem sprint de desenvolvimento.</li>
+        <li>Add.8 já assinado (Fev/2026); Add.9 (L2) com draft pronto — assinatura destrava livro de ofertas.</li>
+        <li>Esforço estimado: <b>~0,5 FTE por 4 semanas</b> (Dados + Cadastro), sem consumir capacidade das squads de desenvolvimento.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="pill ms">MS</span> Premissas &amp; riscos de cronograma</h3>
+      <ul class="clean">
+        <li>Injetor novo: parsing do Streaming Web Services, gestão de sessão/reconexão, snapshot recovery, normalização para o modelo interno — <b>2 devs × 8–10 semanas</b> da Squad Market Data.</li>
+        <li>Symbology própria da Morningstar exige novo de-para completo (ISIN/ticker/exchange ID) para ~15 mercados.</li>
+        <li><b>Caminho crítico não é técnico:</b> onboarding MS + assinatura de licenças diretas com cada bolsa (política por bolsa) pode variar de 4 a 12+ semanas e é pré-requisito de entrega.</li>
+        <li>Custo de oportunidade: squad alocada no injetor MS deixa de atender roadmap 2026 (Nasdaq, A5X, Precia, NUAM, CSD-BR).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert"><b>Custo de oportunidade da espera (~5 meses):</b> pelo modelo de ramp-up do business case ICE, a receita do pacote atinge ~R$ 267 mil/mês no M4 e ~R$ 497 mil/mês estabilizada. Optar pela Morningstar posterga esse fluxo em ~5 meses — algo entre <b>R$ 1,0 e 1,5 milhão de receita não capturada no Ano 1</b>, além do custo de desenvolvimento (~2 devs/trimestre) e do risco de esfriamento dos 13 clientes mapeados no HUB (CSD BR, Somma, Itaú BBA, B3, Itaú Custódia, Natixis/State Street…).</div>
+</section>
+
+<!-- T7 FLUXO DE CAIXA -->
+<section id="t7">
+  <h2>Fluxo de Caixa Acumulado — Quando Acontece o Payback</h2>
+  <div class="h2sub">Caixa acumulado mensal (R$) · receita incremental do pacote − custo do vendor − custo de desenvolvimento · horizonte 18 meses a partir da aprovação (M0)</div>
+
+  <div class="grid g4">
+    <div class="card kpi"><div class="val num" style="color:var(--ice)">M4</div><div class="lbl">Payback ICE</div><div class="foot">Consistente com o business case Jun/2026</div></div>
+    <div class="card kpi"><div class="val num" style="color:var(--ms)">M18</div><div class="lbl">Payback Morningstar</div><div class="foot">Sem vendor fee POA — payback real é posterior</div></div>
+    <div class="card kpi"><div class="val num ok">−R$ 102K</div><div class="lbl">Exposição máx. de caixa ICE</div><div class="foot">Vale no M2 · recuperado em 2 meses</div></div>
+    <div class="card kpi"><div class="val num bad">−R$ 970K</div><div class="lbl">Exposição máx. de caixa MS</div><div class="foot">Vale no M9 · 9,5× a necessidade de funding da ICE</div></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>Curva de caixa acumulado — 18 meses (R$)</h3>
+    <svg viewBox="0 0 1010 380" style="width:100%;height:auto" role="img" aria-label="Gráfico de fluxo de caixa acumulado ICE versus Morningstar">
+      <!-- gridlines -->
+      <g stroke="var(--border)" stroke-width="1">
+        <line x1="70" y1="78"  x2="990" y2="78"/><line x1="70" y1="127" x2="990" y2="127"/>
+        <line x1="70" y1="175" x2="990" y2="175"/><line x1="70" y1="224" x2="990" y2="224"/>
+        <line x1="70" y1="320" x2="990" y2="320"/>
+      </g>
+      <!-- zero line -->
+      <line x1="70" y1="272" x2="990" y2="272" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="984" y="266" fill="var(--gold)" font-size="11" text-anchor="end" font-family="JetBrains Mono">R$ 0 — payback</text>
+      <!-- y labels -->
+      <g fill="var(--txt3)" font-size="10.5" font-family="JetBrains Mono" text-anchor="end">
+        <text x="62" y="82">+4M</text><text x="62" y="131">+3M</text><text x="62" y="179">+2M</text>
+        <text x="62" y="228">+1M</text><text x="62" y="276">0</text><text x="62" y="324">−1M</text>
+      </g>
+      <!-- x labels -->
+      <g fill="var(--txt3)" font-size="10.5" font-family="JetBrains Mono" text-anchor="middle">
+        <text x="70" y="345">M0</text><text x="172" y="345">M2</text><text x="274" y="345">M4</text>
+        <text x="377" y="345">M6</text><text x="479" y="345">M8</text><text x="581" y="345">M10</text>
+        <text x="683" y="345">M12</text><text x="786" y="345">M14</text><text x="888" y="345">M16</text><text x="990" y="345">M18</text>
+      </g>
+      <!-- MS curve -->
+      <polyline points="70,272 121,275 172,279 223,282 274,285 326,289 377,301 428,310 479,316 530,319 581,319 632,318 683,314 734,308 786,302 837,296 888,285 939,274 990,262" fill="none" stroke="var(--ms)" stroke-width="3" stroke-linejoin="round"/>
+      <!-- ICE curve -->
+      <polyline points="70,272 121,276 172,277 223,274 274,269 326,260 377,252 428,239 479,225 530,211 581,197 632,177 683,157 734,138 786,118 837,98 888,78 939,59 990,39" fill="none" stroke="var(--ice)" stroke-width="3" stroke-linejoin="round"/>
+      <!-- payback markers -->
+      <circle cx="274" cy="269" r="6" fill="var(--ice)" stroke="var(--bg)" stroke-width="2"/>
+      <text x="274" y="252" fill="var(--ice)" font-size="12" font-weight="700" text-anchor="middle" font-family="Sora">Payback M4</text>
+      <circle cx="990" cy="262" r="6" fill="var(--ms)" stroke="var(--bg)" stroke-width="2"/>
+      <text x="955" y="248" fill="var(--ms)" font-size="12" font-weight="700" text-anchor="end" font-family="Sora">Payback M18*</text>
+      <!-- MS valley -->
+      <text x="530" y="336" fill="var(--ms)" font-size="10.5" text-anchor="middle" font-family="JetBrains Mono">vale −R$ 970K (M9)</text>
+      <!-- end labels -->
+      <text x="985" y="34" fill="var(--ice)" font-size="11.5" font-weight="700" text-anchor="end" font-family="JetBrains Mono">ICE +R$ 4,81M</text>
+      <!-- go-live markers -->
+      <line x1="274" y1="30" x2="274" y2="330" stroke="var(--ice)" stroke-width="1" stroke-dasharray="2 4" opacity=".4"/>
+      <line x1="377" y1="30" x2="377" y2="330" stroke="var(--ms)" stroke-width="1" stroke-dasharray="2 4" opacity=".4"/>
+      <text x="380" y="42" fill="var(--ms)" font-size="10">go-live MS (M6)</text>
+    </svg>
+    <div style="display:flex;gap:22px;margin-top:8px;font-size:12px;color:var(--txt2)">
+      <span><span style="display:inline-block;width:22px;height:3px;background:var(--ice);vertical-align:middle;margin-right:6px"></span>ICE Data Services</span>
+      <span><span style="display:inline-block;width:22px;height:3px;background:var(--ms);vertical-align:middle;margin-right:6px"></span>Morningstar (fees conhecidos)</span>
+    </div>
+  </div>
+
+  <h2>Tabela mensal — caixa acumulado (R$)</h2>
+  <div class="h2sub">Cenário conservador do business case: ramp-up 2 → 13 clientes · 3 bolsas/cliente · revenda USD 2.133/bolsa · USDBRL 5,97</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Mês</th>
+        <th class="num">ICE Receita</th><th class="num">ICE Custo</th><th class="num">ICE Acumulado</th>
+        <th class="num">MS Receita</th><th class="num">MS Custo</th><th class="num">MS Acumulado</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>M1 — ativação ICE / dev MS</td><td class="num">0</td><td class="num">89.102</td><td class="num bad">−89.102</td><td class="num">0</td><td class="num">70.000</td><td class="num bad">−70.000</td></tr>
+        <tr><td>M2</td><td class="num">76.404</td><td class="num">89.102</td><td class="num bad">−101.800</td><td class="num">0</td><td class="num">70.000</td><td class="num bad">−140.000</td></tr>
+        <tr><td>M3</td><td class="num">152.808</td><td class="num">89.102</td><td class="num bad">−38.095</td><td class="num">0</td><td class="num">70.000</td><td class="num bad">−210.000</td></tr>
+        <tr><td><b>M4 — payback ICE ✓</b></td><td class="num">191.010</td><td class="num">89.102</td><td class="num ok"><b>+63.813</b></td><td class="num">0</td><td class="num">70.000</td><td class="num bad">−280.000</td></tr>
+        <tr><td>M5</td><td class="num">267.414</td><td class="num">89.102</td><td class="num ok">+242.125</td><td class="num">0</td><td class="num">70.000</td><td class="num bad">−350.000</td></tr>
+        <tr><td>M6 — go-live MS</td><td class="num">267.414</td><td class="num">89.102</td><td class="num ok">+420.437</td><td class="num">0</td><td class="num">260.083</td><td class="num bad">−610.083</td></tr>
+        <tr><td>M7</td><td class="num">343.818</td><td class="num">89.102</td><td class="num ok">+675.153</td><td class="num">76.404</td><td class="num">260.083</td><td class="num bad">−793.762</td></tr>
+        <tr><td>M8</td><td class="num">382.020</td><td class="num">89.102</td><td class="num ok">+968.071</td><td class="num">152.808</td><td class="num">260.083</td><td class="num bad">−901.037</td></tr>
+        <tr><td><b>M9 — vale de caixa MS</b></td><td class="num">382.020</td><td class="num">89.102</td><td class="num ok">+1.260.989</td><td class="num">191.010</td><td class="num">260.083</td><td class="num bad"><b>−970.110</b></td></tr>
+        <tr><td>M10</td><td class="num">382.020</td><td class="num">89.102</td><td class="num ok">+1.553.907</td><td class="num">267.414</td><td class="num">260.083</td><td class="num bad">−962.779</td></tr>
+        <tr><td>M11</td><td class="num">496.626</td><td class="num">89.102</td><td class="num ok">+1.961.432</td><td class="num">267.414</td><td class="num">260.083</td><td class="num bad">−955.448</td></tr>
+        <tr><td>M12 — fecha Ano 1</td><td class="num">496.626</td><td class="num">89.102</td><td class="num ok">+2.368.956</td><td class="num">343.818</td><td class="num">260.083</td><td class="num bad">−871.712</td></tr>
+        <tr><td>M13</td><td class="num">496.626</td><td class="num">89.102</td><td class="num ok">+2.776.480</td><td class="num">382.020</td><td class="num">260.083</td><td class="num bad">−749.775</td></tr>
+        <tr><td>M14</td><td class="num">496.626</td><td class="num">89.102</td><td class="num ok">+3.184.004</td><td class="num">382.020</td><td class="num">260.083</td><td class="num bad">−627.838</td></tr>
+        <tr><td>M15</td><td class="num">496.626</td><td class="num">89.102</td><td class="num ok">+3.591.528</td><td class="num">382.020</td><td class="num">260.083</td><td class="num bad">−505.901</td></tr>
+        <tr><td>M16</td><td class="num">496.626</td><td class="num">89.102</td><td class="num ok">+3.999.052</td><td class="num">496.626</td><td class="num">260.083</td><td class="num bad">−269.357</td></tr>
+        <tr><td>M17</td><td class="num">496.626</td><td class="num">89.102</td><td class="num ok">+4.406.576</td><td class="num">496.626</td><td class="num">260.083</td><td class="num bad">−32.814</td></tr>
+        <tr><td><b>M18 — payback MS ✓*</b></td><td class="num">496.626</td><td class="num">89.102</td><td class="num ok">+4.814.101</td><td class="num">496.626</td><td class="num">260.083</td><td class="num ok"><b>+203.729</b></td></tr>
+      </tbody>
+      <tfoot><tr><td>Diferença de caixa acumulado em M18</td><td colspan="6" class="num" style="color:var(--gold2)">ICE à frente em R$ 4,61 milhões</td></tr></tfoot>
+    </table>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>📐 Premissas do modelo</h3>
+      <ul class="clean">
+        <li><b>Receita idêntica para ambos:</b> mesmo ramp-up conservador do business case (2 clientes no 1º mês pós go-live → 13 no 9º), 3 bolsas/cliente, revenda USD 2.133/bolsa, USDBRL 5,97. A única diferença é <b>quando</b> a receita começa: M2 (ICE) vs M7 (MS).</li>
+        <li><b>ICE:</b> custo USD 14.925/mês (R$ 89.102) a partir do M1 (ativação); receita a partir do M2.</li>
+        <li><b>Morningstar:</b> desenvolvimento do injetor M1–M5 (2 devs × R$ 35K/mês fully loaded = R$ 70K/mês); fees de USD 43.565/mês (R$ 260.083) a partir do go-live no M6; receita a partir do M7.</li>
+        <li><b>Excluídos (favorecem a MS no modelo):</b> vendor fee/Implementation/Infrastructure da Morningstar (POA), end-user fees por usuário profissional, non-display "Speak to Subs" de LSE e Swiss, e faturamento trimestral antecipado (piora o perfil de caixa MS).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🔍 Leitura para o Financeiro</h3>
+      <ul class="clean">
+        <li><b>Payback:</b> ICE no M4 vs Morningstar no M18 — <b>14 meses de diferença</b>, com premissas generosas para a MS.</li>
+        <li><b>Necessidade de funding:</b> ICE exige no pior momento R$ 102K (M2); a MS exige R$ 970K (M9) — 9,5× mais capital de giro comprometido, por mais tempo.</li>
+        <li><b>Margem estrutural:</b> com custo fixo de R$ 260K/mês, a MS só entra em caixa mensal positivo a partir de ~10 clientes (M10 do seu ciclo); a ICE fica positiva já com 2 clientes.</li>
+        <li><b>Sensibilidade:</b> se o vendor fee POA da MS adicionar apenas USD 5K/mês, o payback desliza para além do M20; qualquer atraso no onboarding/licenças diretas com as bolsas empurra toda a curva vermelha para a direita.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><b>*Payback M18 é o melhor caso Morningstar:</b> o modelo exclui todos os fees POA e per-user. Incluindo essas camadas, o payback tende a ultrapassar 20 meses — contra 4 meses da ICE com contrato, infraestrutura e injetor já existentes.</div>
+</section>
+
+<!-- T8 FEES DE BOLSAS -->
+<section id="t8">
+  <h2>Fees de Bolsas — Camada de Licenciamento Direto</h2>
+  <div class="h2sub">Atualização Jul/2026 · O licenciamento de dados é contratado diretamente com cada bolsa; o carrier (ICE Data) cobra pelo tráfego/entrega. Caso concreto: Cboe (e-mail Darius Spain, Cboe Sales, Mai–Jun/2026)</div>
+
+  <div class="note" style="margin-top:0"><b>Modelo de licenciamento em 3 camadas:</b> a comparação de vendors precisa separar o que é <b>fee da bolsa</b> (pago diretamente à bolsa, existe em qualquer cenário) do que é <b>fee do carrier</b> (ICE ou Morningstar, pela entrega do dado). A camada de bolsa é <b>neutra à escolha do carrier</b> — o que diferencia as opções é o custo do carrier, o injetor e o time-to-market. <b>O modelo foi confirmado pelos 3 vendors consultados:</b> Morningstar (fees "Billed By: Exchange"), Cboe (proposta direta de recipient/redistribution fees) e Nasdaq, que declarou por escrito que cada bolsa da lista exige licenciamento direto e opera de forma independente (T. Anderson, Jul/2026).</div>
+
+  <div class="card">
+    <h3>🏛 Quem cobra o quê</h3>
+    <div class="cmp">
+      <div class="cmp-row"><div class="crit">Camada</div><div class="a cmp-head" style="color:var(--gold2)">O que cobre</div><div class="cmp-head" style="color:var(--txt)">Quem paga / a quem</div></div>
+      <div class="cmp-row"><div class="crit">1 · Bolsa (licenciamento)</div><div class="a">Recipient fee, redistribution fee, non-display, user fees — conforme política de cada bolsa. Contrato/Order Form direto com a bolsa (ex.: Cboe Global Data Agreement, entidade regulada pela SEC — "Fair Access", sem alteração contratual).</div><div><b>Broadcast → Bolsa</b> (recipient + redistribution); <b>cliente final → Bolsa</b> (agreements de display/uso, conforme já mapeado no hub de contratos)</div></div>
+      <div class="cmp-row"><div class="crit">2 · Carrier (tráfego)</div><div class="a">Conectividade, feed handler, entrega do dado normalizado (NY4 Secaucus / extranet / cloud). É aqui que ICE e Morningstar competem.</div><div><b>Broadcast → ICE Data</b> (MRC do pacote) <b>ou</b> Broadcast → Morningstar (License + Infrastructure + Implementation, POA)</div></div>
+      <div class="cmp-row"><div class="crit">3 · Redistribuição</div><div class="a">Revenda Broadcast ao cliente (Datafeed/Terminal/Wallboard) — USD 2.133/bolsa/mês, com reporting de usuários à bolsa quando exigido (ex.: Cboe exige reporte mensal).</div><div><b>Cliente → Broadcast</b></div></div>
+    </div>
+  </div>
+
+  <h2>Caso Cboe — proposta recebida (Mai/2026)</h2>
+  <div class="h2sub">CFE (Cboe Futures Exchange) + CGIF (Cboe Global Indices Feed) · fonte: Darius Spain, Sales Executive Cboe · use case registrado: terminal de dados com distribuição externa a clientes downstream</div>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="pill y">CENÁRIO A</span> Via Cboe Global Cloud (JSON)</h3>
+      <div class="tbl-wrap" style="border:none">
+        <table>
+          <tbody>
+            <tr><td>Recipient Fee (Top &amp; Depth)</td><td class="num">250,00/mês</td></tr>
+            <tr><td>Redistribution Fee</td><td class="num">500,00/mês</td></tr>
+            <tr><td>Cboe Global Cloud Fee</td><td class="num">250,00/mês</td></tr>
+            <tr><td><b>Base mensal</b></td><td class="num"><b>USD 1.000,00</b></td></tr>
+            <tr><td>+ Pro User / Non-Display Device (Top)</td><td class="num">9,00/usuário/mês</td></tr>
+            <tr><td>+ Non-Display (uso algorítmico/sem tela)</td><td class="num">500,00/mês, se aplicável</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="clean" style="margin-top:10px">
+        <li><b>Limitação técnica:</b> o Cloud entrega apenas <b>Top of Book</b> do CFE; para depth/latência menor, a própria Cboe indica vendors — reforça o papel da ICE como carrier.</li>
+        <li>Reporting mensal de usuários obrigatório.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="pill y">CENÁRIO B</span> Direct Connect / Extranet (nosso caso c/ ICE)</h3>
+      <div class="tbl-wrap" style="border:none">
+        <table>
+          <tbody>
+            <tr><td>Direct Data Access Fee CFE (NY4/NY5/NY6 ou extranet)</td><td class="num">2.000,00/mês</td></tr>
+            <tr><td>Recipient Fee (Top &amp; Depth)</td><td class="num">250,00/mês</td></tr>
+            <tr><td>Redistribution Fee</td><td class="num">500,00/mês</td></tr>
+            <tr><td><b>Base mensal</b></td><td class="num"><b>USD 2.750,00</b></td></tr>
+            <tr><td>+ Pro User / Non-Display Device</td><td class="num">9,00/usuário/mês</td></tr>
+            <tr><td>+ Non-Display (algoritmos/Risk)</td><td class="num">500,00/mês, se aplicável</td></tr>
+            <tr><td>+ Carrier ICE (tráfego, já no MRC do pacote)</td><td class="num">incluído</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="clean" style="margin-top:10px">
+        <li><b>Compatível com a infra atual:</b> NY4 Secaucus é exatamente onde está nossa infraestrutura ICE (Add.1) — depth completo, latência de produção.</li>
+        <li>30-day trial disponível via Cloud para validação antes do compromisso.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>📇 Referência — tabela pública Cboe One Feed (US Equities, factsheet 2026)</h3>
+    <div class="tbl-wrap" style="border:none">
+      <table>
+        <thead><tr><th>Fee mensal</th><th class="num">Cboe One Summary</th><th class="num">Cboe One Premium</th></tr></thead>
+        <tbody>
+          <tr><td>Internal Distribution</td><td class="num">1.500</td><td class="num">15.000</td></tr>
+          <tr><td>External Distribution</td><td class="num">5.000</td><td class="num">12.500</td></tr>
+          <tr><td>Pro User (external)</td><td class="num">10 /usr</td><td class="num">15 /usr</td></tr>
+          <tr><td>Non-Pro User (external)</td><td class="num">0,25 /usr</td><td class="num">0,50 /usr</td></tr>
+          <tr><td>Data Consolidation Fee</td><td class="num">1.000</td><td class="num">1.000</td></tr>
+          <tr><td>Enterprise (usuários ilimitados)</td><td class="num">50.000</td><td class="num">100.000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:12px;color:var(--txt3);margin-top:8px">Cboe One Summary (top + last sale, 4 bolsas US da Cboe) tem 1º mês de External Distribution Fee isento para novos assinantes. CGIF (índices — VIX, SPX, 1.600+ valores, incl. canal Morningstar com 670+ benchmarks) é precificado sob consulta via DataSales@cboe.com.</div>
+  </div>
+
+  <h2>Impacto no comparativo ICE × Morningstar</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>🔁 O que muda na leitura</h3>
+      <ul class="clean">
+        <li><b>Fees de bolsa são vendor-neutros:</b> os USD 37,9K/mês do relatório Morningstar ("Billed By: Exchange") são estimativas da camada 1 — que incidiria de forma equivalente com qualquer carrier. Não são um "custo Morningstar" per se.</li>
+        <li><b>A comparação justa é carrier vs carrier:</b> ICE = USD 14.925/mês contratado, injetor pronto, infra em NY4. Morningstar = License + Infrastructure + Implementation Fee <b>POA</b> + injetor a construir (5–6 meses).</li>
+        <li><b>A conclusão não muda, o argumento fica mais limpo:</b> mesmo neutralizando a camada de bolsas, a ICE vence por custo de carrier conhecido, time-to-market e caixa — e a Morningstar segue sem apresentar o próprio preço.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📋 Ações desta atualização</h3>
+      <ul class="clean">
+        <li><b>Mapa bolsa-a-bolsa (Elissandra + Jurídico):</b> para cada uma das 15 bolsas do pacote, confirmar o que está embutido no MRC ICE vs. o que é faturado diretamente pela bolsa (recipient/redistribution/non-display) — a Cboe confirmou cobrança direta.</li>
+        <li><b>Onboarding Cboe:</b> portal de onboarding → aprovação MDS → DocuSign → Cboe autoriza o vendor (ICE) a liberar o acesso → início do billing. Iniciar em paralelo à ativação para não travar o go-live.</li>
+        <li><b>Provisionar user fees no pricing de revenda:</b> USD 9/usuário pro (Cboe) e non-display USD 500/mês devem entrar no simulador de proposta por cliente — repasse ao cliente final quando o agreement for direto dele com a bolsa.</li>
+        <li><b>Avaliar 30-day trial Cloud (CFE)</b> para validação de conteúdo antes da assinatura do Order Form.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="alert"><b>Atenção jurídica:</b> a Cboe é entidade regulada pela SEC e informou que, por regras de "Fair Access", <b>não altera contratos, agreements ou documentação</b>. O Cboe Global Data Agreement (GT&amp;Cs) e as North American Data Policies devem ser aceitos como estão — encaminhar ao Jurídico com essa premissa para não gastar ciclo de negociação.</div>
+</section>
+
+<!-- T5 RISCOS -->
+<section id="t5">
+  <h2>Riscos Contratuais — leitura do PLA Morningstar vs. base ICE</h2>
+  <div class="h2sub">Fonte: Morningstar Product License Agreement (Market Data, template Nov/2025) · MSA/OS2 ICE e addenda</div>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="pill ms">MS</span> Pontos de atenção no PLA</h3>
+      <ul class="clean">
+        <li><b>Reajuste sem trava:</b> auto-renew anual a "then-current rates" — sem escalonamento acordado. ICE tem escada definida (+6,99% a.a.) até Dez/2027.</li>
+        <li><b>Modificação unilateral:</b> Morningstar/bolsas podem alterar termos; nossa única saída é rescindir em 10 dias — risco operacional para produto já vendido a clientes.</li>
+        <li><b>Indenização ampla ao vendor:</b> Licensee indeniza a Morningstar por falhas em licenças de terceiros e por uso de clientes/usuários autorizados — transfere risco regulatório da redistribuição para a Broadcast.</li>
+        <li><b>Auditoria em nossas instalações</b> por Morningstar ou pelas bolsas, com multa de custos se discrepância ≥5%; retenção de registros por 3 anos.</li>
+        <li><b>Vedação a IA/ML:</b> proibição expressa de uso do dado com machine learning / analytics preditivo — conflita com o roadmap de derived data e automação do CoE.</li>
+        <li><b>Faturamento trimestral antecipado</b> nos Quarter Days — pior para o caixa que o fluxo mensal ICE.</li>
+        <li><b>Suspensão até compliance:</b> entrega condicionada a onboarding e comprovação de licenças por cliente/use case — atrito comercial a cada novo cliente Datafeed.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="pill ice">ICE</span> Riscos do lado ICE (para registro)</h3>
+      <ul class="clean">
+        <li><b>Concentração de vendor:</b> ampliar o pacote aumenta dependência da ICE — mitigável mantendo Morningstar mapeada como segunda fonte qualificada.</li>
+        <li><b>Renovação Dez/2027:</b> notice de 90 dias (Out/2027) para não renovar OS2 por +36 meses — alerta já ativo no hub de contratos.</li>
+        <li><b>Add.9 em draft:</b> Level 2 depende de assinatura (Appendix B em aberto desde Mar/2026) — formalizar antes de vender L2 a cliente.</li>
+        <li><b>Reporting recorrente:</b> End User Report mensal (dia 7, multa 1,5%/mês ou USD 1.000) e usage report trimestral — processo já rodando, mas as 15 sources ampliam o escopo do reporte.</li>
+        <li><b>Exchange agreements de redistribuição:</b> cada bolsa exige agreement do cliente redistribuidor — verificar com Jurídico/Elissandra antes de cada proposta (aplica-se a ambos os vendors).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="okbox"><b>Leitura líquida:</b> os riscos ICE são operacionais e já monitorados; os riscos Morningstar são estruturais (preço sem trava, modificação unilateral, indenização ampla, restrição a IA/derived data) e incidem justamente sobre o nosso modelo de negócio de redistribuição e dados derivados.</div>
+</section>
+
+<!-- T6 RECOMENDAÇÃO -->
+<section id="t6">
+  <h2>Recomendação</h2>
+  <div class="h2sub">Para deliberação da Diretoria de Produtos</div>
+
+  <div class="okbox" style="font-size:14px">
+    <b>Recomendação: seguir com o pacote ICE Data Services (15 bolsas, USD 14.925/mês).</b> Nos custos documentados, a Morningstar é ~2,9× mais cara (USD 43,6K+ vs USD 14,9K/mês) antes mesmo do fee de vendor (POA), dos end-user fees por usuário profissional e do custo de construção de um injetor novo. A ICE entrega go-live em ~4 semanas com injetor em produção; a Morningstar levaria ~5–6 meses e consumiria capacidade da Squad Market Data que está comprometida com o roadmap 2026.
+  </div>
+
+  <div class="grid g4">
+    <div class="card kpi"><div class="val num ok">USD 343K+</div><div class="lbl">Economia direta Ano 1</div><div class="foot">Fees conhecidos MS − custo ICE</div></div>
+    <div class="card kpi"><div class="val num ok">~22 semanas</div><div class="lbl">Antecipação de go-live</div><div class="foot">S4 vs S26</div></div>
+    <div class="card kpi"><div class="val num ok">R$ 1,0–1,5M</div><div class="lbl">Receita Ano 1 preservada</div><div class="foot">Ramp-up ICE não postergado</div></div>
+    <div class="card kpi"><div class="val num ok">2 devs/tri</div><div class="lbl">Capacidade de squad liberada</div><div class="foot">Sem injetor novo para construir</div></div>
+  </div>
+
+  <h2>Plano de ação sugerido</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Ação</th><th>Responsável</th><th>Prazo</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>Aprovar investimento do pacote ICE (USD 14.925/mês) e assinar Add.9 (Level 2)</td><td>Rodrigo Galasini / Diretoria</td><td>Semana 0</td></tr>
+        <tr><td class="num">2</td><td>Acionar ICE para ativação das 15 sources e iniciar cadastro no Thor</td><td>João Carlos · Cadastro de Dados</td><td>S1–3</td></tr>
+        <tr><td class="num">3</td><td>Emitir propostas para CSD BR, Somma, Itaú BBA, B3 e Itaú Custódia</td><td>Elissandra · Comercial</td><td>S4–5</td></tr>
+        <tr><td class="num">4</td><td>Retomar Natixis/State Street com demonstração da cobertura europeia</td><td>Valdir / Edgar</td><td>S5–6</td></tr>
+        <tr><td class="num">5</td><td>Manter Morningstar como segunda fonte qualificada: solicitar proposta formal com License Fee, Implementation Fee e Infrastructure Charge para benchmark anual e plano de contingência</td><td>Antonio Melo · Elissandra</td><td>Contínuo</td></tr>
+        <tr><td class="num">6</td><td>Reavaliar Morningstar pontualmente para nichos sem equivalente ICE (ex.: Swiss Structured Products), se houver demanda de cliente pagante</td><td>Market Data &amp; Automação</td><td>Sob demanda</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note"><b>Condições de reversão da recomendação:</b> a decisão deve ser revisitada se (a) a Morningstar apresentar proposta consolidada com vendor fee que aproxime o custo total de ~USD 20K/mês; (b) a ICE alterar materialmente o pricing na renovação de Dez/2027; ou (c) surgir demanda de cliente âncora por conteúdo exclusivo Morningstar que pague o custo incremental do injetor.</div>
+</section>
+
+<footer>
+  <div>Broadcast · Agência Estado — Market Data &amp; Automação · Análise comparativa de fornecedores · Julho/2026</div>
+  <div>Elaborado por <b style="color:var(--txt2)">Antonio Melo</b> · Fontes: ICE MSA/OS2 + Addenda 1–9 · Business case Pacote ICE (Jun/2026) · Morningstar PLA + Exchange Fee Reports (06/Jul/2026) · Cboe: proposta CFE/CGIF (D. Spain, Mai/2026) + factsheets · Nasdaq: resposta formal (T. Anderson, Jul/2026) · Confidencial</div>
+</footer>
+</main>
+</div>
+</div>
+
+<script>
+function tab(e,id){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  e.currentTarget.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function tg(){
+  const h=document.documentElement;
+  h.dataset.theme = h.dataset.theme==='dark'?'light':'dark';
+}
+</script>
+</body>
+</html>
