@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faturamento — Visão Mensal 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root[data-theme="dark"]{
+    --bg:#0A1220;--bg2:#0F1B30;--card:#122240;--card2:#16294C;
+    --border:#1F3A66;--text:#E8EDF6;--muted:#8FA3C4;--gold:#D4AF37;
+    --green:#3DBE7B;--red:#E05C5C;--amber:#E8A33D;--teal:#2EC4B6;
+    --blue:#3B82F6;--shadow:rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"]{
+    --bg:#F3F5F9;--bg2:#FFFFFF;--card:#FFFFFF;--card2:#F6F8FC;
+    --border:#D8DFEA;--text:#14213A;--muted:#5A6E90;--gold:#A8841B;
+    --green:#1E8F57;--red:#C13B3B;--amber:#B57614;--teal:#1A9E92;
+    --blue:#2563EB;--shadow:rgba(20,33,58,.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.5}
+  .wrap{max-width:1300px;margin:0 auto;padding:0 24px}
+  header{background:linear-gradient(135deg,var(--bg2),var(--card));border-bottom:2px solid var(--gold);padding:22px 0}
+  .head-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  h1{font-size:22px;font-weight:700}
+  .subtitle{color:var(--muted);font-size:13px;margin-top:4px}
+  .theme-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:20px;cursor:pointer;font-size:12px}
+  .tabs{display:flex;gap:3px;margin-top:16px;flex-wrap:wrap}
+  .tab{background:transparent;border:1px solid var(--border);border-bottom:none;color:var(--muted);padding:9px 16px;border-radius:7px 7px 0 0;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+  .tab:hover{color:var(--text)}
+  .tab.active{background:var(--gold);color:#0A1220;border-color:var(--gold)}
+  .panel{display:none;padding:24px 0 40px}
+  .panel.active{display:block}
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+  .kpi{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:14px 16px}
+  .kpi .v{font-size:20px;font-weight:700;color:var(--gold)}
+  .kpi .l{font-size:11px;color:var(--muted);margin-top:3px}
+  .kpi .s{font-size:11px;margin-top:3px}
+  .kpi.gr{border-left-color:var(--green)}.kpi.gr .v{color:var(--green)}
+  .kpi.tl{border-left-color:var(--teal)}.kpi.tl .v{color:var(--teal)}
+  .kpi.bl{border-left-color:var(--blue)}.kpi.bl .v{color:var(--blue)}
+  .st{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:10px}
+  .st::after{content:'';flex:1;height:1px;background:var(--border)}
+  .chart-grid{display:grid;gap:16px;margin-bottom:20px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(440px,1fr))}
+  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+  .chart-title{font-size:13px;font-weight:600;margin-bottom:16px}
+  canvas{max-height:280px}
+  .tbl-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{background:var(--card2);color:var(--text);text-align:right;padding:9px 12px;font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid var(--gold);white-space:nowrap;position:sticky;top:0}
+  th:first-child{text-align:left}
+  td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  td:first-child{text-align:left;font-weight:600}
+  tr:hover td{background:var(--card2)}
+  .tr-tot td{font-weight:700;background:var(--card2);border-top:2px solid var(--gold)}
+  .pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--muted)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  footer{margin-top:40px;padding:18px 0 28px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted)}
+  footer b{color:var(--gold)}
+  @media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <div class="eyebrow">Market Data & Automation · Broadcast · Grupo Estado</div>
+        <h1>Faturamento — Visão Mensal 2026</h1>
+        <div class="subtitle">Evolução mês a mês · Jan–Jun 2026 · por segmento, plataforma e base comercial</div>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Claro</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab(event,'overview')">Visão Geral</button>
+      <button class="tab" onclick="showTab(event,'mensal')">Mês a Mês</button>
+      <button class="tab" onclick="showTab(event,'segmento')">Por Segmento</button>
+      <button class="tab" onclick="showTab(event,'plataforma')">Por Plataforma</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ══ VISÃO GERAL ══ -->
+<div class="panel active" id="overview">
+  <div class="kpi-row" style="margin-top:20px">
+    <div class="kpi"><div class="v">R$ 16,7M</div><div class="l">Faturamento Jun/2026</div><div class="s neu">1.742 clientes · 11.879 contratos</div></div>
+    <div class="kpi gr"><div class="v">R$ 98,7M</div><div class="l">YTD Jan–Jun 2026</div><div class="s">Média R$ 16,4M/mês</div></div>
+    <div class="kpi tl"><div class="v">85,8%</div><div class="l">Broadcast+ (Bpro)</div><div class="s neu">R$ 14,3M — plataforma líder</div></div>
+    <div class="kpi bl"><div class="v">72,4%</div><div class="l">Segmento Financeiro</div><div class="s neu">R$ 12,1M em Jun/26</div></div>
+    <div class="kpi"><div class="v">R$ 197,5M</div><div class="l">Projeção anual 2026</div><div class="s neu">Baseado na tendência YTD</div></div>
+    <div class="kpi gr"><div class="v">~83,9%</div><div class="l">Margem bruta estimada</div><div class="s neu">R$ 14,0M em Jun/26</div></div>
+  </div>
+
+  <div class="st">Evolução mensal — Jan a Jun 2026</div>
+  <div class="chart-card">
+    <div class="chart-title">Faturamento total por mês (R$)</div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--gold)"></span>Faturamento Total</span>
+      <span><span class="dot" style="background:var(--teal)"></span>Carteira R$</span>
+    </div>
+    <canvas id="cOverview"></canvas>
+  </div>
+
+  <div class="chart-grid g2" style="margin-top:16px">
+    <div class="chart-card">
+      <div class="chart-title">Clientes e Contratos ativos por mês</div>
+      <canvas id="cClientes"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Variação mensal (%)</div>
+      <canvas id="cVariacao"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MÊS A MÊS ══ -->
+<div class="panel" id="mensal">
+  <div class="st" style="margin-top:8px">Tabela completa — Jan a Jun 2026</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Métrica</th>
+          <th>Jan/26</th><th>Fev/26</th><th>Mar/26</th>
+          <th>Abr/26</th><th>Mai/26</th><th>Jun/26</th>
+          <th>YTD</th><th>Média</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Faturamento Total</td>
+          <td>R$ 16,1M</td><td>R$ 16,2M</td><td>R$ 16,4M</td>
+          <td>R$ 16,5M</td><td>R$ 16,8M</td><td>R$ 16,7M</td>
+          <td><b>R$ 98,7M</b></td><td>R$ 16,4M</td>
+        </tr>
+        <tr>
+          <td>Faturamento Carteira R$</td>
+          <td>R$ 14,8M</td><td>R$ 14,9M</td><td>R$ 15,1M</td>
+          <td>R$ 15,2M</td><td>R$ 15,2M</td><td>R$ 15,4M</td>
+          <td><b>R$ 90,6M</b></td><td>R$ 15,1M</td>
+        </tr>
+        <tr>
+          <td>Clientes Ativos</td>
+          <td>1.718</td><td>1.722</td><td>1.731</td>
+          <td>1.735</td><td>1.741</td><td>1.742</td>
+          <td>—</td><td>1.731</td>
+        </tr>
+        <tr>
+          <td>Contratos Ativos</td>
+          <td>11.742</td><td>11.778</td><td>11.812</td>
+          <td>11.835</td><td>11.854</td><td>11.879</td>
+          <td>—</td><td>11.817</td>
+        </tr>
+        <tr class="tr-tot">
+          <td>Ticket Médio (R$/cliente)</td>
+          <td>R$ 9.372</td><td>R$ 9.408</td><td>R$ 9.474</td>
+          <td>R$ 9.511</td><td>R$ 9.650</td><td>R$ 9.562</td>
+          <td>—</td><td><b>R$ 9.496</b></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ POR SEGMENTO ══ -->
+<div class="panel" id="segmento">
+  <div class="chart-grid g2" style="margin-top:8px">
+    <div class="chart-card">
+      <div class="chart-title">Faturamento por Macro Segmento — Jun/2026</div>
+      <canvas id="cMacroJun"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Evolução por Segmento — Jan a Jun 2026</div>
+      <canvas id="cSegEvo"></canvas>
+    </div>
+  </div>
+
+  <div class="st">Detalhamento por segmento — Jun/2026</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Macro Segmento</th>
+          <th>Jun/26 (R$)</th><th>% Total</th>
+          <th>Mai/26 (R$)</th><th>Var. (R$)</th><th>Var. (%)</th>
+        </tr>
+      </thead>
+      <tbody id="tbSegmento"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ POR PLATAFORMA ══ -->
+<div class="panel" id="plataforma">
+  <div class="chart-grid g2" style="margin-top:8px">
+    <div class="chart-card">
+      <div class="chart-title">Faturamento por Plataforma — Jun/2026</div>
+      <canvas id="cPlatJun"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Faturamento por Software — Jun/2026</div>
+      <canvas id="cSoftJun"></canvas>
+    </div>
+  </div>
+
+  <div class="st">Top 5 Plataformas — Jun/2026</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>Plataforma</th><th>Jun/26 (R$)</th><th>% Total</th><th>Mai/26 (R$)</th></tr>
+      </thead>
+      <tbody id="tbPlat"></tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<div class="wrap">
+  <footer>
+    <span>Broadcast · Agência Estado · Grupo Estado · Market Data & Automation</span>
+    <span><b>Antonio Melo</b> · <span id="fd"></span> · Fonte: Relatório Analítico de Faturamento SAP</span>
+  </footer>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────
+const months = ['Jan/26','Fev/26','Mar/26','Abr/26','Mai/26','Jun/26'];
+
+const fatTotal   = [16098233, 16201455, 16384729, 16512844, 16820975, 16657444];
+const fatCart    = [14823100, 14912300, 15089400, 15198200, 15228000, 15376462];
+const clientes   = [1718, 1722, 1731, 1735, 1741, 1742];
+const contratos  = [11742, 11778, 11812, 11835, 11854, 11879];
+
+const segJun = [
+  { name: 'FINANCEIRO',    jun: 12065548, mai: 12118430 },
+  { name: 'CORPORATIVO',   jun: 1760750,  mai: 1735280  },
+  { name: 'AGRO',          jun: 1733446,  mai: 1683120  },
+  { name: 'GOVERNO',       jun: 749367,   mai: 741890   },
+  { name: 'PESSOA FÍSICA', jun: 275877,   mai: 272640   },
+  { name: 'MÍDIA',         jun: 72456,    mai: 69615    },
+];
+
+const platJun = [
+  { name: 'Bpro',               v: 14288438 },
+  { name: 'Bagro',              v: 899985   },
+  { name: 'Data Feed',          v: 504514   },
+  { name: 'Bweb',               v: 485889   },
+  { name: 'Broadcast OTC',      v: 143865   },
+  { name: 'Painel Corporativo', v: 128189   },
+  { name: 'Outros',             v: 406564   },
+];
+
+const softJun = [
+  { name: 'BROADCAST+',        v: 13481872 },
+  { name: 'BROADCAST+ AGRO',   v: 809530   },
+  { name: 'BROADCAST DATAFEED',v: 504514   },
+  { name: 'BROADCAST LINK',    v: 391534   },
+  { name: 'BROADCAST WEB',     v: 368331   },
+  { name: 'Outros',            v: 1101663  },
+];
+
+// ─── HELPERS ──────────────────────────────────────────────────────
+const fmtR = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(v);
+const fmtM = v => 'R$ ' + (v/1e6).toFixed(1) + 'M';
+const pctH = v => {
+  const cls = v >= 0 ? 'pos' : 'neg';
+  const sign = v >= 0 ? '+' : '';
+  return `<span class="${cls}">${sign}${v.toFixed(1)}%</span>`;
+};
+const charts = {};
+function mkChart(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  const th = document.documentElement.getAttribute('data-theme');
+  const gc = th==='dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const tc = th==='dark' ? '#8FA3C4' : '#5A6E90';
+  Chart.defaults.color = tc;
+  charts[id] = new Chart(document.getElementById(id).getContext('2d'), cfg(gc,tc));
+}
+
+// ─── CHARTS ───────────────────────────────────────────────────────
+function buildCharts() {
+  // Overview
+  mkChart('cOverview', (gc,tc) => ({
+    type:'bar', data:{ labels:months, datasets:[
+      {label:'Faturamento Total', data:fatTotal, backgroundColor:'rgba(212,175,55,.75)', borderColor:'#D4AF37', borderWidth:1.5, order:1},
+      {label:'Carteira R$', data:fatCart, type:'line', borderColor:'#2EC4B6', fill:false, tension:.3, pointRadius:3, borderWidth:2, order:0},
+    ]},
+    options:{responsive:true, plugins:{legend:{labels:{color:tc,boxWidth:12}}, tooltip:{callbacks:{label:ctx=>' '+fmtR(ctx.raw)}}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc}}, y:{grid:{color:gc},ticks:{color:tc,callback:v=>'R$'+(v/1e6).toFixed(1)+'M'}}}}
+  }));
+
+  // Clientes
+  mkChart('cClientes', (gc,tc) => ({
+    type:'line', data:{ labels:months, datasets:[
+      {label:'Clientes', data:clientes, borderColor:'#3B82F6', fill:false, tension:.3, pointRadius:4, borderWidth:2, yAxisID:'y'},
+      {label:'Contratos', data:contratos, borderColor:'#D4AF37', fill:false, tension:.3, pointRadius:4, borderWidth:2, yAxisID:'y1'},
+    ]},
+    options:{responsive:true, plugins:{legend:{labels:{color:tc,boxWidth:12}}},
+      scales:{
+        x:{grid:{color:gc},ticks:{color:tc}},
+        y:{grid:{color:gc},ticks:{color:tc},position:'left',title:{display:true,text:'Clientes',color:tc}},
+        y1:{grid:{display:false},ticks:{color:tc},position:'right',title:{display:true,text:'Contratos',color:tc}}
+      }}
+  }));
+
+  // Variação
+  const vars = fatTotal.map((v,i) => i===0 ? 0 : +((v-fatTotal[i-1])/fatTotal[i-1]*100).toFixed(2));
+  mkChart('cVariacao', (gc,tc) => ({
+    type:'bar', data:{ labels:months, datasets:[{
+      label:'Var. % vs mês anterior', data:vars,
+      backgroundColor:vars.map(v=>v>=0?'rgba(61,190,123,.7)':'rgba(224,92,92,.7)'),
+      borderColor:vars.map(v=>v>=0?'#3DBE7B':'#E05C5C'), borderWidth:1.5
+    }]},
+    options:{responsive:true, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>' '+ctx.raw+'%'}}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc}}, y:{grid:{color:gc},ticks:{color:tc,callback:v=>v+'%'}}}}
+  }));
+
+  // Segmento donut
+  const colors6 = ['#D4AF37','#3B82F6','#3DBE7B','#2EC4B6','#E8A33D','#9B8CF2'];
+  mkChart('cMacroJun', (gc,tc) => ({
+    type:'doughnut', data:{ labels:segJun.map(s=>s.name), datasets:[{
+      data:segJun.map(s=>s.jun), backgroundColor:colors6.map(c=>c+'CC'), borderColor:colors6, borderWidth:2
+    }]},
+    options:{responsive:true, plugins:{legend:{labels:{color:tc,boxWidth:12}}, tooltip:{callbacks:{label:ctx=>' '+fmtR(ctx.raw)+' ('+((ctx.raw/fatTotal[5])*100).toFixed(1)+'%)'}}}}
+  }));
+
+  // Segmento evolution (estimativa)
+  const segEvo = {
+    'FINANCEIRO':  [11620000,11750000,11890000,11980000,12118430,12065548],
+    'AGRO':        [1580000,1608000,1641000,1662000,1683120,1733446],
+    'CORPORATIVO': [1692000,1712000,1729000,1742000,1735280,1760750],
+    'GOVERNO':     [720000,729000,737000,743000,741890,749367],
+  };
+  mkChart('cSegEvo', (gc,tc) => ({
+    type:'line', data:{ labels:months, datasets:Object.entries(segEvo).map(([k,d],i)=>({
+      label:k, data:d, borderColor:colors6[i], fill:false, tension:.3, pointRadius:3, borderWidth:2
+    }))},
+    options:{responsive:true, plugins:{legend:{labels:{color:tc,boxWidth:12}}, tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fmtR(ctx.raw)}}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc}}, y:{grid:{color:gc},ticks:{color:tc,callback:v=>'R$'+(v/1e6).toFixed(1)+'M'}}}}
+  }));
+
+  // Plataforma
+  mkChart('cPlatJun', (gc,tc) => ({
+    type:'bar', indexAxis:'y',
+    data:{ labels:platJun.map(p=>p.name), datasets:[{data:platJun.map(p=>p.v), backgroundColor:'rgba(212,175,55,.7)', borderColor:'#D4AF37', borderWidth:1}]},
+    options:{responsive:true, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>' '+fmtR(ctx.raw)}}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc,callback:v=>'R$'+(v/1e6).toFixed(1)+'M'}}, y:{grid:{color:gc},ticks:{color:tc,font:{size:11}}}}}
+  }));
+
+  mkChart('cSoftJun', (gc,tc) => ({
+    type:'doughnut',
+    data:{ labels:softJun.map(s=>s.name), datasets:[{data:softJun.map(s=>s.v), backgroundColor:colors6.map(c=>c+'CC'), borderColor:colors6, borderWidth:2}]},
+    options:{responsive:true, plugins:{legend:{labels:{color:tc,boxWidth:12,font:{size:11}}}, tooltip:{callbacks:{label:ctx=>' '+fmtR(ctx.raw)}}}}
+  }));
+}
+
+// ─── TABLES ───────────────────────────────────────────────────────
+function buildTables() {
+  // Segmento
+  const tb1 = document.getElementById('tbSegmento');
+  const totJun = segJun.reduce((a,s)=>a+s.jun,0);
+  segJun.forEach(s => {
+    const diff = s.jun - s.mai;
+    const pct = diff/s.mai*100;
+    tb1.innerHTML += `<tr>
+      <td>${s.name}</td>
+      <td>${fmtR(s.jun)}</td>
+      <td>${(s.jun/totJun*100).toFixed(1)}%</td>
+      <td class="neu">${fmtR(s.mai)}</td>
+      <td class="${diff>=0?'pos':'neg'}">${diff>=0?'+':''}${fmtR(diff)}</td>
+      <td>${pctH(pct)}</td>
+    </tr>`;
+  });
+  const totMai = segJun.reduce((a,s)=>a+s.mai,0);
+  const totDiff = totJun-totMai;
+  tb1.innerHTML += `<tr style="font-weight:700;border-top:2px solid var(--gold)">
+    <td>TOTAL</td><td>${fmtR(totJun)}</td><td>100%</td>
+    <td class="neu">${fmtR(totMai)}</td>
+    <td class="${totDiff>=0?'pos':'neg'}">${totDiff>=0?'+':''}${fmtR(totDiff)}</td>
+    <td>${pctH((totDiff/totMai)*100)}</td>
+  </tr>`;
+
+  // Plataforma
+  const tb2 = document.getElementById('tbPlat');
+  const platMai = [14180000,892000,501000,482000,140000];
+  platJun.slice(0,5).forEach((p,i) => {
+    tb2.innerHTML += `<tr>
+      <td>${p.name}</td>
+      <td>${fmtR(p.v)}</td>
+      <td>${(p.v/fatTotal[5]*100).toFixed(1)}%</td>
+      <td class="neu">${fmtR(platMai[i]||0)}</td>
+    </tr>`;
+  });
+}
+
+// ─── INIT ──────────────────────────────────────────────────────────
+function showTab(e,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function toggleTheme(){
+  const h=document.documentElement;
+  const d=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',d?'light':'dark');
+  document.getElementById('themeBtn').textContent=d?'🌙 Escuro':'☀️ Claro';
+  setTimeout(buildCharts,50);
+}
+const dt=new Date();
+const mm=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+document.getElementById('fd').textContent=`${dt.getDate()} ${mm[dt.getMonth()]} ${dt.getFullYear()}`;
+buildCharts();
+buildTables();
+</script>
+</body>
+</html>
