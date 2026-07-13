@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Breakeven por Produto — Maio 2026</title>
+<title>Breakeven por Produto — Junho 2026</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -117,7 +117,7 @@ tr.tot td{font-weight:700;border-top:2px solid var(--bord)}
 <div class="hdr">
   <div>
     <h1>Análise de Breakeven por Produto</h1>
-    <p>Broadcast · Receita × Despesa de Dados · Maio 2026</p>
+    <p>Broadcast · Receita × Despesa de Dados · Junho 2026</p>
   </div>
   <div class="hdr-r">
     <div style="display:flex;gap:8px;align-items:center">
@@ -235,7 +235,7 @@ tr.tot td{font-weight:700;border-top:2px solid var(--bord)}
       <hr class="met-divider">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
         <div class="met-footer">
-          <b>📐 Base de cálculo:</b> Status = Custo Total de Dados ÷ Receita do Produto. O custo inclui bolsas variáveis (alocadas por participação de cotações) + custos fixos de plataforma (alocados por participação de receita). A média do portfólio em Mai/26 é <b>16,5%</b>.
+          <b>📐 Base de cálculo:</b> Status = Custo Total de Dados ÷ Receita do Produto. O custo inclui bolsas variáveis (alocadas por participação de cotações) + custos fixos de plataforma (alocados por participação de receita). A média do portfólio em Jun/26 é <b>16,0%</b>.
         </div>
         <div class="met-footer">
           <b>⚠ Importante:</b> Os limiares de 18% e 30% são referências internas iniciais — não benchmarks de mercado. Recomenda-se que o CFO defina metas formais de custo de dados por produto para que o Status reflita uma política de pricing estabelecida.
@@ -340,7 +340,7 @@ tr.tot td{font-weight:700;border-top:2px solid var(--bord)}
       <table>
         <thead><tr>
           <th>#</th><th>Bolsa / Fornecedor</th><th class="r">Tipo</th>
-          <th class="r">Custo Mai/26</th><th class="r">Usuários Est.</th>
+          <th class="r">Custo Jun/26</th><th class="r">Usuários Est.</th>
           <th class="r">Custo / Usuário</th><th class="r">Rec. Cotações Assoc.</th>
           <th class="r">ROI Dados</th><th>Eficiência</th>
         </tr></thead>
@@ -353,52 +353,52 @@ tr.tot td{font-weight:700;border-top:2px solid var(--bord)}
 
 <script>
 // ── DATA ─────────────────────────────────────────────────────────────
-const totalReceita = 16820975.04;
-const recCotacoes  =  2606516.21;
-const totalDespVar =  2060479.10;
-const totalDespFix =   713573.52;
+const totalReceita = 16657443.83;
+const recCotacoes  =  2503743.63;
+const totalDespVar =  2107054.02;
+const totalDespFix =   561970.08;
 const totalDesp    = totalDespVar + totalDespFix;
 
 const produtos = [
-  {n:'BROADCAST+',          r:13757179.20, cl:2413, ct:11482, cs:0.157},
-  {n:'BROADCAST+ AGRO',     r:802960.95,   cl:488,  ct:1059,  cs:0.393},
-  {n:'BROADCAST DATAFEED',  r:495796.27,   cl:81,   ct:100,   cs:0.052},
-  {n:'BROADCAST LINK',      r:394992.55,   cl:37,   ct:59,    cs:0},
-  {n:'BROADCAST WEB',       r:368302.18,   cl:2,    ct:442,   cs:0.001},
-  {n:'BROADCAST TICKER',    r:327839.92,   cl:7,    ct:7,     cs:0.051},
-  {n:'PAINEL CORPORATIVO',  r:126894.70,   cl:10,   ct:20,    cs:0.197},
-  {n:'BROADCAST OTC',       r:110265.00,   cl:4,    ct:103,   cs:0},
-  {n:'BROADCAST WHITE LBL', r:91029.37,    cl:4,    ct:510,   cs:0.365},
-  {n:'BCAST LINK ANTIGO',   r:79692.11,    cl:3,    ct:4,     cs:0},
+  {n:'BROADCAST+',          r:13481872.24, cl:1407, ct:9303,  cs:0.157},
+  {n:'BROADCAST+ AGRO',     r:809530.28,   cl:280,  ct:591,   cs:0.393},
+  {n:'BROADCAST DATAFEED',  r:504514.09,   cl:80,   ct:101,   cs:0.052},
+  {n:'BROADCAST LINK',      r:391534.40,   cl:37,   ct:58,    cs:0},
+  {n:'BROADCAST WEB',       r:368331.30,   cl:9,    ct:461,   cs:0.001},
+  {n:'BROADCAST TICKER',    r:335057.05,   cl:7,    ct:7,     cs:0.051},
+  {n:'BROADCAST OTC',       r:143865.00,   cl:4,    ct:103,   cs:0},
+  {n:'PAINEL CORPORATIVO',  r:128189.40,   cl:11,   ct:21,    cs:0.197},
+  {n:'BROADCAST WHITE LBL', r:91029.37,    cl:3,    ct:410,   cs:0.365},
+  {n:'BCAST WEB AGRO',      r:90455.04,    cl:14,   ct:288,   cs:0.30},
+  {n:'BCAST LINK ANTIGO',   r:79974.34,    cl:3,    ct:4,     cs:0},
   {n:'BCAST WEB TN AGORA',  r:60645.15,    cl:1,    ct:303,   cs:0},
-  {n:'BROADCAST FACTSET',   r:56125.23,    cl:11,   ct:14,    cs:0},
-  {n:'BCAST WEB AGRO',      r:40534.10,    cl:0,    ct:0,     cs:0.30},
-  {n:'BROADCAST POLÍTICO',  r:35216.24,    cl:18,   ct:51,    cs:0},
+  {n:'BROADCAST FACTSET',   r:58282.01,    cl:9,    ct:12,    cs:0},
+  {n:'BROADCAST POLÍTICO',  r:52904.66,    cl:19,   ct:53,    cs:0},
 ];
 
 const bolsasVar = [
-  {n:'BM&FBOVESPA', c:1257046.92},
-  {n:'CME Group',   c:402500.52},
-  {n:'ICE',         c:253140.31},
-  {n:'Nasdaq',      c:51731.06},
-  {n:'NYSE',        c:34517.89},
-  {n:'FTSE',        c:27208.66},
-  {n:'Euronext',    c:20454.30},
-  {n:'Deutsche B.', c:7921.92},
-  {n:'CBOE',        c:5187.32},
-  {n:'LME',         c:771.20},
+  {n:'BM&FBOVESPA', c:1191932.17},
+  {n:'CME Group',   c:432016.91},
+  {n:'ICE',         c:270735.89},
+  {n:'Nasdaq',      c:110827.71},
+  {n:'NYSE',        c:37394.60},
+  {n:'FTSE',        c:28362.77},
+  {n:'Euronext',    c:20560.34},
+  {n:'Deutsche B.', c:8778.54},
+  {n:'CBOE',        c:5646.84},
+  {n:'LME',         c:798.25},
 ];
 const plataformaFix = [
-  {n:'IDC',          c:199550.28},
-  {n:'CME (fix)',    c:70754.80},
+  {n:'IDC',          c:212266.64},
+  {n:'CME (fix)',    c:71407.44},
   {n:'CEPEA-FEALQ', c:57484.88},
-  {n:'NYSE (fix)',   c:45443.08},
-  {n:'ICE (fix)',    c:40954.41},
-  {n:'UP2Data B3',   c:35498.56},
-  {n:'FENICS',       c:34671.53},
+  {n:'NYSE (fix)',   c:62709.25},
+  {n:'ICE (fix)',    c:36249.69},
+  {n:'Nasdaq (fix)', c:35764.65},
+  {n:'UP2Data B3',   c:21226.72},
   {n:'ANBIMA',       c:33228.74},
-  {n:'Nasdaq (fix)', c:30901.34},
-  {n:'Trading Ec.',  c:24112.95},
+  {n:'FENICS',       c:12231.62},
+  {n:'Trading Ec.',  c:24866.30},
   {n:'Outros fix.',  c:140972.95},
 ];
 
