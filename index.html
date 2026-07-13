@@ -408,18 +408,31 @@
       <div class="nav-group">
         <button class="nav-group-btn open" onclick="toggleGroup(this)">
           <span class="g-icon">👔</span><span class="g-label">Diretoria</span>
-          <span class="g-count">8</span><span class="chevron">▶</span>
+          <span class="g-count">9</span><span class="chevron">▶</span>
         </button>
         <div class="nav-items">
           <a class="nav-item" onclick="show('breakeven')" href="#"><span class="item-dot"></span> Breakeven por Produto</a>
-          <a class="nav-item" onclick="show('despesas')" href="#"><span class="item-dot"></span> Despesas com Fornecedores</a>
-          <a class="nav-item" onclick="show('despesas-mensal')" href="#"><span class="item-dot"></span> Despesas — Visão Mensal</a>
-          <a class="nav-item" onclick="show('faturamento')" href="#"><span class="item-dot"></span> Faturamento Maio 2026</a>
+          <a class="nav-item" onclick="show('despesas')" href="#"><span class="item-dot"></span> Despesas Jun/2026</a>
+          <a class="nav-item" onclick="show('faturamento')" href="#"><span class="item-dot"></span> Faturamento Jun/2026</a>
           <a class="nav-item" onclick="show('ice-contratos')" href="#"><span class="item-dot"></span> ICE Contratos Consolidados</a>
           <a class="nav-item" onclick="show('ice-pipeline')" href="#"><span class="item-dot"></span> ICE Novas Fontes</a>
           <a class="nav-item" onclick="show('exchange-map')" href="#"><span class="item-dot"></span> Mapa de Bolsas</a>
           <a class="nav-item" onclick="show('tam')" href="#"><span class="item-dot"></span> Oportunidade de Mercado</a>
           <a class="nav-item" onclick="show('terminal-latam')" href="#"><span class="item-dot"></span> Terminal Latam / NUAM</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Visão Mensal 2026 -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">📅</span><span class="g-label">Visão Mensal — 2026</span>
+          <span class="g-count">2</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('despesas-mensal')" href="#"><span class="item-dot"></span> Despesas — Jan-Jun</a>
+          <a class="nav-item" onclick="show('fat-mensal')" href="#"><span class="item-dot"></span> Faturamento — Jan-Jun</a>
         </div>
       </div>
 
@@ -901,7 +914,7 @@
       <div class="inner">
         <div class="page-header">
           <div class="page-eyebrow">Diretoria</div>
-          <div class="page-title">Despesas com Fornecedores de Dados — 2026</div>
+          <div class="page-title">Despesas com Fornecedores — Jun/2026</div>
           <div class="page-desc">Relatório consolidado de despesas com provedores de dados.</div>
         </div>
         <div class="doc-frame-wrap">
@@ -1245,7 +1258,7 @@
     <div class="panel" id="p-despesas-mensal">
       <div class="inner">
         <div class="page-header">
-          <div class="page-eyebrow">Financeiro</div>
+          <div class="page-eyebrow">Visão Mensal</div>
           <div class="page-title">Despesas com Dados — Visão Mensal 2026</div>
           <div class="page-desc">Evolução mês a mês de Jan a Jun/2026 — Real vs Orçado, por fornecedor, YTD acumulado e projeção anual.</div>
         </div>
@@ -1272,6 +1285,23 @@
             <a href="oferta_dados_junho_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
           </div>
           <iframe src="oferta_dados_junho_2026.html" title="Oferta de Dados Jun/2026"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-fat-mensal">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Visão Mensal</div>
+          <div class="page-title">Faturamento — Visão Mensal 2026</div>
+          <div class="page-desc">Evolução mês a mês Jan–Jun 2026 — faturamento total, carteira, clientes, contratos, por segmento e por plataforma.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">faturamento_mensal_2026.html</span>
+            <a href="faturamento_mensal_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="faturamento_mensal_2026.html" title="Faturamento Mensal 2026"></iframe>
         </div>
       </div>
     </div>
