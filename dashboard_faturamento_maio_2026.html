@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Faturamento — Maio 2026</title>
+<title>Dashboard Faturamento — Junho 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
@@ -317,7 +317,7 @@
   </div>
   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
     <div style="display:flex;align-items:center;gap:10px">
-      <div class="header-badge">Período: <span>Maio 2026</span></div>
+      <div class="header-badge">Período: <span>Junho 2026</span></div>
       <button id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/escuro" style="
         background: var(--surface2);
         border: 1px solid var(--border);
@@ -342,12 +342,12 @@
 <div class="kpi-grid">
   <div class="kpi-card green">
     <div class="kpi-label">Faturamento Total</div>
-    <div class="kpi-value">R$ 16,8M</div>
+    <div class="kpi-value">R$ 16,7M</div>
     <div class="kpi-sub">55.599 registros</div>
   </div>
   <div class="kpi-card blue">
     <div class="kpi-label">Fat. Carteira R$</div>
-    <div class="kpi-value">R$ 15,2M</div>
+    <div class="kpi-value">R$ 15,4M</div>
     <div class="kpi-sub">Base recorrente</div>
   </div>
   <div class="kpi-card orange">
@@ -381,12 +381,12 @@
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px">
     <div class="kpi-card green">
       <div class="kpi-label">Regional Brasil</div>
-      <div class="kpi-value">R$ 16,1M</div>
+      <div class="kpi-value">R$ 16,3M</div>
       <div class="kpi-sub">95,7% do faturamento</div>
     </div>
     <div class="kpi-card blue">
       <div class="kpi-label">Base FINANCEIRO I</div>
-      <div class="kpi-value" style="color:var(--accent2)">R$ 5,0M</div>
+      <div class="kpi-value" style="color:var(--accent2)">R$ 5,1M</div>
       <div class="kpi-sub">343 clientes · 5.540 contratos</div>
     </div>
     <div class="kpi-card orange">
@@ -396,7 +396,7 @@
     </div>
     <div class="kpi-card purple">
       <div class="kpi-label">Top Cidade</div>
-      <div class="kpi-value" style="color:var(--accent4)">R$ 9,1M</div>
+      <div class="kpi-value" style="color:var(--accent4)">R$ 7,3M</div>
       <div class="kpi-sub">São Paulo (SP)</div>
     </div>
   </div>
@@ -471,7 +471,7 @@
     </div>
     <div class="kpi-card orange">
       <div class="kpi-label">Top 5 Concentração</div>
-      <div class="kpi-value" style="color:var(--accent3)">53,6%</div>
+      <div class="kpi-value" style="color:var(--accent3)">53,7%</div>
       <div class="kpi-sub">do faturamento total</div>
     </div>
     <div class="kpi-card purple">
@@ -1136,17 +1136,17 @@ buildTable('tbl-individual', individualData, 5);
 
 // ── REGIONAL DATA ─────────────────────────────────────────────────────────────
 const regionalData = [
-  { name: 'BRASIL',         value: 16101319.92, clientes: 1729, contratos: 11835, vendedores: 15 },
+  { name: 'BRASIL',         value: 16291336.77, clientes: 1730, contratos: 11860, vendedores: 15 },
   { name: 'DIRETORIA',      value: 696655.12,   clientes: 9,    contratos: 16,    vendedores: 1  },
   { name: 'NOVOS NEGÓCIOS', value: 23000.00,    clientes: 3,    contratos: 3,     vendedores: 2  },
 ];
 
 const baseData = [
-  { name: 'FINANCEIRO I',   value: 5045235.96, clientes: 343, contratos: 5540 },
-  { name: 'GOVERNO',        value: 3961459.60, clientes: 107, contratos: 2028 },
-  { name: 'FINANCEIRO II',  value: 3878582.42, clientes: 524, contratos: 2091 },
-  { name: 'AGROCORP',       value: 3216041.94, clientes: 755, contratos: 2176 },
-  { name: 'AJUSTES',        value: 696655.12,  clientes: 9,   contratos: 16   },
+  { name: 'FINANCEIRO I',   value: 5088241.11, clientes: 343, contratos: 5540 },
+  { name: 'GOVERNO',        value: 3983960.40, clientes: 107, contratos: 2028 },
+  { name: 'FINANCEIRO II',  value: 3848108.65, clientes: 524, contratos: 2091 },
+  { name: 'AGROCORP',       value: 3349026.61, clientes: 755, contratos: 2176 },
+  { name: 'AJUSTES',        value: 365107.06,  clientes: 9,   contratos: 16   },
   { name: 'NOVOS NEGÓCIOS', value: 23000.00,   clientes: 3,   contratos: 3    },
 ];
 
@@ -1329,7 +1329,7 @@ new Chart(document.getElementById('chartRegMacro'), {
 
 // ── VENDEDORES DATA ───────────────────────────────────────────────────────────
 const vendedoresData = [
-  { name: 'JACKSON DA MOTA PEREIRA',              value: 2323890.15, clientes: 34,  contratos: 1223, servicos: 70 },
+  { name: 'JACKSON DA MOTA PEREIRA',              value: 2328574.71, clientes: 34,  contratos: 1223, servicos: 70 },
   { name: 'CAROLINE DE ALMEIDA CAMPOS',           value: 1952465.65, clientes: 10,  contratos: 3486, servicos: 92 },
   { name: 'FERNANDA FELIPPE',                     value: 1650448.43, clientes: 60,  contratos: 943,  servicos: 71 },
   { name: 'EDGAR APARECIDO DE JESUS',             value: 1586140.66, clientes: 24,  contratos: 997,  servicos: 55 },
