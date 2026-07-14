@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Broadcast Agro — Preços Físicos, Estimativas & Prêmios</title>
+<style>
+  :root[data-theme="dark"]{
+    --bg:#0A1220;--bg2:#0F1B30;--card:#122240;--card2:#16294C;
+    --border:#1F3A66;--text:#E8EDF6;--muted:#8FA3C4;--gold:#D4AF37;
+    --green:#3DBE7B;--red:#E05C5C;--amber:#E8A33D;--teal:#2EC4B6;
+    --blue:#3B82F6;--purple:#9B8CF2;--shadow:rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"]{
+    --bg:#F3F5F9;--bg2:#FFFFFF;--card:#FFFFFF;--card2:#F6F8FC;
+    --border:#D8DFEA;--text:#14213A;--muted:#5A6E90;--gold:#A8841B;
+    --green:#1E8F57;--red:#C13B3B;--amber:#B57614;--teal:#1A9E92;
+    --blue:#2563EB;--purple:#6B5CC7;--shadow:rgba(20,33,58,.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.5}
+  .wrap{max-width:1300px;margin:0 auto;padding:0 24px}
+  header{background:linear-gradient(135deg,var(--bg2),var(--card));border-bottom:2px solid var(--gold);padding:22px 0}
+  .head-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  h1{font-size:22px;font-weight:700}
+  .subtitle{color:var(--muted);font-size:13px;margin-top:4px}
+  .theme-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:20px;cursor:pointer;font-size:12px}
+  .tabs{display:flex;gap:3px;margin-top:16px;flex-wrap:wrap}
+  .tab{background:transparent;border:1px solid var(--border);border-bottom:none;color:var(--muted);padding:9px 16px;border-radius:7px 7px 0 0;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+  .tab:hover{color:var(--text)}
+  .tab.active{background:var(--gold);color:#0A1220;border-color:var(--gold)}
+  .panel{display:none;padding:24px 0 40px}
+  .panel.active{display:block}
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+  .kpi{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:14px 16px}
+  .kpi .v{font-size:22px;font-weight:700;color:var(--gold)}
+  .kpi .l{font-size:11px;color:var(--muted);margin-top:3px}
+  .kpi.gr{border-left-color:var(--green)}.kpi.gr .v{color:var(--green)}
+  .kpi.tl{border-left-color:var(--teal)}.kpi.tl .v{color:var(--teal)}
+  .kpi.am{border-left-color:var(--amber)}.kpi.am .v{color:var(--amber)}
+  .kpi.bl{border-left-color:var(--blue)}.kpi.bl .v{color:var(--blue)}
+  .st{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:10px}
+  .st::after{content:'';flex:1;height:1px;background:var(--border)}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+  .card h3{font-size:14px;font-weight:700;margin-bottom:10px}
+  .muted{color:var(--muted);font-size:13px}
+  .pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;margin:2px}
+  .pill.g{background:rgba(61,190,123,.12);border:1px solid rgba(61,190,123,.3);color:var(--green)}
+  .pill.a{background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);color:var(--gold)}
+  .pill.t{background:rgba(46,196,182,.12);border:1px solid rgba(46,196,182,.3);color:var(--teal)}
+  .pill.b{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:var(--blue)}
+  .pill.p{background:rgba(155,140,242,.12);border:1px solid rgba(155,140,242,.3);color:var(--purple)}
+  /* Commodity cards */
+  .com-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;border-top:3px solid var(--gold)}
+  .com-card.soja{border-top-color:#22C55E}
+  .com-card.milho{border-top-color:#EAB308}
+  .com-card.trigo{border-top-color:#F97316}
+  .com-card.cafe{border-top-color:#92400E}
+  .com-card.arroz{border-top-color:#6EE7B7}
+  .com-card.outros{border-top-color:var(--muted)}
+  .com-name{font-size:15px;font-weight:700;margin-bottom:8px}
+  .com-count{font-size:28px;font-weight:700;margin:6px 0 4px}
+  /* Map-like state grid */
+  .state-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .state-tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--card2);border:1px solid var(--border)}
+  .state-tag.hot{background:rgba(61,190,123,.15);border-color:rgba(61,190,123,.4);color:var(--green)}
+  .state-tag.mid{background:rgba(212,175,55,.12);border-color:rgba(212,175,55,.3);color:var(--gold)}
+  .state-tag.low{background:var(--card2);color:var(--muted)}
+  /* Porto cards */
+  .porto-card{background:var(--card2);border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .porto-name{font-size:13px;font-weight:600}
+  .porto-count{font-size:18px;font-weight:700;color:var(--teal)}
+  /* Indicator row */
+  .ind-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border)}
+  .ind-row:last-child{border-bottom:none}
+  .ind-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  /* Table */
+  .search-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:center}
+  .search-box input{background:transparent;border:none;color:var(--text);font-size:13px;outline:none;flex:1}
+  .search-box input::placeholder{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{background:var(--card2);color:var(--text);text-align:left;padding:9px 12px;font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid var(--gold);position:sticky;top:0}
+  td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+  tr:hover td{background:var(--card2)}
+  .ticker{font-family:monospace;font-size:11px;color:var(--teal);background:var(--card2);padding:2px 6px;border-radius:4px}
+  .cat-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px}
+  footer{margin-top:40px;padding:18px 0 28px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted)}
+  footer b{color:var(--gold)}
+  @media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr}.g2,.g3,.g4{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <div class="eyebrow">Market Data & Automation · Broadcast Agro · Agência Estado</div>
+        <h1>Broadcast Agro — Preços Físicos, Estimativas & Prêmios</h1>
+        <div class="subtitle">Portfólio de dados agro focado nos três pilares de valor para o cliente · 754 instrumentos de alta relevância comercial</div>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Claro</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab(event,'overview')">Visão Geral</button>
+      <button class="tab" onclick="showTab(event,'fisicos')">Preços Físicos</button>
+      <button class="tab" onclick="showTab(event,'estimativas')">Estimativas de Safra</button>
+      <button class="tab" onclick="showTab(event,'premios')">Prêmios de Exportação</button>
+      <button class="tab" onclick="showTab(event,'tickers')">Tickers</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ══ VISÃO GERAL ══ -->
+<div class="panel active" id="overview">
+  <div class="kpi-row" style="margin-top:20px">
+    <div class="kpi"><div class="v">754</div><div class="l">Instrumentos nos 3 pilares principais</div></div>
+    <div class="kpi gr"><div class="v">441</div><div class="l">Preços físicos spot — 9 commodities, 122 praças</div></div>
+    <div class="kpi am"><div class="v">232</div><div class="l">Estimativas de safra — 12 commodities, 6 indicadores</div></div>
+    <div class="kpi tl"><div class="v">81</div><div class="l">Prêmios de exportação — 5 portos, soja e milho</div></div>
+    <div class="kpi bl"><div class="v">10</div><div class="l">Estados com cobertura de preços físicos</div></div>
+    <div class="kpi"><div class="v">CEPEA-FEALQ</div><div class="l">Principal contribuinte — parceria Agência Estado / USP</div></div>
+  </div>
+
+  <div class="st">Os três pilares de valor para o cliente agro</div>
+  <div class="grid g3">
+    <div style="background:var(--card);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:0 12px 12px 0;padding:20px">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:8px">01 · Preço Físico</div>
+      <div style="font-size:28px;font-weight:700;color:var(--green);margin-bottom:6px">441 tickers</div>
+      <p class="muted" style="font-size:12.5px;line-height:1.65;margin-bottom:10px">O preço que o produtor pratica no mercado interno. Base para tomada de decisão de venda, cálculo de margem e comparação com o mercado externo. 122 praças em 10 estados.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="pill g">Soja (184)</span>
+        <span class="pill g">Milho (145)</span>
+        <span class="pill g">Trigo (61)</span>
+        <span class="pill g">Café (25)</span>
+        <span class="pill g">Arroz (6)</span>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-left:4px solid var(--amber);border-radius:0 12px 12px 0;padding:20px">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--amber);font-weight:700;margin-bottom:8px">02 · Estimativa de Safra</div>
+      <div style="font-size:28px;font-weight:700;color:var(--amber);margin-bottom:6px">232 tickers</div>
+      <p class="muted" style="font-size:12.5px;line-height:1.65;margin-bottom:10px">O que vai acontecer com a oferta. Produção, área plantada, produtividade, exportação, estoques e importação por commodity e safra. Base para estratégia de hedge e planejamento comercial.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="pill a">Milho (57)</span>
+        <span class="pill a">Soja (48)</span>
+        <span class="pill a">Trigo (28)</span>
+        <span class="pill a">Algodão (24)</span>
+        <span class="pill a">Arroz (22)</span>
+        <span class="pill a">+7 outras</span>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-left:4px solid var(--teal);border-radius:0 12px 12px 0;padding:20px">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);font-weight:700;margin-bottom:8px">03 · Prêmio de Exportação</div>
+      <div style="font-size:28px;font-weight:700;color:var(--teal);margin-bottom:6px">81 tickers</div>
+      <p class="muted" style="font-size:12.5px;line-height:1.65;margin-bottom:10px">A diferença entre o preço CBOT/CME e o preço FOB porto. Define se vale exportar e qual porto usar. Essencial para tradings, exportadores e produtores integrados ao mercado externo.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="pill t">Milho (49)</span>
+        <span class="pill t">Soja (22)</span>
+        <span class="pill t">Paranaguá</span>
+        <span class="pill t">Santos</span>
+        <span class="pill t">Tubarão</span>
+        <span class="pill t">Barcarena</span>
+        <span class="pill t">Itaqui</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="st">Público-alvo por pilar</div>
+  <div class="grid g3">
+    <div class="card">
+      <h3 style="color:var(--green)">🌱 Preço Físico — para quem?</h3>
+      <ul class="muted" style="font-size:12.5px;line-height:1.8;padding-left:16px;margin-top:6px">
+        <li>Produtores rurais e cooperativas</li>
+        <li>Corretoras de grãos</li>
+        <li>Departamentos agrícolas de banks</li>
+        <li>Plataformas de comercialização</li>
+        <li>Consultoras agro (como CMA/SAFRAS)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--amber)">📊 Estimativas — para quem?</h3>
+      <ul class="muted" style="font-size:12.5px;line-height:1.8;padding-left:16px;margin-top:6px">
+        <li>Tradings (Cargill, Bunge, ADM, Amaggi)</li>
+        <li>Analistas e research agro</li>
+        <li>Tesourarias de agrobusiness</li>
+        <li>Fundos com exposição agro</li>
+        <li>Governo e reguladores</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--teal)">🚢 Prêmios — para quem?</h3>
+      <ul class="muted" style="font-size:12.5px;line-height:1.8;padding-left:16px;margin-top:6px">
+        <li>Exportadores diretos</li>
+        <li>Tradings internacionais</li>
+        <li>Mesas de derivativos agro</li>
+        <li>Produtores integrados ao mercado externo</li>
+        <li>Arbitradores interno × externo</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PREÇOS FÍSICOS ══ -->
+<div class="panel" id="fisicos">
+  <div class="kpi-row" style="margin-top:8px">
+    <div class="kpi gr"><div class="v">441</div><div class="l">Tickers de preços físicos</div></div>
+    <div class="kpi gr"><div class="v">122</div><div class="l">Praças únicas cobertas</div></div>
+    <div class="kpi gr"><div class="v">10</div><div class="l">Estados com cobertura</div></div>
+    <div class="kpi gr"><div class="v">9</div><div class="l">Commodities</div></div>
+  </div>
+
+  <div class="st">Cobertura por commodity</div>
+  <div class="grid g3">
+    <div class="com-card soja">
+      <div class="com-name">🌱 Soja Grão</div>
+      <div class="com-count" style="color:#22C55E">184</div>
+      <p class="muted" style="font-size:12px;line-height:1.6;margin-bottom:8px">Principal commodity — maior cobertura geográfica. Soja grão, farelo e óleo em praças do PR, RS, MS, MT, SP, GO, MG e outros.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="pill g">PR (88 total)</span><span class="pill g">RS (84)</span><span class="pill g">MS (61)</span><span class="pill g">MT (57)</span>
+      </div>
+    </div>
+    <div class="com-card milho">
+      <div class="com-name">🌽 Milho</div>
+      <div class="com-count" style="color:#EAB308">145</div>
+      <p class="muted" style="font-size:12px;line-height:1.6;margin-bottom:8px">Segunda maior cobertura. Milho em balcão e posto em praças produtoras e consumidoras — MT, MS, PR, RS, SP, GO, MG.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="pill a">Balcão</span><span class="pill a">Posto</span><span class="pill a">FOB Paranaguá</span>
+      </div>
+    </div>
+    <div class="com-card trigo">
+      <div class="com-name">🌾 Trigo</div>
+      <div class="com-count" style="color:#F97316">61</div>
+      <p class="muted" style="font-size:12px;line-height:1.6;margin-bottom:8px">Cobertura forte no Sul — PR e RS que concentram a produção. Trigo pão, trigo melhorador e derivados.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="pill t">PR</span><span class="pill t">RS</span><span class="pill t">SC</span>
+      </div>
+    </div>
+    <div class="com-card cafe">
+      <div class="com-name">☕ Café Arábica</div>
+      <div class="com-count" style="color:#92400E">25</div>
+      <p class="muted" style="font-size:12px;line-height:1.6;margin-bottom:8px">Café arábica em praças do triângulo cafeeiro — MG, SP e ES. Múltiplas qualidades e tipos.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="pill g">MG</span><span class="pill g">SP</span><span class="pill g">ES</span>
+      </div>
+    </div>
+    <div class="com-card arroz">
+      <div class="com-name">🌾 Arroz</div>
+      <div class="com-count" style="color:#6EE7B7">6</div>
+      <p class="muted" style="font-size:12px;line-height:1.6;margin-bottom:8px">Arroz casca em praças do RS e SC — estados líderes na produção de arroz irrigado.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="pill t">RS</span><span class="pill t">SC</span>
+      </div>
+    </div>
+    <div class="com-card outros">
+      <div class="com-name">📦 Outros</div>
+      <div class="com-count" style="color:var(--muted)">20</div>
+      <p class="muted" style="font-size:12px;line-height:1.6;margin-bottom:8px">Soja farelo, soja óleo e outros derivados em praças selecionadas.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="pill g">Farelo Soja (8)</span><span class="pill g">Óleo Soja (4)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="st">Cobertura geográfica — estados</div>
+  <div class="card">
+    <p class="muted" style="font-size:12.5px;margin-bottom:12px">Número de tickers de preços físicos por estado produtor:</p>
+    <div class="state-grid">
+      <span class="state-tag hot">PR · 88</span>
+      <span class="state-tag hot">RS · 84</span>
+      <span class="state-tag hot">MS · 61</span>
+      <span class="state-tag hot">MT · 57</span>
+      <span class="state-tag mid">SP · 41</span>
+      <span class="state-tag mid">SC · 36</span>
+      <span class="state-tag mid">MG · 24</span>
+      <span class="state-tag mid">GO · 23</span>
+      <span class="state-tag low">TO · 8</span>
+      <span class="state-tag low">MA · 5</span>
+    </div>
+    <p class="muted" style="font-size:11px;margin-top:12px">PR, RS, MS e MT concentram 66% dos tickers físicos — os 4 maiores estados produtores de grãos do Brasil.</p>
+  </div>
+</div>
+
+<!-- ══ ESTIMATIVAS ══ -->
+<div class="panel" id="estimativas">
+  <div class="kpi-row" style="margin-top:8px">
+    <div class="kpi am"><div class="v">232</div><div class="l">Tickers de estimativas de safra</div></div>
+    <div class="kpi am"><div class="v">12</div><div class="l">Commodities cobertas</div></div>
+    <div class="kpi am"><div class="v">6</div><div class="l">Indicadores por commodity</div></div>
+    <div class="kpi am"><div class="v">SAFRAS</div><div class="l">Contribuinte — referência nacional em projeções</div></div>
+  </div>
+
+  <div class="st">Os 6 indicadores por commodity</div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="ind-row">
+      <div class="ind-dot" style="background:var(--green)"></div>
+      <div style="flex:1"><b>Produção</b> — volume estimado em milhões de toneladas por safra</div>
+      <span class="pill g">Todas as commodities</span>
+    </div>
+    <div class="ind-row">
+      <div class="ind-dot" style="background:var(--amber)"></div>
+      <div style="flex:1"><b>Área Plantada</b> — hectares estimados por safra</div>
+      <span class="pill a">Milho · Soja · Algodão · Cana</span>
+    </div>
+    <div class="ind-row">
+      <div class="ind-dot" style="background:var(--teal)"></div>
+      <div style="flex:1"><b>Produtividade</b> — ton./ha estimada por safra</div>
+      <span class="pill t">Milho · Soja · Cana</span>
+    </div>
+    <div class="ind-row">
+      <div class="ind-dot" style="background:var(--blue)"></div>
+      <div style="flex:1"><b>Exportação</b> — volume estimado de embarques em mi/ton.</div>
+      <span class="pill b">Todas as commodities</span>
+    </div>
+    <div class="ind-row">
+      <div class="ind-dot" style="background:var(--purple)"></div>
+      <div style="flex:1"><b>Estoques</b> — estoque final estimado em mi/ton.</div>
+      <span class="pill p">Milho · Soja · Óleo · Farelo</span>
+    </div>
+    <div class="ind-row">
+      <div class="ind-dot" style="background:var(--red)"></div>
+      <div style="flex:1"><b>Importação</b> — volume importado estimado em mi/ton.</div>
+      <span style="font-size:10px;color:var(--red)">Milho · Trigo · Arroz</span>
+    </div>
+  </div>
+
+  <div class="st">Commodities cobertas</div>
+  <div class="grid g4">
+    <div class="card"><h3>🌽 Milho</h3><div style="font-size:22px;font-weight:700;color:var(--amber)">57</div><p class="muted" style="font-size:12px;margin-top:4px">6 indicadores · safras 2024/25 e 2025/26 · Brasil e por estado</p></div>
+    <div class="card"><h3>🌱 Soja</h3><div style="font-size:22px;font-weight:700;color:var(--amber)">48</div><p class="muted" style="font-size:12px;margin-top:4px">5–6 indicadores · grão, farelo e óleo · múltiplas safras</p></div>
+    <div class="card"><h3>🌾 Trigo</h3><div style="font-size:22px;font-weight:700;color:var(--amber)">28</div><p class="muted" style="font-size:12px;margin-top:4px">5 indicadores · produção, exportação, importação, estoques, área</p></div>
+    <div class="card"><h3>🌿 Algodão</h3><div style="font-size:22px;font-weight:700;color:var(--amber)">24</div><p class="muted" style="font-size:12px;margin-top:4px">4 indicadores · pluma em pluma · MT, BA e GO</p></div>
+    <div class="card"><h3>🌾 Arroz</h3><div style="font-size:22px;font-weight:700;color:var(--amber)">22</div><p class="muted" style="font-size:12px;margin-top:4px">5 indicadores · produção a importação</p></div>
+    <div class="card"><h3>🫒 Óleo & Farelo Soja</h3><div style="font-size:22px;font-weight:700;color:var(--amber)">30</div><p class="muted" style="font-size:12px;margin-top:4px">3 indicadores cada · produção, exportação, estoques</p></div>
+    <div class="card"><h3>☕ Café</h3><div style="font-size:22px;font-weight:700;color:var(--amber)">10</div><p class="muted" style="font-size:12px;margin-top:4px">2 indicadores · produção e exportação</p></div>
+    <div class="card"><h3>🍬 Açúcar & Cana</h3><div style="font-size:22px;font-weight:700;color:var(--amber)">11</div><p class="muted" style="font-size:12px;margin-top:4px">Cana (3) + açúcar (1) · produção, área, produtividade</p></div>
+  </div>
+</div>
+
+<!-- ══ PRÊMIOS ══ -->
+<div class="panel" id="premios">
+  <div class="kpi-row" style="margin-top:8px">
+    <div class="kpi tl"><div class="v">81</div><div class="l">Tickers de prêmios de exportação</div></div>
+    <div class="kpi tl"><div class="v">5</div><div class="l">Portos exportadores cobertos</div></div>
+    <div class="kpi tl"><div class="v">Milho</div><div class="l">Maior cobertura — 49 tickers em 5 portos</div></div>
+    <div class="kpi tl"><div class="v">Soja</div><div class="l">Segunda commodity — 22 tickers</div></div>
+  </div>
+
+  <div class="st">Cobertura por porto exportador</div>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="color:var(--teal);margin-bottom:14px">📍 Prêmios por porto</h3>
+      <div class="porto-card">
+        <div>
+          <div class="porto-name">Paranaguá (PR)</div>
+          <div class="muted" style="font-size:11px">Principal porto exportador de grãos do Brasil</div>
+        </div>
+        <div class="porto-count">22</div>
+      </div>
+      <div class="porto-card">
+        <div>
+          <div class="porto-name">Tubarão / Vitória (ES)</div>
+          <div class="muted" style="font-size:11px">Porto da Vale — referência em milho</div>
+        </div>
+        <div class="porto-count">16</div>
+      </div>
+      <div class="porto-card">
+        <div>
+          <div class="porto-name">Santos (SP)</div>
+          <div class="muted" style="font-size:11px">Maior porto do Brasil — açúcar, soja, milho</div>
+        </div>
+        <div class="porto-count">14</div>
+      </div>
+      <div class="porto-card">
+        <div>
+          <div class="porto-name">Barcarena (PA)</div>
+          <div class="muted" style="font-size:11px">Corredor Norte — escoamento de MT e PA</div>
+        </div>
+        <div class="porto-count">11</div>
+      </div>
+      <div class="porto-card">
+        <div>
+          <div class="porto-name">Itaqui (MA)</div>
+          <div class="muted" style="font-size:11px">Corredor Norte — MATOPIBA</div>
+        </div>
+        <div class="porto-count">8</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--teal);margin-bottom:14px">🌽🌱 Prêmios por commodity</h3>
+      <div style="margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-weight:600">Milho</span>
+          <span style="font-size:22px;font-weight:700;color:var(--teal)">49</span>
+        </div>
+        <p class="muted" style="font-size:12.5px;line-height:1.6">Maior cobertura de prêmios. Milho FOB Paranaguá, Tubarão, Santos, Barcarena e Itaqui — com múltiplas posições de exportação (vencimentos mensais) e compra/venda separados.</p>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-weight:600">Soja Grão</span>
+          <span style="font-size:22px;font-weight:700;color:var(--teal)">22</span>
+        </div>
+        <p class="muted" style="font-size:12.5px;line-height:1.6">Soja FOB Paranaguá em múltiplos vencimentos — fev/27 a dez/27. Prêmio vendedor e comprador separados para arbitragem interna.</p>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:var(--card2);border-radius:8px">
+        <p class="muted" style="font-size:12px;line-height:1.6"><b style="color:var(--text)">Como usar:</b> prêmio = preço FOB porto − preço CBOT/CME convertido. Quando o prêmio está positivo, o mercado local paga mais do que a referência internacional — sinal de demanda firme no Brasil.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TICKERS ══ -->
+<div class="panel" id="tickers">
+  <div class="search-box">
+    <span style="color:var(--muted)">🔍</span>
+    <input type="text" id="searchInput" placeholder="Buscar por commodity, praça, estado ou ticker..." oninput="filterTable()">
+    <span id="resultCount" style="color:var(--muted);font-size:12px;white-space:nowrap"></span>
+  </div>
+  <div style="overflow-x:auto;max-height:580px;overflow-y:auto">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:50%">Descrição</th>
+          <th style="width:22%">Ticker</th>
+          <th style="width:14%">Categoria</th>
+          <th style="width:14%">Contribuinte</th>
+        </tr>
+      </thead>
+      <tbody id="tickerTable"></tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<div class="wrap">
+  <footer>
+    <span>Broadcast · Agência Estado · Grupo Estado · Market Data & Automation</span>
+    <span><b>Antonio Melo</b> · <span id="fd"></span> · Fonte: Tickers_Agro.xlsx</span>
+  </footer>
+</div>
+
+<script>
+const tickers = [
+  // PREÇOS FÍSICOS — Soja
+  {d:'Soja Grão, Cascavel (PR), R$/sc 60kg, balcão', t:'SBGCSCB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Grão, Londrina (PR), R$/sc 60kg, balcão', t:'SBGLDNB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Grão, Maringá (PR), R$/sc 60kg, balcão', t:'SBGMRGB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Grão, Passo Fundo (RS), R$/sc 60kg', t:'SBGPSFB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Grão, Dourados (MS), R$/sc 60kg, balcão', t:'SBGDRDB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Grão, Rondonópolis (MT), R$/sc 60kg', t:'SBGRDNB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Grão, Sorriso (MT), R$/sc 60kg', t:'SBGSSRB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Grão, Campinas (SP), R$/sc 60kg', t:'SBGCPSB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Grão, Rio Verde (GO), R$/sc 60kg', t:'SBGRVDB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Farelo, Paranaguá (PR), R$/ton.', t:'SFAPRGB-AE', cat:'Físico', com:'Soja'},
+  {d:'Soja Óleo, São Paulo (SP), R$/kg', t:'SOASPB-AE', cat:'Físico', com:'Soja'},
+  // PREÇOS FÍSICOS — Milho
+  {d:'Milho, Cascavel (PR), R$/sc 60kg, balcão', t:'MILCSCB-AE', cat:'Físico', com:'Milho'},
+  {d:'Milho, Campinas (SP), R$/sc 60kg, balcão', t:'MILCPSB-AE', cat:'Físico', com:'Milho'},
+  {d:'Milho, Dourados (MS), R$/sc 60kg, balcão', t:'MILDRDB-AE', cat:'Físico', com:'Milho'},
+  {d:'Milho, Rondonópolis (MT), R$/sc 60kg', t:'MILRDNB-AE', cat:'Físico', com:'Milho'},
+  {d:'Milho, Uberlândia (MG), R$/sc 60kg', t:'MILUBRB-AE', cat:'Físico', com:'Milho'},
+  {d:'Milho, Goiânia (GO), R$/sc 60kg', t:'MILGOIB-AE', cat:'Físico', com:'Milho'},
+  {d:'Milho, Passo Fundo (RS), R$/sc 60kg', t:'MILPSFB-AE', cat:'Físico', com:'Milho'},
+  // PREÇOS FÍSICOS — Trigo
+  {d:'Trigo, Cascavel (PR), R$/sc 60kg, balcão', t:'TRGCSCB-AE', cat:'Físico', com:'Trigo'},
+  {d:'Trigo, Passo Fundo (RS), R$/sc 60kg', t:'TRGPSFB-AE', cat:'Físico', com:'Trigo'},
+  {d:'Trigo, Maringá (PR), R$/sc 60kg', t:'TRGMRGB-AE', cat:'Físico', com:'Trigo'},
+  // PREÇOS FÍSICOS — Café
+  {d:'Café Arábica, Campos Gerais (MG), R$/sc 60kg', t:'CFACGR6-AE', cat:'Físico', com:'Café'},
+  {d:'Café Arábica, Varginha (MG), R$/sc 60kg', t:'CFAVRG6-AE', cat:'Físico', com:'Café'},
+  {d:'Café Arábica, Franca (SP), R$/sc 60kg', t:'CFAFRN6-AE', cat:'Físico', com:'Café'},
+  // PREÇOS FÍSICOS — Arroz
+  {d:'Arroz Casca, Jaguari (RS), R$/sc 50kg, balcão', t:'ARZJGRB-AE', cat:'Físico', com:'Arroz'},
+  {d:'Arroz Casca, Pelotas (RS), R$/sc 50kg, balcão', t:'ARZPLSB-AE', cat:'Físico', com:'Arroz'},
+  {d:'Arroz Casca, Alto Vale do Itajaí (SC)', t:'ARZAVIB-AE', cat:'Físico', com:'Arroz'},
+  // ESTIMATIVAS — Soja
+  {d:'Soja Grão, Brasil, estimativa de produção, mi/ton., safra 2025/26', t:'SBGPRDUSD-AE', cat:'Estimativa', com:'Soja'},
+  {d:'Soja Grão, Brasil, estimativa de área plantada, mi/ha, safra 2025/26', t:'SBGASEUSD-AE', cat:'Estimativa', com:'Soja'},
+  {d:'Soja Grão, Brasil, estimativa de produtividade, ton./ha', t:'SBGPDTUSD-AE', cat:'Estimativa', com:'Soja'},
+  {d:'Soja Grão, Brasil, estimativa de exportação, mi/ton.', t:'SBGEXPUSD-AE', cat:'Estimativa', com:'Soja'},
+  {d:'Soja Grão, Brasil, estimativa de estoques, mi/ton.', t:'SBGESTUSD-AE', cat:'Estimativa', com:'Soja'},
+  {d:'Farelo de Soja, Brasil, estimativa de produção', t:'FSAPRDUSD-AE', cat:'Estimativa', com:'Soja'},
+  {d:'Óleo de Soja, Brasil, estimativa de exportação', t:'OSAEXPUSD-AE', cat:'Estimativa', com:'Soja'},
+  // ESTIMATIVAS — Milho
+  {d:'Milho, Brasil, estimativa de produção, mi/ton., safra 2025/26', t:'MILPRDUSD-AE', cat:'Estimativa', com:'Milho'},
+  {d:'Milho, Brasil, estimativa de exportação, mi/ton.', t:'MILEXPUSD-AE', cat:'Estimativa', com:'Milho'},
+  {d:'Milho, Brasil, estimativa de importação, mi/ton.', t:'MILIMPUSD-AE', cat:'Estimativa', com:'Milho'},
+  {d:'Milho, Brasil, estimativa de estoques, mi/ton.', t:'MILESTUSD-AE', cat:'Estimativa', com:'Milho'},
+  {d:'Milho, Brasil, estimativa de área plantada, mi/ha', t:'MILASEUSD-AE', cat:'Estimativa', com:'Milho'},
+  // ESTIMATIVAS — Trigo
+  {d:'Trigo, Brasil, estimativa de produção, mi/ton.', t:'TRGPRDUSD-AE', cat:'Estimativa', com:'Trigo'},
+  {d:'Trigo, Brasil, estimativa de importação, mi/ton.', t:'TRGIMPUSD-AE', cat:'Estimativa', com:'Trigo'},
+  {d:'Trigo, Brasil, estimativa de exportação, mi/ton.', t:'TRGEXPUSD-AE', cat:'Estimativa', com:'Trigo'},
+  // ESTIMATIVAS — Algodão
+  {d:'Algodão em pluma, Brasil, estimativa de produção, mi/ton.', t:'ALGPRDUSD-AE', cat:'Estimativa', com:'Algodão'},
+  {d:'Algodão em pluma, Brasil, estimativa de área plantada', t:'ALGASEUSD-AE', cat:'Estimativa', com:'Algodão'},
+  {d:'Algodão em pluma, Brasil, estimativa de exportação', t:'ALGEXPUSD-AE', cat:'Estimativa', com:'Algodão'},
+  // ESTIMATIVAS — Arroz
+  {d:'Arroz, Brasil, estimativa de produção, mi/ton.', t:'ARZPRDUSD-AE', cat:'Estimativa', com:'Arroz'},
+  {d:'Arroz, Brasil, estimativa de importação, mi/ton.', t:'ARZIMPUSD-AE', cat:'Estimativa', com:'Arroz'},
+  // ESTIMATIVAS — Café / Açúcar
+  {d:'Café, Brasil, estimativa de produção, mi/sc 60kg', t:'CFAPRDUSD-AE', cat:'Estimativa', com:'Café'},
+  {d:'Açúcar, Brasil, estimativa de produção, mi/ton.', t:'ACUPRDUSD-AE', cat:'Estimativa', com:'Açúcar'},
+  {d:'Cana de açúcar, Brasil, estimativa de produção, mi/ton.', t:'CNAPRDUSD-AE', cat:'Estimativa', com:'Cana'},
+  // PRÊMIOS — Soja
+  {d:'Soja Grão, Paranaguá (PR), cents US$/bu, fevereiro/2027, prêmio, vendedor', t:'SBGPRGPG-AE', cat:'Prêmio', com:'Soja'},
+  {d:'Soja Grão, Paranaguá (PR), cents US$/bu, março/2027, prêmio, vendedor', t:'SBGPRGPH-AE', cat:'Prêmio', com:'Soja'},
+  {d:'Soja Grão, Paranaguá (PR), cents US$/bu, abril/2027, prêmio, vendedor', t:'SBGPRGPJ-AE', cat:'Prêmio', com:'Soja'},
+  {d:'Soja Grão, Paranaguá (PR), cents US$/bu, maio/2027, prêmio, comprador', t:'SBGPRGPKC-AE', cat:'Prêmio', com:'Soja'},
+  // PRÊMIOS — Milho
+  {d:'Milho, Paranaguá (PR), cents US$/bu, fevereiro/2027, prêmio, vendedor', t:'MILPRGPG-AE', cat:'Prêmio', com:'Milho'},
+  {d:'Milho, Tubarão (ES), cents US$/bu, março/2027, prêmio, vendedor', t:'MILTBRAH-AE', cat:'Prêmio', com:'Milho'},
+  {d:'Milho, Santos (SP), cents US$/bu, abril/2027, prêmio, vendedor', t:'MILSSTSJ-AE', cat:'Prêmio', com:'Milho'},
+  {d:'Milho, Barcarena (PA), cents US$/bu, março/2027, prêmio', t:'MILBRCAH-AE', cat:'Prêmio', com:'Milho'},
+  {d:'Milho, Itaqui (MA), cents US$/bu, fevereiro/2027, prêmio', t:'MILITQPG-AE', cat:'Prêmio', com:'Milho'},
+];
+
+const catColors = {
+  'Físico':     {bg:'rgba(61,190,123,.15)',  color:'#3DBE7B'},
+  'Estimativa': {bg:'rgba(232,163,61,.15)',  color:'#E8A33D'},
+  'Prêmio':     {bg:'rgba(46,196,182,.15)',  color:'#2EC4B6'},
+};
+
+function buildTable() {
+  const tb = document.getElementById('tickerTable');
+  tickers.forEach(row => {
+    const cc = catColors[row.cat] || {};
+    tb.innerHTML += `<tr>
+      <td>${row.d}</td>
+      <td><span class="ticker">${row.t}</span></td>
+      <td><span class="cat-badge" style="background:${cc.bg};color:${cc.color};border:1px solid ${cc.color}33">${row.cat}</span></td>
+      <td class="muted">CEPEA-FEALQ</td>
+    </tr>`;
+  });
+  document.getElementById('resultCount').textContent = `${tickers.length} tickers (amostra representativa)`;
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const rows = document.querySelectorAll('#tickerTable tr');
+  let n = 0;
+  rows.forEach(tr => {
+    const show = !q || tr.textContent.toLowerCase().includes(q);
+    tr.style.display = show ? '' : 'none';
+    if (show) n++;
+  });
+  document.getElementById('resultCount').textContent = q ? `${n} resultados` : `${tickers.length} tickers (amostra)`;
+}
+
+function showTab(e, id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function toggleTheme() {
+  const h = document.documentElement;
+  const d = h.getAttribute('data-theme') === 'dark';
+  h.setAttribute('data-theme', d ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = d ? '🌙 Escuro' : '☀️ Claro';
+}
+const dt = new Date();
+const mm = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+document.getElementById('fd').textContent = `${dt.getDate()} ${mm[dt.getMonth()]} ${dt.getFullYear()}`;
+buildTable();
+</script>
+</body>
+</html>
