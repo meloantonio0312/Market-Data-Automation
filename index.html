@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hub Operacional — Broadcast · Agência Estado</title>
+<title>Market Data & Automation — Broadcast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -357,23 +359,84 @@
 </head>
 <body>
 
-<div class="app">
+<header class="topbar">
+  <button class="sidebar-toggle" onclick="toggleSidebar()" title="Menu">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <rect x="1" y="3" width="14" height="1.5" rx=".75" fill="currentColor"/>
+      <rect x="1" y="7.25" width="14" height="1.5" rx=".75" fill="currentColor"/>
+      <rect x="1" y="11.5" width="14" height="1.5" rx=".75" fill="currentColor"/>
+    </svg>
+  </button>
+  <div class="brand">
+    <div class="brand-icon">B</div>
+    <div>
+      <div class="brand-name">Market Data & Automation</div>
+      <div class="brand-sub">Broadcast · Grupo Estado</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+      <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+      <span id="theme-label">Dark</span>
+    </button>
+    <div class="pulse"></div>
+    Online
+  </div>
+</header>
 
-  <!-- SIDEBAR -->
+<div class="layout">
+
   <nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="brand">
-        <span class="brand-icon">💼</span>
-        <span class="brand-text">Hub <span style="opacity:.5">Operacional</span></span>
+    <div class="sidebar-inner">
+
+      <div class="sidebar-search">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="nav-search" placeholder="Buscar (ex: ICE, fees...)" oninput="filterNav(this.value)">
+          <button class="search-clear" id="search-clear-btn" onclick="clearSearch()">✕</button>
+        </div>
+        <div class="no-results" id="no-results">Nenhum resultado encontrado</div>
       </div>
-      <button class="sidebar-toggle" onclick="toggleSidebar()" title="Recolher menu">◀</button>
-    </div>
 
-    <div class="search-wrap">
-      <input class="search-input" type="text" placeholder="Buscar..." id="searchInput" oninput="searchNav(this.value)">
-    </div>
+      <a class="nav-item active" style="padding-left:16px; font-weight:500;" onclick="show('overview')" href="#">
+        <span style="font-size:13px">📊</span> Overview Executivo
+      </a>
 
-    <div class="nav-groups">
+      <div class="nav-divider"></div>
+
+      <!-- Diretoria -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">👔</span><span class="g-label">Diretoria</span>
+          <span class="g-count">9</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('breakeven')" href="#"><span class="item-dot"></span> Breakeven por Produto</a>
+          <a class="nav-item" onclick="show('despesas')" href="#"><span class="item-dot"></span> Despesas Jun/2026</a>
+          <a class="nav-item" onclick="show('faturamento')" href="#"><span class="item-dot"></span> Faturamento Jun/2026</a>
+          <a class="nav-item" onclick="show('ice-contratos')" href="#"><span class="item-dot"></span> ICE Contratos Consolidados</a>
+          <a class="nav-item" onclick="show('ice-pipeline')" href="#"><span class="item-dot"></span> ICE Novas Fontes</a>
+          <a class="nav-item" onclick="show('exchange-map')" href="#"><span class="item-dot"></span> Mapa de Bolsas</a>
+          <a class="nav-item" onclick="show('tam')" href="#"><span class="item-dot"></span> Oportunidade de Mercado</a>
+          <a class="nav-item" onclick="show('terminal-latam')" href="#"><span class="item-dot"></span> Terminal Latam / NUAM</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Visão Mensal 2026 -->
+      <div class="nav-group">
+        <button class="nav-group-btn open" onclick="toggleGroup(this)">
+          <span class="g-icon">📅</span><span class="g-label">Visão Mensal — 2026</span>
+          <span class="g-count">2</span><span class="chevron">▶</span>
+        </button>
+        <div class="nav-items">
+          <a class="nav-item" onclick="show('despesas-mensal')" href="#"><span class="item-dot"></span> Despesas — Jan-Jun</a>
+          <a class="nav-item" onclick="show('fat-mensal')" href="#"><span class="item-dot"></span> Faturamento — Jan-Jun</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
 
       <!-- Market Data -->
       <div class="nav-group">
@@ -382,7 +445,7 @@
           <span class="g-count">7</span><span class="chevron">▶</span>
         </button>
         <div class="nav-items">
-          <a class="nav-item active" onclick="show('team')" href="#"><span class="item-dot"></span> Estrutura do Time</a>
+          <a class="nav-item" onclick="show('team')" href="#"><span class="item-dot"></span> Estrutura do Time</a>
           <a class="nav-item" onclick="show('hub-datafeeds')" href="#"><span class="item-dot"></span> HUB Datafeeds</a>
           <a class="nav-item" onclick="show('licensing-process')" href="#"><span class="item-dot"></span> Processo de Licenciamento</a>
           <a class="nav-item" onclick="show('datafeed-roadmap')" href="#"><span class="item-dot"></span> Roadmap Datafeed 2026–27</a>
@@ -394,7 +457,7 @@
 
       <div class="nav-divider"></div>
 
-      <!-- Cenário Competitivo -->
+      <!-- Vendas & Marketing -->
       <div class="nav-group">
         <button class="nav-group-btn open" onclick="toggleGroup(this)">
           <span class="g-icon">📊</span><span class="g-label">Cenário Competitivo</span>
@@ -420,6 +483,7 @@
         <div class="nav-items">
           <a class="nav-item" onclick="show('fees-cheatsheet')" href="#"><span class="item-dot"></span> Cheatsheet de Fees</a>
           <a class="nav-item" onclick="show('datafeed-visao')" href="#"><span class="item-dot"></span> Datafeed — Visão Geral</a>
+          <a class="nav-item" onclick="show('ice-pipeline')" href="#"><span class="item-dot"></span> ICE Novas Fontes</a>
           <a class="nav-item" onclick="show('oferta-dados')" href="#"><span class="item-dot"></span> Infográfico Dados — Mai/26</a>
           <a class="nav-item" onclick="show('oferta-jun2026')" href="#"><span class="item-dot"></span> Infográfico Dados — Jun/26</a>
           <a class="nav-item" onclick="show('esg')" href="#"><span class="item-dot"></span> Levantamento ESG</a>
@@ -455,19 +519,323 @@
         </div>
       </div>
 
-      <div class="nav-divider"></div>
-      <a href="index_executivo.html" style="display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;color:var(--text-2);text-decoration:none;opacity:.6;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.6">
-        <span>🏛️</span> Hub Executivo →
-      </a>
-
     </div>
   </nav>
 
-  <!-- MAIN -->
-  <main class="main" id="main">
-    <div class="panels">
+  <main class="main" id="main-content">
 
-<div class="panel" id="p-team" style="display:block">
+    <!-- OVERVIEW -->
+    <div class="panel active" id="p-overview">
+      <div class="inner">
+        <p style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:8px;">
+          <span style="width:16px;height:1px;background:var(--gold);display:inline-block"></span>
+          Market Data & Automation · Jun 2026
+        </p>
+        <h1 style="font-family:'DM Serif Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:400;line-height:1.15;margin-bottom:.7rem;">
+          Executive Overview
+        </h1>
+        <p style="font-size:13px;color:var(--text-2);max-width:560px;line-height:1.75;margin-bottom:1.75rem;">
+          Visão executiva da área — KPIs, projetos com impacto e alertas que requerem atenção. Para o detalhe completo, use o menu lateral ou os atalhos de deep dive abaixo.
+        </p>
+
+        <!-- ── KPI ROW ── -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:2rem;">
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Faturamento Mensal</div>
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;">R$&nbsp;<span style="color:var(--gold)">16,8M</span></div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:5px;">Referência: Maio 2026</div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Clientes Ativos</div>
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;"><span style="color:var(--gold)">1.741</span></div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:5px;">11.854 contratos ativos</div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Instrumentos Cobertos</div>
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;"><span style="color:var(--gold)">662K</span></div>
+            <div style="font-size:11px;color:var(--green);margin-top:5px;">▲ +50,5% vs 2025 (440K)</div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Margem Bruta</div>
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;"><span style="color:var(--green)">83,9%</span></div>
+            <div style="font-size:11px;color:var(--green);margin-top:5px;">R$ 14,1M s/ custo fornecedores</div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px;">Custo Fornecedores</div>
+            <div style="font-size:1.7rem;font-weight:300;color:var(--text-1);line-height:1;">R$&nbsp;<span style="color:var(--gold)">2,7M</span></div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:5px;">Var R$2,1M · Fix R$654K · Mai/26</div>
+          </div>
+
+        </div>
+
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:2rem 0;">
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);margin-bottom:10px;">Oportunidade de Mercado — TAM / SAM / SOM</p>
+
+        <!-- TAM / SAM / SOM CARDS -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:1.5rem;">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.4rem;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--teal-dim))"></div>
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:8px;">TAM — Mercado Total</div>
+            <div style="font-size:2rem;font-weight:300;color:var(--text-1);line-height:1;margin-bottom:4px;">R$ <span style="color:var(--teal)">3,8B</span></div>
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:12px;">mercado de Market Data no Brasil · 2025/26 · fonte: B3, Trillia, LSEG</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;">Referência: B3 gerou R$327M em dados de mercado em 2025 (+15,3%) e Trillia R$1,1B em analytics (+10,3%). Somando Bloomberg, LSEG, ICE e players locais, o mercado brasileiro de dados financeiros profissionais supera R$3,8B/ano.</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.4rem;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-dim))"></div>
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px;">SAM — Mercado Endereçável</div>
+            <div style="font-size:2rem;font-weight:300;color:var(--text-1);line-height:1;margin-bottom:4px;">R$ <span style="color:var(--gold)">950M</span></div>
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:12px;">segmentos onde a Broadcast já compete · 2026</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;">Financeiro, Agro, Corporativo e Governo — os 4 segmentos ativos. A B3 faturou R$96,5M só em Dados para Mercado de Capitais no Q1/2026. A Broadcast endereça o mesmo universo de clientes com distribuição e curadoria diferenciadas.</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.4rem;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),rgba(76,175,135,.2))"></div>
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:8px;">SOM — Fatia Realizável</div>
+            <div style="font-size:2rem;font-weight:300;color:var(--text-1);line-height:1;margin-bottom:4px;">R$ <span style="color:var(--green)">320M</span></div>
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:12px;">captura realista em 3 anos com o roadmap atual</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;">Projeção conservadora considerando expansão ICE, Fenics, NUAM e ESG sobre a base atual de 1.741 clientes + penetração em Latam e novos segmentos (Mídia, Pessoa Física, ESG).</div>
+          </div>
+        </div>
+
+        <!-- ONDE A BROADCAST PODE SER REFERÊNCIA -->
+        <div style="margin-bottom:1.5rem;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);margin-bottom:10px;">Onde a Broadcast pode ser referência — e quem atacar</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+
+            <!-- FINANCEIRO -->
+            <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:1rem 1.2rem;">
+              <div style="display:grid;grid-template-columns:140px 1fr auto;align-items:start;gap:1rem;margin-bottom:.75rem;">
+                <div style="font-size:13px;font-weight:500;color:var(--text-1);padding-top:2px;">Financeiro</div>
+                <div style="font-size:12px;color:var(--text-2);">665 clientes ativos, R$12M/mês. Upsell via ICE (derivativos, energia), Fenics (FX/UST) e Nasdaq. Ticket médio R$18K — competindo diretamente com Bloomberg/LSEG a custo menor.</div>
+                <span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(76,175,135,.15);color:var(--green);font-weight:500;white-space:nowrap;">Líder atual</span>
+              </div>
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:6px;">Prospects prioritários</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">BTG Pactual</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Safra</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Daycoval</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">ABC Brasil</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Votorantim</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">XP Inc.</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Avenue</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Kinea</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Verde AM</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Squadra</span>
+                <span style="font-size:11px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:6px;padding:3px 10px;color:var(--gold);">Natixis / State Street ★</span>
+              </div>
+            </div>
+
+            <!-- AGRO -->
+            <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:1rem 1.2rem;">
+              <div style="display:grid;grid-template-columns:140px 1fr auto;align-items:start;gap:1rem;margin-bottom:.75rem;">
+                <div style="font-size:13px;font-weight:500;color:var(--text-1);padding-top:2px;">Agro</div>
+                <div style="font-size:12px;color:var(--text-2);">393 clientes, maior volume da base. ICE, CME/CBOT e Euronext são as bolsas-chave para commodities. Derived Data e índices customizados ampliam o valor além da cotação spot.</div>
+                <span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(201,168,76,.12);color:var(--gold);font-weight:500;white-space:nowrap;">Referência nacional</span>
+              </div>
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:6px;">Prospects prioritários</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Cargill</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Bunge</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">ADM</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Rabobank</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Amaggi</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">SLC Agrícola</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Coamo</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Terra Santa</span>
+                <span style="font-size:11px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:6px;padding:3px 10px;color:var(--gold);">Stockler ★</span>
+              </div>
+            </div>
+
+            <!-- GOVERNO -->
+            <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:0 10px 10px 0;padding:1rem 1.2rem;">
+              <div style="display:grid;grid-template-columns:140px 1fr auto;align-items:start;gap:1rem;margin-bottom:.75rem;">
+                <div style="font-size:13px;font-weight:500;color:var(--text-1);padding-top:2px;">Governo</div>
+                <div style="font-size:12px;color:var(--text-2);">Apenas 23 clientes mas ticket de R$31,6K — maior da base. CSD-BR e renda fixa são diferenciais únicos. Banco Central e B3 podem demandar até 5–7 bolsas do pacote ICE.</div>
+                <span style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--teal-dim);color:var(--teal);font-weight:500;white-space:nowrap;">Alto valor</span>
+              </div>
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:6px;">Prospects prioritários</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span style="font-size:11px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:6px;padding:3px 10px;color:var(--gold);">Banco Central ★</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">BNDES</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Tesouro Nacional</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">ANBIMA</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">CVM</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Susep</span>
+              </div>
+            </div>
+
+            <!-- ESG -->
+            <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:1rem 1.2rem;">
+              <div style="display:grid;grid-template-columns:140px 1fr auto;align-items:start;gap:1rem;margin-bottom:.75rem;">
+                <div style="font-size:13px;font-weight:500;color:var(--text-1);padding-top:2px;">ESG</div>
+                <div style="font-size:12px;color:var(--text-2);">Resolução CVM 244 cria obrigação de reporte ESG para fundos. Sem concorrente local consolidado. Gestoras e corporates expostos à regulação ESG são o alvo imediato.</div>
+                <span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(232,169,74,.1);color:var(--amber);font-weight:500;white-space:nowrap;">First mover</span>
+              </div>
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:6px;">Prospects prioritários</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Itaú Asset</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">BB DTVM</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Caixa AM</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Petrobras</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Vale</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Suzano</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Embraer</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">JBS</span>
+              </div>
+            </div>
+
+            <!-- LATAM -->
+            <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:0 10px 10px 0;padding:1rem 1.2rem;">
+              <div style="display:grid;grid-template-columns:140px 1fr auto;align-items:start;gap:1rem;margin-bottom:.75rem;">
+                <div style="font-size:13px;font-weight:500;color:var(--text-1);padding-top:2px;">Latam</div>
+                <div style="font-size:12px;color:var(--text-2);">Chile, Peru, Colômbia via NUAM. Único provedor brasileiro com infraestrutura para atender bancos internacionais na região. Potencial USD 8–15K/mês por cliente.</div>
+                <span style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--purple-dim);color:var(--purple);font-weight:500;white-space:nowrap;">Expansão</span>
+              </div>
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:6px;">Prospects prioritários</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span style="font-size:11px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:6px;padding:3px 10px;color:var(--gold);">Natixis / State Street ★</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Santander Brasil</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">HSBC AM</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">JPMorgan Brasil</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Goldman Sachs BR</span>
+                <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 10px;color:var(--text-2);">Credicorp</span>
+              </div>
+            </div>
+
+          </div>
+          <p style="font-size:11px;color:var(--text-3);margin-top:8px;">★ = prospects já identificados no pipeline HUB 2026 ou com OS de sugestão aberta.</p>
+        </div>
+
+        <!-- ── PROJETOS COM IMPACTO ── -->
+        <div style="margin-bottom:2rem;">
+          <p style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);margin-bottom:10px;">Projetos Estratégicos — Impacto Estimado</p>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <th style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:500;padding:8px 14px;text-align:left;">Projeto</th>
+                  <th style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:500;padding:8px 14px;text-align:left;">Impacto para o cliente</th>
+                  <th style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:500;padding:8px 14px;text-align:left;">Receita potencial</th>
+                  <th style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:500;padding:8px 14px;text-align:left;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">ICE — 15 Bolsas Internacionais</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Acesso a derivativos, energia e commodities globais. <strong style="color:var(--text-1);">13 clientes</strong> identificados, 18 OS de sugestões abertas.</td>
+                  <td style="padding:11px 14px;font-size:13px;color:var(--gold);font-weight:500;">USD 14,9K/mês custo · markup 114%</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(232,169,74,.12);color:var(--amber);font-weight:500;">Aguardando aprovação</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">Fenics Market Data (FX / UST)</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Cobertura de FX e US Treasuries para clientes institucionais. Custo fixo <strong style="color:var(--text-1);">R$ 34,7K/mês</strong> (já ativo no SAP).</td>
+                  <td style="padding:11px 14px;font-size:13px;color:var(--green);font-weight:500;">Em monetização</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(76,175,135,.15);color:var(--green);font-weight:500;">Em produção</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">Nasdaq Global Index Data</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Índices Nasdaq para ETFs e fundos. Custo atual <strong style="color:var(--text-1);">R$ 30,9K/mês</strong> — receita a ser estruturada.</td>
+                  <td style="padding:11px 14px;font-size:13px;color:var(--teal);font-weight:500;">A estruturar</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(46,196,182,.12);color:var(--teal);font-weight:500;">Em desenvolvimento</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">NUAM — Chile / Peru / Colombia</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Expansão Latam. Modelo de break-even em 24 meses. Prospect: <strong style="color:var(--text-1);">Natixis / State Street</strong> — USD 8–15K/mês.</td>
+                  <td style="padding:11px 14px;font-size:13px;color:var(--teal);font-weight:500;">USD 8–15K/mês potencial</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(201,168,76,.12);color:var(--gold);font-weight:500;">Planejado Q4 2026</span></td>
+                </tr>
+                <tr>
+                  <td style="padding:11px 14px;font-size:13px;font-weight:500;color:var(--text-1);">ESG Data</td>
+                  <td style="padding:11px 14px;font-size:12px;color:var(--text-2);">Novo segmento. Créditos de carbono e dados ESG para fundos e corporates regulados pela CVM. Base: 588,7K instrumentos mapeados.</td>
+                  <td style="padding:11px 14px;font-size:13px;color:var(--text-3);font-weight:500;">A definir</td>
+                  <td style="padding:11px 14px;"><span style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.07);color:var(--text-3);font-weight:500;">Pesquisa em andamento</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="text-align:right;margin-top:8px;">
+            <button onclick="show('datafeed-roadmap')" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:inherit;">Ver roadmap completo →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="panel" id="p-datafeed-roadmap">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Market Data</div>
+          <div class="page-title">Roadmap Market Data 2026–2027</div>
+          <div class="page-desc">Roadmap consolidado dos projetos de injetores: FenicsMD, Nasdaq, A5X, NUAM, CSD-BR e demais frentes de Market Data.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Market_Data_Roadmap_2026_2027.html</span>
+            <a href="Market_Data_Roadmap_2026_2027.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Market_Data_Roadmap_2026_2027.html" title="Roadmap Market Data 2026-2027"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MANAGEMENT ═══ -->
+    <div class="panel" id="p-roadmap">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Market Data</div>
+          <div class="page-title">Projetos 2026 — Accomplished vs Pending</div>
+          <div class="page-desc">Dashboard consolidado de status de todos os projetos da área.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">dashboard_2026_projects.html</span>
+            <a href="dashboard_2026_projects.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="dashboard_2026_projects.html" title="Abrir Dashboard de Projetos 2026"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-automacao">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Market Data</div>
+          <div class="page-title">CoE Automação — Sprint Planning 2026</div>
+          <div class="page-desc">Planejamento de sprints do Centro de Excelência em Automação.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">dashboard_automacao_2026.html</span>
+            <a href="dashboard_automacao_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="dashboard_automacao_2026.html" title="Abrir Sprint Planning CoE"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-hub-datafeeds">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Market Data</div>
+          <div class="page-title">HUB Datafeeds — Dashboard 2026</div>
+          <div class="page-desc">Visão consolidada dos datafeeds operados pela área.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">HUB_Datafeeds_Dashboard.html</span>
+            <a href="HUB_Datafeeds_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="HUB_Datafeeds_Dashboard.html" title="Abrir HUB Datafeeds"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-team">
       <div class="inner">
         <div class="page-header">
           <div class="page-eyebrow">Market Data</div>
@@ -508,75 +876,111 @@
       </div>
     </div>
 
-<div class="panel" id="p-datafeed-roadmap">
+    <!-- ═══ FINANCEIRO ═══ -->
+    <div class="panel" id="p-breakeven">
       <div class="inner">
         <div class="page-header">
-          <div class="page-eyebrow">Market Data</div>
-          <div class="page-title">Roadmap Market Data 2026–2027</div>
-          <div class="page-desc">Roadmap consolidado dos projetos de injetores: FenicsMD, Nasdaq, A5X, NUAM, CSD-BR e demais frentes de Market Data.</div>
+          <div class="page-eyebrow">Diretoria</div>
+          <div class="page-title">Breakeven por Produto — Maio 2026</div>
+          <div class="page-desc">Análise de ponto de equilíbrio por linha de produto.</div>
         </div>
         <div class="doc-frame-wrap">
           <div class="doc-frame-bar">
-            <span class="doc-frame-file">Market_Data_Roadmap_2026_2027.html</span>
-            <a href="Market_Data_Roadmap_2026_2027.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+            <span class="doc-frame-file">dashboard_breakeven_maio_2026.html</span>
+            <a href="dashboard_breakeven_maio_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
           </div>
-          <iframe src="Market_Data_Roadmap_2026_2027.html" title="Roadmap Market Data 2026-2027"></iframe>
+          <iframe src="dashboard_breakeven_maio_2026.html" title="Abrir Breakeven Maio 2026"></iframe>
         </div>
       </div>
     </div>
 
-<div class="panel" id="p-roadmap">
+    <div class="panel" id="p-faturamento">
       <div class="inner">
         <div class="page-header">
-          <div class="page-eyebrow">Market Data</div>
-          <div class="page-title">Projetos 2026 — Accomplished vs Pending</div>
-          <div class="page-desc">Dashboard consolidado de status de todos os projetos da área.</div>
+          <div class="page-eyebrow">Diretoria</div>
+          <div class="page-title">Dashboard Faturamento — Maio 2026</div>
+          <div class="page-desc">Receita consolidada do mês por produto e cliente.</div>
         </div>
         <div class="doc-frame-wrap">
           <div class="doc-frame-bar">
-            <span class="doc-frame-file">dashboard_2026_projects.html</span>
-            <a href="dashboard_2026_projects.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+            <span class="doc-frame-file">dashboard_faturamento_maio_2026.html</span>
+            <a href="dashboard_faturamento_maio_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
           </div>
-          <iframe src="dashboard_2026_projects.html" title="Abrir Dashboard de Projetos 2026"></iframe>
+          <iframe src="dashboard_faturamento_maio_2026.html" title="Abrir Faturamento Maio 2026"></iframe>
         </div>
       </div>
     </div>
 
-<div class="panel" id="p-automacao">
+    <div class="panel" id="p-despesas">
       <div class="inner">
         <div class="page-header">
-          <div class="page-eyebrow">Market Data</div>
-          <div class="page-title">CoE Automação — Sprint Planning 2026</div>
-          <div class="page-desc">Planejamento de sprints do Centro de Excelência em Automação.</div>
+          <div class="page-eyebrow">Diretoria</div>
+          <div class="page-title">Despesas com Fornecedores — Jun/2026</div>
+          <div class="page-desc">Relatório consolidado de despesas com provedores de dados.</div>
         </div>
         <div class="doc-frame-wrap">
           <div class="doc-frame-bar">
-            <span class="doc-frame-file">dashboard_automacao_2026.html</span>
-            <a href="dashboard_automacao_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+            <span class="doc-frame-file">report_despesas_dados_2026.html</span>
+            <a href="report_despesas_dados_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
           </div>
-          <iframe src="dashboard_automacao_2026.html" title="Abrir Sprint Planning CoE"></iframe>
+          <iframe src="report_despesas_dados_2026.html" title="Abrir Despesas 2026"></iframe>
         </div>
       </div>
     </div>
 
-<div class="panel" id="p-hub-datafeeds">
+    <div class="panel" id="p-ice-contratos">
       <div class="inner">
         <div class="page-header">
-          <div class="page-eyebrow">Market Data</div>
-          <div class="page-title">HUB Datafeeds — Dashboard 2026</div>
-          <div class="page-desc">Visão consolidada dos datafeeds operados pela área.</div>
+          <div class="page-eyebrow">Diretoria</div>
+          <div class="page-title">ICE Data Services — Contratos Consolidados</div>
+          <div class="page-desc">Hierarquia completa dos 9 addenda do contrato ICE.</div>
         </div>
         <div class="doc-frame-wrap">
           <div class="doc-frame-bar">
-            <span class="doc-frame-file">HUB_Datafeeds_Dashboard.html</span>
-            <a href="HUB_Datafeeds_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+            <span class="doc-frame-file">ICE_Addenda_Consolidado.html</span>
+            <a href="ICE_Addenda_Consolidado.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
           </div>
-          <iframe src="HUB_Datafeeds_Dashboard.html" title="Abrir HUB Datafeeds"></iframe>
+          <iframe src="ICE_Addenda_Consolidado.html" title="Abrir ICE — Addenda Consolidado"></iframe>
         </div>
       </div>
     </div>
 
-<div class="panel" id="p-licensing-process">
+    <div class="panel" id="p-terminal-latam">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Diretoria</div>
+          <div class="page-title">Terminal Latam — Market Data Dashboard</div>
+          <div class="page-desc">P&L e cenários de break-even para Chile, Colômbia e Peru (NUAM).</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Term_Latam_NUAM.html</span>
+            <a href="Term_Latam_NUAM.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Term_Latam_NUAM.html" title="Abrir Terminal Latam / NUAM"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-exchange-map">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Diretoria</div>
+          <div class="page-title">Mapa de Bolsas</div>
+          <div class="page-desc">Dashboard com os 32 contratos de bolsa ativos, organizados por região e status.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Exchange_Map_Contracts_Dashboard.html</span>
+            <a href="Exchange_Map_Contracts_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Exchange_Map_Contracts_Dashboard.html" title="Abrir Mapa de Contratos"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ VENDAS — BOLSAS FEES & REGRAS ═══ -->
+    <div class="panel" id="p-licensing-process">
       <div class="inner">
         <div class="page-header">
           <div class="page-eyebrow">Market Data</div>
@@ -593,109 +997,7 @@
       </div>
     </div>
 
-<div class="panel" id="p-sugestoes">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Market Data</div>
-          <div class="page-title">Dashboard de Sugestões de Clientes</div>
-          <div class="page-desc">Consolidação de pedidos e feedback de clientes via tickets de suporte.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">dashboard_sugestoes_v2.html</span>
-            <a href="dashboard_sugestoes_v2.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="dashboard_sugestoes_v2.html" title="Abrir Sugestões de Clientes"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-bpipe">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Cenário Competitivo</div>
-          <div class="page-title">Bloomberg B-PIPE × Broadcast — Matriz Competitiva</div>
-          <div class="page-desc">Comparação direta de funcionalidades, cobertura e precificação entre as plataformas.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">BPIPE_x_Broadcast_apresentacao.html</span>
-            <a href="BPIPE_x_Broadcast_apresentacao.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="BPIPE_x_Broadcast_apresentacao.html" title="Abrir B-PIPE vs Broadcast"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-inteligencia-mercado">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Cenário Competitivo</div>
-          <div class="page-title">Inteligência de Mercado — Broadcast+ vs Competidores</div>
-          <div class="page-desc">Posicionamento competitivo frente a Bloomberg, LSEG, Trillia, CMA e outros players do mercado.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">broadcast_inteligencia_mercado.html</span>
-            <a href="broadcast_inteligencia_mercado.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="broadcast_inteligencia_mercado.html" title="Abrir Inteligência de Mercado"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-cma">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Cenário Competitivo</div>
-          <div class="page-title">CMA vs Broadcast — Análise Competitiva & Oportunidade</div>
-          <div class="page-desc">Comparativo com foco na oportunidade de captura de clientes CMA. Inclui perfil da CMA, matriz de funcionalidades, playbook de abordagem e battle card.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">CMA_vs_Broadcast_Dashboard.html</span>
-            <a href="CMA_vs_Broadcast_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="CMA_vs_Broadcast_Dashboard.html" title="CMA vs Broadcast"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-nelogica">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Cenário Competitivo</div>
-          <div class="page-title">Nelogica vs Broadcast — Análise Competitiva</div>
-          <div class="page-desc">Comparativo direto entre Nelogica e Broadcast para uso em conversas comerciais e posicionamento de vendas.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">Nelogica_vs_Broadcast_Dashboard.html</span>
-            <a href="Nelogica_vs_Broadcast_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="Nelogica_vs_Broadcast_Dashboard.html" title="Nelogica vs Broadcast"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-trillia">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Cenário Competitivo</div>
-          <div class="page-title">Trillia (B3) vs Broadcast — Análise Competitiva</div>
-          <div class="page-desc">Comparativo estratégico com o competidor mais relevante de médio prazo. Inclui visão executiva, matriz de funcionalidades, posicionamento e battle card.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">Trillia_vs_Broadcast_Dashboard.html</span>
-            <a href="Trillia_vs_Broadcast_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="Trillia_vs_Broadcast_Dashboard.html" title="Trillia vs Broadcast"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-fees-cheatsheet">
+    <div class="panel" id="p-fees-cheatsheet">
       <div class="inner">
         <div class="page-header">
           <div class="page-eyebrow">Marketing & Materiais</div>
@@ -712,75 +1014,7 @@
       </div>
     </div>
 
-<div class="panel" id="p-datafeed-visao">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Marketing & Materiais</div>
-          <div class="page-title">Broadcast Datafeed — Visão Geral de Produto</div>
-          <div class="page-desc">Material institucional sobre o produto Datafeed para apresentação a clientes.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">Broadcast_Datafeed_Visao_Geral.html</span>
-            <a href="Broadcast_Datafeed_Visao_Geral.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="Broadcast_Datafeed_Visao_Geral.html" title="Abrir Visão Geral — Datafeed"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-oferta-dados">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Marketing & Materiais</div>
-          <div class="page-title">Infográfico Dados — Mai/26</div>
-          <div class="page-desc">One-pager de vendas com análise de crescimento da cobertura de instrumentos.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">broadcast_oferta_dados_onepager.html</span>
-            <a href="broadcast_oferta_dados_onepager.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="broadcast_oferta_dados_onepager.html" title="Abrir Oferta de Dados"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-oferta-jun2026">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Marketing & Materiais</div>
-          <div class="page-title">Infográfico Dados — Jun/26</div>
-          <div class="page-desc">Infográfico atualizado com a base de Jun/2026 — 712.391 instrumentos, +61,9% vs Dez/2024. Principais contribuidores: Precia (Colômbia), FenicsMD FX, FenicsMD FX Options e ICE Data Curvas.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">oferta_dados_junho_2026.html</span>
-            <a href="oferta_dados_junho_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="oferta_dados_junho_2026.html" title="Oferta de Dados Jun/2026"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-esg">
-      <div class="inner">
-        <div class="page-header">
-          <div class="page-eyebrow">Marketing & Materiais</div>
-          <div class="page-title">Levantamento de Mercado — Dados ESG</div>
-          <div class="page-desc">Pesquisa de mercado e oportunidades de produto no segmento de dados ESG.</div>
-        </div>
-        <div class="doc-frame-wrap">
-          <div class="doc-frame-bar">
-            <span class="doc-frame-file">levantamento_mercado_esg_broadcast.html</span>
-            <a href="levantamento_mercado_esg_broadcast.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
-          </div>
-          <iframe src="levantamento_mercado_esg_broadcast.html" title="Abrir Levantamento ESG"></iframe>
-        </div>
-      </div>
-    </div>
-
-<div class="panel" id="p-agro-policies">
+    <div class="panel" id="p-agro-policies">
       <div class="inner">
         <div class="page-header">
           <div class="page-eyebrow">Marketing & Materiais</div>
@@ -797,24 +1031,43 @@
       </div>
     </div>
 
-<div class="panel" id="p-agro-contribuintes">
+    <!-- ═══ VENDAS — COMPETITIVE INTEL ═══ -->
+    <div class="panel" id="p-inteligencia-mercado">
       <div class="inner">
         <div class="page-header">
-          <div class="page-eyebrow">Marketing & Materiais</div>
-          <div class="page-title">Agro — Instrumentos & Contribuintes</div>
-          <div class="page-desc">2.413 instrumentos agro mapeados via 5 contribuintes — Agência Estado/CEPEA, Scot Consultoria, Aboissa, Ibrafe, ABRAPA e Grão Direto. 14 categorias, 16 commodities.</div>
+          <div class="page-eyebrow">Cenário Competitivo</div>
+          <div class="page-title">Inteligência de Mercado — Broadcast+ vs Competidores</div>
+          <div class="page-desc">Posicionamento competitivo frente a Bloomberg, LSEG, Trillia, CMA e outros players do mercado.</div>
         </div>
         <div class="doc-frame-wrap">
           <div class="doc-frame-bar">
-            <span class="doc-frame-file">broadcast_agro_contribuintes.html</span>
-            <a href="broadcast_agro_contribuintes.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+            <span class="doc-frame-file">broadcast_inteligencia_mercado.html</span>
+            <a href="broadcast_inteligencia_mercado.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
           </div>
-          <iframe src="broadcast_agro_contribuintes.html" title="Agro Instrumentos & Contribuintes"></iframe>
+          <iframe src="broadcast_inteligencia_mercado.html" title="Abrir Inteligência de Mercado"></iframe>
         </div>
       </div>
     </div>
 
-<div class="panel" id="p-derived-commodities">
+    <div class="panel" id="p-bpipe">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Cenário Competitivo</div>
+          <div class="page-title">Bloomberg B-PIPE × Broadcast — Matriz Competitiva</div>
+          <div class="page-desc">Comparação direta de funcionalidades, cobertura e precificação entre as plataformas.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">BPIPE_x_Broadcast_apresentacao.html</span>
+            <a href="BPIPE_x_Broadcast_apresentacao.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="BPIPE_x_Broadcast_apresentacao.html" title="Abrir B-PIPE vs Broadcast"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ VENDAS — PRODUTO / DERIVED DATA ═══ -->
+    <div class="panel" id="p-derived-commodities">
       <div class="inner">
         <div class="page-header">
           <div class="page-eyebrow">Produto</div>
@@ -831,7 +1084,7 @@
       </div>
     </div>
 
-<div class="panel" id="p-derived-macro">
+    <div class="panel" id="p-derived-macro">
       <div class="inner">
         <div class="page-header">
           <div class="page-eyebrow">Produto</div>
@@ -848,7 +1101,231 @@
       </div>
     </div>
 
-<div class="panel" id="p-newsletter">
+    <!-- ═══ VENDAS — MATERIAIS COMERCIAIS ═══ -->
+    <div class="panel" id="p-ice-pipeline">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Marketing & Materiais</div>
+          <div class="page-title">ICE Novas Fontes</div>
+          <div class="page-desc">Pipeline comercial de clientes beneficiários do pacote ICE Data — 15 bolsas internacionais.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">ICE_Beneficiarios_Pipeline_HUB.html</span>
+            <a href="ICE_Beneficiarios_Pipeline_HUB.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="ICE_Beneficiarios_Pipeline_HUB.html" title="Abrir ICE — Pipeline Beneficiários"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-oferta-dados">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Marketing & Materiais</div>
+          <div class="page-title">Infográfico Dados — Mai/26</div>
+          <div class="page-desc">One-pager de vendas com análise de crescimento da cobertura de instrumentos.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">broadcast_oferta_dados_onepager.html</span>
+            <a href="broadcast_oferta_dados_onepager.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="broadcast_oferta_dados_onepager.html" title="Abrir Oferta de Dados"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-datafeed-visao">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Marketing & Materiais</div>
+          <div class="page-title">Broadcast Datafeed — Visão Geral de Produto</div>
+          <div class="page-desc">Material institucional sobre o produto Datafeed para apresentação a clientes.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Broadcast_Datafeed_Visao_Geral.html</span>
+            <a href="Broadcast_Datafeed_Visao_Geral.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Broadcast_Datafeed_Visao_Geral.html" title="Abrir Visão Geral — Datafeed"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-esg">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Marketing & Materiais</div>
+          <div class="page-title">Levantamento de Mercado — Dados ESG</div>
+          <div class="page-desc">Pesquisa de mercado e oportunidades de produto no segmento de dados ESG.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">levantamento_mercado_esg_broadcast.html</span>
+            <a href="levantamento_mercado_esg_broadcast.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="levantamento_mercado_esg_broadcast.html" title="Abrir Levantamento ESG"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-sugestoes">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Market Data</div>
+          <div class="page-title">Dashboard de Sugestões de Clientes</div>
+          <div class="page-desc">Consolidação de pedidos e feedback de clientes via tickets de suporte.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">dashboard_sugestoes_v2.html</span>
+            <a href="dashboard_sugestoes_v2.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="dashboard_sugestoes_v2.html" title="Abrir Sugestões de Clientes"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TAM / SAM / SOM ═══ -->
+    <div class="panel" id="p-tam">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Diretoria</div>
+          <div class="page-title">Oportunidade de Mercado — TAM / SAM / SOM</div>
+          <div class="page-desc">Esta análise está disponível no Overview Executivo para acesso imediato.</div>
+        </div>
+        <div class="card" onclick="show('overview')" style="max-width:340px;">
+          <div class="card-icon" style="background:var(--gold-dim)">📊</div>
+          <div class="tag">Overview Executivo</div>
+          <div class="card-title">Ver TAM / SAM / SOM no Overview</div>
+          <div class="card-desc">Os cards de oportunidade de mercado, posição por segmento e onde a Broadcast pode ser referência estão integrados no Overview Executivo.</div>
+          <div class="card-foot"><span>Overview</span><span class="arrow">→</span></div>
+        </div>
+      </div>
+    </div>
+
+        <div class="panel" id="p-nelogica">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Cenário Competitivo</div>
+          <div class="page-title">Nelogica vs Broadcast — Análise Competitiva</div>
+          <div class="page-desc">Comparativo direto entre Nelogica e Broadcast para uso em conversas comerciais e posicionamento de vendas.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Nelogica_vs_Broadcast_Dashboard.html</span>
+            <a href="Nelogica_vs_Broadcast_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Nelogica_vs_Broadcast_Dashboard.html" title="Nelogica vs Broadcast"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-trillia">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Cenário Competitivo</div>
+          <div class="page-title">Trillia (B3) vs Broadcast — Análise Competitiva</div>
+          <div class="page-desc">Comparativo estratégico com o competidor mais relevante de médio prazo. Inclui visão executiva, matriz de funcionalidades, posicionamento e battle card.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">Trillia_vs_Broadcast_Dashboard.html</span>
+            <a href="Trillia_vs_Broadcast_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="Trillia_vs_Broadcast_Dashboard.html" title="Trillia vs Broadcast"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-cma">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Cenário Competitivo</div>
+          <div class="page-title">CMA vs Broadcast — Análise Competitiva & Oportunidade</div>
+          <div class="page-desc">Comparativo com foco na oportunidade de captura de clientes CMA. Inclui perfil da CMA, matriz de funcionalidades, playbook de abordagem e battle card.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">CMA_vs_Broadcast_Dashboard.html</span>
+            <a href="CMA_vs_Broadcast_Dashboard.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="CMA_vs_Broadcast_Dashboard.html" title="CMA vs Broadcast"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-despesas-mensal">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Visão Mensal</div>
+          <div class="page-title">Despesas com Dados — Visão Mensal 2026</div>
+          <div class="page-desc">Evolução mês a mês de Jan a Jun/2026 — Real vs Orçado, por fornecedor, YTD acumulado e projeção anual.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">despesas_mensal_2026.html</span>
+            <a href="despesas_mensal_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="despesas_mensal_2026.html" title="Despesas Mensal 2026"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-oferta-jun2026">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Marketing & Materiais</div>
+          <div class="page-title">Infográfico Dados — Jun/26</div>
+          <div class="page-desc">Infográfico atualizado com a base de Jun/2026 — 712.391 instrumentos, +61,9% vs Dez/2024. Principais contribuidores: Precia (Colômbia), FenicsMD FX, FenicsMD FX Options e ICE Data Curvas.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">oferta_dados_junho_2026.html</span>
+            <a href="oferta_dados_junho_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="oferta_dados_junho_2026.html" title="Oferta de Dados Jun/2026"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-fat-mensal">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Visão Mensal</div>
+          <div class="page-title">Faturamento — Visão Mensal 2026</div>
+          <div class="page-desc">Evolução mês a mês Jan–Jun 2026 — faturamento total, carteira, clientes, contratos, por segmento e por plataforma.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">faturamento_mensal_2026.html</span>
+            <a href="faturamento_mensal_2026.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="faturamento_mensal_2026.html" title="Faturamento Mensal 2026"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-agro-contribuintes">
+      <div class="inner">
+        <div class="page-header">
+          <div class="page-eyebrow">Marketing & Materiais</div>
+          <div class="page-title">Agro — Instrumentos & Contribuintes</div>
+          <div class="page-desc">2.413 instrumentos agro mapeados via 5 contribuintes — Agência Estado/CEPEA, Scot Consultoria, Aboissa, Ibrafe, ABRAPA e Grão Direto. 14 categorias, 16 commodities.</div>
+        </div>
+        <div class="doc-frame-wrap">
+          <div class="doc-frame-bar">
+            <span class="doc-frame-file">broadcast_agro_contribuintes.html</span>
+            <a href="broadcast_agro_contribuintes.html" target="_blank" class="doc-frame-open">Abrir em nova aba ↗</a>
+          </div>
+          <iframe src="broadcast_agro_contribuintes.html" title="Agro Instrumentos & Contribuintes"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ COMUNICAÇÃO ═══ -->
+    <div class="panel" id="p-newsletter">
       <div class="inner">
         <div class="page-header">
           <div class="page-eyebrow">Comunicação</div>
@@ -865,10 +1342,14 @@
       </div>
     </div>
 
-    </div>
   </main>
-
 </div>
+
+<footer class="app-footer">
+  <span>Autor: <strong>Antonio Melo</strong></span>
+  <span class="dot">·</span>
+  <span>Última atualização: <strong id="last-update"></strong></span>
+</footer>
 
 <script>
   function show(id) {
@@ -1033,6 +1514,5 @@
     input.focus();
   }
 </script>
-
 </body>
 </html>
